@@ -1,12 +1,16 @@
+import os
 import spotipy.util as util
 import requests
 import datetime
 from datetime import date
 import pandas as pd
+from dotenv import load_dotenv
 
-username = 'YOUR_USERNAME'
-client_id ='YOUR_CLIENT_ID'
-client_secret = 'YOUR_CLIENT_SECRET'
+load_dotenv()
+
+username = os.getenv('USERNAME')
+client_id = os.getenv('CLIENT_ID')
+client_secret = os.getenv('CLIENT_SECRET')
 redirect_uri = 'http://localhost:7777/callback'
 scope = 'user-read-recently-played'
 
@@ -16,14 +20,14 @@ token = util.prompt_for_user_token(username=username,
                                    client_secret=client_secret,     
                                    redirect_uri=redirect_uri)
 
-def get_listening_history():
+def get_listening_history(runtime):
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': f'Bearer ' + token,
     }
 
-    now = datetime.datetime.utcnow()
+    now = runtime
     beginning_time = now - datetime.timedelta(days=7)
 
     timestamp_steps = 6 * 60 * 60  # basically 6 hrs in seconds
@@ -64,12 +68,13 @@ def get_listening_history():
     
     return song_history
 
-def write_events_to_csv(song_history):
+def write_events_to_csv(runtime, song_history):
     event_df = pd.DataFrame([song for song in song_history])
-    filename = "data.csv"
+    filename = f"spotify_{runtime}_data.csv"
     filepath = filename
     print("Creating CSV at " + filepath)
     event_df.to_csv(filepath, index=False)
 
-history = get_listening_history()
-write_events_to_csv(history)
+runtime = datetime.datetime.utcnow()
+history = get_listening_history(runtime)
+write_events_to_csv(runtime.timestamp(),history)
