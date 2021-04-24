@@ -17,3 +17,6 @@ Follow the instructions in the [google-calendar folder](./google-calendar/README
 
 ### For spotify data
 Follow the instructions in the [spotify-data folder](./spotify-data/README.md)
+
+### For github data
+Follow the instructions in the [github-data folder](./github-data/README.md)
