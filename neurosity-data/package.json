@@ -1,0 +1,19 @@
+{
+  "name": "neurosity-data",
+  "version": "1.0.0",
+  "description": "gets insights from neurosity recorded data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oreHGA/fusion.git"
+  },
+  "author": "Ore Ogundipe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oreHGA/fusion/issues"
+  },
+  "homepage": "https://github.com/oreHGA/fusion#readme"
+}
