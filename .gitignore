@@ -1,1 +1,3 @@
 .vscode
+.cache*
+.ipynb_checkpoints
