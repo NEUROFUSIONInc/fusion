@@ -20,3 +20,11 @@ Follow the instructions in the [spotify-data folder](./spotify-data/README.md)
 
 ### For github data
 Follow the instructions in the [github-data folder](./github-data/README.md)
+
+
+## Todos
+
+- Extract methods for different datasets into seperate python files / methods (utils.py)
+
+- dashboard
+    -- read data as .csv
