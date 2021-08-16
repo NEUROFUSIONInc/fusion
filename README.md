@@ -21,10 +21,19 @@ Follow the instructions in the [spotify-data folder](./spotify-data/README.md)
 ### For github data
 Follow the instructions in the [github-data folder](./github-data/README.md)
 
+## Interacting with dashboard
+Follow the instructions in the [dashboard folder](./dashboard/README.md)
 
 ## Todos
 
-- Extract methods for different datasets into seperate python files / methods (utils.py)
+[x] Extract methods for different datasets into seperate python files / methods (utils.py)
 
-- dashboard
-    -- read data as .csv
+[] dashboard
+    [x] read data as .csv
+    [x] static version with gantt chart
+    [x] date filter to activity data
+    [x] minimum duration filter to activity data
+    [x] application usage summary to activity data
+    [] oura / physio summaries
+    [] oura summary - time spent moving around vs being stationary (usually represents sitting down, lying down)
+    [] ...
