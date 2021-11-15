@@ -16,3 +16,6 @@ cp .env.example .env
 
 - Run `python getspotifydata.py`. 
     - you should see a `.csv` file created in the `spotify-data` folder
+
+
+{TODO: update this for getting features from already fetched data through spotify manual download}
