@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>Fusion</title>
+  </head>
+  <body>
+    <div class="fusion-title">
+      <h1>Welcome to Fusion, Ore!</h1>
+      <i>Helping you better understand yourself & the world around you.</i><br>
+      <i>Discover hidden insights from the apps you use daily.</i>
+    </div>
+
+    <div class="fusion-datasources">
+
+      <!-- make each datasource tile clickable -->      
+      <div class="fusion-datasource">
+        <img src="./static/oura-logo.png" width="50px" height="50px">
+        <p>Oura Ring</p>
+      </div>
+
+      <div class="fusion-datasource">
+        <img src="./static/spotify-logo.png" width="50px" height="50px">
+        <p>Spotify</p>
+      </div>
+
+      <div class="fusion-datasource">
+        <img src="./static/activitywatch-logo.png" width="50px" height="50px">
+        <p>ActivityWatch</p>
+      </div>
+
+      <div class="fusion-datasource">
+        <img src="./static/twitter-logo.png" width="50px" height="50px">
+        <p>Twitter</p>
+      </div>
+    </div>
+
+    <div class="fusion-getstarted">
+      <input type="button" value="Get Started" class="fusion-getstarted-button"/>
+    </div>
+
+    <div class="fusion-searchbar">
+
+    </div>
+    
+    <div class="fusion-results">
+
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>
