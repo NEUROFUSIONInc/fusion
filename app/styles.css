@@ -111,3 +111,8 @@ body {
     flex-direction: column;
     justify-content: center;
 }
+
+#fusionLoadingText{
+    display:none;
+    text-align: center;
+}

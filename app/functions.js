@@ -1,11 +1,17 @@
 var fusionLandingPage = document.getElementById("fusionLandingPage");
 fusionLandingPage.onclick = function(e){
-  // hide the landing page
-  fusionLandingPage.style.display = "none";
+  // show the loading text
+  var fusionLoadingText = document.getElementById("fusionLoadingText");
+  fusionLoadingText.style.display = "block";
+  setTimeout(function(){
+      // hide the landing page
+    fusionLandingPage.style.display = "none";
 
-  // display the query page
-  var fusionQueryPage = document.getElementById("fusionQueryPage");
-  fusionQueryPage.style.display = "flex";
+    // display the query page
+    var fusionQueryPage = document.getElementById("fusionQueryPage");
+    fusionQueryPage.style.display = "flex";
+  }, 1500);
+
 };
 
 
