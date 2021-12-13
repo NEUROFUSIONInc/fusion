@@ -25,3 +25,38 @@ body {
     align-self: flex-end;
     padding-left: 20px;
 }
+
+@media only screen and (max-width: 480px) {
+    .fusion-video {
+        width: 320px;
+        height: 240px;
+    }
+
+    body {
+        flex-direction: column;
+    }
+
+    .left-side {
+        margin: auto;
+        height: 100%;
+        position: inherit;
+    }
+    .right-side{
+        padding: 0px;
+    }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 1025px) {
+    body {
+        flex-direction: column;
+    }
+
+    .left-side {
+        margin: auto;
+        height: 100%;
+        position: inherit;
+    }
+    .right-side{
+        padding: 0px;
+    }
+}
