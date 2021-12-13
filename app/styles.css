@@ -25,13 +25,89 @@ body {
     justify-content: space-evenly;
 }
 
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
 .fusion-getstarted {
     display: flex;
     justify-content: center;
 }
+
+.fusion-getstarted-button {
+    cursor: pointer;
+}
+
 .fusion-getstarted-button{
     width: 200px;
     border: 3px solid black;
     border-radius: 10px;
     color: #212836;
+    height: 40px;
+    font-weight: 500;
+}
+
+.fusion-searchbar{
+}
+
+#fusionQueryPage {
+    display: none;
+    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
+}
+
+#fusionLandingPage{
+    /* display: none; */
+}
+
+.fusionQueryPage-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fusion-searchbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.fusion-searchbar input[type="text"] {
+    color: #212836;
+    width: 500px;
+    height: 40px;
+    border: 0;
+    border-radius: 5px;
+    line-height: 1;
+    padding-left: 20px;
+}
+
+.fusion-results {
+    display: none;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.insight-highlight {
+    text-decoration: underline;
+}
+
+.insight-highlight:hover{
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.fusion-results ul {
+    list-style-type: none;
+}
+
+.fusion-results ul li {
+    margin-bottom: 20px;
+}
+
+#fusionResultsItemDetail {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
 }
