@@ -1,3 +1,5 @@
 .vscode
 .cache*
 .ipynb_checkpoints
+fusion-ios/*
+.DS_Store
