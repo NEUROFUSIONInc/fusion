@@ -16,7 +16,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 def get_activity_watch_data():
     
-    input_df = pd.read_csv("../data/aw_data_grouped_2021_08_04.csv")
+    input_df = pd.read_csv("../data/aw_data_grouped_2022_03_22.csv")
 
     return input_df
 
@@ -84,7 +84,7 @@ def plot_period_summary(df: pd.DataFrame, start_date: datetime, end_date: dateti
     aw_summary = aw_summary.agg({
                         'duration_seconds': 'sum'
                     })
-    aw_summary = aw_summary.sort_values(by=['duration_seconds'], ascending=False).head(20)
+    aw_summary = aw_summary.sort_values(by=['duration_seconds'], ascending=False).head(50)
     print(aw_summary)
 
     # divide by 60 to convert to minutes
@@ -134,11 +134,11 @@ app.layout = html.Div(children=[
         # Display Graphs
         dcc.Graph(
             id='aw-duration_summary-chart',
-            figure=plot_period_summary(df, datetime.fromisoformat("2021-02-27"), datetime.fromisoformat("2021-03-01"))
+            figure=plot_period_summary(df, datetime.fromisoformat("2022-02-01"), datetime.fromisoformat("2022-03-01"))
         ),
         dcc.Graph(
             id='aw-gantt-graph',
-            figure=plot_period_activity(df, datetime.fromisoformat("2021-02-27"), datetime.fromisoformat("2021-03-01"))
+            figure=plot_period_activity(df, datetime.fromisoformat("2022-02-01"), datetime.fromisoformat("2022-03-01"))
         )
         
     ])
