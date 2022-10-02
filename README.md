@@ -37,3 +37,17 @@ Follow the instructions in the [dashboard folder](./dashboard/README.md)
     [] oura / physio summaries
     [] oura summary - time spent moving around vs being stationary (usually represents sitting down, lying down)
     [] ...
+
+# What's next
+https://www.notion.so/next-steps-for-fusion-betting-on-magicFlow-56c74371306c4816a9e08722868a9163
+
+First step:
+- get data collection script going to call these "experiments"
+    - first connect neurosity
+    - show avg. sig quality
+    - start recording 
+    - save (
+        per user,
+        year/month/day folder format
+    )
+    - (fix eyes on cross ) - go checkout lab.js
