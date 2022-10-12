@@ -1,0 +1,15 @@
+
+
+folder structure for data should be
+
+<userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>
+
+
+build the best intuitive visualization
+- allow to see visualization side by side
+
+
+tagging recordings need to be first party
+
+- 1665425778  - working on famasi at the time
+- 1665427637  
