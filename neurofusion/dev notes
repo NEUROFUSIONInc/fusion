@@ -1,6 +1,6 @@
 
 
-folder structure for data should be
+folder structure for uploaded data should be
 
 <userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>
 
@@ -11,11 +11,57 @@ build the best intuitive visualization
 
 tagging recordings need to be first party
 
-- 1665425778  - working on famasi at the time
-- 1665427637  
+- 1665425778  - (ore) working on famasi at the time
+- 1665427637  - (ore) same as above
+- 1665596855  - (ore) not really feeling work (/low energy)
+
+- 1665632132  - (deji) - working  5mins
+- 1665632460  - (deji) - same as above
+- 1665632927  - (deji) - same as above
+- 1665633719  - (deji) - same as above
+
+- 1665724696  - (ore)  - (h) free flow
+- 1665725683  - (ore)
 
 
 set up
 - get the notion service wrapped
 - need to do the login whether I like it or not
 - add a button to start a recording
+
+....
+
+simple signon for user (like mixpanel and jargon)
+
+makes sense storing device id in the localstorage
+    - still need to add the neurosity provider
+
+get user email -> (device id) -> store in local storage
+
+next load fetch from local storage first
+
+- signed in user, gets a neurosity device
+    - device gets tied to userId stored in localstorage
+        (de anonymised) for starters let users just know what you're collecting data for
+            "we want to explore changes in brain activty over time
+            and how it relates with behavior"
+                - would you like to share data (y/n)
+
+        - notes can even show what it looks like
+        - (hehehehe for local first just save a ton of data in localstorage)
+            - correlating with magicflow data
+                - (i should get a data scientist)
+
+....
+
+I'm so excited, gonna get to viewing experiments natively sooon!!!
+ - i dream of a future with labjs style experiments and analyis on data
+    - then imagine pairing with other physio signals
+        - I actually should just get those initial one on homepage.
+
+oura (reg health)
+magicflow (actions on device)
+neurosity (brain activity)
+
+what's a good statistical correlation I can use for this
+    - think about meaning (reference stats material)
