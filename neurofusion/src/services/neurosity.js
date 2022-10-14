@@ -5,8 +5,8 @@ import useLocalStorage from "react-use/lib/useLocalStorage";
 
 const deviceId = "8521599236afdebc792ca3015005d153";
 export const notion = new Notion({
-    deviceId: deviceId
-//   autoSelectDevice: false
+    // deviceId: deviceId
+  autoSelectDevice: false
 });
 
 const initialState = {

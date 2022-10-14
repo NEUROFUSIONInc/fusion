@@ -1,29 +1,66 @@
 import logo from '../assets/logo.png';
 import React, { useState, useEffect } from 'react';
-
-import { notion, useNotion } from "../services/neurosity";
+import { Notion } from "@neurosity/notion";
 
 export default function Root() {
 
-    const { user, lastSelectedDeviceId, setSelectedDevice } = useNotion();
-    const email = "oreogundipe@gmail.com"
-    const password = "#pJ4NDTNOL7L"
+    const email = process.env.REACT_APP_NEUROSITY_EMAIL;
+    const password = process.env.REACT_APP_NEUROSITY_PASSWORD;
+    const deviceId = process.env.REACT_APP_NEUROSITY_DEVICEID;
+
+    const [notion, setNotion] = useState(null);
+    const [loggedIn, setLoggedIn] = useState(false);
+    
     useEffect(() => {
+        // it all starts with having a device id set
+        // (you can save it in local storage after setting it once)
+        if (deviceId) {
+            const notion_instance = new Notion({ deviceId });
+            setNotion(notion_instance);
+        }
+
+    }, [deviceId]);
+
+
+    useEffect(() => {
+        if (!notion) {
+          return;
+        }
+
         login()
 
-        async function login() {
-            await notion
+        async function login(){
+            const auth = await notion
             .login({
                 email,
                 password
             }).then(() => {
                 alert("logged in to neurosity")
+                setLoggedIn(true)
+            }).catch((error) => {
+                alert("failed to login")
             })
+
+            if(auth) {
+                setLoggedIn(true)
+            }
         }
-    }, [
-        lastSelectedDeviceId,
-        setSelectedDevice
-    ])
+
+    }, [notion]);
+
+    useEffect(() => {
+        if(loggedIn) {
+            // we can now show the user a button to start an experiment
+        }
+    }, [loggedIn])
+
+    function getSignalQuality(){
+        // live feed of signal quality
+    }
+    
+    function genericExperiment(){
+        // record raw data
+    }
     
     return (
       <>
@@ -34,13 +71,25 @@ export default function Root() {
             <p>..for the curious</p>
         </div>
 
-        <div id="signalquality">
+        { loggedIn ? (
+            <div id="signalquality">
 
-        </div>
+            </div>
+        ) :
+            <></>
+        }
+        
 
-        <div id="record-experiment">
-
-        </div>
+        { loggedIn ? (
+            <div id="record-experiment">
+                <button onClick={genericExperiment}>Start a generic experiment</button>
+            </div>
+        ) : (
+            <div>
+                <p>You need to be logged in to record an experiment</p>
+            </div>
+        )}
+        
       </>
     );
   }
