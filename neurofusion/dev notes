@@ -20,10 +20,25 @@ tagging recordings need to be first party
 - 1665632927  - (deji) - same as above
 - 1665633719  - (deji) - same as above
 
+
 - 1665724696  - (ore)  - (h) free flow
 - 1665725683  - (ore)
+...
+- (all this data was from the wrong device, so the logs were empty)
 
+- 1665739693  - (ore) - dev :p
+- 1665731281
+tends to start hurting at 30 - 2hours of use 
 
+(found that std deviation was wrong on recording until this time)
+- 1665785803  - (ore) mentally unfocused
+- 1665786857  - (ore) somewhat working ... 
+- 1665798130  - (ore) should do eyes closed with breathing
+
+- 1665799106  - (ore) (h) after basketball and some free thinkin
+- 1665801014             
+
+- 1665803634  - (ore) in the zone ish?
 set up
 - get the notion service wrapped
 - need to do the login whether I like it or not
@@ -65,3 +80,10 @@ neurosity (brain activity)
 
 what's a good statistical correlation I can use for this
     - think about meaning (reference stats material)
+
+
+(should look at neurosity dev vscode app )
+
+
+--- later
+eeg haptics will be fun for dev experiemnts
