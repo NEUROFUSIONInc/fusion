@@ -1,0 +1,9 @@
+`{
+  "name": "neurofusion-server",
+  "version": "1.0.0",
+  "description": "neurofusion server",
+  "main": "index.js",
+  "repository": "https://github.com/oreHGA/fusion.git",
+  "author": "https://oreogundipe.dev/",
+  "license": "MIT"
+}
