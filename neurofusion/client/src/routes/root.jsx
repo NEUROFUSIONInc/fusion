@@ -23,6 +23,8 @@ export default function Root() {
         if (deviceId) {
             const notion_instance = new Notion({ deviceId });
             setNotion(notion_instance);
+
+            // TODO:validate that the device login is valid
         }
 
     }, [deviceId]);
