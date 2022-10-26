@@ -49,7 +49,7 @@ export default function Root() {
                     console.log("connected to neurosity")
                     setLoggedIn(true)
                 }).catch((error) => {
-                    console("failed to connect to neurosity")
+                    console.log("failed to connect to neurosity")
                     console.log(error)
                 })
 
@@ -124,6 +124,11 @@ export default function Root() {
         alert("starting generic experiment")
     }
 
+    function dinoExperiment() {
+        // play game
+        alert("starting dino experiment")
+    }
+
     return (
         <>
             <div id="sidebar">
@@ -153,7 +158,10 @@ export default function Root() {
             {loggedIn ? (
                 <div id="record-experiment">
                     <h2>Experiments</h2>
-                    <button onClick={genericExperiment}>Start a generic experiment</button>
+                    <ul>
+                        <li><button onClick={genericExperiment}>Generic Experiment</button></li>
+                        <li><button onClick={dinoExperiment}>Play dino game!</button></li>
+                    </ul>
                 </div>
             ) : (
                 <div>
