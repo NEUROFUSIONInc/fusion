@@ -1,5 +1,5 @@
 import logo from '../assets/logo.png';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, startTransition } from 'react';
 import { Notion } from "@neurosity/notion";
 import ReactEcharts from "echarts-for-react";
 
@@ -11,10 +11,12 @@ export default function Root() {
 
     const [notion, setNotion] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
-    // const [signalQualitySeries, setSignalQualitySeries] = useState({});
+    const [signalQualitySeries, setSignalQualitySeries] = useState([]);
     const [signalQualityValues, setSignalQualityValues] = useState({});
 
     const [signalQualityChartOptions, setSignalQualityChartOptions] = useState({});
+
+    const [deviceStatus, setDeviceStatus] = useState("offline");
 
     // e.g CP3, C3, F5, PO3, PO4, F6, C4, CP4
     const [channelNames, setChannelNames] = useState([]);
@@ -24,7 +26,10 @@ export default function Root() {
         // (you can save it in local storage after setting it once)
         console.log(deviceId)
         if (deviceId) {
-            const notion_instance = new Notion({ deviceId });            
+            const notion_instance = new Notion({ 
+                // deviceId: deviceId
+                autoSelectDevice: false 
+            });            
             setNotion(notion_instance);
 
             // TODO:validate that the device login is valid
@@ -38,9 +43,7 @@ export default function Root() {
             return;
         }
 
-        login()
-
-        async function login() {
+        (async () => {
             await notion
                 .login({
                     email,
@@ -51,48 +54,72 @@ export default function Root() {
                 }).catch((error) => {
                     console.log("failed to connect to neurosity")
                     console.log(error)
-                })
-
-        }
+                });          
+        })();
 
     }, [notion]);
 
     useEffect(() => {
-        console.log(loggedIn)
         if (loggedIn && notion) {
-
             (async () => {
-                const channelNames = (await notion.getInfo()).channelNames;
-                setChannelNames(channelNames);
+                await notion.selectDevice(["deviceId", deviceId]).then(() => {
+                    console.log("selected device")
+                });
             })();
 
-            // connect to live feed of signal quality
-            notion.signalQuality().subscribe(signalQuality => {
+            (async () => {
+                // validate that the device is online
+                await notion.status().subscribe(status => {
+                    if(status.state != deviceStatus) {
+                        let deviceState = status.state;
+                        (status.sleepMode) ? deviceState = "sleep" : deviceState = status.state;
+                        setDeviceStatus(deviceState)
 
-                let signalQualityEntry = {
-                    'unixTimestamp_secs': Math.floor(Date.now() / 1000),
-                }
+                        if (deviceState === "online") {
 
-                // change value after every 10 seconds
-                if (signalQualityEntry.unixTimestamp_secs % 5 == 0) {
-                    console.log("formatting signal quality entry");
-
-                    for (let ch_index = 0; ch_index < channelNames.length; ch_index++) {
-
-                        let ch_name = channelNames[ch_index];
-                        signalQualityEntry[ch_name + "_value"] = signalQuality[ch_index].standardDeviation;
-                        signalQualityEntry[ch_name + "_status"] = signalQuality[ch_index].status;
+                            (async () => {
+                                const channelNames = (await notion.getInfo()).channelNames;
+                                setChannelNames(channelNames);
+                            })();
+                        }
 
                     }
+                    
+                });
 
-                    console.log("updating signal quality average")
-                    setSignalQualityValues(signalQualityEntry)
-                    console.log(signalQualityEntry)
-                }
-            });
+            })()
         }
-
     }, [loggedIn, notion])
+
+    async function formatSignalQuality(signalQuality) {
+
+        let formattedSignalQuality = {
+            'unixTimestamp_secs': Math.floor(Date.now()),
+        }
+        for (let ch_index = 0; ch_index < channelNames.length; ch_index++) {
+            let ch_name = channelNames[ch_index];
+            formattedSignalQuality[ch_name + "_value"] = signalQuality[ch_index].standardDeviation;
+            formattedSignalQuality[ch_name + "_status"] = signalQuality[ch_index].status;
+        }
+        return formattedSignalQuality;
+    }
+
+    useEffect(() => {
+        if (deviceStatus == "online") {
+            // connect to live feed of signal quality
+            (async () => {
+                await notion.signalQuality().subscribe(signalQuality => {
+
+                    (async () => await formatSignalQuality(signalQuality).then(
+                        (formattedSignalQuality) => {
+                            setSignalQualityValues(formattedSignalQuality)
+                        })
+                    )();
+
+                });
+            })();
+        }
+    }, [deviceStatus, channelNames]);
 
     useEffect(() => {
         
@@ -100,8 +127,15 @@ export default function Root() {
         for (let i = 0; i < channelNames.length; i++) {
           valueData.push(signalQualityValues[channelNames[i] + "_value"]);
         }
+
+        // TODO: average over longer data window
+        // (e.g. 10 seconds) and update chart every 10 seconds
+
         // get the chart series and generate options
         const option = {   
+            title: {
+                text: 'Signal Quality over time',
+            },
             grid: { containLabel: true },
             xAxis: {
                 name: "channelName",
@@ -117,11 +151,15 @@ export default function Root() {
             ],
         };
         setSignalQualityChartOptions(option)
-    }, [signalQualityValues])
+    }, [deviceStatus, signalQualityValues])
 
     function genericExperiment() {
         // record raw data
         alert("starting generic experiment")
+
+        // collect data for desired seconds
+        
+        // display
     }
 
     function dinoExperiment() {
@@ -142,20 +180,20 @@ export default function Root() {
                 {/* select box to choose device */}
             </div>
 
-            {loggedIn && signalQualityValues ? (
+            {deviceStatus == "online" && signalQualityValues ? (
                 <div id="signalquality">
                     <h2>Signal Quality</h2>
                     {/* chart for data quality ranges */}
-                    <p>Signal quality is {JSON.stringify(signalQualityValues)}</p>
+                    {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
 
                     <ReactEcharts option={signalQualityChartOptions} />
                 </div>
             ) :
-                <></>
+                <p>Device status is {deviceStatus}</p>
             }
 
 
-            {loggedIn ? (
+            {deviceId ? (
                 <div id="record-experiment">
                     <h2>Experiments</h2>
                     <ul>
