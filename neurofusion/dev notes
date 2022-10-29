@@ -49,6 +49,11 @@ tends to start hurting at 30 - 2hours of use
 ...
 - 1666672250  - (ore) (h) some fusion work turned into free flow lol
 - 1666676581  - (ore) sane as above
+
+- 1666815945  - (ore) (h) morning, reflecting and reading jounral entries
+
+- 1667068211 - (ore) coffee shop ... i think I did 3 recordings of this
+
 ---------
 frontend set up
 - get the notion service wrapped
@@ -62,7 +67,7 @@ simple signon for user (like mixpanel and jargon)
 makes sense storing device id in the localstorage
     - still need to add the neurosity provider
 
-get user email -> (device id) -> store in local storage
+get user email -> (device id) -> store in local storage``
 
 next load fetch from local storage first
 
@@ -98,3 +103,8 @@ what's a good statistical correlation I can use for this
 
 --- later
 eeg haptics will be fun for dev experiemnts
+
+....
+
+oura integration needed (has to be one click)
+
