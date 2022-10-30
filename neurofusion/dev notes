@@ -4,7 +4,6 @@ folder structure for uploaded data should be
 
 <userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>
 
-
 build the best intuitive visualization
 - allow to see visualization side by side
 
@@ -53,6 +52,12 @@ tends to start hurting at 30 - 2hours of use
 - 1666815945  - (ore) (h) morning, reflecting and reading jounral entries
 
 - 1667068211 - (ore) coffee shop ... i think I did 3 recordings of this
+.
+- 1667072603 - (ore) same as above
+
+- 1667087486 - (ore) (l-h) back home, kinda working
+.
+- 1667088613 - (ore) same as above
 
 ---------
 frontend set up
