@@ -130,7 +130,7 @@ export default function Root() {
         // get the chart series and generate options
         const option = {   
             title: {
-                text: 'Signal Quality over time',
+                text: 'Live signal quality feed',
             },
             grid: { containLabel: true },
             xAxis: {
@@ -149,6 +149,8 @@ export default function Root() {
         setSignalQualityChartOptions(option)
     }, [deviceStatus, signalQualityValues])
 
+    let montageStyle = 
+    {display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"};
     return (
         <>
             <div id="sidebar">
@@ -171,45 +173,56 @@ export default function Root() {
                     {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
                     
                     <div id="sidebars">
-                        <div>
-                            {/* add image of brain montage */}
-                            <img src={brainMontage} alt="brain montage" width={500} />
-                        </div>
-
+                    
                         <div>
                             <ReactEcharts option={signalQualityChartOptions} />
-                        </div> 
+                        </div>
 
-                        <p>
-                        Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5
-                        </p>                      
+                        <div style={montageStyle}>
+                            <p>Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5</p>
+
+                            {/* add image of brain montage */}
+                            <img src={brainMontage} alt="brain montage" width={500} />                    
+                        </div>
+                      
                     </div>
                     
-
                     {/* display what is good quality vs not good */}
                     {/* custom gradient for groups */}
                 </div>
             ) : <> </>
             }
 
-            {deviceId ? (
-                <div id="record-experiment">
-                    <h2>Experiments</h2>
-                        <div>
-                            <p>You need to be logged in to record an experiment</p>
-                        </div>
-                    <ul>
-                        <li>
-                            <Experiment
-                                name="Generic Experiment"
-                                text="Record brain activity for a defined duration">    
-                            </Experiment>
-                        </li>
-                    </ul>
-                </div>
-            ) : (
-                <></>
-            )}
+            <div id="record-experiment">
+                <h2>Experiments</h2>
+                
+                {deviceStatus != "online" ? (
+                    <div>
+                        <p>You need to be logged in to record an experiment</p>
+                    </div>
+                ) : 
+                    <>
+                        <p>After every experiment, you get 5 files downloaded automatically</p>
+                        <ul>
+                            <li>raw eeg brain waves</li>
+                            <li>raw signal quality values</li>
+                            <li>focus predictions</li>
+                            <li>calm predictions</li>
+                            <li>powerByBand across channels</li>
+                        </ul>
+                    </>
+                }
+            
+                <Experiment
+                    name="Generic Experiment"
+                    description="Record brain activity for a defined duration"
+                    duration={60} // in seconds  
+                    notion={notion} // pass in the notion instance
+                    channelNames={channelNames} // pass in the channel names
+                />
+                    
+            </div>
+            
 
         </>
     );
