@@ -1,7 +1,9 @@
 import logo from '../assets/logo.png';
-import React, { useState, useEffect, startTransition } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Notion } from "@neurosity/notion";
 import ReactEcharts from "echarts-for-react";
+import Experiment from '../components/experiment';
+import brainMontage from "../assets/brainmontage2.png";
 
 export default function Root() {
 
@@ -11,9 +13,8 @@ export default function Root() {
 
     const [notion, setNotion] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
-    const [signalQualitySeries, setSignalQualitySeries] = useState([]);
-    const [signalQualityValues, setSignalQualityValues] = useState({});
 
+    const [signalQualityValues, setSignalQualityValues] = useState({});
     const [signalQualityChartOptions, setSignalQualityChartOptions] = useState({});
 
     const [deviceStatus, setDeviceStatus] = useState("offline");
@@ -31,12 +32,9 @@ export default function Root() {
                 autoSelectDevice: false 
             });            
             setNotion(notion_instance);
-
-            // TODO:validate that the device login is valid
         }
 
     }, [deviceId]);
-
 
     useEffect(() => {
         if (!notion) {
@@ -109,13 +107,11 @@ export default function Root() {
             // connect to live feed of signal quality
             (async () => {
                 await notion.signalQuality().subscribe(signalQuality => {
-
                     (async () => await formatSignalQuality(signalQuality).then(
                         (formattedSignalQuality) => {
                             setSignalQualityValues(formattedSignalQuality)
                         })
                     )();
-
                 });
             })();
         }
@@ -153,20 +149,6 @@ export default function Root() {
         setSignalQualityChartOptions(option)
     }, [deviceStatus, signalQualityValues])
 
-    function genericExperiment() {
-        // record raw data
-        alert("starting generic experiment")
-
-        // collect data for desired seconds
-        
-        // display
-    }
-
-    function dinoExperiment() {
-        // play game
-        alert("starting dino experiment")
-    }
-
     return (
         <>
             <div id="sidebar">
@@ -180,31 +162,53 @@ export default function Root() {
                 {/* select box to choose device */}
             </div>
 
+            <p>Your device is: <strong>{deviceStatus}</strong></p>
+
             {deviceStatus == "online" && signalQualityValues ? (
                 <div id="signalquality">
                     <h2>Signal Quality</h2>
                     {/* chart for data quality ranges */}
                     {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
+                    
+                    <div id="sidebars">
+                        <div>
+                            {/* add image of brain montage */}
+                            <img src={brainMontage} alt="brain montage" width={500} />
+                        </div>
 
-                    <ReactEcharts option={signalQualityChartOptions} />
+                        <div>
+                            <ReactEcharts option={signalQualityChartOptions} />
+                        </div> 
+
+                        <p>
+                        Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5
+                        </p>                      
+                    </div>
+                    
+
+                    {/* display what is good quality vs not good */}
+                    {/* custom gradient for groups */}
                 </div>
-            ) :
-                <p>Device status is {deviceStatus}</p>
+            ) : <> </>
             }
-
 
             {deviceId ? (
                 <div id="record-experiment">
                     <h2>Experiments</h2>
+                        <div>
+                            <p>You need to be logged in to record an experiment</p>
+                        </div>
                     <ul>
-                        <li><button onClick={genericExperiment}>Generic Experiment</button></li>
-                        <li><button onClick={dinoExperiment}>Play dino game!</button></li>
+                        <li>
+                            <Experiment
+                                name="Generic Experiment"
+                                text="Record brain activity for a defined duration">    
+                            </Experiment>
+                        </li>
                     </ul>
                 </div>
             ) : (
-                <div>
-                    <p>You need to be logged in to record an experiment</p>
-                </div>
+                <></>
             )}
 
         </>
