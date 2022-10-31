@@ -158,6 +158,7 @@ export default function Root() {
 
                 <h1>neurofusion</h1>
                 <p>..for the curious</p>
+                <p>Correlating your brain activity with health & productivity signals</p>
             </div>
 
             <div id="devices">
@@ -172,17 +173,17 @@ export default function Root() {
                     {/* chart for data quality ranges */}
                     {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
                     
-                    <div id="sidebars">
+                    <div id="sidebars" style={{display: 'flex'}}>
                     
-                        <div>
+                        <div style={{width: '50%', textAlign: 'center'}}>
                             <ReactEcharts option={signalQualityChartOptions} />
+
+                            <p>Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5</p>
                         </div>
 
                         <div style={montageStyle}>
-                            <p>Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5</p>
-
                             {/* add image of brain montage */}
-                            <img src={brainMontage} alt="brain montage" width={500} />                    
+                            <img src={brainMontage} alt="brain montage" width={'700px'} />                    
                         </div>
                       
                     </div>
@@ -195,7 +196,7 @@ export default function Root() {
 
             <div id="record-experiment">
                 <h2>Experiments</h2>
-                
+
                 {deviceStatus != "online" ? (
                     <div>
                         <p>You need to be logged in to record an experiment</p>
