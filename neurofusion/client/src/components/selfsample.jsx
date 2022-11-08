@@ -40,7 +40,9 @@ export default function SelfSample() {
     return (
         <div id="self-sampling" >
             <h2>Self-sampling</h2>
-            <p>Enter text to describe what you're doing now</p>
+            <p>Self-sampling gives a verbose description of what you're doing now.</p>
+            <p>Enter a text below so we can reference & tie recordings to during analysis.</p>
+            
             <label htmlFor='self_sample_text'>Entry:</label>
             <textarea 
                 id="self_sample_text"
