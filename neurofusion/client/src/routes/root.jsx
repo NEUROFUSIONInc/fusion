@@ -4,6 +4,7 @@ import { Notion } from "@neurosity/notion";
 import ReactEcharts from "echarts-for-react";
 import Experiment from '../components/experiment';
 import brainMontage from "../assets/brainmontage2.png";
+import SelfSample from '../components/selfsample';
 
 export default function Root() {
 
@@ -151,6 +152,7 @@ export default function Root() {
 
     let montageStyle = 
     {display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"};
+    
     return (
         <>
             <div id="sidebar">
@@ -178,7 +180,8 @@ export default function Root() {
                         <div style={{width: '50%', textAlign: 'center'}}>
                             <ReactEcharts option={signalQualityChartOptions} />
 
-                            <p>Signal quality thresholds: bad >= 15, good >= 10, great >= 1.5</p>
+                            <p>Signal quality thresholds: <strong>bad >= 15, good >= 10, great >= 1.5</strong></p>
+                            <p>Sit still for about 10 seconds to see signal average</p>
                         </div>
 
                         <div style={montageStyle}>
@@ -193,7 +196,9 @@ export default function Root() {
                 </div>
             ) : <> </>
             }
-
+            
+            <SelfSample />
+            
             <div id="record-experiment">
                 <h2>Experiments</h2>
 
@@ -222,9 +227,7 @@ export default function Root() {
                     channelNames={channelNames} // pass in the channel names
                 />
                     
-            </div>
-            
-
+            </div>            
         </>
     );
 }
