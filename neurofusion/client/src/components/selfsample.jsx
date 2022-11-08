@@ -57,7 +57,7 @@ export default function SelfSample() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Timestamp</th>
+                                <th>Date</th>
                                 <th>Text</th>
                             </tr>
                         </thead>
@@ -66,7 +66,7 @@ export default function SelfSample() {
                         {selfSampleHistory.map((entry, index) => {
                             return (
                                 <tr key={index}>
-                                    <td>{entry.unixTimestamp}</td>
+                                    <td>{new Date(parseInt(entry.unixTimestamp)*1000).toUTCString()}</td>
                                     <td>{entry.text}</td>
                                 </tr>
                             )
