@@ -1,5 +1,3 @@
-
-
 folder structure for uploaded data should be
 
 <userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>
@@ -7,8 +5,9 @@ folder structure for uploaded data should be
 build the best intuitive visualization
 - allow to see visualization side by side
 
+tagging recordings need to be built in - done
 
-tagging recordings need to be built in
+manual logs
 
 - 1665425778  - (ore) working on famasi at the time
 - 1665427637  - (ore) same as above
@@ -18,7 +17,6 @@ tagging recordings need to be built in
 - 1665632460  - (deji) - same as above
 - 1665632927  - (deji) - same as above
 - 1665633719  - (deji) - same as above
-
 
 - 1665724696  - (ore)  - (h) free flow
 - 1665725683  - (ore)
@@ -59,14 +57,38 @@ tends to start hurting at 30 - 2hours of use
 .
 - 1667088613 - (ore) same as above
 
+- 1667132322 - (ore) probably working lol
+- 1667134063
+
+- 1667192177 - (ore) more working, but correlate
+..
+- 1667195114
+
+- 1667223359
+- 1667225110 - (ore) preparing for work (noisy data)
+- 1667230791 - 
+
+- 1667450269 - (ore) watching a movie loose focus
+
+- 1667489356 - (ore) free flow - bathroom, reading, h
+- 1667490234 - (ore) more free flow  - was thinking a bit more 
+
+- 1667494878 - (ore) (h) msft work during the day
+
+- 1667534962 - (ore) (h) evening - didn't really get done what i wanted
+- 1667542672 - (ore) (h) - same as above, chatted a bit, but was behind computer
+
+- 1669217984 - (ore) - prepping design proposal
+- 1669220847 - (ore) - still kinda working
+
 ---------
 frontend set up
 - get the notion service wrapped
 - need to do the login whether I like it or not
 - add a button to start a recording
 
-....
 
+----
 simple signon for user (like mixpanel and jargon)
 
 makes sense storing device id in the localstorage
@@ -113,3 +135,15 @@ eeg haptics will be fun for dev experiemnts
 
 oura integration needed (has to be one click)
 
+...
+
+brains at play code for browser visualizations
+
+
+
+----
+analysis
+- should look at "rebound on rem"
+- spectrogram
+- fft 
+- from oura, heart rate over time (sleeping , awake)
