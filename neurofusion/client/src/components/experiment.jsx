@@ -3,6 +3,12 @@ import Timer from './timer';
 
 import { timer } from "rxjs";
 import { takeUntil } from "rxjs/operators/index.js";
+import uploadFileToBlob, { isStorageConfigured } from '../services/azure-storage-blob.ts';
+
+import { v4 as uuidv4 } from 'uuid';
+
+const storageConfigured = isStorageConfigured();
+// const storageMode = process.env.REACT_APP_STORAGEMODE ?? "local";
 
 export default function Experiment({
     name,
@@ -13,6 +19,15 @@ export default function Experiment({
 
     const [recordingDuration, setRecordingDuration] = useState(-1); // in seconds;
     const [recordingStatus, setRecordingStatus] = useState("stopped"); // started, stopped
+
+    function getOrSetUserGuid() {
+        let userGuid = localStorage.getItem("userGuid");
+        if (!userGuid) {
+            userGuid = uuidv4();
+            localStorage.setItem("userGuid", userGuid);
+        }
+        return userGuid;
+    }
 
     useEffect(() => {
         setRecordingDuration(duration);
@@ -56,7 +71,7 @@ export default function Experiment({
                 }
             }).add(() => {
                 // now we want to have this downloaded right away
-                writeDataToStore("rawBrainwaves", rawBrainwavesSeries, fileTimestamp);
+                writeDataToStore("rawBrainwaves", rawBrainwavesSeries, fileTimestamp, "remoteStorage");
             });
 
             /**
@@ -83,7 +98,7 @@ export default function Experiment({
 
                 signalQualitySeries.push(signalQualityEntry);
             }).add(() => {
-                writeDataToStore("signalQuality", signalQualitySeries, fileTimestamp);
+                writeDataToStore("signalQuality", signalQualitySeries, fileTimestamp, "remoteStorage");
             });
 
             /**
@@ -97,7 +112,7 @@ export default function Experiment({
             ).subscribe(focus => {
                 focusPredictionSeries.push(focus);
             }).add(() => {
-                writeDataToStore("focus", focusPredictionSeries, fileTimestamp);
+                writeDataToStore("focus", focusPredictionSeries, fileTimestamp, "remoteStorage");
             });
 
             /**
@@ -111,7 +126,7 @@ export default function Experiment({
             ).subscribe(calm => {
                 calmPredictionSeries.push(calm);
             }).add(() => {
-                writeDataToStore("calm", calmPredictionSeries, fileTimestamp);
+                writeDataToStore("calm", calmPredictionSeries, fileTimestamp, "remoteStorage");
             });
 
             /**
@@ -141,7 +156,7 @@ export default function Experiment({
 
                 powerByBandSeries.push(bandPowerObject);
             }).add(() => {
-                writeDataToStore("powerByBand", powerByBandSeries, fileTimestamp);
+                writeDataToStore("powerByBand", powerByBandSeries, fileTimestamp, "remoteStorage");
             });
         }
     }
@@ -154,17 +169,37 @@ export default function Experiment({
         }).join('\n')
     }
 
-    function writeDataToStore(dataName, data, fileTimestamp) {
+    function writeDataToStore(dataName, data, fileTimestamp, storeType="download") {
         setRecordingStatus("stopped");
 
+        const userGuid = getOrSetUserGuid();
         const content = convertToCSV(data); // convert to csv format
-        const fileName = `${dataName}_${fileTimestamp}.csv`
+        if (storeType === "download") {
+            const fileName = `${dataName}_${fileTimestamp}.csv`
+    
+            var hiddenElement = document.createElement('a');
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(content);
+            hiddenElement.target = '_blank';
+            hiddenElement.download = fileName;
+            hiddenElement.click();
+        } else if ( storeType === "remoteStorage") {
+            // this is where we go ahead and then deploy to azure blob
+            // first step is do it from the browser and then we'll go ahead to do from server
 
-        var hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(content);
-        hiddenElement.target = '_blank';
-        hiddenElement.download = fileName;
-        hiddenElement.click();
+            (async (data, dataName, fileTimestamp) => {
+                // userGuid/YYYY/MM/DD/dataName_fileTimestamp.csv
+                const fileObject = new File(
+                    [JSON.stringify(data)], 
+                    `${userGuid}/${dataName}_${fileTimestamp}.csv`, 
+                    { type: 'application/csv' }
+                );
+
+                // *** UPLOAD TO AZURE STORAGE ***
+                const blobsInContainer = await uploadFileToBlob(fileObject);        
+            })(data, dataName, fileTimestamp);
+        }
+
+
 
 
         console.log(`Writing data for ${dataName} complete`);
