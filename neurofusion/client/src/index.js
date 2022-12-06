@@ -7,14 +7,26 @@ import {
 } from "react-router-dom";
 import './index.css';
 import Root from "./routes/root";
-import ErrorPage from './error-page';
+import Analysis from './routes/analysis';
+import ErrorPage from './routes/error-page';
 
 import reportWebVitals from './reportWebVitals';
+import Recordings from './routes/recordings';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/analysis",
+    element: <Analysis />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/recordings",
+    element: <Recordings />,
     errorElement: <ErrorPage />
   }
 ]);

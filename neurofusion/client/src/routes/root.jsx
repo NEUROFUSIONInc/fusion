@@ -1,10 +1,10 @@
-import logo from '../assets/logo.png';
 import React, { useState, useEffect } from 'react';
 import { Notion } from "@neurosity/notion";
 import ReactEcharts from "echarts-for-react";
 import Experiment from '../components/experiment';
 import brainMontage from "../assets/brainmontage2.png";
 import SelfSample from '../components/selfsample';
+import SideNavBar from '../components/sidenavbar';
 
 export default function Root() {
 
@@ -155,79 +155,76 @@ export default function Root() {
     
     return (
         <>
-            <div id="sidebar">
-                <img src={logo} className="App-logo" alt="logo" width={100} height={100} />
-
-                <h1>neurofusion</h1>
-                <p>..for the curious</p>
-                <p>Correlating your brain activity with health & productivity signals</p>
-            </div>
-
-            <div id="devices">
-                {/* select box to choose device */}
-            </div>
-
-            <p>Your device is: <strong>{deviceStatus}</strong></p>
-
-            {deviceStatus == "online" && signalQualityValues ? (
-                <div id="signalquality">
-                    <h2>Signal Quality</h2>
-                    {/* chart for data quality ranges */}
-                    {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
-                    
-                    <div id="sidebars" style={{display: 'flex'}}>
-                    
-                        <div style={{width: '50%', textAlign: 'center'}}>
-                            <ReactEcharts option={signalQualityChartOptions} />
-
-                            <p>Signal quality thresholds: <strong>bad >= 15, good >= 10, great >= 1.5</strong></p>
-                            <p>Sit still for about 10 seconds to see signal average</p>
-                        </div>
-
-                        <div style={montageStyle}>
-                            {/* add image of brain montage */}
-                            <img src={brainMontage} alt="brain montage" width={'700px'} />                    
-                        </div>
-                      
-                    </div>
-                    
-                    {/* display what is good quality vs not good */}
-                    {/* custom gradient for groups */}
+            <SideNavBar></SideNavBar>
+            
+            <main style={{marginLeft: '10%'}}>
+                <div id="devices">
+                    {/* select box to choose device */}
                 </div>
-            ) : <> </>
-            }
-            
-            <SelfSample />
-            
-            <div id="record-experiment">
-                <h2>Experiments</h2>
 
-                {deviceStatus != "online" ? (
-                    <div>
-                        <p>You need to be logged in to record an experiment</p>
+                <p>Your device is: <strong>{deviceStatus}</strong></p>
+
+                {deviceStatus == "online" && signalQualityValues ? (
+                    <div id="signalquality">
+                        <h2>Signal Quality</h2>
+                        {/* chart for data quality ranges */}
+                        {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
+                        
+                        <div id="sidebars" style={{display: 'flex'}}>
+                        
+                            <div style={{width: '50%', textAlign: 'center'}}>
+                                <ReactEcharts option={signalQualityChartOptions} />
+
+                                <p>Signal quality thresholds: <strong>bad >= 15, good >= 10, great >= 1.5</strong></p>
+                                <p>Sit still for about 10 seconds to see signal average</p>
+                            </div>
+
+                            <div style={montageStyle}>
+                                {/* add image of brain montage */}
+                                <img src={brainMontage} alt="brain montage" width={'700px'} />                    
+                            </div>
+                        
+                        </div>
+                        
+                        {/* display what is good quality vs not good */}
+                        {/* custom gradient for groups */}
                     </div>
-                ) : 
-                    <>
-                        <p>After every experiment, you get 5 files downloaded automatically</p>
-                        <ul>
-                            <li>raw eeg brain waves</li>
-                            <li>raw signal quality values</li>
-                            <li>focus predictions</li>
-                            <li>calm predictions</li>
-                            <li>powerByBand across channels</li>
-                        </ul>
-                    </>
+                ) : <> </>
                 }
-            
-                <Experiment
-                    name="Generic Experiment"
-                    description="Record brain activity for a defined duration"
-                    duration={60} // in seconds  
-                    notion={notion} // pass in the notion instance
-                    channelNames={channelNames} // pass in the channel names
-                />
-                    
-            </div>            
+                
+                <SelfSample />
+                
+                <div id="record-experiment">
+                    <h2>Experiments</h2>
+
+                    {deviceStatus != "online" ? (
+                        <div>
+                            <p>You need to be logged in to record an experiment</p>
+                        </div>
+                    ) : 
+                        <>
+                            <p>After every experiment, you get 5 files downloaded automatically</p>
+                            <ul>
+                                <li>raw eeg brain waves</li>
+                                <li>raw signal quality values</li>
+                                <li>focus predictions</li>
+                                <li>calm predictions</li>
+                                <li>powerByBand across channels</li>
+                            </ul>
+                        </>
+                    }
+                
+                    <Experiment
+                        name="Generic Experiment"
+                        description="Record brain activity for a defined duration"
+                        duration={60} // in seconds  
+                        notion={notion} // pass in the notion instance
+                        channelNames={channelNames} // pass in the channel names
+                    />
+                        
+                </div>
+            </main>
+                        
         </>
     );
 }
