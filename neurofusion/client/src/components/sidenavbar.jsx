@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../assets/logo.png';
+import { logoutUser } from '../services/magic';
 
 const navStyle = {
   position: 'fixed',
@@ -44,8 +45,6 @@ const SideNavBar = () => {
     <nav style={navStyle}>
       <img src={logo} style={logoStyle} alt="logo" width={100} height={100} />
 
-                {/* <h1>neurofusion</h1> */}
-                {/* <p>..for the curious</p> */}
       <h3 style={titleStyle}>Neurofusion</h3>
       <ul style={listStyle}>
         <li style={itemStyle}>
@@ -57,7 +56,14 @@ const SideNavBar = () => {
         <li style={itemStyle}>
           <a style={linkStyle} href="/analysis">Analysis</a>
         </li>
+        <li style={itemStyle}>
+          <a style={linkStyle} href="/https://www.notion.so/Brain-Research-291b3c8f980d408f85d04f4c4772e8af">Research</a>
+        </li>
+        <li style={itemStyle}>
+          <a style={linkStyle} href="#" onClick={logoutUser}>Logout</a>
+        </li>
       </ul>
+
     </nav>
   );
 };

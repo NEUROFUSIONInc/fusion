@@ -33,7 +33,7 @@ export default function Analysis() {
         xAxis: {
             type: 'time',
             splitLine: {
-                show: true,
+                // show: true,
             }
         },
         yAxis: {
@@ -41,7 +41,9 @@ export default function Analysis() {
             name: 'focus probability',
             splitLine: {
                 show: true
-            }
+            },
+            min: 0,
+            max: 1
         },
         series: [
             {
@@ -72,6 +74,7 @@ export default function Analysis() {
 
                 <ReactEcharts
                     option={options}
+                    style={{ height: '500px', width: '100%' }}
                 />
             </main>
 

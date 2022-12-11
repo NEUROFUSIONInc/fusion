@@ -199,11 +199,12 @@ export default function Root() {
 
                     {deviceStatus != "online" ? (
                         <div>
-                            <p>You need to be logged in to record an experiment</p>
+                            <p>You need to be logged in with device turned on to record an experiment</p>
                         </div>
                     ) : 
                         <>
-                            <p>After every experiment, you get 5 files downloaded automatically</p>
+                            <p>After every experiment, 5 files will automatically be uploaded to storage.</p>
+                            <p>Go to <a href="/recordings">recordings tab</a> to see your history</p>
                             <ul>
                                 <li>raw eeg brain waves</li>
                                 <li>raw signal quality values</li>
