@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Notion } from "@neurosity/notion";
 import ReactEcharts from "echarts-for-react";
 import Experiment from '../components/experiment';
-import brainMontage from "../assets/brainmontage2.png";
+import brainMontage from "../assets/neurosity_montage.png";
 import SelfSample from '../components/selfsample';
 import SideNavBar from '../components/sidenavbar';
 
@@ -15,6 +15,7 @@ export default function Root() {
     const [notion, setNotion] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
 
+    const [signalQualityArray, setSignalQualityArray] = useState([]);
     const [signalQualityValues, setSignalQualityValues] = useState({});
     const [signalQualityChartOptions, setSignalQualityChartOptions] = useState({});
 
@@ -110,6 +111,14 @@ export default function Root() {
                 await notion.signalQuality().subscribe(signalQuality => {
                     (async () => await formatSignalQuality(signalQuality).then(
                         (formattedSignalQuality) => {
+                            // TODO: keep a running average of signal quality
+                            setSignalQualityArray(sigArray => [...sigArray, formattedSignalQuality])
+                            if(signalQualityArray.length == 30) {
+                                console.log("about to over 30 samples")
+                                console.log(signalQualityArray)
+                                // empty the array
+                                setSignalQualityArray([])
+                            }
                             setSignalQualityValues(formattedSignalQuality)
                         })
                     )();
@@ -144,6 +153,19 @@ export default function Root() {
                 {
                     data: valueData,
                     type: "bar",
+                    itemStyle: {
+                        color: function(params) {
+                            if (params.value >= 15) { // bad
+                                return 'red';
+                            } else if (params.value >= 10) { // good
+                                return 'yellow';
+                            } else if (params.value >= 1.5) { // great
+                                return 'green';
+                            } else { // no contact
+                                return 'grey';
+                            }
+                        }
+                    }
                 },
             ],
         };
@@ -167,8 +189,6 @@ export default function Root() {
                 {deviceStatus == "online" && signalQualityValues ? (
                     <div id="signalquality">
                         <h2>Signal Quality</h2>
-                        {/* chart for data quality ranges */}
-                        {/* <p>Signal quality is {JSON.stringify(signalQualityValues)}</p> */}
                         
                         <div id="sidebars" style={{display: 'flex'}}>
                         
