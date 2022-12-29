@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { loginUser } from '../services/magic';
-
+import logo from '../assets/logo.png';
 
 const Authenticate = ({ setStatus }) => {
   const [email, setEmail] = useState('');
@@ -36,9 +36,14 @@ const Authenticate = ({ setStatus }) => {
     flexDirection: 'column'
   }
 
+  const logoStyle = {
+    padding: '0 20px'
+  }
+
   return (
 
     <div style={EmailForm}>
+      <img src={logo} style={logoStyle} alt="logo" width={100} height={100} />
       <h1>Login to Neurofusion</h1>
 
       <form onSubmit={handleSubmit}>
