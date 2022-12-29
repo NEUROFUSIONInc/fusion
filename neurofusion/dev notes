@@ -103,6 +103,9 @@ tends to start hurting at 30 - 2hours of use
 - 1671159331 - some coffee, working on getting spectrogram from eeg for music gen project, keen to see results, some coffee in system
 - 1671160309 - same as above
 
+- 1672319390 - light work trying to catch up on light dev (slow pick up but things are happening)
+- 1672320077 - same as above
+
 ---------
 frontend set up
 - get the notion service wrapped
@@ -139,33 +142,32 @@ I'm so excited, gonna get to viewing experiments natively sooon!!!
     - then imagine pairing with other physio signals
         - I actually should just get those initial one on homepage.
 
-oura (reg health)
-magicflow (actions on device)
+
+core data integrations
+----------------------
 neurosity (brain activity)
-
-what's a good statistical correlation I can use for this
-    - think about meaning (reference stats material)
-
-
-(should look at neurosity dev vscode app )
-
-
---- later
-eeg haptics will be fun for dev experiemnts
-
-....
-
-oura integration needed (has to be one click)
-
-...
-
-brains at play code for browser visualizations
-
-
+magicflow (actions on device)
+oura (reg health)
 
 ----
 analysis
-- should look at "rebound on rem"
+- (eeg) power spectral analysis
+- (health) should look at "sleep rebound on rem"
 - spectrogram
 - fft 
-- from oura, heart rate over time (sleeping , awake)
+- (health) from oura, heart rate over time (sleeping , awake)
+
+questions:
+- what's a good statistical correlation I can use for this
+    - think about meaning (reference stats material)
+
+later:
+- eeg haptics will be fun for dev experiemnts
+
+[] spend a full period on data storage and sync.
+[] display signal quality for time period
+[] neurosity device selector after login
+[] signal quality component
+    [] change bar colors to match criteria (bad, good, great)
+
+[] properly design the analysis view based on available data streams
