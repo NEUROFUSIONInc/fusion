@@ -1,9 +1,15 @@
-`{
+{
   "name": "neurofusion-server",
   "version": "1.0.0",
   "description": "neurofusion server",
   "main": "index.js",
   "repository": "https://github.com/oreHGA/fusion.git",
   "author": "https://oreogundipe.dev/",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dayjs": "^1.11.7",
+    "isomorphic-fetch": "^3.0.0",
+    "jwt-decode": "^3.1.2"
+  },
+  "type": "module"
 }
