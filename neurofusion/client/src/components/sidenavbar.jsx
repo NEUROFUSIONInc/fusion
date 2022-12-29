@@ -57,7 +57,10 @@ const SideNavBar = () => {
           <a style={linkStyle} href="/analysis">Analysis</a>
         </li>
         <li style={itemStyle}>
-          <a style={linkStyle} href="/https://www.notion.so/Brain-Research-291b3c8f980d408f85d04f4c4772e8af">Research</a>
+          <a style={linkStyle} href="https://neurofusion.substack.com">Research</a>
+        </li>
+        <li style={itemStyle}>
+          <a style={linkStyle} href="/settings">Settings</a>
         </li>
         <li style={itemStyle}>
           <a style={linkStyle} href="#" onClick={logoutUser}>Logout</a>

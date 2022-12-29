@@ -11,6 +11,7 @@ import Root from "./routes/root";
 import Analysis from './routes/analysis';
 import ErrorPage from './routes/error-page';
 import Recordings from './routes/recordings';
+import Settings from './routes/settings';
 
 import { UserContext } from "./contexts/UserContext";
 import { checkUser } from './services/magic';
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
   {
     path: "/recordings",
     element: <Recordings />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
     errorElement: <ErrorPage />
   }
 ]);
