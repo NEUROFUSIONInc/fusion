@@ -29,10 +29,10 @@ export default function Root() {
         // (you can save it in local storage after setting it once)
         console.log(deviceId)
         if (deviceId) {
-            const notion_instance = new Notion({ 
+            const notion_instance = new Notion({
                 // deviceId: deviceId
-                autoSelectDevice: false 
-            });            
+                autoSelectDevice: false
+            });
             setNotion(notion_instance);
         }
 
@@ -54,7 +54,7 @@ export default function Root() {
                 }).catch((error) => {
                     console.log("failed to connect to neurosity")
                     console.log(error)
-                });          
+                });
         })();
 
     }, [notion]);
@@ -70,7 +70,7 @@ export default function Root() {
             (async () => {
                 // validate that the device is online
                 await notion.status().subscribe(status => {
-                    if(status.state != deviceStatus) {
+                    if (status.state != deviceStatus) {
                         let deviceState = status.state;
                         (status.sleepMode) ? deviceState = "sleep" : deviceState = status.state;
                         setDeviceStatus(deviceState)
@@ -84,61 +84,34 @@ export default function Root() {
                         }
 
                     }
-                    
+
                 });
 
             })()
         }
     }, [loggedIn, notion])
 
-    async function formatSignalQuality(signalQuality) {
-
-        let formattedSignalQuality = {
-            'unixTimestamp_secs': Math.floor(Date.now()),
-        }
-        for (let ch_index = 0; ch_index < channelNames.length; ch_index++) {
-            let ch_name = channelNames[ch_index];
-            formattedSignalQuality[ch_name + "_value"] = signalQuality[ch_index].standardDeviation;
-            formattedSignalQuality[ch_name + "_status"] = signalQuality[ch_index].status;
-        }
-        return formattedSignalQuality;
-    }
-
+    // average the signal quality values every 50 samples
     useEffect(() => {
-        if (deviceStatus == "online") {
-            // connect to live feed of signal quality
+        if (signalQualityArray.length >= 50) {
             (async () => {
-                await notion.signalQuality().subscribe(signalQuality => {
-                    (async () => await formatSignalQuality(signalQuality).then(
-                        (formattedSignalQuality) => {
-                            // TODO: keep a running average of signal quality
-                            setSignalQualityArray(sigArray => [...sigArray, formattedSignalQuality])
-                            if(signalQualityArray.length == 30) {
-                                console.log("about to over 30 samples")
-                                console.log(signalQualityArray)
-                                // empty the array
-                                setSignalQualityArray([])
-                            }
-                            setSignalQualityValues(formattedSignalQuality)
-                        })
-                    )();
-                });
+                const avgSigQuality = await averageSignalQuality(signalQualityArray)
+                setSignalQualityValues(avgSigQuality)
+                // empty the array
+                setSignalQualityArray([])
             })();
         }
-    }, [deviceStatus, channelNames]);
+    }, [signalQualityArray])
 
+    // update chart options when signal quality values change
     useEffect(() => {
-        
         const valueData = [];
         for (let i = 0; i < channelNames.length; i++) {
-          valueData.push(signalQualityValues[channelNames[i] + "_value"]);
+            valueData.push(signalQualityValues[channelNames[i] + "_value"]);
         }
 
-        // TODO: average over longer data window
-        // (e.g. 10 seconds) and update chart every 10 seconds
-
         // get the chart series and generate options
-        const option = {   
+        const option = {
             title: {
                 text: 'Live signal quality feed',
             },
@@ -154,7 +127,7 @@ export default function Root() {
                     data: valueData,
                     type: "bar",
                     itemStyle: {
-                        color: function(params) {
+                        color: function (params) {
                             if (params.value >= 15) { // bad
                                 return 'red';
                             } else if (params.value >= 10) { // good
@@ -172,14 +145,53 @@ export default function Root() {
         setSignalQualityChartOptions(option)
     }, [deviceStatus, signalQualityValues])
 
-    let montageStyle = 
-    {display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"};
-    
+    // feed signal quality values into array
+    useEffect(() => {
+        if (deviceStatus === "online") {
+            const subscribeToLiveFeed = async () => {
+                await notion.signalQuality().subscribe(async signalQuality => {
+                    const formattedSignalQuality = await formatSignalQuality(signalQuality);
+                    setSignalQualityArray(sigArray => [...sigArray, formattedSignalQuality]);
+                });
+            };
+            subscribeToLiveFeed();
+        }
+    }, [deviceStatus, channelNames]);
+
+    // helper functions
+    function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
+    async function formatSignalQuality(signalQuality) {
+        let formattedSignalQuality = {
+            'unixTimestamp_secs': Math.floor(Date.now()),
+        }
+        for (let ch_index = 0; ch_index < channelNames.length; ch_index++) {
+            let ch_name = channelNames[ch_index];
+            formattedSignalQuality[ch_name + "_value"] = signalQuality[ch_index].standardDeviation;
+            formattedSignalQuality[ch_name + "_status"] = signalQuality[ch_index].status;
+        }
+        return formattedSignalQuality;
+    }
+
+    async function averageSignalQuality(signalQualityArray) {
+        const averageSignalQuality = {}
+        for (var channel in channelNames) {
+            let channelName = channelNames[channel]
+            let channelValues = signalQualityArray.map((sample) => sample[channelName + "_value"]).filter(isNumber)
+            let channelAverage = channelValues.reduce((a, b) => a + b, 0) / channelValues.length;
+            averageSignalQuality[channelName + "_value"] = channelAverage;
+        }
+        return averageSignalQuality;
+    }
+
+    let montageStyle =
+        { display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" };
+
     return (
         <>
             <SideNavBar></SideNavBar>
-            
-            <main style={{marginLeft: '10%'}}>
+
+            <main style={{ marginLeft: '10%' }}>
                 <div id="devices">
                     {/* select box to choose device */}
                 </div>
@@ -187,33 +199,33 @@ export default function Root() {
                 <p>Your device is: <strong>{deviceStatus}</strong></p>
 
                 {deviceStatus == "online" && signalQualityValues ? (
+                    // TODO: move all this to the signal quality component
                     <div id="signalquality">
                         <h2>Signal Quality</h2>
-                        
-                        <div id="sidebars" style={{display: 'flex'}}>
-                        
-                            <div style={{width: '50%', textAlign: 'center'}}>
+
+                        <div id="sidebars" style={{ display: 'flex' }}>
+
+                            <div style={{ width: '50%', textAlign: 'center' }}>
                                 <ReactEcharts option={signalQualityChartOptions} />
 
                                 <p>Signal quality thresholds: <strong>bad >= 15, good >= 10, great >= 1.5</strong></p>
-                                <p>Sit still for about 10 seconds to see signal average</p>
+                                <p>Sit still for about 10 seconds after adjusting to see signal average</p>
                             </div>
 
                             <div style={montageStyle}>
                                 {/* add image of brain montage */}
-                                <img src={brainMontage} alt="brain montage" width={'700px'} />                    
+                                <img src={brainMontage} alt="brain montage" width={'700px'} />
                             </div>
-                        
+
                         </div>
-                        
-                        {/* display what is good quality vs not good */}
+
                         {/* custom gradient for groups */}
                     </div>
                 ) : <> </>
                 }
-                
+
                 <SelfSample />
-                
+
                 <div id="record-experiment">
                     <h2>Experiments</h2>
 
@@ -221,7 +233,7 @@ export default function Root() {
                         <div>
                             <p>You need to be logged in with device turned on to record an experiment</p>
                         </div>
-                    ) : 
+                    ) :
                         <>
                             <p>After every experiment, 5 files will automatically be uploaded to storage.</p>
                             <p>Go to <a href="/recordings">recordings tab</a> to see your history</p>
@@ -234,7 +246,7 @@ export default function Root() {
                             </ul>
                         </>
                     }
-                
+
                     <Experiment
                         name="Generic Experiment"
                         description="Record brain activity for a defined duration"
@@ -242,10 +254,10 @@ export default function Root() {
                         notion={notion} // pass in the notion instance
                         channelNames={channelNames} // pass in the channel names
                     />
-                        
+
                 </div>
             </main>
-                        
+
         </>
     );
 }
