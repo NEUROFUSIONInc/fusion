@@ -7,7 +7,11 @@
   "author": "https://oreogundipe.dev/",
   "license": "MIT",
   "dependencies": {
+    "@neurosity/notion": "^5.17.0",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.7",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "isomorphic-fetch": "^3.0.0",
     "jwt-decode": "^3.1.2"
   },
