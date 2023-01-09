@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/magic';
 import logo from '../assets/logo.png';
 
-const Authenticate = ({ setStatus }) => {
+const AuthManager = ({ setStatus }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState(null);
@@ -41,7 +41,6 @@ const Authenticate = ({ setStatus }) => {
   }
 
   return (
-
     <div style={EmailForm}>
       <img src={logo} style={logoStyle} alt="logo" width={100} height={100} />
       <h1>Login to Neurofusion</h1>
@@ -57,4 +56,4 @@ const Authenticate = ({ setStatus }) => {
   );
 };
 
-export default Authenticate;
+export default AuthManager;
