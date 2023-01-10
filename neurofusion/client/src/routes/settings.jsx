@@ -7,24 +7,14 @@ import { useEffect } from 'react';
 import { React, useState } from 'react';
 import SideNavBar from '../components/sidenavbar';
 import { notion, useNotion } from '../services/neurosity';
+import { getNeurositySelectedDevice, updateNeurositySelectedDevice } from '../services/appsettings';
 
-export function ConnectNeurosityAccountButton() {
+function ConnectNeurosityAccountButton() {
 
     //  check if neurosity is signed in and then
     const { user, devices } = useNotion();
     const [neurositySelectedDevice, setNeurositySelectedDevice] = useState(getNeurositySelectedDevice());
 
-
-    function getNeurositySelectedDevice() {
-        return localStorage.getItem("neurositySelectedDevice")
-    }
-
-    function updateNeurositySelectedDevice(event) {
-        const deviceId = event.target.value;
-        alert(`selected device id - ${deviceId}`);
-        localStorage.setItem("neurositySelectedDevice", deviceId)
-    }
-    
     function connectNeurosityAccount() {
       fetch(`http://localhost:4000/api/get-neurosity-oauth-url`)
         .then((res) => res.json())
@@ -70,7 +60,7 @@ export function ConnectNeurosityAccountButton() {
                     <label>Active Device:</label>
                     <select onChange={updateNeurositySelectedDevice}>
                         {devices.map((device) => {
-                            if (device.deviceId == neurositySelectedDevice) {
+                            if (device.deviceId === neurositySelectedDevice) {
                                 return <option value={device.deviceId} selected>{device.deviceNickname}</option>
                             }else {
                                 return <option value={device.deviceId}>{device.deviceNickname}</option>
@@ -90,7 +80,7 @@ export function ConnectNeurosityAccountButton() {
     );
 }
 
-export function ConnectMagicFlow() {
+function ConnectMagicFlow() {
     const handleTokenChange = (event) => {
 
     }
