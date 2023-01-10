@@ -106,15 +106,21 @@ tends to start hurting at 30 - 2hours of use
 - 1672319390 - light work trying to catch up on light dev (slow pick up but things are happening)
 - 1672320077 - same as above
 
----------
-frontend set up
-- get the notion service wrapped
-- need to do the login whether I like it or not
-- add a button to start a recording
+- 1672758379 - somewhat tough task some caffiene, let's see if I get it done. first task is showing sig quality averages, next new oauth integration
+- 1672760578 - same as above loosely
 
+- 1672843168 - back again trying to get neurosity oauth + watching a podcast
+- 1672844537 - same as above
 
+- 1673277832 - some coffee in the system + neurosity focus shift
+- 1673279492 - (no data, I think wifi fell off)
+
+- 1673293511 - eyes closed (mostly), head aching a bit - too much coffee/adrelaline, laughs in between
+
+- 1673295103 - free form, scrolling on phone and reading article
+
+- 1673310903 - personality test
 ----
-simple signon for user (like mixpanel and jargon)
 
 makes sense storing device id in the localstorage
     - still need to add the neurosity provider
@@ -152,10 +158,11 @@ oura (reg health)
 ----
 analysis
 - (eeg) power spectral analysis
-- (health) should look at "sleep rebound on rem"
-- spectrogram
-- fft 
+- (productivity)
 - (health) from oura, heart rate over time (sleeping , awake)
+- (eeg) foof? to the get the predominant frequency over brain noise
+- (health) should look at "sleep rebound on rem"
+- spectrogram (will likely move to later)
 
 questions:
 - what's a good statistical correlation I can use for this
@@ -171,3 +178,9 @@ later:
     [] change bar colors to match criteria (bad, good, great)
 
 [] properly design the analysis view based on available data streams
+
+
+
+
+signalquality seems to be better when my head is bent downwards...
+... desperately need signal helper
