@@ -14,7 +14,7 @@ export default function SignalQuality({channelNames, deviceStatus}) {
     useEffect(() => {
         if (deviceStatus === "online") {
             const subscribeToLiveFeed = async () => {
-                notion.signalQuality().subscribe(async (signalQuality) => {
+                await notion.signalQuality().subscribe(async (signalQuality) => {
                     const formattedSignalQuality = await formatSignalQuality(signalQuality);
                     setSignalQualityArray(sigArray => [...sigArray, formattedSignalQuality]);
                 });

@@ -20,22 +20,25 @@ export default function Root() {
 
     // sign in to neurosity device
     useEffect(() => {
-        console.log(neurositySelectedDevice)
-        if (neurositySelectedDevice) {
+        
+        if(!neurositySelectedDevice) {
+            alert("Looks like you haven't connected a Neurosity device yet. Redirecting you to the setting page to continue")
+            window.location.href = '/settings';
+        } else {
             (async () => {
                 await notion.selectDevice(["deviceId", neurositySelectedDevice]).then(() => {
                     console.log(`connected to neurosity device ${neurositySelectedDevice}`)
                 });
             })();
-
+    
             (async () => {
                 // validate that the device is online
-                notion.status().subscribe(status => {
+                await notion.status().subscribe(status => {
                     if (status.state !== deviceStatus) {
                         let deviceState = status.state;
                         (status.sleepMode) ? deviceState = "sleep" : deviceState = status.state;
                         setDeviceStatus(deviceState);
-
+    
                         if (deviceState === "online") {
                             (async () => {
                                 const channelNames = (await notion.getInfo()).channelNames;
