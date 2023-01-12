@@ -15,15 +15,14 @@ export default function SignalQuality({channelNames, deviceStatus}) {
         if (deviceStatus === "online") {
             const subscribeToLiveFeed = async () => {
                 await notion.signalQuality().subscribe(async (signalQuality) => {
-                    const formattedSignalQuality = await formatSignalQuality(signalQuality);
-                    setSignalQualityArray(sigArray => [...sigArray, formattedSignalQuality]);
+                    setSignalQualityArray(sigArray => [...sigArray, signalQuality]);
                 });
             };
             subscribeToLiveFeed();
         }
     }, [deviceStatus]);
 
-    // average the signal quality values every 50 samples
+    // average after every 50 samples
     useEffect(() => {
         if (signalQualityArray.length >= 50) {
             (async () => {
@@ -81,22 +80,31 @@ export default function SignalQuality({channelNames, deviceStatus}) {
     function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
     async function formatSignalQuality(signalQuality) {
-        let formattedSignalQuality = {
-            'unixTimestamp_secs': Math.floor(Date.now()),
-        }
+        let formattedSignalQuality = {}
+
         for (let ch_index = 0; ch_index < channelNames.length; ch_index++) {
             let ch_name = channelNames[ch_index];
             formattedSignalQuality[ch_name + "_value"] = signalQuality[ch_index].standardDeviation;
-            formattedSignalQuality[ch_name + "_status"] = signalQuality[ch_index].status;
         }
         return formattedSignalQuality;
     }
 
+    async function formatSignalQualityArray(signalQualityArray) {
+        let formattedSignalQualityArray = [];
+        for (let i = 0; i < signalQualityArray.length; i++) {
+            await formatSignalQuality(signalQualityArray[i]).then((formattedSignalQuality) => {
+                formattedSignalQualityArray.push(formattedSignalQuality);
+            });
+        }
+        return formattedSignalQualityArray;
+    }
+
     async function averageSignalQuality(signalQualityArray) {
         const averageSignalQuality = {}
+        const formattedSignalQualityArray = await formatSignalQualityArray(signalQualityArray);
         for (var channel in channelNames) {
             let channelName = channelNames[channel]
-            let channelValues = signalQualityArray.map((sample) => sample[channelName + "_value"]).filter(isNumber)
+            let channelValues = formattedSignalQualityArray.map((sample) => sample[channelName + "_value"]).filter(isNumber)
             let channelAverage = channelValues.reduce((a, b) => a + b, 0) / channelValues.length;
             averageSignalQuality[channelName + "_value"] = channelAverage;
         }
