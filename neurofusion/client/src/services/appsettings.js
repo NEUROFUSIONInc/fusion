@@ -4,7 +4,7 @@ export function getNeurositySelectedDevice() {
     return localStorage.getItem("neurositySelectedDevice")
 }
 
-export function updateNeurositySelectedDevice(event, cb=null) {
+export function updateNeurositySelectedDevice(event) {
     const deviceId = event.target.value;
     alert(`selected device id - ${deviceId}`);
     localStorage.setItem("neurositySelectedDevice", deviceId)

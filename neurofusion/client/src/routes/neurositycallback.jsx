@@ -11,7 +11,7 @@ export default function NeurosityCallback() {
         if(!loading && user) {
             // make api to backend that oauth is complete
             // TODO: implement route on backend
-            fetch("http://localhost:4000/api/neurosity-oauth-complete", {
+            fetch(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/neurosity-oauth-complete`, {
                 method: "POST",
                 body: JSON.stringify(oauthResult)
             })

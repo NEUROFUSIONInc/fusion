@@ -67,7 +67,7 @@ function useProvideNotion() {
           }));
 
           axios
-            .get(`http://localhost:4000/api/get-neurosity-custom-token`, {
+            .get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/neurosity/get-custom-token`, {
               params: { userId: acmeNeuroConfig.testNeurosityUserId }
             })
             .then(({ data }) =>

@@ -8,15 +8,17 @@ import { React, useState } from 'react';
 import SideNavBar from '../components/sidenavbar';
 import { notion, useNotion } from '../services/neurosity';
 import { getNeurositySelectedDevice, updateNeurositySelectedDevice } from '../services/appsettings';
+import axios from 'axios';
 
 function ConnectNeurosityAccountButton() {
 
     //  check if neurosity is signed in and then
     const { user, devices } = useNotion();
+    // const {}
     const [neurositySelectedDevice, setNeurositySelectedDevice] = useState(getNeurositySelectedDevice());
 
     function connectNeurosityAccount() {
-      fetch(`http://localhost:4000/api/get-neurosity-oauth-url`)
+      fetch(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/neurosity/get-oauth-url`)
         .then((res) => res.json())
         .then(data => {
           console.log(data)
@@ -81,35 +83,60 @@ function ConnectNeurosityAccountButton() {
 }
 
 function ConnectMagicFlow() {
-    const handleTokenChange = (event) => {
+    const [magicflowToken, setMagicflowToken] = useState([]);
 
+    useEffect(() => {
+        setMagicflowToken(getMagicflowToken());
+    },[]);
+
+    function getMagicflowToken() {
+        axios.get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token`,
+        {
+            params: {
+                "userEmail": "oreogundipe@gmail.com" //TODO: fetch from signed in user information
+            }
+        }).then((res) => {
+            console.log(res);
+            return res.data.token;
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    const handleTokenChange = (event) => {
+        if( event.target.value !== magicflowToken){
+            setMagicflowToken(event.target.value);
+        }
     }
 
     const handleMagicFlowTokenSave = (event) => {
-        // call magicflow api to validate token
-
-        // save token to localstorage
+        event.preventDefault();
+        alert(`making backend request with value ${magicflowToken}`);
+        axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/set-token`,
+        {
+            "user_email": "oreogundipe@gmail.com",
+            "token": magicflowToken
+        }).then((res) => {
+            console.log(res);
+            return res.data.token;
+        }).catch((err) => {
+            console.log(err);
+        });
     }
+
     return (
-        <form onSubmit={handleMagicFlowTokenSave}>
-            <h3>Productivity Data (magicflow)</h3>
-            <label>
+        <>
+            <h3>Productivity Data (Magicflow)</h3>
+            <label for="magicflowToken">
                 Magicflow Token:
-                <input type="text" name="token" onChange={handleTokenChange} />
             </label>
-            <input type="submit" value="Submit" />
-        </form>
+            <textarea id="magicflowToken" type="text" name="magicflowToken" value={magicflowToken} onChange={handleTokenChange}></textarea>
+            <button onClick={handleMagicFlowTokenSave}>Update Magicflow token</button>
+        </>
     )
 }
 
 export default function Settings() {
-
-    const [magicflowToken, setMagicflowToken] = useState({})
-
-    useEffect(() => {
-        // get magicflow token from localstorage
-        // setMagicflowToken(token)        
-    }, [])
 
     return (
         <>
