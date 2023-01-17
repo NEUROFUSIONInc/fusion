@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '18.x'
+      
+      - name: change directory to project
+        run: |
+          cd neurofusion/server
 
       - name: npm install, build, and test
         run: |
