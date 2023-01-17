@@ -2,7 +2,7 @@ import { Notion } from "@neurosity/notion";
 import express from "express";
 import dotenv from 'dotenv';
 import cors from 'cors';
-
+import UserMetadata from './db.js';
 dotenv.config()
 
 const app = express()
@@ -15,8 +15,11 @@ const notion = new Notion({
 // TODO: configure trusted sources
 app.use(cors());
 
+/**
+ * Neurosity Routes
+ */
 //  generate oauth url
-app.get('/api/get-neurosity-oauth-url', (req, res) => {
+app.get('/api/neurosity/get-oauth-url', (req, res) => {
   async function getOAuth() {
     await notion
     .createOAuthURL({
@@ -58,8 +61,7 @@ app.get('/api/get-neurosity-oauth-url', (req, res) => {
 })
 
 // get custom token given neurosity id
-app.get('/api/get-neurosity-token', (req, res) => {
-
+app.get('/api/neurosity/get-custom-token', (req, res) => {
   const userId = req.body.userId;
 
   async function getToken() {
@@ -87,6 +89,51 @@ app.get('/api/get-neurosity-token', (req, res) => {
   getToken();
 })
 
+app.post('/api/neurosity/oauth-complete', (req, res) => {
+  // TODO: store the token in the database
+})
+
+/**
+ * Magicflow Routes
+ */
+app.get('/api/magicflow/get-token', (req, res) => {
+  console.log(req.params);
+  if(!req.params.userEmail) {
+    res.status(401).json({
+      body: {
+        error: "user email not provided"
+      }
+    });
+    return;
+  }
+
+  (async () => {
+    const userMetadata = await UserMetadata.findOne({ where: { userEmail: req.params.userEmail } });
+    if (userMetadata === null) {
+      console.log('Not found!');
+      res.status(401).json({
+        body: {
+          error: "user does not exist"
+        }
+      });
+    } else {
+      console.log(userMetadata instanceof UserMetadata); // true
+      console.log(userMetadata.userEmail); // 'oreogundipe@gmail.com'
+      res.status(200).json({
+        statusCode: 200,
+        body: {
+          userGuid: userMetadata.userGuid
+        }
+      });
+    }
+  })();
+})
+
+app.post('/api/magicflow/set-token', (req, res) => {
+  // store token in db
+  // check if data exists & fetch from magicflow
+})
+
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Neurofusion server listening on port ${port}`)
 })
