@@ -38,7 +38,9 @@ function ConnectNeurosityAccountButton() {
         // setError("");
         // setRemovingAccess(true);
 
-        await notion.removeOAuthAccess().catch((error) => {
+        await notion.removeOAuthAccess().then(() => {
+            localStorage.removeItem('neurositySelectedDevice');
+        }).catch((error) => {
             // setError(error?.message);
         });
 
@@ -61,6 +63,7 @@ function ConnectNeurosityAccountButton() {
                 }}>
                     <label>Active Device:</label>
                     <select onChange={updateNeurositySelectedDevice}>
+                        <option value="">Choose a device</option>
                         {devices.map((device) => {
                             if (device.deviceId === neurositySelectedDevice) {
                                 return <option value={device.deviceId} selected>{device.deviceNickname}</option>
@@ -137,7 +140,7 @@ function ConnectMagicFlow() {
 }
 
 export default function Settings() {
-
+    
     return (
         <>
             <SideNavBar></SideNavBar>

@@ -20,7 +20,6 @@ export default function Root() {
 
     // sign in to neurosity device
     useEffect(() => {
-        
         if(!neurositySelectedDevice) {
             alert("Looks like you haven't connected a Neurosity device yet. Redirecting you to the setting page to continue")
             window.location.href = '/settings';
@@ -49,7 +48,7 @@ export default function Root() {
                 });
             })()
         }
-    }, []);
+    }, [neurositySelectedDevice]);
     
     return (
         <>
@@ -62,6 +61,7 @@ export default function Root() {
                     <label>Active Device:</label>
                     <select onChange={updateNeurositySelectedDevice}>
                         {devices.map((device) => {
+                            <option value="">Choose a device</option>
                             if (device.deviceId === neurositySelectedDevice) {
                                 return <option value={device.deviceId} selected>{device.deviceNickname}</option>
                             }else {

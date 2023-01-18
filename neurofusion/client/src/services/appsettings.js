@@ -9,6 +9,10 @@ export function updateNeurositySelectedDevice(event) {
     alert(`selected device id - ${deviceId}`);
     localStorage.setItem("neurositySelectedDevice", deviceId)
 
+    connectToNeurosityDevice(deviceId);
+}
+
+export function connectToNeurosityDevice(deviceId) {
     (async () => {
         await notion.selectDevice(["deviceId", deviceId]).then(() => {
             console.log(`connected to neurosity device ${deviceId}`)
