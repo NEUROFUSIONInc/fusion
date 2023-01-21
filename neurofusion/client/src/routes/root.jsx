@@ -78,8 +78,6 @@ export default function Root() {
                 :   <></>
                 }
 
-                <SelfSample />
-
                 <div id="record-experiment">
                     <h2>Experiments</h2>
 
@@ -103,13 +101,15 @@ export default function Root() {
 
                     <Experiment
                         name="Generic Experiment"
-                        description="Record brain activity for a defined duration"
+                        description="Record brain activity for a defined duration (secs)"
                         duration={60} // in seconds  
                         notion={notion} // pass in the notion instance
                         channelNames={channelNames} // pass in the channel names
                     />
 
                 </div>
+
+                <SelfSample />
             </main>
 
         </>

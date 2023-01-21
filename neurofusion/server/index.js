@@ -2,7 +2,7 @@ import { Notion } from "@neurosity/notion";
 import express from "express";
 import dotenv from 'dotenv';
 import cors from 'cors';
-import UserMetadata from './db.js';
+import { sequelize, UserMetadata } from './db.js';
 dotenv.config()
 
 const app = express()
@@ -15,6 +15,8 @@ const notion = new Notion({
 // TODO: configure trusted sources
 app.use(cors());
 
+// TODO: configure body parser (base64auth)
+
 /**
  * Neurosity Routes
  */
@@ -22,39 +24,39 @@ app.use(cors());
 app.get('/api/neurosity/get-oauth-url', (req, res) => {
   async function getOAuth() {
     await notion
-    .createOAuthURL({
-      clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
-      clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
-      redirectUri: process.env.NEUROSITY_OAUTH_CLIENT_REDIRECT_URI,
-      responseType: "token",
-      state: Math.random().toString().split(".")[1], // A random string is required for security reasons
-      scope: [
-        "read:accelerometer",
-        "read:brainwaves",
-        "read:calm",
-        "read:devices-info",
-        "read:devices-status",
-        "read:focus",
-        "read:memories:brainwaves",
-        "read:signal-quality",
-        "write:brainwave-markers",
-        "write:brainwaves"
-      ]
+      .createOAuthURL({
+        clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
+        clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
+        redirectUri: process.env.NEUROSITY_OAUTH_CLIENT_REDIRECT_URI,
+        responseType: "token",
+        state: Math.random().toString().split(".")[1], // A random string is required for security reasons
+        scope: [
+          "read:accelerometer",
+          "read:brainwaves",
+          "read:calm",
+          "read:devices-info",
+          "read:devices-status",
+          "read:focus",
+          "read:memories:brainwaves",
+          "read:signal-quality",
+          "write:brainwave-markers",
+          "write:brainwaves"
+        ]
 
-    })
-    .then((url) => (
-      res.status(200).json({
-        statusCode: 200,
-        body: {
-          url: url
+      })
+      .then((url) => (
+        res.status(200).json({
+          statusCode: 200,
+          body: {
+            url: url
+          }
         }
-      }
-    )))
-    .catch((error) => (
-      res.status(400).json({
-        body: error.response.data
-      }
-    )));
+        )))
+      .catch((error) => (
+        res.status(400).json({
+          body: error.response.data
+        }
+        )));
   }
 
   getOAuth();
@@ -66,24 +68,24 @@ app.get('/api/neurosity/get-custom-token', (req, res) => {
 
   async function getToken() {
     await notion
-    .getOAuthToken({
-      clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
-      clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
-      userId
-    })
-    .then((url) => (
-      res.status(200).json({
-        statusCode: 200,
-        body: {
-          url: url
+      .getOAuthToken({
+        clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
+        clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
+        userId
+      })
+      .then((url) => (
+        res.status(200).json({
+          statusCode: 200,
+          body: {
+            url: url
+          }
         }
-      }
-    )))
-    .catch((error) => (
-      res.status(400).json({
-        body: error.response.data
-      }
-    )));
+        )))
+      .catch((error) => (
+        res.status(400).json({
+          body: error.response.data
+        }
+        )));
   }
 
   getToken();
@@ -96,9 +98,10 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
 /**
  * Magicflow Routes
  */
+// TODO: fetch magicflow token
 app.get('/api/magicflow/get-token', (req, res) => {
   console.log(req.params);
-  if(!req.params.userEmail) {
+  if (!req.params.userEmail) {
     res.status(401).json({
       body: {
         error: "user email not provided"
@@ -129,11 +132,49 @@ app.get('/api/magicflow/get-token', (req, res) => {
   })();
 })
 
+// TODO: set token
 app.post('/api/magicflow/set-token', (req, res) => {
   // store token in db
   // check if data exists & fetch from magicflow
 })
 
+app.post('/api/userlogin', (req, res) => {
+  // accept the userEmail & magicLinkAuthToken &validate
+
+  // call magiclink to validate user is loggedIn
+
+  // fetch user if exists else create user
+  UserMetadata.findOne({
+    where: {
+      userEmail: req.body.userEmail
+    }
+  }).then(result => {
+    console.log(result);
+    // check if user exists
+    // if not, create user
+    // return user guid
+    res.status(200).json({
+      statusCode: 200,
+      body: {
+        userGuid: result.userGuid,
+        magicLinkAuthToken: result.magicLinkAuthToken,
+        magicflowToken: result.magicflowToken,
+        neurosityToken: result.neurosityToken
+      }
+    });
+  }).catch(error => {
+    console.log(error);
+    res.status(400).json({
+      body: error.response.data
+    });
+  });
+})
+
 app.listen(port, () => {
   console.log(`Neurofusion server listening on port ${port}`)
+
+  sequelize.authenticate().then(async () => {
+    console.log('Database connected');
+    sequelize.sync();
+  });
 })
