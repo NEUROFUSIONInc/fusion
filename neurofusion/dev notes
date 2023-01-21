@@ -7,6 +7,22 @@ build the best intuitive visualization
 
 tagging recordings need to be built in - done
 
+------
+core data integrations
+----------------------
+neurosity (brain activity)
+magicflow (actions on device)
+oura (reg health)
+
+----
+analysis
+- (eeg) power spectral analysis
+- (productivity)
+- (health) from oura, heart rate over time (sleeping , awake)
+- (eeg) foof? to the get the predominant frequency over brain noise
+- (health) should look at "sleep rebound on rem"
+- spectrogram (will likely move to later)
+
 manual logs
 -----------
 - 1665425778  - (ore) working on famasi at the time
@@ -120,26 +136,95 @@ tends to start hurting at 30 - 2hours of use
 - 1673295103 - free form, scrolling on phone and reading article
 
 - 1673310903 - personality test
-----
 
-makes sense storing device id in the localstorage
-    - still need to add the neurosity provider
+- 1673539843 - (unsure, check magicflow data)
 
-get user email -> (device id) -> store in local storage``
+- 1673938165 - tired from a long day + jet lag (trying to get azure deployment working & submit pioneer weekly update)
+- 1673939208 - same as above
+- 1673941008 - same as above
+------------
+- 1673972572 - morning 8am - 30mins after wake (don't feel I've had enough sleep) - scrolled on phone, read for a bit
 
-next load fetch from local storage first
+- 1673978266 - some coffee in system, getting into the groove
 
-- signed in user, gets a neurosity device
-    - device gets tied to userId stored in localstorage
-        (de anonymised) for starters let users just know what you're collecting data for
-            "we want to explore changes in brain activty over time
-            and how it relates with behavior"
-                - would you like to share data (y/n)
+- 1673982341 - after chat with Milan, reflecting and planning next steps
 
-        - notes can even show what it looks like
-        - (hehehehe for local first just save a ton of data in localstorage)
-            - correlating with magicflow data
-                - (i should get a data scientist)
+- 1673999071 - playing fifa
+- 1674000046 - same as above
+- 1674000799 - same as above
+
+- 1674007406 - trying to get into a working groove (challenging task)
+- 1674008714 - same as above ... i think I found a bug in between that kept me more focused
+-------------
+
+- 1674058840 - first recording of the day
+
+- 1674068657 - drinking some coffee and about to face the analysis head on
+- 1674071339 - same as above
+- 1674071990 - same as above
+- 1674073045 - same as above
+
+- 1674085969 - (afternoon) meeting with wes. A lot of noisy data
+- 1674086833 - chat with ebun & free flow
+
+- 1674087670 - chat with jake
+- 1674088941 - still chatting with jake & some free roam afterwards
+
+- 1674111353 - late evening, watching a random film
+- 1674112632 - ...
+- 1674113507 - drift to work
+
+- 1674118724 - piano before sleep
+
+------
+- 1674153040 - starting work, moved around a bit
+
+- 1674154161 - prepping for call with alex
+- 1674156033 - call with alex
+
+- 1674170603 - post swim, reading papers & prepping for chat with banke - very noisy data
+- 1674171743 - less noisy behind my desk but distracted
+- 1674172379 - reading paper
+- 1674173114 - reading paper
+ 
+- 1674173843 - reading paper & then call w Ore
+
+- 1674182759 - free form, kinda lethergic, reading an article
+- 1674184001 - well plans changed, let's see how the night goes
+------
+
+- 1674239692 - 10mins eyes closed (resting state) some coffee, open eye in between ... was visualizing workflow
+- 1674240901 - tried to work, mainly distracted
+- 1674243604 - still not much work done,
+
+(afternoon)
+- 1674254293 - trying to record while playing chess, but battery died, there was a lot of movement
+
+(evening)
+- 1674273747 - resting state (eye's close 10mins), was thinking about projects
+
+- 1674274492 - eyes open, free recording 
+
+- 1674275579 - eyes open - moved around a bit
+
+-------
+
+- 1674322176 - eyes closed, free thinking, head was shaking a bit.
+- 1674325610 - eyes closed - thinking about decision
+
+- 1674326439 - conversation with layla - working memory a bit slower (forgetting speech)
+
+- 1674327094 - (h) watching video, couple minutes in switched context to neurofusion
+
+- 1674328024 -
+
+- 1674328804 -
+
+- 1674332878 - turned into working
+
+- 1674333665 -
+ 
+- 1674336341 - resting eeg
 
 ....
 
@@ -149,38 +234,30 @@ I'm so excited, gonna get to viewing experiments natively sooon!!!
         - I actually should just get those initial one on homepage.
 
 
-core data integrations
-----------------------
-neurosity (brain activity)
-magicflow (actions on device)
-oura (reg health)
-
-----
-analysis
-- (eeg) power spectral analysis
-- (productivity)
-- (health) from oura, heart rate over time (sleeping , awake)
-- (eeg) foof? to the get the predominant frequency over brain noise
-- (health) should look at "sleep rebound on rem"
-- spectrogram (will likely move to later)
-
 questions:
 - what's a good statistical correlation I can use for this
     - think about meaning (reference stats material)
 
 later:
-- eeg haptics will be fun for dev experiemnts
 
 [] spend a full period on data storage and sync.
-[] display signal quality for time period
-[] neurosity device selector after login
-[] signal quality component
-    [] change bar colors to match criteria (bad, good, great)
 
 [] properly design the analysis view based on available data streams
 
+Idea! Have you considered taking screenshots with Magicflow & storing on user device - it’ll really help with categorization
+
+---
+- signalquality seems to be better when my head is bent downwards...
+- desperately need signal helper
+
+integrating brain dump - capturing text from keyboard, sit locally on device
+
+
+local version of neurofusion..
+
+the desire to call people
 
 
 
-signalquality seems to be better when my head is bent downwards...
-... desperately need signal helper
+I should get an EA - or actually even better, use AI to be my EA
+- Insights from Magicflow data
