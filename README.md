@@ -13,7 +13,7 @@ See [set up details in neurofusion/client folder](./neurofusion/client/README.md
 See [set up details in neurofusion/server folder](./neurofusion/server/README.md)
 
 ## Analysis
-See [/analysis folder](https://github.com/oreHGA/fusion/tree/master/analysis)
+See [/analysis folder](./analysis/README.md)
 
 ## Other Services
 Blob Storage - Azure
