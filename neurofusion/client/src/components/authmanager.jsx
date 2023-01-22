@@ -37,13 +37,14 @@ const AuthManager = ({ setStatus }) => {
   }
 
   const logoStyle = {
-    padding: '0 20px'
+    padding: '0 20px',
+    borderRadius: '61px'
   }
 
   return (
     <div style={EmailForm}>
-      <img src={logo} style={logoStyle} alt="logo" width={100} height={100} />
-      <h1>Login to Neurofusion</h1>
+      <img src={logo} style={logoStyle} alt="logo" height={150}/>
+      <h1>Login to NEUROFUSION</h1>
 
       <form onSubmit={handleSubmit}>
         <label>
