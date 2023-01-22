@@ -1,5 +1,7 @@
-import { Sequelize, Op, Model, DataTypes } from "sequelize";
-import dotenv from 'dotenv';
+// import { Sequelize, Op, Model, DataTypes } from "sequelize";
+const { Sequelize, Op, Model, DataTypes } = require("sequelize");
+
+const dotenv = require("dotenv");
 dotenv.config()
 
 const user = process.env.DATABASE_USER;
@@ -7,14 +9,14 @@ const host = process.env.DATABASE_HOST;
 const database = process.env.DATABASE_NAME;
 const password = process.env.DATABASE_PASSWORD;
 
-export const sequelize =  new Sequelize(database, user, password, {
+const sequelize =  new Sequelize(database, user, password, {
     host: host,
     dialect: 'mysql',
     logging: false,
     ssl: true
 })
 
-export class UserMetadata extends Model { }
+class UserMetadata extends Model { }
 
 UserMetadata.init(
     {
@@ -49,3 +51,8 @@ UserMetadata.init(
             defaultValue: false
         }
     }, { sequelize, modelName: "userMetadata" });
+
+module.exports = {
+    UserMetadata: UserMetadata,
+    sequelize: sequelize
+}

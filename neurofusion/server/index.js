@@ -1,8 +1,10 @@
-import { Notion } from "@neurosity/notion";
-import express from "express";
-import dotenv from 'dotenv';
-import cors from 'cors';
-import { sequelize, UserMetadata } from './db.js';
+const {Notion} = require("@neurosity/notion");
+const express = require("express");
+const dotenv = require('dotenv');
+const cors = require('cors');
+const { Magic } = require('@magic-sdk/admin');
+
+const { sequelize, UserMetadata } = require('./db.js');
 dotenv.config()
 
 const app = express()
@@ -11,6 +13,9 @@ const port = process.env.PORT || 4000;
 const notion = new Notion({
   autoSelectDevice: false
 });
+
+/* 1. Setup Magic Admin SDK */
+const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
 
 // TODO: configure trusted sources
 app.use(cors());
@@ -42,7 +47,6 @@ app.get('/api/neurosity/get-oauth-url', (req, res) => {
           "write:brainwave-markers",
           "write:brainwaves"
         ]
-
       })
       .then((url) => (
         res.status(200).json({
@@ -63,8 +67,9 @@ app.get('/api/neurosity/get-oauth-url', (req, res) => {
 })
 
 // get custom token given neurosity id
+// TODO: needs to be properly tested
 app.get('/api/neurosity/get-custom-token', (req, res) => {
-  const userId = req.body.userId;
+  const userId = req.params.userId;
 
   async function getToken() {
     await notion
@@ -90,15 +95,21 @@ app.get('/api/neurosity/get-custom-token', (req, res) => {
 
   getToken();
 })
-
+  
+// TODO: store the token in the database
 app.post('/api/neurosity/oauth-complete', (req, res) => {
-  // TODO: store the token in the database
 })
 
 /**
  * Magicflow Routes
  */
-// TODO: fetch magicflow token
+// TODO: set token - implementation
+app.post('/api/magicflow/set-token', (req, res) => {
+  // store token in db
+  // check if data exists & fetch from magicflow
+})
+
+// TODO: fetch magicflow token - testing
 app.get('/api/magicflow/get-token', (req, res) => {
   console.log(req.params);
   if (!req.params.userEmail) {
@@ -125,33 +136,54 @@ app.get('/api/magicflow/get-token', (req, res) => {
       res.status(200).json({
         statusCode: 200,
         body: {
-          userGuid: userMetadata.userGuid
+          userGuid: userMetadata.userGuid,
+          magicflowToken: userMetadata.magicflowToken
         }
       });
     }
   })();
 })
 
-// TODO: set token
-app.post('/api/magicflow/set-token', (req, res) => {
-  // store token in db
-  // check if data exists & fetch from magicflow
-})
 
-app.post('/api/userlogin', (req, res) => {
-  // accept the userEmail & magicLinkAuthToken &validate
+// TODO: post request to trigger updating magicflow data
+app.post('/api/magicflow/update-data', (req, res) => {
+  // parse userGuid & fetch for magicflow token for user
+
+  // then call ../magicflow/index.js getTimeseriesData
+});
+
+// TODO: needs testing
+app.post('/api/userlogin', async (req, res) => {
+  if (!req.body.userEmail || !req.body.magicLinkAuthToken) {
+    res.status(401).json({
+      body: {
+        error: "user email or magic link auth token not provided"
+      }
+    });
+    return;
+  }
 
   // call magiclink to validate user is loggedIn
+  const magicLinkUser = await magic.users.getMetadataByToken(req.body.magicLinkAuthToken);
+  if (!magicLinkUser) {
+    res.status(401).json({
+      body: {
+        error: "user is not logged in"
+      }
+    });
+    return;
+  }
 
   // fetch user if exists else create user
   UserMetadata.findOne({
     where: {
-      userEmail: req.body.userEmail
+      userEmail: magicLinkUser.email
     }
   }).then(result => {
     console.log(result);
+    // TODO: validate results
+    
     // check if user exists
-    // if not, create user
     // return user guid
     res.status(200).json({
       statusCode: 200,
@@ -162,6 +194,7 @@ app.post('/api/userlogin', (req, res) => {
         neurosityToken: result.neurosityToken
       }
     });
+    // if not, create user
   }).catch(error => {
     console.log(error);
     res.status(400).json({
@@ -169,6 +202,11 @@ app.post('/api/userlogin', (req, res) => {
     });
   });
 })
+
+// TODO: storage, generate upload token
+app.get('/api/get-upload-token', (req, res) => {
+
+});
 
 app.listen(port, () => {
   console.log(`Neurofusion server listening on port ${port}`)

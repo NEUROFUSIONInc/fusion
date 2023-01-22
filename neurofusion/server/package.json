@@ -10,6 +10,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "@magic-sdk/admin": "^1.8.0",
     "@neurosity/notion": "^5.17.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.7",
@@ -22,6 +23,5 @@
     "pg": "^8.8.0",
     "sequelize": "^6.28.0",
     "sqlite3": "^5.1.4"
-  },
-  "type": "module"
+  }
 }
