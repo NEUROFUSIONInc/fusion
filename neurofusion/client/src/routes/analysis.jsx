@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import ReactEcharts from "echarts-for-react";
 import SideNavBar from '../components/sidenavbar';
 
-import magicFlowContexts from "../assets/magicflow_contexts_clean.json"
-import neurosityFocus from "../assets/neurosity_focus_clean.json"
+import magicFlowContexts from "../assets/magicflow_contexts_clean_dec_11.json"
+import neurosityFocus from "../assets/neurosity_focus_clean_dec_11.json"
+import magicFlowRawEvents from "../assets/magicflow_raw_events_clean_dec_11.json"
+import powerSpectrumData from "../assets/neurosity_power_spectrum_clean_dec_11.json"
+
 
 export default function Analysis() {
 
@@ -11,6 +14,10 @@ export default function Analysis() {
         return [item.timestamp, item.probability]
     })
 
+    const powerSpectrumSeries = powerSpectrumData.map((item) => {
+        return [item.unixTimestamp, item.CP3_alpha]
+    })
+    
     const verticalLinesData = magicFlowContexts.map((item) => {
         return {
             name: item.categories[0],
@@ -18,6 +25,17 @@ export default function Analysis() {
             lineStyle: {
                 type: 'solid',
                 color: 'green'
+            }
+        }
+    })
+
+    const verticalLinesData2 = magicFlowRawEvents.map((item) => {
+        return {
+            name: item.app,
+            xAxis: item.endDate,
+            lineStyle: {
+                type: 'solid',
+                color: item.focus == true ? 'green' : 'red'
             }
         }
     })
@@ -38,25 +56,25 @@ export default function Analysis() {
         },
         yAxis: {
             type: 'value',
-            name: 'focus probability',
+            // name: 'focus probability',
             splitLine: {
                 show: true
             },
-            min: 0,
-            max: 1
+            // min: 0,
+            // max: 1
         },
         series: [
             {
                 type: 'line',
                 smooth: true,
-                data: seriesData,
+                data: powerSpectrumSeries, //seriesData,
                 markLine: {
                     label: {
                         show: true,
                         formatter: '{b}'
                     },
                     symbol: 'none',
-                    data: verticalLinesData
+                    data: verticalLinesData2
                 }
             }
         ]
@@ -68,7 +86,7 @@ export default function Analysis() {
             <SideNavBar></SideNavBar>
 
             <main style={{
-                marginLeft: '10%',
+                marginLeft: '12%',
             }}>
                 <p>Correlating your brain activity with health & productivity signals</p>
 
