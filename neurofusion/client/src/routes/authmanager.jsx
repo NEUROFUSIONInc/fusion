@@ -1,11 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { loginUser } from '../services/magic';
 import logo from '../assets/logo.png';
+import { checkUser } from '../services/magic';
 
-const AuthManager = ({ setStatus }) => {
+
+const AuthManager = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState(null);
+
+  const [user, setUser] = useState({ isLoggedIn: false, email: '' });
+
+  useEffect(() => {
+    console.log("User login status is ", user.isLoggedIn);
+    if (user.isLoggedIn) {
+      window.location.href = '/lab';
+    }
+    
+    const validateUser = async () => {
+      setLoading(true);
+      try {
+        await checkUser(setUser);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    validateUser();
+  }, [user.isLoggedIn]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,7 +38,7 @@ const AuthManager = ({ setStatus }) => {
       return;
     }
     try {
-      await loginUser(email, setStatus);
+      await loginUser(email, setUser);
       setLoading(false);
     } catch (error) {
       setError('Unable to log in');

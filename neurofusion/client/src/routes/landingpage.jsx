@@ -11,6 +11,11 @@ const logoStyle = {
 
 
 export default function LandingPage() {
+
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+    
     return (
         <div class="container">
 
@@ -79,7 +84,9 @@ export default function LandingPage() {
                         </ul>
                     </div>
                 </div>
-                <button class="button">SIGN UP FOR BETA</button>
+
+                <button class="button" onClick={redirectToLogin}>LOGIN</button>
+
                 <div class="footer">
                     <h3>ore@usefusion.app</h3>
                     <h3>@NEUROFUSION Research Inc.</h3>
