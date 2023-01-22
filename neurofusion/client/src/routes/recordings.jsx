@@ -10,7 +10,7 @@ export default function Recordings() {
             <SideNavBar></SideNavBar>
 
             <main style={{
-                marginLeft: '10%',
+                marginLeft: '12%',
             }}>
         
                 <p>List of recordings will be displayed here</p>

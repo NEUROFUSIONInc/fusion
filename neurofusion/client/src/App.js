@@ -12,16 +12,23 @@ import Analysis from './routes/analysis';
 import ErrorPage from './routes/error-page';
 import Recordings from './routes/recordings';
 import Settings from './routes/settings';
+import LandingPage from './routes/landingpage';
 import NeurosityCallback from "./routes/neurositycallback";
 
 import { UserContext } from "./contexts/UserContext";
 import { checkUser } from './services/magic';
 import { ProvideNotion } from "./services/neurosity";
 import AuthManager from "./components/authmanager";
+import './App.css';
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <LandingPage />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/lab",
     element: <Root />,
     errorElement: <ErrorPage />
   },
@@ -52,6 +59,10 @@ function App() {
   const [loading, setLoading] = useState();
 
   useEffect(() => {
+    console.log(user.isLoggedIn);
+    if (user.isLoggedIn) {
+      return;
+    }
     const validateUser = async () => {
       setLoading(true);
       try {

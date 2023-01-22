@@ -54,7 +54,7 @@ export default function Root() {
         <>
             <SideNavBar></SideNavBar>
 
-            <main style={{ marginLeft: '10%', paddingLeft: "10px" }}>
+            <main style={{ marginLeft: '12%', paddingLeft: "10px" }}>
                 <div id="devices">
                     {/* repeated in settings page, should be a component */}
                     {/* TODO: Bug changing device here will not retrigger subscription */}

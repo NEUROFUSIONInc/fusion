@@ -6,12 +6,14 @@ const navStyle = {
   position: 'fixed',
   left: 0,
   top: 0,
-  width: '10%',
+  width: '12%',
   height: '100%',
   overflow: 'auto',
-  backgroundColor: '#333',
+  backgroundColor: 'rgb(16 43 83)',
   color: '#fff',
   padding: '20px 0',
+  display: 'flex',
+  flexDirection: 'column-reverse'
 };
 
 const titleStyle = {
@@ -37,18 +39,22 @@ const linkStyle = {
 };
 
 const logoStyle = {
-  padding: '0 20px'
+  padding: '0 20px',
+  width: '-webkit-fill-available',
+  borderRadius: '61px'
 }
 
 const SideNavBar = () => {
   return (
     <nav style={navStyle}>
-      <img src={logo} style={logoStyle} alt="logo" width={100} height={100} />
+      <div>
+        <img src={logo} style={logoStyle} alt="logo" width={150} height={150}/>
+      </div>
 
-      <h3 style={titleStyle}>Neurofusion</h3>
+      <h3 style={titleStyle}>NEUROFUSION</h3>
       <ul style={listStyle}>
         <li style={itemStyle}>
-          <a style={linkStyle} href="/">Experiments</a>
+          <a style={linkStyle} href="/lab">Playground</a>
         </li>
         <li style={itemStyle}>
           <a style={linkStyle} href="/recordings">Recordings</a>

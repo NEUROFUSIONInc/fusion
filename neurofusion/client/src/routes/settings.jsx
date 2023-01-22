@@ -146,7 +146,7 @@ export default function Settings() {
             <SideNavBar></SideNavBar>
 
             <main style={{
-                marginLeft: '10%',
+                marginLeft: '12%',
                 paddingLeft: "10px"
             }}>
                 <h1>Settings</h1>
