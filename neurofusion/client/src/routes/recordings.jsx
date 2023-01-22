@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import ReactEcharts from "echarts-for-react";
 import SideNavBar from '../components/sidenavbar';
 
-
 export default function Recordings() {
 
     return(
