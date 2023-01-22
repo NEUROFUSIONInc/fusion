@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
-// import { useLocation } from "react-router-dom";
 import { Notion } from "@neurosity/notion";
 import axios from "axios";
 
@@ -15,7 +14,7 @@ export const useNotion = () => {
 };
 
 const acmeNeuroConfig = {
-  enableDBQuery: true,
+  enableDBQuery: false,
   // Neurosity userId must be saved and retrieved by third-party
   testNeurosityUserId: "OEWjFDdq6mMFKyDtSafg1edxnr25"
 };
@@ -68,7 +67,7 @@ function useProvideNotion() {
 
           axios
             .get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/neurosity/get-custom-token`, {
-              params: { userId: acmeNeuroConfig.testNeurosityUserId }
+              params: { userId: acmeNeuroConfig.testNeurosityUserId } // TODO: fetch this from the UserContext of signed in user
             })
             .then(({ data }) =>
               notion
