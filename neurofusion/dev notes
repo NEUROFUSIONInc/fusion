@@ -21,7 +21,7 @@ analysis
 - (health) from oura, heart rate over time (sleeping , awake)
 - (eeg) foof? to the get the predominant frequency over brain noise
 - (health) should look at "sleep rebound on rem"
-- spectrogram (will likely move to later)
+- spectrogram - use these together with power to indentify times of interest.
 
 manual logs
 -----------
@@ -217,14 +217,20 @@ tends to start hurting at 30 - 2hours of use
 - 1674327094 - (h) watching video, couple minutes in switched context to neurofusion
 
 - 1674328024 -
-
 - 1674328804 -
-
 - 1674332878 - turned into working
 
 - 1674333665 -
  
 - 1674336341 - resting eeg
+
+evening
+- 1674360001 - freely working
+- 1674371266 - freely working
+- 1674375590 - freely working
+
+- 1674376426 - 10mins resting state (starting to hurt)
+
 
 ....
 
@@ -260,4 +266,5 @@ the desire to call people
 
 
 I should get an EA - or actually even better, use AI to be my EA
-- Insights from Magicflow data
+- Insights from productivity data
+ - whats different in the things I've been spending my time doing (interests)
