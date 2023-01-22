@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { loginUser } from '../services/magic';
 import logo from '../assets/logo.png';
-import { checkUser } from '../services/magic';
+import { loginUser, checkUser } from '../services/auth';
 
 
 const AuthManager = () => {

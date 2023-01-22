@@ -4,7 +4,6 @@ import {
 } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 
-import Spinner from 'react-bootstrap/Spinner';
 
 import Root from "./routes/root";
 import Analysis from './routes/analysis';
@@ -15,9 +14,9 @@ import LandingPage from './routes/landingpage';
 import AuthManager from "./routes/authmanager";
 import NeurosityCallback from "./routes/neurositycallback";
 
-import { UserContext } from "./contexts/UserContext";
-import { checkUser } from './services/magic';
 import { ProvideNotion } from "./services/neurosity";
+import { ProvideNeurofusionUser } from "./services/auth";
+
 import './App.css';
 
 
@@ -61,12 +60,12 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <UserContext.Provider>
+    <ProvideNeurofusionUser>
       <ProvideNotion>
         <RouterProvider router={router} />
         {/* TODO: handle authentication on routes */}
       </ProvideNotion>
-    </UserContext.Provider>
+    </ProvideNeurofusionUser>
   );
 }
 

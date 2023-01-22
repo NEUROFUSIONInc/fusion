@@ -9,6 +9,8 @@ import SideNavBar from '../components/sidenavbar';
 import { notion, useNotion } from '../services/neurosity';
 import { getNeurositySelectedDevice, updateNeurositySelectedDevice } from '../services/appsettings';
 import axios from 'axios';
+import { useNeurofusionUser } from '../services/auth';
+
 
 function ConnectNeurosityAccountButton() {
 
@@ -140,26 +142,33 @@ function ConnectMagicFlow() {
 }
 
 export default function Settings() {
+    const neurofusionUserInfo = useNeurofusionUser();
     
     return (
         <>
-            <SideNavBar></SideNavBar>
+        {
+            neurofusionUserInfo.isLoggedIn == true ?
+            <>
+                <SideNavBar></SideNavBar>
 
-            <main style={{
-                marginLeft: '12%',
-                paddingLeft: "10px"
-            }}>
-                <h1>Settings</h1>
+                <main style={{
+                    marginLeft: '12%',
+                    paddingLeft: "10px"
+                }}>
+                    <h1>Settings</h1>
 
-                <h2>Data Onboarding</h2>
+                    <h2>Data Onboarding</h2>
 
-                <ConnectNeurosityAccountButton />
+                    <ConnectNeurosityAccountButton />
 
-                <ConnectMagicFlow />
+                    <ConnectMagicFlow />
 
-                <h3>Health Data (Oura/Apple Health)</h3>
-                <p>Coming soon!</p>
-            </main>
+                    <h3>Health Data (Oura/Apple Health)</h3>
+                    <p>Coming soon!</p>
+                </main>
+            </>
+        : <></>
+        }
         </>
     );
 }

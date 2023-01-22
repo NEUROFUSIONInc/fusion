@@ -6,9 +6,10 @@ import magicFlowContexts from "../assets/magicflow_contexts_clean_dec_11.json"
 import neurosityFocus from "../assets/neurosity_focus_clean_dec_11.json"
 import magicFlowRawEvents from "../assets/magicflow_raw_events_clean_dec_11.json"
 import powerSpectrumData from "../assets/neurosity_power_spectrum_clean_dec_11.json"
-
+import { useNeurofusionUser } from '../services/auth';
 
 export default function Analysis() {
+    const neurofusionUserInfo = useNeurofusionUser();
 
     const seriesData = neurosityFocus.map((item) => {
         return [item.timestamp, item.probability]
@@ -83,19 +84,23 @@ export default function Analysis() {
     // for now just feed in the base data
     return (
         <>
-            <SideNavBar></SideNavBar>
+            {
+                neurofusionUserInfo.isLoggedIn == true ?
+            <>
+                <SideNavBar></SideNavBar>
 
-            <main style={{
-                marginLeft: '12%',
-            }}>
-                <p>Correlating your brain activity with health & productivity signals</p>
+                <main style={{
+                    marginLeft: '12%',
+                }}>
+                    <p>Correlating your brain activity with health & productivity signals</p>
 
-                <ReactEcharts
-                    option={options}
-                    style={{ height: '500px', width: '100%' }}
-                />
-            </main>
-
+                    <ReactEcharts
+                        option={options}
+                        style={{ height: '500px', width: '100%' }}
+                    />
+                </main>
+            </> : <></>
+            }
         </>
     )
 

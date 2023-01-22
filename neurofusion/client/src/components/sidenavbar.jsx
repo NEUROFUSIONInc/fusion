@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from '../assets/logo.png';
-import { logoutUser } from '../services/magic';
+import { logoutUser } from '../services/auth';
 
 const navStyle = {
   position: 'fixed',
