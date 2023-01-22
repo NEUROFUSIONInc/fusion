@@ -172,6 +172,13 @@ export default function Experiment({
     function writeDataToStore(dataName, data, fileTimestamp, storeType="download") {
         setRecordingStatus("stopped");
 
+        if (fileTimestamp.length!=10 && fileTimestamp.length!=13 ) {
+            console.log("fileTimestamp must be in seconds or milliseconds");
+            return;
+        }
+
+        const recordingDate = new Date(fileTimestamp  * 1000); // in milliseconds
+
         const userGuid = getOrSetUserGuid();
         const content = convertToCSV(data); // convert to csv format
         if (storeType === "download") {
@@ -185,12 +192,15 @@ export default function Experiment({
         } else if ( storeType === "remoteStorage") {
             // this is where we go ahead and then deploy to azure blob
             // first step is do it from the browser and then we'll go ahead to do from server
+            const year = recordingDate.getUTCFullYear();
+            const month = recordingDate.getUTCMonth();
+            const day = recordingDate.getUTCDate();
 
             (async (data, dataName, fileTimestamp) => {
                 // userGuid/YYYY/MM/DD/dataName_fileTimestamp.csv
                 const fileObject = new File(
                     [JSON.stringify(data)], 
-                    `${userGuid}/${dataName}_${fileTimestamp}.csv`, 
+                    `${userGuid}/${year}/${month}/${day}/${dataName}_${fileTimestamp}.csv`, 
                     { type: 'application/csv' }
                 );
 
@@ -198,9 +208,7 @@ export default function Experiment({
                 const blobsInContainer = await uploadFileToBlob(fileObject);        
             })(data, dataName, fileTimestamp);
         }
-
-
-
+        
 
         console.log(`Writing data for ${dataName} complete`);
     }
