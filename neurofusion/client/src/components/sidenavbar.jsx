@@ -20,6 +20,7 @@ const titleStyle = {
   margin: 0,
   padding: '0 20px',
   fontSize: '1.2em',
+  textAlign: 'center',
 };
 
 const listStyle = {
@@ -39,16 +40,13 @@ const linkStyle = {
 };
 
 const logoStyle = {
-  padding: '0 20px',
-  width: '-webkit-fill-available',
-  borderRadius: '61px'
 }
 
 const SideNavBar = () => {
   return (
     <nav style={navStyle}>
-      <div>
-        <img src={logo} style={logoStyle} alt="logo" width={150} height={150}/>
+      <div style={{display: 'flex', justifyContent: 'center' }}>
+        <img src={logo} style={logoStyle} alt="logo" width={150} />
       </div>
 
       <h3 style={titleStyle}>NEUROFUSION</h3>

@@ -58,8 +58,6 @@ const AuthManager = () => {
   }
 
   const logoStyle = {
-    padding: '0 20px',
-    borderRadius: '61px'
   }
 
   return (

@@ -4,9 +4,7 @@ import analysisdemo from '../assets/analysisdemo.png';
 import '../App.css';
 
 const logoStyle = {
-    padding: '0 20px',
-    width: '-webkit-fill-available',
-    borderRadius: '61px'
+    padding: '0 20px'
 }
 
 
@@ -22,7 +20,7 @@ export default function LandingPage() {
             <div class="landing">
                 <div class="banner">
                     <div class="title">
-                        <img src={logo} width={150} height={150} style={logoStyle} ></img>
+                        <img src={logo} height={150} style={logoStyle} ></img>
                         <h1>NEUROFUSION</h1>
                     </div>
                     <p>Making your brain & behavior data accessible to you</p>
@@ -89,7 +87,7 @@ export default function LandingPage() {
 
                 <div class="footer">
                     <h3>ore@usefusion.app</h3>
-                    <h3>@NEUROFUSION Research Inc.</h3>
+                    <h3>© NEUROFUSION Research Inc.</h3>
                 </div>
             </div>
         </div>
