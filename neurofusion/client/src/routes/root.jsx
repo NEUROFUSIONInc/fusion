@@ -9,6 +9,8 @@ import { notion, useNotion } from "../services/neurosity";
 import { getNeurositySelectedDevice, updateNeurositySelectedDevice } from '../services/appsettings';
 import { useNeurofusionUser } from '../services/auth';
 
+import '../App.css';
+
 export default function Root() {
 
     const neurosityUserInfo = useNotion();

@@ -62,12 +62,14 @@ const uploadFileToBlob = async (file: File | null): Promise<string[]> => {
   await containerClient.createIfNotExists({
     access: 'container',
   });
-
+  
   // upload file
   await createBlobInContainer(containerClient, file);
 
+  // don't need to return a full list on client
+  return [];
   // get list of blobs in container
-  return getBlobsInContainer(containerClient);
+  // return getBlobsInContainer(containerClient);
 };
 // </snippet_uploadFileToBlob>
 
