@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState, useContext } from 'react';
 import { Magic } from 'magic-sdk';
+import axios from 'axios';
 
 const magic = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY);
 
@@ -81,11 +82,30 @@ export const checkUser = async (cb) => {
 };
 
 export const loginUser = async (email, cb) => {
-  await magic.auth.loginWithMagicLink({ email });
-  return cb({ isLoggedIn: true , isLoading: false});
+  const idToken = await magic.auth.loginWithMagicLink({ email });
+  if (idToken) {
+    const neurofusionUser = await userLoginComplete(email, idToken);
+    const user = await magic.user.getMetadata();
+
+    const userMetadata = {...neurofusionUser, isLoggedIn: true, isLoading: false, email: user.email};
+    return cb(userMetadata);
+  } else { 
+    return cb({ isLoggedIn: false, isLoading: false });
+  }
 };
 
 export const logoutUser = async () => {
   await magic.user.logout();
   window.location.assign('/');
 };
+
+export async function userLoginComplete(email, idToken) {
+    const res = await axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/userlogin`, {
+        userEmail: email,
+        magicLinkAuthToken: idToken
+    });
+
+    if (res.status === 200) {
+        return res.data;
+    }
+}
