@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const { Magic } = require('@magic-sdk/admin');
 
+const storageController = require('./controllers/storage');
+
 const { sequelize, UserMetadata } = require('./db.js');
 dotenv.config()
 
@@ -13,6 +15,9 @@ const port = process.env.PORT || 4000;
 const notion = new Notion({
   autoSelectDevice: false
 });
+
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 /* 1. Setup Magic Admin SDK */
 const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
@@ -208,6 +213,16 @@ app.get('/api/get-upload-token', (req, res) => {
 
 });
 
+app.post('/api/storage/upload', storageController.uploadBlob);
+
+app.get('/api/storage/search', storageController.findBlobs);
+
+// Get blob content
+app.get('/api/storage/get', storageController.getBlob);
+
+// Download blob content as file
+app.get('/api/storage/download', storageController.downloadBlob);
+
 app.listen(port, () => {
   console.log(`Neurofusion server listening on port ${port}`)
 
@@ -215,4 +230,4 @@ app.listen(port, () => {
     console.log('Database connected');
     sequelize.sync();
   });
-})
+});
