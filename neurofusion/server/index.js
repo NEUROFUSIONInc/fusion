@@ -2,11 +2,13 @@ const {Notion} = require("@neurosity/notion");
 const express = require("express");
 const dotenv = require('dotenv');
 const cors = require('cors');
-const { Magic } = require('@magic-sdk/admin');
 
 const storageController = require('./controllers/storage');
+const userController = require('./controllers/user');
 
-const { sequelize, UserMetadata } = require('./db.js');
+const db = require('./models/index');
+
+
 dotenv.config()
 
 const app = express()
@@ -19,8 +21,6 @@ const notion = new Notion({
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-/* 1. Setup Magic Admin SDK */
-const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
 
 // TODO: configure trusted sources
 app.use(cors());
@@ -157,62 +157,11 @@ app.post('/api/magicflow/update-data', (req, res) => {
   // then call ../magicflow/index.js getTimeseriesData
 });
 
-// TODO: needs testing
-app.post('/api/userlogin', async (req, res) => {
-  if (!req.body.userEmail || !req.body.magicLinkAuthToken) {
-    res.status(401).json({
-      body: {
-        error: "user email or magic link auth token not provided"
-      }
-    });
-    return;
-  }
+app.post('/api/userlogin', userController.validateLogin);
 
-  // call magiclink to validate user is loggedIn
-  const magicLinkUser = await magic.users.getMetadataByToken(req.body.magicLinkAuthToken);
-  if (!magicLinkUser) {
-    res.status(401).json({
-      body: {
-        error: "user is not logged in"
-      }
-    });
-    return;
-  }
-
-  // fetch user if exists else create user
-  UserMetadata.findOne({
-    where: {
-      userEmail: magicLinkUser.email
-    }
-  }).then(result => {
-    console.log(result);
-    // TODO: validate results
-    
-    // check if user exists
-    // return user guid
-    res.status(200).json({
-      statusCode: 200,
-      body: {
-        userGuid: result.userGuid,
-        magicLinkAuthToken: result.magicLinkAuthToken,
-        magicflowToken: result.magicflowToken,
-        neurosityToken: result.neurosityToken
-      }
-    });
-    // if not, create user
-  }).catch(error => {
-    console.log(error);
-    res.status(400).json({
-      body: error.response.data
-    });
-  });
-})
-
-// TODO: storage, generate upload token
-app.get('/api/get-upload-token', (req, res) => {
-
-});
-
+/**
+ * Storage Routes
+ */
 app.post('/api/storage/upload', storageController.uploadBlob);
 
 app.get('/api/storage/search', storageController.findBlobs);
@@ -223,11 +172,13 @@ app.get('/api/storage/get', storageController.getBlob);
 // Download blob content as file
 app.get('/api/storage/download', storageController.downloadBlob);
 
+/**
+ * Start server
+ */
 app.listen(port, () => {
   console.log(`Neurofusion server listening on port ${port}`)
 
-  sequelize.authenticate().then(async () => {
+  db.sequelize.authenticate().then(async () => {
     console.log('Database connected');
-    sequelize.sync();
   });
 });
