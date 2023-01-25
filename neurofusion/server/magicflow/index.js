@@ -1,6 +1,6 @@
-import { getTimeSeries } from "./utils.js";
-import fs from 'fs';
-import dayjs from 'dayjs';
+const {getTimeSeries} = require("./utils.js");
+const fs = require("fs");
+const dayjs = require('dayjs');
 
 // READ THIS
 // Put your refresh token into utils.js and you should be able to query your data.

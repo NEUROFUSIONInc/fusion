@@ -1,7 +1,7 @@
-import fetch from 'isomorphic-fetch';
-import jwt_decode from "jwt-decode";
-import dayjs from 'dayjs';
-import dotenv from 'dotenv';
+const fetch = require('isomorphic-fetch');
+const jwt_decode = require("jwt-decode");
+const dayjs = require('dayjs');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -10,20 +10,19 @@ let environment = "prod"; // "staging"
 
 // your refresh token goes here!
 // TODO: need to parse this from the stored magicflow token for the user
-let refreshToken = "";
-let accessToken = "";
+let refreshToken = "<update-here>";
 
 let servers = {
   staging: process.env.MAGICFLOW_STAGING_SERVER,
   prod: process.env.MAGICFLOW_PROD_SERVER
 }
-export let serverURL = servers[environment]
+let serverURL = servers[environment]
 
 
-export const DAY_SECS = 24 * 60 * 60;
-export const DAY = DAY_SECS * 1000;
-export const MONTH = 30 * DAY;
-export const YEAR = 12 * MONTH;
+const DAY_SECS = 24 * 60 * 60;
+const DAY = DAY_SECS * 1000;
+const MONTH = 30 * DAY;
+const YEAR = 12 * MONTH;
 
 const months = [
   "January",
@@ -40,28 +39,28 @@ const months = [
   "December",
 ];
 
-export function currentTime() {
+function currentTime() {
   // Return currentTime in secs since Jan 01 1970
   return Date.now() / 1000;
 }
 
 // Create a string representation of the date.
-export function formatDate(millis) {
+function formatDate(millis) {
   const date = new Date(+millis);
   return `${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 // Get millis from text
-export function timestamp(str) {
+function timestamp(str) {
   return new Date(str).getTime();
 }
 
-export function sleep(ms) {
+function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Request sugar
-export function objToQueryString(obj) {
+function objToQueryString(obj) {
   const keyValuePairs = [];
   for (let i = 0; i < Object.keys(obj).length; i += 1) {
     keyValuePairs.push(
@@ -73,12 +72,12 @@ export function objToQueryString(obj) {
   return keyValuePairs.join("&");
 }
 
-export function decodeJWT(token) {
+function decodeJWT(token) {
   return jwt_decode(token);
 }
 
 
-export function getHeaders(upload) {
+function getHeaders(upload) {
   const token = accessToken
   let headers = {
     "Access-Control-Allow-Headers": ["AI-Calls-Remaining", "AI-Call-Limit"],
@@ -94,7 +93,7 @@ export function getHeaders(upload) {
   return headers;
 }
 
-export async function refresh(retry) {
+async function refresh(retry) {
   if (!refreshToken) {
     console.error("No refresh token found, you'll need to supply one for this to work!."); return
   }
@@ -148,14 +147,8 @@ async function request_sugar(type, endpoint, body, upload, isRetry) {
     endpoint.startsWith("http") || endpoint.startsWith("localhost")
       ? endpoint
       : serverURL + endpoint;
-  if (accessToken) {
-    let user = decodeJWT(accessToken);
-    // console.log({user})
-    const expiry = user.exp;
-    if (currentTime() > expiry) {
-      await refresh();
-    }
-  } else accessToken = await refresh();
+  
+  let accessToken = await refresh();
   // console.log({accessToken})
   if (!accessToken) return;
   let fetchOptions = {
@@ -228,7 +221,7 @@ async function request_sugar(type, endpoint, body, upload, isRetry) {
 }
 
 // Get request sugar
-export async function get_sugar(endpoint, params) {
+async function get_sugar(endpoint, params) {
   if (params) {
     let keyValuePairs = objToQueryString(params);
     endpoint = `${endpoint}?${keyValuePairs}`;
@@ -239,7 +232,7 @@ export async function get_sugar(endpoint, params) {
   });
 }
 
-export async function getData(dataName, source, noCache, extraParams) {
+async function getData(dataName, source, noCache, extraParams) {
   source = source || "facebook";
   !dataName.includes("timeseries") ? source = "single/" + source : ""
   const params = {
@@ -257,7 +250,7 @@ export async function getData(dataName, source, noCache, extraParams) {
   return data;
 }
 
-export async function getTimeSeries(source, options) {
+async function getTimeSeries(source, options) {
   options.range = options.range ? Object.fromEntries(Object.entries(options.range).map(date => { date[1] = dayjs(date[1]).format("YYYY-MM-DD"); return date })) : {}
   let data;
   if (options.daysInPast !== undefined) {
@@ -278,4 +271,8 @@ export async function getTimeSeries(source, options) {
   }
   if (data && data?.length) data = data.filter((a) => a)
   return data;
+}
+
+module.exports = {
+  getTimeSeries
 }
