@@ -32,15 +32,12 @@ export const authOptions: NextAuthOptions = {
         didToken: { label: "DID Token", type: "text" },
       },
       async authorize(credentials) {
-        console.log(credentials?.didToken);
         const didToken = credentials?.didToken || "";
         // validate magic DID token
         magic.token.validate(didToken);
 
         // fetch user metadata
         const metadata = await magic.users.getMetadataByToken(didToken);
-
-        console.log(metadata);
 
         // return user info
         return {
