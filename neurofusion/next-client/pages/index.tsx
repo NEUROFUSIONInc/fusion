@@ -1,8 +1,15 @@
+"use client";
+
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { Magic } from "magic-sdk";
+
+const magic =
+  typeof window !== "undefined" &&
+  new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY || "a");
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
@@ -18,7 +25,11 @@ const Home: NextPage = () => {
         <>
           <h1>Welcome {session.user?.email}</h1>
           <button
-            onClick={() => signOut()}
+            onClick={async () => {
+              if (!magic) throw new Error(`magic not defined`);
+              await magic.user.logout();
+              signOut();
+            }}
             className="py-1 px-4 bg-gray-900 text-zinc-50 rounded-md"
           >
             Logout
