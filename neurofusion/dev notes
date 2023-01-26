@@ -1,18 +1,3 @@
-folder structure for uploaded data should be
-
-<userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>
-
-build the best intuitive visualization
-- allow to see visualization side by side
-
-tagging recordings need to be built in - done
-
-------
-core data integrations
-----------------------
-neurosity (brain activity)
-magicflow (actions on device)
-oura (reg health)
 
 ----
 analysis
@@ -289,7 +274,28 @@ evening
 - 1674679916
 - 1674681882
 - 1674706492
+
+- 1674715314  - freely working, ended up scorlling on instagram
+
+- 1674717040 - rubber ducking ideas for visualization
+
+- 1674719194 - eyes closed, thinking about visualizations and presenting data
+
+- 1674720455 - eyes open, probably trying to work
+
 ----
+- 1674744909 - meeting w E
+
+- 1674748330 - 10mins eyes closed
+
+- 1674749054 - eyes open, starting to figure out what to do re:work
+
+- 1674750807 - eyes closed, soft piano - kept opening my eyes in between though lol
+
+- 1674758084  - eyes open, working
+
+-  - eyes open, working - focus being analysis of data
+
 
 ----
 I'm so excited, gonna get to viewing experiments natively sooon!!!
@@ -304,15 +310,15 @@ questions:
 
 later:
 
-[] spend a full period on data storage and sync.
+- [] spend a full period on data storage and sync.
 
-[] properly design the analysis view based on available data streams
+- [] properly design the analysis view based on available data streams
 
 Idea! Have you considered taking screenshots with Magicflow & storing on user device - it’ll really help with categorization
 
 ---
-- signalquality seems to be better when my head is bent downwards...
-- desperately need signal helper
+- [] signalquality seems to be better when my head is bent downwards...
+- [] desperately need signal helper
 
 integrating brain dump - capturing text from keyboard, sit locally on device
 
