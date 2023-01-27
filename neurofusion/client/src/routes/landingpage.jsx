@@ -1,6 +1,6 @@
 import logo from '../assets/logo.png';
 import dinodemo from '../assets/dinodemo.png';
-import analysisdemo from '../assets/analysisdemo.png';
+import analysisdemo from '../assets/analysisdemo_day.png';
 import '../App.css';
 
 const logoStyle = {

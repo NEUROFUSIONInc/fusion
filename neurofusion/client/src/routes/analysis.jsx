@@ -7,7 +7,7 @@ import { Dropdown, Slider } from '@fluentui/react'
 // import neurosityFocus from "../assets/neurosity_focus_clean_dec_11.json"
 // import magicFlowRawEvents from "../assets/magicflow_raw_events_clean_dec_11.json"
 
-import powerSpectrumData from "../assets/powerSpectrum_signalQuality_1674454790.json"
+import powerSpectrumData from "../assets/final_df.json"
 import { useNeurofusionUser } from '../services/auth';
 
 export default function Analysis() {
@@ -30,6 +30,15 @@ export default function Analysis() {
         { key: 'beta', text: 'Beta' },
         { key: 'gamma', text: 'Gamma' }
     ];
+
+    const [zoomStart, setZoomStart] = useState(null);
+    const [zoomEnd, setZoomEnd] = useState(null);
+
+    function handleZoom(param) {
+        const { startValue, endValue } = param;
+        setZoomStart(startValue);
+        setZoomEnd(endValue);
+    }
 
     useEffect(() => {
         // only intialize the chart once
@@ -168,7 +177,14 @@ export default function Analysis() {
                 right: 10,
                 data: legendData,
                 textStyle: chartTextStyle
-            }
+            },
+            dataZoom: [
+            {
+                id: 'dataZoomX',
+                type: 'slider',
+                xAxisIndex: [0],
+                filterMode: 'filter'
+            }]
         };
 
         return options;
