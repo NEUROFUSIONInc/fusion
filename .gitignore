@@ -1,4 +1,3 @@
-.vscode
 .cache*
 .ipynb_checkpoints
 fusion-ios/*
