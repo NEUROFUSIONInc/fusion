@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Magic } from "magic-sdk";
+import { Button } from "components/ui";
 
 const magic =
   typeof window !== "undefined" &&
@@ -24,16 +25,15 @@ const Home: NextPage = () => {
       {session ? (
         <>
           <h1>Welcome {session.user?.email}</h1>
-          <button
+          <Button
             onClick={async () => {
               if (!magic) throw new Error(`magic not defined`);
               await magic.user.logout();
               signOut();
             }}
-            className="py-1 px-4 bg-gray-900 text-zinc-50 rounded-md"
           >
             Logout
-          </button>
+          </Button>
         </>
       ) : (
         <Link href="/auth/login">Login</Link>
