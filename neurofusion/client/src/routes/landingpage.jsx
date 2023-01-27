@@ -4,9 +4,11 @@ import analysisdemo from '../assets/analysisdemo.png';
 import '../App.css';
 
 const logoStyle = {
-    padding: '0 20px'
 }
 
+const imageStyle = {
+    width: '100%'
+}
 
 export default function LandingPage() {
 
@@ -20,10 +22,19 @@ export default function LandingPage() {
             <div class="landing">
                 <div class="banner">
                     <div class="title">
-                        <img src={logo} height={150} style={logoStyle} ></img>
-                        <h1>NEUROFUSION</h1>
+                        <img src={logo} height={100} style={logoStyle} ></img>
+                        <h1 style={{paddingLeft: '10px'}}>NEUROFUSION</h1>
                     </div>
                     <p>Making your brain & behavior data accessible to you</p>
+                </div>
+                <div class="block">
+                    <div style={{width: '100vw'}}>
+                        <img
+                        class="image"
+                        src={analysisdemo}
+                        style={{width:'100%'}}
+                        ></img>
+                    </div>
                 </div>
                 <div class="block">
                     <div class="body">
@@ -42,23 +53,13 @@ export default function LandingPage() {
                             <li>Run your data with available models & share your results with others!</li>
                         </ul>
                     </div>
-                    <img
-                        class="image"
-                        src={dinodemo}
-                    ></img>
-                </div>
-                <div class="block">
-                    <img
-                        class="image"
-                        src={analysisdemo}
-                    ></img>
                     <div class="body">
                         <h1 class="bodyTitle">
                             Your lab on the go!
                         </h1>
                         <ul class="list">
                             <li>
-                                Design quests - a set of experiments - and exection flow
+                                Design quests, a set of tasks and their exection flow
                             </li>
                             <li>Define methods that update study results as new data
                                 is fetched!</li>
