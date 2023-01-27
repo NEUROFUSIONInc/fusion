@@ -4,7 +4,6 @@ import {
 } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 
-
 import Root from "./routes/root";
 import Analysis from './routes/analysis';
 import ErrorPage from './routes/error-page';
@@ -60,12 +59,12 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ProvideNeurofusionUser>
-      <ProvideNotion>
-        <RouterProvider router={router} />
-        {/* TODO: handle authentication on routes */}
-      </ProvideNotion>
-    </ProvideNeurofusionUser>
+      <ProvideNeurofusionUser>
+        <ProvideNotion>
+          <RouterProvider router={router} />
+          {/* TODO: handle authentication on routes */}
+        </ProvideNotion>
+      </ProvideNeurofusionUser>
   );
 }
 
