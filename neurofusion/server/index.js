@@ -110,10 +110,7 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
  * Magicflow Routes
  */
 // TODO: set token - implementation
-app.post('/api/magicflow/set-token', (req, res) => {
-  // store token in db
-  // check if data exists & fetch from magicflow
-})
+app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
 // TODO: fetch magicflow token - testing
 app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
