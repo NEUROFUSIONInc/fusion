@@ -6,14 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Magic } from "magic-sdk";
-import { Button } from "components/ui";
+import { Button } from "~/components/ui";
 
 const magic =
   typeof window !== "undefined" &&
   new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY || "a");
 
 const Home: NextPage = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   return (
     <div className="p-2">
       <Image
