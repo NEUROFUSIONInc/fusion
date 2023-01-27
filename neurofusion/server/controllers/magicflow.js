@@ -29,7 +29,48 @@ exports.fetchToken = async (req, res) => {
     console.error(err);
     res.status(400)
       .json({
-        error: "Unable to fetch user token"
+        error: "Unable to fetch magicflow token"
+      });
+  }
+};
+
+exports.setToken = async (req, res) => {
+  const email = req.body.userEmail;
+  const magicflowToken = req.body.magicflowToken;
+
+  if (!email || !magicflowToken) {
+    return res.status(401)
+      .json({
+        error: "Invalid payload."
+      });
+  }
+
+  try {
+    const userMetadata = await db.UserMetadata.findOne({ where: { userEmail: email } });
+
+    if (!userMetadata) {
+      return res.status(401)
+        .json({
+          error: "User does not exist"
+        });
+    }
+
+    await db.UserMetadata.update({ magicflowToken: magicflowToken }, {
+      where: {
+        userGuid: userMetadata.userGuid
+      }
+    });
+
+    res.status(200)
+      .json({
+        userGuid: userMetadata.userGuid,
+        magicflowToken
+      });
+  } catch (err) {
+    console.error(err);
+    res.status(400)
+      .json({
+        error: "Unable to update magicflow token"
       });
   }
 };
