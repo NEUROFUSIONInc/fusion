@@ -1,0 +1,7 @@
+.next
+node_modules
+coverage
+__snapshots__
+package-lock.json
+*.config.js
+next-env.d.ts
