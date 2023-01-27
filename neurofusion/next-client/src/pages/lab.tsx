@@ -1,5 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
+
 import { authOptions } from "./api/auth/[...nextauth]";
 
 const LabPage: NextPage = () => {

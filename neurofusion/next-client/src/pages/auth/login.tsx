@@ -1,18 +1,17 @@
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]";
 import { Magic } from "magic-sdk";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
-const magic =
-  typeof window !== "undefined" &&
-  new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY || "a");
+import { authOptions } from "../api/auth/[...nextauth]";
 
-type FormValue = {
+const magic = typeof window !== "undefined" && new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY || "a");
+
+interface FormValue {
   email: string;
-};
+}
 
 const LoginPage = () => {
   const router = useRouter();
@@ -26,7 +25,7 @@ const LoginPage = () => {
     await signIn("credentials", {
       didToken,
       redirect: true,
-      callbackUrl: router.query["callbackUrl"]?.toString(),
+      callbackUrl: router.query.callbackUrl?.toString(),
     });
   };
 
@@ -37,6 +36,7 @@ const LoginPage = () => {
           {...register("email", { required: true })}
           className="border"
           placeholder="valid email address"
+          autoComplete="email"
         />
 
         <button type="submit">Sign in</button>
