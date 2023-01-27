@@ -33,20 +33,13 @@ export default function LandingPage() {
                         <p>We provide:</p>
                         <ul class="list">
                             <li>
-                                A playground of experiments for collecting brain
+                                A playground of exercises for recording brain & behavior
                                 data
                             </li>
                             <li>
-                                Instant & interactive plots of recorded data:
-                                <ul>
-                                    <li>health</li>
-                                    <li>productivity</li>
-                                    <li>brain power</li>
-                                    <li>self sample</li>
-                                </ul>
+                                See how your health, productivity, brain power, behavior (activities) change over time
                             </li>
-                            <li>Run datasets against available models</li>
-                            <li>Share your runs & results with others</li>
+                            <li>Run your data with available models & share your results with others!</li>
                         </ul>
                     </div>
                     <img
