@@ -54,23 +54,17 @@ export default function LandingPage() {
                     ></img>
                     <div class="body">
                         <h1 class="bodyTitle">
-                            We enable community science
+                            Your lab on the go!
                         </h1>
                         <ul class="list">
                             <li>
-                                Taking brain (EEG) & behavior research out of the
-                                lab
-                            </li>
-                            <li>"Run trials on yourself"</li>
-                            <li>
-                                Design studies - a set of experiments - and exection flow
+                                Design quests - a set of experiments - and exection flow
                             </li>
                             <li>Define methods that update study results as new data
                                 is fetched!</li>
                             <li>
-                            Members can opt-in and participate using hassle-free 
-                            data collection & validation tools while maintaining ownership
-                            of their data and providing consent for usage.
+                            Members can opt-in and provide informed consent to participate 
+                            in shared studies via the platform.
                             </li>
                         </ul>
                     </div>
