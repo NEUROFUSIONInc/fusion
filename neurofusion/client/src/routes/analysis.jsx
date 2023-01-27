@@ -225,7 +225,6 @@ export default function Analysis() {
                                             [...selectedFrequencyBands, option.key] : 
                                             selectedFrequencyBands.filter((item) => item !== option.key));
                                     }}
-                                    calloutProps={{ doNotLayer: true }}
                                     styles={{
                                         label: {
                                             color: 'white'
