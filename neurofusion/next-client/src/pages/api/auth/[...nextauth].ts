@@ -1,5 +1,6 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
 import { randomBytes } from "crypto";
+
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Magic } from "@magic-sdk/admin";
 
