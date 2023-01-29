@@ -4,11 +4,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export const Button: FC<ButtonProps> = ({ children, ...props }) => {
   return (
-    <button
-      type="button"
-      className="py-1 px-4 bg-gray-900 text-zinc-50 rounded-md"
-      {...props}
-    >
+    <button type="button" className="text-zinc-50 rounded-full bg-secondary-600 py-1 px-4 text-sm font-bold" {...props}>
       {children}
     </button>
   );
