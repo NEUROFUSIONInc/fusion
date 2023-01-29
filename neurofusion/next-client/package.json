@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@magic-sdk/admin": "^1.8.0",
+    "@next/font": "^13.1.6",
     "magic-sdk": "^13.1.0",
     "next": "latest",
     "next-auth": "^4.18.10",
+    "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1"
@@ -40,6 +42,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "postcss": "^8.4.18",
     "prettier": "^2.8.3",
+    "prettier-plugin-tailwindcss": "^0.2.2",
     "storybook": "^7.0.0-beta.35",
     "tailwindcss": "^3.2.4",
     "typescript": "4.9.4"
