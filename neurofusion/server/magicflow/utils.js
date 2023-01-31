@@ -8,10 +8,6 @@ dotenv.config();
 // environment
 let environment = "prod"; // "staging"
 
-// your refresh token goes here!
-// TODO: need to parse this from the stored magicflow token for the user
-let refreshToken = "<update-here>";
-
 let servers = {
   staging: process.env.MAGICFLOW_STAGING_SERVER,
   prod: process.env.MAGICFLOW_PROD_SERVER
@@ -93,7 +89,7 @@ function getHeaders(upload) {
   return headers;
 }
 
-async function refresh(retry) {
+async function refresh(retry, refreshToken) {
   if (!refreshToken) {
     console.error("No refresh token found, you'll need to supply one for this to work!."); return
   }
@@ -125,7 +121,9 @@ async function refresh(retry) {
           return;
         }
       }
-      if (data.refresh_token) refreshToken = data.refresh_token;
+      if (data.refresh_token) {
+        refreshToken = data.refresh_token;
+      }
       return data.access_token;
     } else {
       console.error(
@@ -134,21 +132,20 @@ async function refresh(retry) {
     }
     if ((retry || 0) + 1 < 3) {
       retry = (retry || 0) + 1;
-      return await refresh(retry)
+      return await refresh(retry, refreshToken)
     }
   }).then(r => { return r }).catch(e => console.error("Magicflow refresh function didn't complete: ", e));
 
   return accessToken;
 }
 
-async function request_sugar(type, endpoint, body, upload, isRetry) {
-
+async function request_sugar(type, endpoint, body, upload, isRetry, refreshToken) {
   endpoint =
     endpoint.startsWith("http") || endpoint.startsWith("localhost")
       ? endpoint
       : serverURL + endpoint;
   
-  let accessToken = await refresh();
+  let accessToken = await refresh(0, refreshToken);
   // console.log({accessToken})
   if (!accessToken) return;
   let fetchOptions = {
@@ -174,11 +171,11 @@ async function request_sugar(type, endpoint, body, upload, isRetry) {
       ) {
         let response = await res.json();
         if (response && response.data && response.data.includes("verify your email")) return response.data;
-        let accessToken = await refresh();
+        let accessToken = await refresh(0, refreshToken);
         if (accessToken && !isRetry)
           return await new Promise((resolve) =>
             setTimeout(
-              () => resolve(request_sugar(type, endpoint, body, upload, "isRetry")),
+              () => resolve(request_sugar(type, endpoint, body, upload, true, refreshToken)),
               4000
             )
           );
@@ -208,7 +205,7 @@ async function request_sugar(type, endpoint, body, upload, isRetry) {
       if (err.message && err.message.includes("Failed to fetch") && upload) {
         return new Promise((resolve) =>
           setTimeout(
-            () => resolve(request_sugar(type, endpoint, body, upload)),
+            () => resolve(request_sugar(type, endpoint, body, upload, true, refreshToken)),
             4000
           )
         );
@@ -221,25 +218,25 @@ async function request_sugar(type, endpoint, body, upload, isRetry) {
 }
 
 // Get request sugar
-async function get_sugar(endpoint, params) {
+async function get_sugar(endpoint, params, refreshToken) {
   if (params) {
     let keyValuePairs = objToQueryString(params);
     endpoint = `${endpoint}?${keyValuePairs}`;
   }
-  return request_sugar("GET", endpoint, null, false).catch((res) => {
+  return request_sugar("GET", endpoint, null, false, false, refreshToken).catch((res) => {
     console.error(res)
       ;
   });
 }
 
-async function getData(dataName, source, noCache, extraParams) {
+async function getData(dataName, source, noCache, extraParams, refreshToken) {
   source = source || "facebook";
   !dataName.includes("timeseries") ? source = "single/" + source : ""
   const params = {
     name: dataName,
     ...extraParams
   };
-  let data = await get_sugar(`/api/v1/data/query/${source}/`, params).then(async res => {
+  let data = await get_sugar(`/api/v1/data/query/${source}/`, params, refreshToken).then(async res => {
     const data = res && await res;
     // console.log(data)
     if (!data || typeof data === "string") {
@@ -250,7 +247,7 @@ async function getData(dataName, source, noCache, extraParams) {
   return data;
 }
 
-async function getTimeSeries(source, options) {
+async function getTimeSeries(source, options, refreshToken) {
   options.range = options.range ? Object.fromEntries(Object.entries(options.range).map(date => { date[1] = dayjs(date[1]).format("YYYY-MM-DD"); return date })) : {}
   let data;
   if (options.daysInPast !== undefined) {
@@ -258,7 +255,9 @@ async function getTimeSeries(source, options) {
     data = await getData(
       "timeseries" + date.replace(/-/g, "_"),
       `time_series/${source}/` + date,
-      options.daysInPast ? false : "noCache"
+      options.daysInPast ? false : "noCache",
+      {},
+      refreshToken
     ).catch((error) => console.error(error));
   }
   else {
@@ -266,13 +265,12 @@ async function getTimeSeries(source, options) {
       "timeseries",
       `time_series/${source}`,
       "noCache",
-      { ...(options.range || []) }
+      { ...(options.range || []) },
+      refreshToken
     ).catch((error) => console.error(error));
   }
   if (data && data?.length) data = data.filter((a) => a)
   return data;
 }
 
-module.exports = {
-  getTimeSeries
-}
+module.exports = getTimeSeries;
