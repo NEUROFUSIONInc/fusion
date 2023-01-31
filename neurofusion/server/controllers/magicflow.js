@@ -1,4 +1,5 @@
 const db = require('../models/index');
+const { magicFlowQueue, storageQueue } = require('../queue');
 
 
 exports.fetchToken = async (req, res) => {
@@ -59,6 +60,14 @@ exports.setToken = async (req, res) => {
       where: {
         userGuid: userMetadata.userGuid
       }
+    });
+
+    // Fetch user's magicflow data in the background
+    magicFlowQueue.push({
+      guid: userMetadata.userGuid,
+      token: magicflowToken,
+      lastFetched: userMetadata.magicflowLastFetched,
+      storageQueue // Importing this from magicflow processor wasn't working so passing the instance
     });
 
     res.status(200)
