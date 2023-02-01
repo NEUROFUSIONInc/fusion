@@ -113,7 +113,7 @@ export default function Analysis() {
             const powerSpectrumSeries = powerSpectrumData.map((item) => {
                 // filter for only good channels
                 if (item[`${channelName}_${frequencyBand}`] <= stdDevThreshold) {
-                    return [item.unixTimestamp, item[`${channelName}_${frequencyBand}`]]
+                    return [item.unixTimestamp, item[`${channelName}_${frequencyBand}_moving_avg`]]
                 }
             })
 
