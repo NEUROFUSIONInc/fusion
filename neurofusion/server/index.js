@@ -2,12 +2,15 @@ const {Notion} = require("@neurosity/notion");
 const express = require("express");
 const dotenv = require('dotenv');
 const cors = require('cors');
+const cron = require('node-cron');
 
 const storageController = require('./controllers/storage');
 const userController = require('./controllers/user');
+const magicFlowController = require('./controllers/magicflow');
 
 const db = require('./models/index');
 
+const magicFlowCron = require('./cron-jobs/magicflow-daily-fetch');
 
 dotenv.config()
 
@@ -109,45 +112,10 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
  * Magicflow Routes
  */
 // TODO: set token - implementation
-app.post('/api/magicflow/set-token', (req, res) => {
-  // store token in db
-  // check if data exists & fetch from magicflow
-})
+app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
 // TODO: fetch magicflow token - testing
-app.get('/api/magicflow/get-token', (req, res) => {
-  console.log(req.params);
-  if (!req.params.userEmail) {
-    res.status(401).json({
-      body: {
-        error: "user email not provided"
-      }
-    });
-    return;
-  }
-
-  (async () => {
-    const userMetadata = await UserMetadata.findOne({ where: { userEmail: req.params.userEmail } });
-    if (userMetadata === null) {
-      console.log('Not found!');
-      res.status(401).json({
-        body: {
-          error: "user does not exist"
-        }
-      });
-    } else {
-      console.log(userMetadata instanceof UserMetadata); // true
-      console.log(userMetadata.userEmail); // 'oreogundipe@gmail.com'
-      res.status(200).json({
-        statusCode: 200,
-        body: {
-          userGuid: userMetadata.userGuid,
-          magicflowToken: userMetadata.magicflowToken
-        }
-      });
-    }
-  })();
-})
+app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
 
 
 // TODO: post request to trigger updating magicflow data
@@ -175,10 +143,12 @@ app.get('/api/storage/download', storageController.downloadBlob);
 /**
  * Start server
  */
-app.listen(port, () => {
-  console.log(`Neurofusion server listening on port ${port}`)
+app.listen(port, async () => {
+  console.log(`Neurofusion server listening on port ${port}`);
 
-  db.sequelize.authenticate().then(async () => {
-    console.log('Database connected');
-  });
+  await db.sequelize.authenticate();
+  console.log('Database connected');
+
+  // Schedule cron jobs after db is connected (for jobs that require db query)
+  cron.schedule(magicFlowCron.expression, magicFlowCron.job);
 });
