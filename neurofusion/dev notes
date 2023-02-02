@@ -408,15 +408,27 @@ evening
 - 1675226004 - eyes open, on computer - 
 had to take it off during the last recording, head was starting to hurt (wearing it with headsets make it hurt faster - but this was after >40mins)
 
+----
+
+- 1675270202 - eyes open, this is going to be a free form recording.. can't guarantee the amount of noise but interesting to see - 9:14AM device shutdown
+
+tagging outcomes
+- when I'm changing context from one activity to the other
+- tracking movement periods
+
+- 1675276805 - more randmoness (drinking coffee and reading)
+
+- 1675284254 - famasi dev 
 
 questions:
 - what's a good statistical correlation I can use for this
+    
+    - bin the powerByBand values to 'x' seconds averages
+
     - think about meaning (reference stats material)
 
-later:
-
-
 - [] properly design the analysis view based on available data streams
+----
 
 Idea! Have you considered taking screenshots with Magicflow & storing on user device - it’ll really help with categorization
 
@@ -429,14 +441,8 @@ integrating brain dump - capturing text from keyboard, sit locally on device
 
 local version of neurofusion..
 
-the desire to call people
-
 (wait for a minute first to get good signal quality)
 
-
 I should get an EA - or actually even better, use AI to be my EA
-- Insights from productivity data
+- Insights from screen time on what activities new following up on
  - whats different in the things I've been spending my time doing (interests)
-
-
-- bin the powerByBand values to 'x' seconds averages
