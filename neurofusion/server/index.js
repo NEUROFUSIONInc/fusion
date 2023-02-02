@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const storageController = require('./controllers/storage');
 const userController = require('./controllers/user');
+const magicFlowController = require('./controllers/magicflow');
 
 const db = require('./models/index');
 
@@ -109,45 +110,10 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
  * Magicflow Routes
  */
 // TODO: set token - implementation
-app.post('/api/magicflow/set-token', (req, res) => {
-  // store token in db
-  // check if data exists & fetch from magicflow
-})
+app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
 // TODO: fetch magicflow token - testing
-app.get('/api/magicflow/get-token', (req, res) => {
-  console.log(req.params);
-  if (!req.params.userEmail) {
-    res.status(401).json({
-      body: {
-        error: "user email not provided"
-      }
-    });
-    return;
-  }
-
-  (async () => {
-    const userMetadata = await UserMetadata.findOne({ where: { userEmail: req.params.userEmail } });
-    if (userMetadata === null) {
-      console.log('Not found!');
-      res.status(401).json({
-        body: {
-          error: "user does not exist"
-        }
-      });
-    } else {
-      console.log(userMetadata instanceof UserMetadata); // true
-      console.log(userMetadata.userEmail); // 'oreogundipe@gmail.com'
-      res.status(200).json({
-        statusCode: 200,
-        body: {
-          userGuid: userMetadata.userGuid,
-          magicflowToken: userMetadata.magicflowToken
-        }
-      });
-    }
-  })();
-})
+app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
 
 
 // TODO: post request to trigger updating magicflow data
