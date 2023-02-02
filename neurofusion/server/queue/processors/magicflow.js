@@ -1,4 +1,5 @@
 const dayjs = require('dayjs');
+const db = require('../../models');
 const getTimeSeries = require('../../magicflow/utils');
 
 const SOURCES = ['activitywatch', 'apple'];
@@ -72,6 +73,16 @@ const queueProcessor = async ({ guid, token, lastFetched, storageQueue }) => {
   try {
     await Promise.allSettled(
       months.flatMap(month => SOURCES.map(source => getMagicFlowData(guid, source, token, month.start, month.end, storageQueue)))
+    );
+    // This will always update the last fetched even if writing to the blob store fails
+    await db.UserMetadata.update(
+      { 
+        magicflowLastFetched: dayjs()
+      }, {
+        where: {
+          userGuid: guid
+        }
+      }
     );
   } catch (err) {
     console.error(err);
