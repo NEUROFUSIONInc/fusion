@@ -2,6 +2,7 @@ const {Notion} = require("@neurosity/notion");
 const express = require("express");
 const dotenv = require('dotenv');
 const cors = require('cors');
+const cron = require('node-cron');
 
 const storageController = require('./controllers/storage');
 const userController = require('./controllers/user');
@@ -9,6 +10,7 @@ const magicFlowController = require('./controllers/magicflow');
 
 const db = require('./models/index');
 
+const magicFlowCron = require('./cron-jobs/magicflow-daily-fetch');
 
 dotenv.config()
 
@@ -141,10 +143,12 @@ app.get('/api/storage/download', storageController.downloadBlob);
 /**
  * Start server
  */
-app.listen(port, () => {
-  console.log(`Neurofusion server listening on port ${port}`)
+app.listen(port, async () => {
+  console.log(`Neurofusion server listening on port ${port}`);
 
-  db.sequelize.authenticate().then(async () => {
-    console.log('Database connected');
-  });
+  await db.sequelize.authenticate();
+  console.log('Database connected');
+
+  // Schedule cron jobs after db is connected (for jobs that require db query)
+  cron.schedule(magicFlowCron.expression, magicFlowCron.job);
 });
