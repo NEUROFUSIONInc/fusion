@@ -53,15 +53,27 @@ exports.uploadBlob = async (content, fileName, fileType, tags={}) => {
 /**
  * This return's a list of blob (path) for a given user guid, data name, and date range using the blob tags
  * @param guid - user's guid
- * @param dataName - e.g focus, calm etc
  * @param startTimestamp - unix timestamp in milliseconds. inclusive
  * @param endTimestamp - unix timestamp in milliseconds. inclusive
+ * @param provider - e.g magicflow, neurosity etc. optional
+ * @param dataName - e.g focus, calm, apple, activitywatch etc. optional
  */
-exports.findBlobs = async (guid, dataName, startTimestamp, endTimestamp) => {
+exports.findBlobs = async (guid, startTimestamp, endTimestamp, provider, dataName) => {
+  if (!guid || !startTimestamp || !endTimestamp) {
+    throw new Error("Invalid params");
+  }
+
   const containerClient = getContainerClient();
 
-  const query = `"guid" = '${guid}' AND "dataName" = '${dataName}' 
-    AND "timestamp" >= '${startTimestamp}' AND "timestamp" <= '${endTimestamp}'`;
+  let query = `"guid" = '${guid}' AND "timestamp" >= '${startTimestamp}' AND "timestamp" <= '${endTimestamp}'`;
+
+  if (provider) {
+    query += ` AND "provider" = '${provider}'`;
+  }
+
+  if (dataName) {
+    query += ` AND "dataName" = '${dataName}'`;
+  }
   
   let results = [];
   const iter = containerClient.findBlobsByTags(query);
