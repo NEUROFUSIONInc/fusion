@@ -53,7 +53,10 @@ app.get('/api/neurosity/get-oauth-url', (req, res) => {
           "read:memories:brainwaves",
           "read:signal-quality",
           "write:brainwave-markers",
-          "write:brainwaves"
+          "write:brainwaves",
+          "read:kinesis",
+          "write:kinesis",
+          "read:status"
         ]
       })
       .then((url) => (
