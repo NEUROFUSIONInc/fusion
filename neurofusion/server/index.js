@@ -133,15 +133,15 @@ app.post('/api/userlogin', userController.validateLogin);
 /**
  * Storage Routes
  */
-app.post('/api/storage/upload', storageController.uploadBlob);
+app.post('/api/storage/upload', storageController.uploadValidator, storageController.uploadBlob);
 
-app.get('/api/storage/search', storageController.findBlobs);
+app.get('/api/storage/search', storageController.findValidator, storageController.findBlobs);
 
 // Get blob content
-app.get('/api/storage/get', storageController.getBlob);
+app.get('/api/storage/get', storageController.getAndDownloadValidator, storageController.getBlob);
 
 // Download blob content as file
-app.get('/api/storage/download', storageController.downloadBlob);
+app.get('/api/storage/download', storageController.getAndDownloadValidator, storageController.downloadBlob);
 
 /**
  * Start server
