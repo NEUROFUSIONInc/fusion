@@ -4,17 +4,20 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: "class",
+  darkMode: ["class"],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["var(--font-inter)", fontFamily.sans],
-        heading: ["var(--font-heading)", fontFamily.sans],
-      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-circle": "radial-gradient(ellipse at 50% 50%, #1D1539 2%, #011227 100%)",
+        "dark-gradient": "linear-gradient(to bottom right, #16122E 10%, #011227 65%, #191230 100%)",
+        "light-gradient":
+          "linear-gradient(to bottom right, rgba(229,222,252,0.4) 0%, #ffffff 35%, #ffffff 50%, rgba(229,222,252,0.3) 100%)",
       },
+    },
+    fontFamily: {
+      body: ["'Inter', sans-serif", ...fontFamily.sans],
+      heading: ["'Expletus Sans', cursive", ...fontFamily.sans],
     },
     colors: {
       transparent: "transparent",
@@ -22,10 +25,12 @@ module.exports = {
       white: colors.white,
       gray: colors.gray,
       red: colors.red,
+      fuchsia: colors.fuchsia,
       aqua: "#05F2DB", // #02DEE7
       lime: "#A8E457", // ##B6F25C
       dark: "#023059", // #112F58,
       primary: {
+        50: "#ebf3fe",
         100: "#cde2fc",
         200: "#9cc5fa",
         300: "#6aa7f7",
