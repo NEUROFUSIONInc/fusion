@@ -1,4 +1,4 @@
-const {getTimeSeries} = require("./utils.js");
+const getTimeSeries = require("./utils.js");
 const fs = require("fs");
 const dayjs = require('dayjs');
 
@@ -18,8 +18,10 @@ let daysInPastOptions = {
   daysInPast: 7 // get data for a week ago
 }
 
+const refreshToken = "";
+
 // getTimeSeries('apple', rangeOptions).then(r => r && fs.writeFileSync('data_health.json', JSON.stringify(r)))
-getTimeSeries('activitywatch', rangeOptions).then(r => r && fs.writeFileSync('data_activity.json', JSON.stringify(r)))
+getTimeSeries('activitywatch', rangeOptions, refreshToken).then(r => r && fs.writeFileSync('data_activity.json', JSON.stringify(r)))
 
 
 

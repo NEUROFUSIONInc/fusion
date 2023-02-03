@@ -129,7 +129,7 @@ export default function Root() {
 
                         </div>
 
-                        <SelfSample />
+                        {/* <SelfSample /> */}
                     </main>
                 </>
                 : <></>

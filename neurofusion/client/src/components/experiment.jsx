@@ -19,6 +19,11 @@ export default function Experiment({
 
     const [recordingDuration, setRecordingDuration] = useState(-1); // in seconds;
     const [recordingStatus, setRecordingStatus] = useState("stopped"); // started, stopped
+    
+    const [eventDescription, setEventDescription] = useState("");
+    const handleEventDescriptionChange = (event) => {
+        setEventDescription(event.target.value);
+    }
 
     function getOrSetUserGuid() {
         let userGuid = localStorage.getItem("userGuid");
@@ -34,6 +39,8 @@ export default function Experiment({
     }, [duration]);
 
     function startRecording() {
+        // TODO: Also include the event Description for the experiment using
+        // the eventSchema in root README.md
         // record raw data
         alert("starting recording")
         // invoke all the subscriptions 
@@ -229,6 +236,14 @@ export default function Experiment({
         <>
             <h3>{name}</h3>
             <p>{description}</p>
+
+            <label htmlFor="event_description">Description of what you're doing:</label>
+            <textarea 
+                id="event_description"
+                value={eventDescription}
+                onChange={handleEventDescriptionChange}
+                placeholder="e.g eyes closed, listening to music"
+            ></textarea>
 
             <div>
             Recording time in seconds :

@@ -25,7 +25,7 @@ export default function LandingPage() {
                         <img src={logo} height={100} style={logoStyle} ></img>
                         <h1 style={{paddingLeft: '10px'}}>NEUROFUSION</h1>
                     </div>
-                    <p>Making your brain & behavior data accessible to you</p>
+                    <p>Making your health & behavior data accessible to you</p>
                 </div>
                 <div class="block">
                     <div style={{width: '100vw'}}>
