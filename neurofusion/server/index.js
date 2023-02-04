@@ -21,7 +21,9 @@ const notion = new Notion({
   autoSelectDevice: false
 });
 
-app.use(express.json()); // for parsing application/json
+app.use(express.json({
+  limit: "50mb"
+})); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 

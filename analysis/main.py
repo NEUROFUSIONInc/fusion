@@ -2,7 +2,7 @@ import flask
 import json
 import glob
 import pandas as pd
-
+import requests
 
 def getTimestampFromPath(path):
     """
@@ -62,23 +62,23 @@ def preprocess_data(startTimestamp: int, endTimestamp: int = None, datatype: str
 
 
     Return:
-    if datatype is eegPowerSpectrum, 
-    a json object that contains 
-    unixTimestamp, 
-    <channel>_<band>_value,
-    <channel>_<band>_stdvalue,
-    <channel>_<band>_moving_avg
+    if datatype is eegPowerSpectrum:
+        a json object that contains 
+        unixTimestamp, 
+        <channel>_<band>_value,
+        <channel>_<band>_stdvalue,
+        <channel>_<band>_moving_avg
 
-    if datatype is events,
-    a json array that contains
-    "startTimestamp"
-    "endTimestamp"
-    "event":
-    {
-        "name": "",
-        "description": "",
-        "value": ""
-    }
+    if datatype is events:
+        a json array that contains
+        "startTimestamp"
+        "endTimestamp"
+        "event":
+        {
+            "name": "",
+            "description": "",
+            "value": ""
+        }
     """
 
     if datatype == "eegPowerSpectrum":    
@@ -180,15 +180,31 @@ def get_powerSpectrumSignalQuality(
 
 # dataset where magicflow events and eeg recordings overlap
 
-if __name__ == "__main__":    
-    mergedEEG_df = preprocess_data(startTimestamp=1665632132, endTimestamp=None, datatype="eegPowerSpectrum")
+if __name__ == "__main__":
+
+    datatype = "eegPowerSpectrum"  
+    startTimestamp = 1665633719  
+    mergedEEG_df = preprocess_data(startTimestamp=startTimestamp, endTimestamp=None, datatype=datatype)
 
     # you can now upload the mergedEEG_df to the backend
-    # provider - fusion
-    # dataName - eegPowerSpectrum
-    # userGuid - {}
-    # content = mergedEEG_df.to_json(orient='records')
+    url = "http://localhost:4000/api/storage/upload"
+    local_path = f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/processed/{datatype}_{startTimestamp}.json"
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "provider": "fusion",
+        "dataName": "eegPowerSpectrum",
+        "userGuid": "460ad24b-570a-42e5-a8c4-679b86401189",
+        "fileTimestamp": startTimestamp,
+        "content": mergedEEG_df.to_json(orient='records')
+    }
 
-    req
+    # frontend vis can read this data when complete
+    response = requests.post(url, json=data, headers=headers)
+
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print(response)
+        print("Failed to upload file and data")
 
     print(mergedEEG_df.head())
