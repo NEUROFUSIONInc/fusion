@@ -1,14 +1,16 @@
-/** @type {import('eslint').Linter.Config} */
-module.exports = {
+// @ts-check
+const { defineConfig } = require("eslint-define-config");
+
+module.exports = defineConfig({
   root: true,
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "unused-imports"],
   extends: [
     "next/core-web-vitals",
     "plugin:@shopify/typescript",
     "plugin:@shopify/react",
     "plugin:@shopify/prettier",
-    // "eslint-config-prettier",
+    "plugin:storybook/recommended",
   ],
   overrides: [
     {
@@ -27,12 +29,29 @@ module.exports = {
       files: ["*.ts", "*.tsx", "*.js", "*.jsx", "!*.stories.tsx"],
       rules: {
         "react/react-in-jsx-scope": "off",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": [
+          "warn",
+          {
+            vars: "all",
+            varsIgnorePattern: "^_",
+            args: "after-used",
+            argsIgnorePattern: "^_",
+          },
+        ],
         "prettier/prettier": "off",
         "no-console": "error",
         "no-nested-ternary": "off",
         "react/no-children-prop": "off",
         "line-comment-position": "off",
         "@shopify/strict-component-boundaries": "off",
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            selector: "variable",
+            format: ["UPPER_CASE", "camelCase", "PascalCase"],
+          },
+        ],
         // THis is intended for internationalisation - when we are ready to add this we should enable this rule
         "@shopify/jsx-no-hardcoded-content": "off",
         "@shopify/jsx-prefer-fragment-wrappers": "off",
@@ -43,4 +62,4 @@ module.exports = {
       },
     },
   ],
-};
+});

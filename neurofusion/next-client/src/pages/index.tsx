@@ -1,16 +1,44 @@
 import type { NextPage } from "next";
-import { Magic } from "magic-sdk";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 
-import { Navbar } from "~/components/layouts";
-
-const magic = typeof window !== "undefined" && new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY || "a");
+import { MainLayout } from "~/components/layouts";
+import { Button } from "~/components/ui";
+import { magic } from "~/lib/magic";
 
 const Home: NextPage = () => {
+  const { data: session } = useSession();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#13122D_1%] via-[#011227_65%] to-[#191230_100%]  p-2">
-      <Navbar />
-    </div>
+    <MainLayout dark>
+      {session ? (
+        <>
+          <h1>Welcome {session.user?.email}</h1>
+          <Button
+            onClick={async () => {
+              if (!magic) throw new Error(`magic not defined`);
+              await magic.user.logout();
+              signOut();
+            }}
+          >
+            Logout
+          </Button>
+        </>
+      ) : (
+        <Link href="/auth/login">Login</Link>
+      )}
+
+      <Link href="/lab" className="block">
+        Go to protected lab route
+      </Link>
+
+      <Link href="/recordings" className="block">
+        Go to another protected route (Recordings)
+      </Link>
+    </MainLayout>
   );
 };
+
+(Home as any).theme = "dark";
 
 export default Home;

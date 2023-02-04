@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Plus } from "lucide-react";
 
-import { Button } from "./button";
+import { ButtonLink } from "./button-link";
 
-const meta: Meta<typeof Button> = {
-  title: "UI/Button",
-  component: Button,
+const meta: Meta<typeof ButtonLink> = {
+  title: "UI/Layouts/ButtonLink",
+  component: ButtonLink,
   argTypes: {
     fullWidth: {
       type: "boolean",
@@ -28,20 +28,21 @@ const meta: Meta<typeof Button> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Button>;
+type Story = StoryObj<typeof ButtonLink>;
 
 export const Primary: Story = {
   args: {
-    children: "Button",
+    children: "Button Link",
     intent: "primary",
     size: "md",
+    href: "#",
   },
 };
 
 export const PrimaryWithIcon: Story = {
   args: {
     ...Primary.args,
-    children: "Icon Button",
+    children: "Icon Button Link",
     rightIcon: <Plus size={16} />,
   },
 };
