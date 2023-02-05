@@ -4,6 +4,7 @@ import glob
 import pandas as pd
 import requests
 import re
+import os
 
 
 def getTimestampFromPath(path):
@@ -15,7 +16,9 @@ def getTimestampFromPath(path):
 
 def get_file_list(file_pattern: str):
     """
-    example file_pattern: "/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/deji/powerByBand_*.json"
+    example file_pattern: "/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/ore/powerByBand_*.json"
+
+    returns an array of timestamps that match the pattern
     """
     # Get a list of all the files with a path matching the pattern
     files = glob.glob(file_pattern)
@@ -48,15 +51,15 @@ def extract_events_from_file(file_path):
         timestamp: {
             startTimestamp: timestamp,
             endTimestamp: None,
-            event: {
-                name: description,
-                description: description,
-                value: None,
-            }
+            name: description,
+            description: description,
+            value: None,
+            source: "manual",
+            tags: []
         }
     }
     """
-    fusion_events = {}
+    fusion_events = []
     with open(file_path, 'r') as file:
         for line in file:
             # get out the timestamp, make the rest the "event.name"
@@ -65,18 +68,17 @@ def extract_events_from_file(file_path):
 
             if(len(timestamps) > 0):
                 # this is assuming the timestamp is a key for the events
-                fusion_events[int(timestamps[0])] = {
+                fusion_event = {
                     "startTimestamp": timestamps[0],
                     "endTimestamp": None,
-                    "event": {
-                        "name": description,
-                        "description": description,
-                        "value": None,
-                        "source": "manual"
-                    }
+                    "name": description,
+                    "description": description,
+                    "value": None,
+                    "source": "manual"
                 }
-                # fusion_events.append(fusion_event)
-    return fusion_events
+                fusion_events.append(fusion_event)
+
+    return pd.DataFrame.from_dict(fusion_events, orient='columns')
 
 
 def preprocess_data(startTimestamp: int, endTimestamp: int = None, datatype: str = "eegPowerSpectrum"):
@@ -96,12 +98,11 @@ def preprocess_data(startTimestamp: int, endTimestamp: int = None, datatype: str
         a dataframe that contains
         "startTimestamp"
         "endTimestamp"
-        "event":
-        {
-            "name": "",
-            "description": "",
-            "value": ""
-        }
+        "name": "",
+        "description": "",
+        "value": "",
+        "source": "manual",
+        "tags": []
     """
 
     if datatype == "eegPowerSpectrum":
@@ -112,12 +113,12 @@ def preprocess_data(startTimestamp: int, endTimestamp: int = None, datatype: str
         print(file_list)
         event_df_list = []  # an empty list to store the data frames
         for singlefile_timestamp in file_list:
-            print(
-                f"comparing startTimestamp: {startTimestamp} with singlefile_timestamp: {singlefile_timestamp}")
-            if(int(startTimestamp) <= int(singlefile_timestamp)):
+            if(int(singlefile_timestamp) >= int(startTimestamp)):
                 data = get_powerSpectrumSignalQuality(
                     singlefile_timestamp
                 )
+                if (data.empty):
+                    continue
                 event_df_list.append(data)  # append the data frame to the list
 
         # concatenate all the data frames in the list.
@@ -134,7 +135,6 @@ def preprocess_data(startTimestamp: int, endTimestamp: int = None, datatype: str
 def get_powerSpectrumSignalQuality(
     startTimestamp: str,
     endTimestamp: str = None,
-    download: bool = False,
     options: dict = {
         "frequency_bands": ['delta', 'theta', 'alpha', 'beta', 'gamma'],
         "channels": ['CP3', 'C3', 'F5', 'PO3', 'PO4', 'F6', 'C4', 'CP4'],
@@ -161,9 +161,13 @@ def get_powerSpectrumSignalQuality(
     print(f"Processing {startTimestamp}...")
     # TODO:make api call to backend for particular dataset - >
     df_powerSpectrum = pd.read_json(
-        f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/deji/powerByBand_{startTimestamp}.json")
+        f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/ore/powerByBand_{startTimestamp}.json")
     df_signalQuality = pd.read_json(
-        f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/deji/signalQuality_{startTimestamp}.json")
+        f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/ore/signalQuality_{startTimestamp}.json")
+
+    if (df_powerSpectrum.empty or df_signalQuality.empty):
+        print("empty dataframe nothing to process")
+        return pd.DataFrame()
 
     # average signal quality values per timestamp entries
     df_signalQuality = df_signalQuality.groupby(by="unixTimestamp").mean()
@@ -194,18 +198,7 @@ def get_powerSpectrumSignalQuality(
     if len(rename_obj) > 0:
         df_powerSpectrum_signalQuality.rename(columns=rename_obj, inplace=True)
 
-    if download:
-        path = f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/2022/ore/powerSpectrum_signalQuality_{startTimestamp}.json"
-        df_powerSpectrum_signalQuality.to_json(path, orient='records')
-        print(f"Written data to {path}")
-
     return df_powerSpectrum_signalQuality
-
-# tbh, i don't think I'm here yet... I think eeg data for a day summary needs to be clearer
-
-# the goal will be then saying that your brain power average for today is
-
-# dataset where magicflow events and eeg recordings overlap
 
 
 if __name__ == "__main__":
@@ -215,32 +208,48 @@ if __name__ == "__main__":
     # - screen time
 
     datatypes = ["eegPowerSpectrum", "events"]
-    startTimestamp = 1665633719
+    startTimestamp = 1674979200  # get last week timestamp
 
     for datatype in datatypes:
-        mergedEEG_df = preprocess_data(
+        processed_df = preprocess_data(
             startTimestamp=startTimestamp, endTimestamp=None, datatype=datatype)
 
-        # you can now upload the mergedEEG_df to the backend
-        url = "http://localhost:4000/api/storage/upload"
-        local_path = f"/Users/oreogundipe/lab/fusion/neuroscripts/logger/archive/data/processed/{datatype}_{startTimestamp}.json"
+        # split the data into daily chunks
+        # Convert the Unix timestamp column to a Pandas datetime
+        timestamp_column = "unixTimestamp" if datatype == "eegPowerSpectrum" else "startTimestamp"
+
+        # format timestamp column
+        processed_df[timestamp_column] = pd.to_datetime(
+            processed_df[timestamp_column], unit='s')
+
+        # Group the dataframe by day
+        grouped_df = processed_df.groupby(
+            pd.Grouper(key=timestamp_column, freq='D'))
+
+        # you can now upload the processed data to storage
+        url = f"{os.environ.get('NEUROFUSION_BACKEND_SERVER', 'http://localhost:4000')}/api/storage/upload"
         headers = {'Content-Type': 'application/json'}
 
-        # TODO: validate events output
-        data = {
-            "provider": "fusion",
-            "dataName": datatype,
-            "userGuid": "460ad24b-570a-42e5-a8c4-679b86401189",
-            "fileTimestamp": startTimestamp,
-            "content": mergedEEG_df.to_json(orient='records')
-        }
-        # frontend vis can read this data when complete
-        response = requests.post(url, json=data, headers=headers)
+        # Write each chunk to storage
+        for name, group in grouped_df:
+            if (group.empty):
+                print("empty dataframe nothing to upload")
+                continue
 
-        if response.status_code == 200:
-            print(response.json())
-        else:
-            print(response)
-            print("Failed to upload file and data")
+            print(f"Uploading data for {name.timestamp()}...")
+            data = {
+                "provider": "fusion",
+                "dataName": datatype,
+                "userGuid": "29972266-b23f-49c8-8cc0-a50588e9df81",
+                "fileTimestamp": name.timestamp(),
+                "content": group.to_json(orient='records')
+            }
 
-        print(mergedEEG_df.head())
+            # frontend vis can read this data when complete
+            response = requests.post(url, json=data, headers=headers)
+
+            if response.status_code == 200:
+                print(response.json())
+            else:
+                print(response)
+                print("Failed to upload file and data")
