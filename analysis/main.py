@@ -240,7 +240,7 @@ if __name__ == "__main__":
             data = {
                 "provider": "fusion",
                 "dataName": datatype,
-                "userGuid": "29972266-b23f-49c8-8cc0-a50588e9df81",
+                "userGuid": "2db533ce-8349-427f-9cdd-a4a7f6b62266",
                 "fileTimestamp": name.timestamp(),
                 "content": group.to_json(orient='records')
             }
