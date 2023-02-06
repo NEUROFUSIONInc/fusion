@@ -88,24 +88,24 @@ function ConnectNeurosityAccountButton() {
 }
 
 function ConnectMagicFlow() {
-    const [magicflowToken, setMagicflowToken] = useState([]);
+    const [magicflowToken, setMagicflowToken] = useState("");
+    const neurofusionUserInfo = useNeurofusionUser();
 
     useEffect(() => {
-        setMagicflowToken(getMagicflowToken());
+        (async () => { 
+            const magicflowToken = await getMagicflowToken();
+            setMagicflowToken(magicflowToken);
+        })();
     },[]);
 
-    function getMagicflowToken() {
-        axios.get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token`,
-        {
-            params: {
-                "userEmail": "oreogundipe@gmail.com" //TODO: fetch from signed in user information
-            }
-        }).then((res) => {
-            console.log(res);
-            return res.data.token;
-        }).catch((err) => {
-            console.log(err);
-        });
+    async function getMagicflowToken() {
+        const res = await axios.get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token/${neurofusionUserInfo.email}`);
+        
+        if( res.status == 200 ){
+            return res.data.magicflowToken;
+        } else {
+            console.log("error getting magicflow token");
+        };
     }
 
     const handleTokenChange = (event) => {
@@ -114,19 +114,20 @@ function ConnectMagicFlow() {
         }
     }
 
-    const handleMagicFlowTokenSave = (event) => {
+    const handleMagicFlowTokenSave = async (event) => {
         event.preventDefault();
         alert(`making backend request with value ${magicflowToken}`);
-        axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/set-token`,
+        const res =  await axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/set-token`,
         {
-            "user_email": "oreogundipe@gmail.com",
-            "token": magicflowToken
-        }).then((res) => {
-            console.log(res);
-            return res.data.token;
-        }).catch((err) => {
-            console.log(err);
+            "userEmail": neurofusionUserInfo.email,
+            "magicflowToken": magicflowToken
         });
+        
+        if(res.status == 200) {
+            return res.data.magicflowToken;
+        } else {
+            console.log("error setting magicflow token");
+        }
     }
 
     return (
