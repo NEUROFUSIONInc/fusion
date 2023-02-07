@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  body {
+    @apply font-body text-base text-primary-900  antialiased dark:bg-primary-900 dark:text-white;
+  }
+
   h1,
   h2,
   h3,
   h4,
   h5 {
     @apply font-heading font-bold;
-  }
-
-  body {
-    @apply font-sans text-base text-dark antialiased dark:bg-primary-900 dark:text-white;
   }
 }

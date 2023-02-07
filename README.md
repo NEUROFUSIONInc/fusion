@@ -62,4 +62,6 @@ Project Overview & Lab Notes - https://www.notion.so/next-steps-for-fusion-betti
 
 Project Monthly Updates - https://neurofusion.substack.com
 
-Pending Tasks - https://github.com/users/oreHGA/projects/1
+Dev Tasks - https://github.com/users/oreHGA/projects/1
+
+User Flows - https://www.notion.so/Fusion-User-flows-9c454c9f767a403b9384e94b1dfdc48b

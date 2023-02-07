@@ -1,22 +1,36 @@
 const stream = require('stream');
+const { body, query, validationResult } = require('express-validator');
 const blobStorage = require('../storage/blob');
 
 
+exports.uploadValidator = [
+  body("userGuid").notEmpty().isUUID().withMessage("must be a uuid"),
+  body("provider").notEmpty().withMessage("must not be empty"),
+  body("dataName").notEmpty().withMessage("must not be empty"),
+  body("fileTimestamp").notEmpty().isNumeric().withMessage("must be a timestamp"),
+  body("content").notEmpty().withMessage("must not be empty")
+];
+
 exports.uploadBlob = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400)
+      .json({
+        errors: errors.array()
+      });
+  }
+
   const dataName = req.body.dataName;
   const fileTimestamp = req.body.fileTimestamp;
   const content = req.body.content;
   const userGuid = req.body.userGuid;
+  const provider = req.body.provider;
 
-  if (!dataName || !fileTimestamp || !content || !userGuid) {
-    return res.status(401)
-      .send("Invalid payload");
-  }
-
-  const fileName = `${userGuid}/${fileTimestamp}-${dataName}.json`;
+  const fileName = `${userGuid}/${provider}/${dataName}_${fileTimestamp}.json`;
   const fileType = "application/json";
   const tags = {
     "guid": userGuid,
+    "provider": provider,
     "dataName": dataName,
     "timestamp": `${fileTimestamp}`
   };
@@ -36,19 +50,47 @@ exports.uploadBlob = async (req, res) => {
   }
 };
 
+exports.findValidator = [
+  query("userGuid")
+    .notEmpty()
+    .isUUID()
+    .withMessage("must be a uuid"),
+  query("startTimestamp")
+    .notEmpty()
+    .isNumeric()
+    .withMessage("must be a timestamp"),
+  query("endTimestamp")
+    .notEmpty()
+    .isNumeric()
+    .withMessage("must be a timestamp"),
+  // Optional params - either provide a valid value or don't add it
+  query("provider")
+    .notEmpty()
+    .optional({ nullable: false })
+    .withMessage("must not be empty if provided. optional param"),
+  query("dataName")
+    .notEmpty()
+    .optional({ nullable: false })
+    .withMessage("must not be empty if provided. optional param")
+];
+
 exports.findBlobs = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400)
+      .json({
+        errors: errors.array()
+      });
+  }
+
   const dataName = req.query.dataName;
+  const provider = req.query.provider;
   const userGuid = req.query.userGuid;
   const startTimestamp = req.query.startTimestamp;
   const endTimestamp = req.query.endTimestamp;
 
-  if (!dataName || !userGuid || !startTimestamp || !endTimestamp) {
-    return res.status(401)
-      .send("Invalid payload");
-  }
-
   try {
-    const blobNames = await blobStorage.findBlobs(userGuid, dataName, startTimestamp, endTimestamp);
+    const blobNames = await blobStorage.findBlobs(userGuid, startTimestamp, endTimestamp, provider, dataName);
     res.status(200)
       .json({ blobNames });
   } catch (err) {
@@ -58,13 +100,22 @@ exports.findBlobs = async (req, res) => {
   }
 };
 
-exports.getBlob = async (req, res) => {
-  const blobName = req.query.blobName;
+exports.getAndDownloadValidator = [
+  query("blobName")
+    .notEmpty()
+    .withMessage("must not be empty")
+];
 
-  if (!blobName) {
-    return res.status(401)
-      .send("Invalid payload");
+exports.getBlob = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400)
+      .json({
+        errors: errors.array()
+      });
   }
+
+  const blobName = req.query.blobName;
 
   try {
     const buffer = await blobStorage.getBlobAsBuffer(blobName);
@@ -80,16 +131,20 @@ exports.getBlob = async (req, res) => {
 };
 
 exports.downloadBlob = async (req, res) => {
-  const blobName = req.query.blobName;
-
-  if (!blobName) {
-    return res.status(401)
-      .send("Invalid payload");
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400)
+      .json({
+        errors: errors.array()
+      });
   }
+
+  const blobName = req.query.blobName;
 
   try {
     const buffer = await blobStorage.getBlobAsBuffer(blobName);
-    const fileName = blobName.split("/")[1];
+    const filePaths = blobName.split("/");
+    const fileName = filePaths[filePaths.length - 1];
 
     const readStream = new stream.PassThrough();
     readStream.end(buffer);
