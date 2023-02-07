@@ -221,8 +221,8 @@ export default function Analysis() {
           name: item.categories[0],
           xAxis: item.timestamp,
           lineStyle: {
-            type: "solid",
-            color: "grey",
+            type: "dotted",
+            color: item.focus ? "green" : "red",
           },
         };
       });
@@ -244,7 +244,8 @@ export default function Analysis() {
               show: true,
               formatter: '{b}',
               interval: 0,
-              rotate: 45
+              rotate: 45,
+              fontFamily: "Expletus Sans",
           },
           symbol: 'none',
           data: verticalLinesData
