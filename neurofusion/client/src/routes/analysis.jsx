@@ -24,12 +24,10 @@ export default function Analysis() {
 
   const channelNames = ["CP3", "C3", "F5", "PO3", "PO4", "F6", "C4", "CP4"];
 
-  const today = new Date();
-  const oneWeekAgo = new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000));
-  const [startDate, setStartDate] = useState(oneWeekAgo.toLocaleDateString());
-  const [endDate, setEndDate] = useState(today.toLocaleDateString());
+  const [startDate, setStartDate] = useState(new Date((new Date).getTime() - (1 * 24 * 60 * 60 * 1000)).toLocaleDateString());
 
   const [powerSpectrumData, setPowerSpectrumData] = useState([]);
+  const [magicFlowContexts, setMagicFlowContexts] = useState([]);
 
   const frequencyBands = [
     { key: "delta", text: "Delta" },
@@ -39,24 +37,20 @@ export default function Analysis() {
     { key: "gamma", text: "Gamma" },
   ];
 
-  // fetch the power spectrum data from the backend
+  // fetch the power spectrum & magicflow contexts data
   useEffect(() => {
     // console.log('startDate', startDate)
     // console.log('endDate', endDate)
-    if(startDate === "" || endDate === "") {
+    if(startDate === "") {
       return;
     }
 
     // TODO: check if values are in the right format
     const startTimestamp = new Date(startDate).getTime() / 1000;
-    const endTimestamp = new Date(endDate).getTime() / 1000;
+    const endTimestamp = (new Date(startDate).getTime() + (1 * 24 * 60 * 60 * 1000)) / 1000;
 
-    if (startTimestamp > endTimestamp) {
-      console.log("start date is after end date");
-      return;
-    }
 
-    // make call to backend to get available blobs for time period
+    // make call to backend to get available blobs for time period - eegPowerSpectrum
     async function fetchData() {
       const res = await axios.get(
         `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/search`,
@@ -95,8 +89,57 @@ export default function Analysis() {
           }
         }
 
-        console.log("merged dataset", mergedDataset);
+        console.log("merged powerSpectrum dataset", mergedDataset);
         setPowerSpectrumData(mergedDataset);
+
+      } else {
+        console.log("request unsucessful");
+        console.log(res);
+      }
+    }
+
+    // make call to backend to get available blobs for time period - magicflow
+    async function fetchMagicflowEvents() {
+      const res = await axios.get(
+        `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/search`,
+        {
+          params: {
+            userGuid: localStorage.getItem("userGuid"), // this should be from backend
+            dataName: "activitywatch",
+            startTimestamp: startTimestamp,
+            endTimestamp: endTimestamp,
+            provider: "magicflow"
+          }
+        }
+      );
+
+      if (res.status === 200) {
+        // fetch the magicflow datasets for timestamp
+        let mergedEventsDataset = [];
+        let mergedContextsDataset = [];
+
+        const blobNames = res.data.blobNames;
+        for (let i=0; i < blobNames.length; i++) {
+          const res = await axios.get(
+            `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/get`,
+            {
+              params: {
+                blobName: blobNames[i]
+              }
+            }
+          );
+
+          if (res.status === 200) {
+            console.log("Merging the contexts")
+            mergedContextsDataset = mergedContextsDataset.concat(eval(res.data.productivityMetrics.contexts));
+          } else {
+            console.log("request unsucessful");
+            console.log(res);
+          }
+        }
+
+        console.log("merged contexts dataset", mergedContextsDataset);
+        setMagicFlowContexts(mergedContextsDataset);
 
       } else {
         console.log("request unsucessful");
@@ -106,11 +149,12 @@ export default function Analysis() {
 
     try {
       fetchData();
+      fetchMagicflowEvents();
     } catch (err) {
       console.log(err);
     }
 
-  }, [startDate, endDate])
+  }, [startDate])
 
   // initialize brain power chart
   useEffect(() => {
@@ -140,7 +184,7 @@ export default function Analysis() {
         );
       })();
     }
-  }, [powerSpectrumData, selectedChannels, selectedFrequencyBands, stdDevThreshold]);
+  }, [powerSpectrumData, magicFlowContexts, selectedChannels, selectedFrequencyBands, stdDevThreshold]);
 
   async function updateBrainChartOptions(
     channelName,
@@ -154,35 +198,6 @@ export default function Analysis() {
      * This function takes in a channel name and returns the chart options
      * for that channel.
      */
-
-    /**
-             // const seriesData = neurosityFocus.map((item) => {
-             //     return [item.timestamp, item.probability]
-            // })
-            * 
-            // const verticalLinesData = magicFlowContexts.map((item) => {
-            //     return {
-            //         name: item.categories[0],
-            //         xAxis: item.timestamp,
-            //         lineStyle: {
-            //             type: 'solid',
-            //             color: 'green'
-            //         }
-            //     }
-            // })
-    
-            // const verticalLinesData2 = magicFlowRawEvents.map((item) => {
-            //     return {
-            //         name: item.app,
-            //         xAxis: item.endDate,
-            //         lineStyle: {
-            //             type: 'solid',
-            //             color: item.focus == true ? 'green' : 'red'
-            //         }
-            //     }
-            // })
-            
-         */
 
     const yAxisName = `${channelName} ${frequencyBands} Power (uV^2/Hz)`;
     const xAxisName = "Time";
@@ -200,6 +215,18 @@ export default function Analysis() {
         }
       });
 
+      // TODO: add vertical lines for magicflow contexts
+      const verticalLinesData = magicFlowContexts.map((item) => {
+        return {
+          name: item.categories[0],
+          xAxis: item.timestamp,
+          lineStyle: {
+            type: "solid",
+            color: "grey",
+          },
+        };
+      });
+
       const dataLabel = `${channelName} ${frequencyBand} power`;
       legendData.push(dataLabel);
       seriesData.push({
@@ -212,6 +239,16 @@ export default function Analysis() {
         lineStyle: {
           width: 2,
         },
+        markLine: {
+          label: {
+              show: true,
+              formatter: '{b}',
+              interval: 0,
+              rotate: 45
+          },
+          symbol: 'none',
+          data: verticalLinesData
+        }
       });
     });
 
@@ -242,7 +279,7 @@ export default function Analysis() {
           areaStyle: {
             color: "red",
           },
-        },
+        }
       },
       yAxis: {
         type: "value",
@@ -303,18 +340,18 @@ export default function Analysis() {
                 display: "flex",
                 flexDirection: "column",
               }}>
-                <label>From:</label>
+                <label>Day:</label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
-                <label>To:</label>
+                {/* <label>To:</label>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                />
+                /> */}
               </div>
 
               {/* channel pickers */}
