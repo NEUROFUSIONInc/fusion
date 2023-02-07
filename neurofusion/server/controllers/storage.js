@@ -26,7 +26,7 @@ exports.uploadBlob = async (req, res) => {
   const userGuid = req.body.userGuid;
   const provider = req.body.provider;
 
-  const fileName = `${userGuid}/${provider}/${fileTimestamp}-${dataName}.json`;
+  const fileName = `${userGuid}/${provider}/${dataName}_${fileTimestamp}.json`;
   const fileType = "application/json";
   const tags = {
     "guid": userGuid,

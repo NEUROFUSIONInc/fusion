@@ -207,7 +207,7 @@ export default function Experiment({
             const year = recordingDate.getUTCFullYear();
             const month = recordingDate.getUTCMonth() + 1;
             const day = recordingDate.getUTCDate();
-            const uploadPath = `${userGuid}/${year}/${month}/${day}/${dataName}_${fileTimestamp}.csv`;
+            const uploadPath = `${userGuid}/${year}/${month}/${day}/${dataName}_${fileTimestamp}.json`;
             console.log("Uploading to - ", uploadPath);
 
             (async (data, remotePath, fileType) => {
@@ -215,12 +215,12 @@ export default function Experiment({
                 const fileObject = new File(
                     [JSON.stringify(data)], 
                     remotePath, 
-                    { type: `application/${fileType}` }
+                    { type: fileType }
                 );
 
                 // *** UPLOAD TO AZURE STORAGE ***
                 const blobsInContainer = await uploadFileToBlob(fileObject);        
-            })(data, uploadPath, 'json');
+            })(data, uploadPath, 'application/json');
         }
         
 

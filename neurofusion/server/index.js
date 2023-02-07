@@ -21,7 +21,9 @@ const notion = new Notion({
   autoSelectDevice: false
 });
 
-app.use(express.json()); // for parsing application/json
+app.use(express.json({
+  limit: "1000mb"
+})); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 
@@ -53,7 +55,10 @@ app.get('/api/neurosity/get-oauth-url', (req, res) => {
           "read:memories:brainwaves",
           "read:signal-quality",
           "write:brainwave-markers",
-          "write:brainwaves"
+          "write:brainwaves",
+          "read:kinesis",
+          "write:kinesis",
+          "read:status"
         ]
       })
       .then((url) => (
@@ -111,20 +116,13 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
 /**
  * Magicflow Routes
  */
-// TODO: set token - implementation
 app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
-// TODO: fetch magicflow token - testing
 app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
 
-
-// TODO: post request to trigger updating magicflow data
-app.post('/api/magicflow/update-data', (req, res) => {
-  // parse userGuid & fetch for magicflow token for user
-
-  // then call ../magicflow/index.js getTimeseriesData
-});
-
+/**
+ * User Routes
+ */
 app.post('/api/userlogin', userController.validateLogin);
 
 /**
