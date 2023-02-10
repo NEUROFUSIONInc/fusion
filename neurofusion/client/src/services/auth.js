@@ -96,6 +96,7 @@ export const loginUser = async (email, cb) => {
 
 export const logoutUser = async () => {
   await magic.user.logout();
+  localStorage.clear();
   window.location.assign('/');
 };
 
