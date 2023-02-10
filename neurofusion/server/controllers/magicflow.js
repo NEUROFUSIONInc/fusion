@@ -45,9 +45,9 @@ exports.setToken = async (req, res) => {
 
     // Fetch user's magicflow data in the background
     magicFlowQueue.push({
-      guid: userMetadata.userGuid,
+      guid: req.user.userGuid,
       token: magicflowToken,
-      lastFetched: userMetadata.magicflowLastFetched,
+      lastFetched: req.user.magicflowLastFetched,
       storageQueue // Importing this from magicflow processor wasn't working so passing the instance
     });
 
