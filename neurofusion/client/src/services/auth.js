@@ -106,6 +106,8 @@ export async function userLoginComplete(email, idToken) {
     });
 
     if (res.status === 200) {
+        // Simple but not the most secure way to store the token
+        localStorage.setItem('token', res.data.body.authToken);
         return res.data;
     }
 }
