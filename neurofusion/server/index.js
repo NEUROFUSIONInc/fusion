@@ -33,6 +33,14 @@ app.use(cors());
 // TODO: configure body parser (base64auth)
 
 /**
+ * User Routes
+ */
+app.post('/api/userlogin', userController.validateLogin);
+
+// All routes after this require an authorization token
+app.use(userController.tokenValidator);
+
+/**
  * Neurosity Routes
  */
 //  generate oauth url
@@ -119,11 +127,6 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
 app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
 app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
-
-/**
- * User Routes
- */
-app.post('/api/userlogin', userController.validateLogin);
 
 /**
  * Storage Routes
