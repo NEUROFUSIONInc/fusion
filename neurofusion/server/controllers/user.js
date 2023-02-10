@@ -16,6 +16,14 @@ exports.tokenValidator = async (req, res, next) => {
         userGuid: decoded.userGuid
       }
     });
+
+    if (!user) {
+      return res.status(401)
+        .json({
+          error: "Authentication failed"
+        });
+    }
+
     req.user = user;
     next();
   } catch (err) {
