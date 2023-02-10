@@ -126,7 +126,7 @@ app.post('/api/neurosity/oauth-complete', (req, res) => {
  */
 app.post('/api/magicflow/set-token', magicFlowController.setToken);
 
-app.get('/api/magicflow/get-token/:email', magicFlowController.fetchToken);
+app.get('/api/magicflow/get-token', magicFlowController.fetchToken);
 
 /**
  * Storage Routes
