@@ -30,8 +30,8 @@ yarn start
 - Neurosity - for managing neurosity device connection
 - Magicflow - get/set token and queue fetch to fusion storage
 - Analytics
-- calls after related data points are fetched
-  - merge eegPowerSpectrum with signal quality
+  - calls after related data points are fetched (can only perform action if token matches user account)
+    - merge eegPowerSpectrum with signal quality
 
 ## Database
 
