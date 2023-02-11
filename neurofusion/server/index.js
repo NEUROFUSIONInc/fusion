@@ -1,27 +1,26 @@
-const { Notion } = require("@neurosity/notion");
 const express = require("express");
-const dotenv = require("dotenv");
+require("dotenv").config();
 const cors = require("cors");
 const cron = require("node-cron");
 
-const storageController = require("./controllers/storage");
-const userController = require("./controllers/user");
-const magicFlowController = require("./controllers/magicflow");
-
+// import db
 const db = require("./models/index");
 
+// import controllers
+const userController = require("./controllers/user");
+const storageController = require("./controllers/storage");
+const magicFlowController = require("./controllers/magicflow");
+const neurosityController = require("./controllers/neurosity");
+const vitalController = require("./controllers/vital");
+
+// import cron runners
 const magicFlowCron = require("./cron-jobs/magicflow-daily-fetch");
 
-dotenv.config();
-
+// create express app
 const app = express();
 const port = process.env.PORT || 4000;
 
-const notion = new Notion({
-  autoSelectDevice: false,
-});
-
-// for parsing application/json
+// config parsing application/json
 app.use(
   express.json({
     limit: "1000mb",
@@ -46,81 +45,10 @@ app.use(userController.tokenValidator);
  * Neurosity Routes
  */
 //  generate oauth url
-app.get("/api/neurosity/get-oauth-url", (req, res) => {
-  async function getOAuth() {
-    await notion
-      .createOAuthURL({
-        clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
-        clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
-        redirectUri: process.env.NEUROSITY_OAUTH_CLIENT_REDIRECT_URI,
-        responseType: "token",
-        state: Math.random().toString().split(".")[1], // A random string is required for security reasons
-        scope: [
-          "read:accelerometer",
-          "read:brainwaves",
-          "read:calm",
-          "read:devices-info",
-          "read:devices-status",
-          "read:focus",
-          "read:memories:brainwaves",
-          "read:signal-quality",
-          "write:brainwave-markers",
-          "write:brainwaves",
-          "read:kinesis",
-          "write:kinesis",
-          "read:status",
-        ],
-      })
-      .then((url) =>
-        res.status(200).json({
-          statusCode: 200,
-          body: {
-            url: url,
-          },
-        })
-      )
-      .catch((error) =>
-        res.status(400).json({
-          body: error.response.data,
-        })
-      );
-  }
+app.get("/api/neurosity/get-oauth-url", neurosityController.generateOAuthURL);
 
-  getOAuth();
-});
-
-// get custom token given neurosity id
-// TODO: needs to be properly tested
-app.get("/api/neurosity/get-custom-token", (req, res) => {
-  const userId = req.params.userId;
-
-  async function getToken() {
-    await notion
-      .getOAuthToken({
-        clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
-        clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
-        userId,
-      })
-      .then((url) =>
-        res.status(200).json({
-          statusCode: 200,
-          body: {
-            url: url,
-          },
-        })
-      )
-      .catch((error) =>
-        res.status(400).json({
-          body: error.response.data,
-        })
-      );
-  }
-
-  getToken();
-});
-
-// TODO: store the token in the database
-app.post("/api/neurosity/oauth-complete", (req, res) => {});
+// get custom token for signed in user given neurosity id
+app.get("/api/neurosity/get-custom-token", neurosityController.getOAuthToken);
 
 /**
  * Magicflow Routes
@@ -128,6 +56,10 @@ app.post("/api/neurosity/oauth-complete", (req, res) => {});
 app.post("/api/magicflow/set-token", magicFlowController.setToken);
 
 app.get("/api/magicflow/get-token", magicFlowController.fetchToken);
+
+/**
+ * Vital Routes
+ */
 
 /**
  * Storage Routes
