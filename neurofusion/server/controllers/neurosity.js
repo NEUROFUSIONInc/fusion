@@ -30,15 +30,12 @@ exports.generateOAuthURL = async (req, res) => {
     })
     .then((url) =>
       res.status(200).json({
-        statusCode: 200,
-        body: {
-          url: url,
-        },
+        url: url,
       })
     )
     .catch((error) =>
       res.status(400).json({
-        body: error.response.data,
+        error: error.response.data,
       })
     );
 };
