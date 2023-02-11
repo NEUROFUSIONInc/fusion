@@ -99,7 +99,7 @@ function ConnectMagicFlow() {
     },[]);
 
     async function getMagicflowToken() {
-        const res = await axios.get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token/${neurofusionUserInfo.email}`);
+        const res = await axios.get(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token`);
         
         if( res.status == 200 ){
             return res.data.magicflowToken;
@@ -119,7 +119,6 @@ function ConnectMagicFlow() {
         alert(`making backend request with value ${magicflowToken}`);
         const res =  await axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/set-token`,
         {
-            "userEmail": neurofusionUserInfo.email,
             "magicflowToken": magicflowToken
         });
         

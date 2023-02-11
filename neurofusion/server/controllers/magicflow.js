@@ -3,16 +3,8 @@ const { magicFlowQueue, storageQueue } = require('../queue');
 
 
 exports.fetchToken = async (req, res) => {
-  const email = req.params.email;
-  if (!email) {
-    return res.status(401)
-      .json({
-        error: "User email not provided"
-      });
-  }
-
   try {
-    const userMetadata = await db.UserMetadata.findOne({ where: { userEmail: email } });
+    const userMetadata = await db.UserMetadata.findOne({ where: { userEmail: req.user.userEmail } });
 
     if (!userMetadata) {
       return res.status(401)
@@ -23,7 +15,6 @@ exports.fetchToken = async (req, res) => {
 
     res.status(200)
       .json({
-        userGuid: userMetadata.userGuid,
         magicflowToken: userMetadata.magicflowToken
       });
   } catch (err) {
@@ -36,43 +27,32 @@ exports.fetchToken = async (req, res) => {
 };
 
 exports.setToken = async (req, res) => {
-  const email = req.body.userEmail;
   const magicflowToken = req.body.magicflowToken;
 
-  if (!email || !magicflowToken) {
-    return res.status(401)
+  if (!magicflowToken) {
+    return res.status(400)
       .json({
         error: "Invalid payload."
       });
   }
 
   try {
-    const userMetadata = await db.UserMetadata.findOne({ where: { userEmail: email } });
-
-    if (!userMetadata) {
-      return res.status(401)
-        .json({
-          error: "User does not exist"
-        });
-    }
-
     await db.UserMetadata.update({ magicflowToken: magicflowToken }, {
       where: {
-        userGuid: userMetadata.userGuid
+        userGuid: req.user.userGuid
       }
     });
 
     // Fetch user's magicflow data in the background
     magicFlowQueue.push({
-      guid: userMetadata.userGuid,
+      guid: req.user.userGuid,
       token: magicflowToken,
-      lastFetched: userMetadata.magicflowLastFetched,
+      lastFetched: req.user.magicflowLastFetched,
       storageQueue // Importing this from magicflow processor wasn't working so passing the instance
     });
 
     res.status(200)
       .json({
-        userGuid: userMetadata.userGuid,
         magicflowToken
       });
   } catch (err) {
