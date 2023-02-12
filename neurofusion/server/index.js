@@ -64,6 +64,8 @@ app.get("/api/magicflow/get-token", magicFlowController.fetchToken);
  */
 app.get("/api/vital/get-token", vitalController.generateToken);
 
+app.get("/api/vital/get-devices", vitalController.getDevices);
+
 /**
  * Storage Routes
  */

@@ -92,7 +92,7 @@ function ConnectNeurosity() {
                     <input type="checkbox" id="neurosity_alwayson" name="neurosity_alwayson" value="True" /> */}
 
           <button onClick={disconnectNeurosityAccount}>
-            Disconnect Neurosity Account from Neurofusion
+            Disconnect Neurosity Account
           </button>
         </div>
       )}
@@ -164,6 +164,11 @@ function ConnectMagicFlow() {
 
 function ConnectVital() {
   const [isLoading, setLoading] = useState(false);
+  const [vitalDevices, setVitalDevices] = useState([]);
+
+  useEffect(() => {
+    updateVitalDeviceList();
+  }, []);
 
   async function generateLinkToken() {
     const res = await axios.get(
@@ -179,17 +184,14 @@ function ConnectVital() {
     }
   }
 
-  async function getVitalDevices() {
+  async function updateVitalDeviceList() {
     const res = await axios.get(
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-devices`
     );
 
     if (res.status == 200) {
-      console.log(res.data);
-
-      // TODO: update state with devices
-
-      return res.data;
+      setVitalDevices(res.data.devices);
+      return res.data.devices;
     } else {
       alert("error getting vital devices");
       console.log("error getting vital devices");
@@ -200,19 +202,19 @@ function ConnectVital() {
     // Device is now connected.
     console.log(metadata);
     // make api call to get connected devices
-    getVitalDevices();
+    updateVitalDeviceList();
   }, []);
 
   const onExit = useCallback((metadata) => {
     // User has quit the link flow.
     console.log(metadata);
-    getVitalDevices();
+    updateVitalDeviceList();
   }, []);
 
   const onError = useCallback((metadata) => {
     // Error encountered in connecting device.
     console.log(metadata);
-    getVitalDevices();
+    updateVitalDeviceList();
   }, []);
 
   const config = {
@@ -244,10 +246,24 @@ function ConnectVital() {
         onClick={handleVitalOpen}
         disabled={isLoading || !ready}
       >
-        Connect health data
+        Connect health device
       </button>
 
       {error && <p>{error}</p>}
+
+      {vitalDevices && vitalDevices.length > 0 ? (
+        <ul>
+          {vitalDevices.map((device) => {
+            return (
+              <li>
+                {device.name}, {device.status}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

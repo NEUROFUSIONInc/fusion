@@ -10,7 +10,7 @@ const db = require("../models/index");
 
 const client = new VitalClient({
   api_key: process.env.VITAL_SECRET_KEY,
-  environment: "sandbox",
+  environment: process.env.VITAL_ENVIRONMENT,
   region: "us",
 });
 
@@ -81,6 +81,49 @@ exports.generateToken = async (req, res) => {
     console.error(err.message);
     return res.status(400).json({
       error: "Unable to generate link token",
+    });
+  }
+};
+
+exports.getDevices = async (req, res) => {
+  // fetch the users devices
+  const userProviders = await db.UserProvider.findOne({
+    where: {
+      userGuid: req.user.userGuid,
+      // type: "vital",
+    },
+  });
+
+  if (!userProviders) {
+    return res.status(400).json({
+      error: "Unable to fetch user provider record",
+    });
+  }
+
+  // make api call for vital
+  try {
+    const user = await client.User.providers(userProviders.providerUserId);
+
+    if (!user) {
+      throw new Error("Unable to fetch vital user");
+    }
+
+    // map the devices to the format we want
+    const devices = user.providers.map((provider) => {
+      return {
+        name: provider.name,
+        slug: provider.slug,
+        status: provider.status,
+      };
+    });
+
+    return res.status(200).json({
+      devices,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(400).json({
+      error: "Unable to fetch devices",
     });
   }
 };
