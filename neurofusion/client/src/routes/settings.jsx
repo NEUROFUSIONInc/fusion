@@ -165,8 +165,6 @@ function ConnectMagicFlow() {
 function ConnectVital() {
   const [isLoading, setLoading] = useState(false);
 
-  const 
-
   async function generateLinkToken() {
     const res = await axios.get(
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-token`
