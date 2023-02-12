@@ -4,9 +4,10 @@
 // 3. connecting oura data
 
 import { useEffect } from "react";
-import { React, useState } from "react";
+import { React, useState, useCallback } from "react";
 import SideNavBar from "../components/sidenavbar";
 import { notion, useNotion } from "../services/neurosity";
+import { useVitalLink } from "@tryvital/vital-link";
 import {
   getNeurositySelectedDevice,
   updateNeurositySelectedDevice,
@@ -14,7 +15,7 @@ import {
 import axios from "axios";
 import { useNeurofusionUser } from "../services/auth";
 
-function ConnectNeurosityAccountButton() {
+function ConnectNeurosity() {
   //  check if neurosity is signed in and then
   const { user, devices } = useNotion();
   // const {}
@@ -162,10 +163,93 @@ function ConnectMagicFlow() {
 }
 
 function ConnectVital() {
+  const [isLoading, setLoading] = useState(false);
+
+  const 
+
+  async function generateLinkToken() {
+    const res = await axios.get(
+      `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-token`
+    );
+
+    if (res.status == 200) {
+      console.log(res.data.linkToken);
+      return res.data.linkToken;
+    } else {
+      alert("error getting vital link token");
+      console.log("error getting vital link token");
+    }
+  }
+
+  async function getVitalDevices() {
+    const res = await axios.get(
+      `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-devices`
+    );
+
+    if (res.status == 200) {
+      console.log(res.data);
+
+      // TODO: update state with devices
+
+      return res.data;
+    } else {
+      alert("error getting vital devices");
+      console.log("error getting vital devices");
+    }
+  }
+
+  const onSuccess = useCallback((metadata) => {
+    // Device is now connected.
+    console.log(metadata);
+    // make api call to get connected devices
+    getVitalDevices();
+  }, []);
+
+  const onExit = useCallback((metadata) => {
+    // User has quit the link flow.
+    console.log(metadata);
+    getVitalDevices();
+  }, []);
+
+  const onError = useCallback((metadata) => {
+    // Error encountered in connecting device.
+    console.log(metadata);
+    getVitalDevices();
+  }, []);
+
+  const config = {
+    onSuccess,
+    onExit,
+    onError,
+    env: process.env.REACT_APP_VITALLINK_ENV,
+  };
+
+  const { open, ready, error } = useVitalLink(config);
+
+  const handleVitalOpen = async () => {
+    setLoading(true);
+    try {
+      const token = await generateLinkToken();
+      open(token);
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <h3>Health Data (Oura/Apple Health)</h3>
-      <p>Coming soon!</p>
+      <button
+        type="button"
+        onClick={handleVitalOpen}
+        disabled={isLoading || !ready}
+      >
+        Connect health data
+      </button>
+
+      {error && <p>{error}</p>}
     </>
   );
 }
@@ -189,7 +273,7 @@ export default function Settings() {
 
             <h2>Data Onboarding</h2>
 
-            <ConnectNeurosityAccountButton />
+            <ConnectNeurosity />
 
             <ConnectMagicFlow />
 
