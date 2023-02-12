@@ -2643,6 +2643,13 @@
   resolved "https://registry.npmjs.org/@trysound/sax/-/sax-0.2.0.tgz"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
 
+"@tryvital/vital-link@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@tryvital/vital-link/-/vital-link-0.1.7.tgz#02831e80fa4352565284d695fd1cf0befe79dc82"
+  integrity sha512-1ut/euzU2YdDnCQ8DmPb+1oj3hq1xoimdOnpTcuSr1GvqSRQ8qn4mtwZlcOhBdkryUQ06jyi3soBXynUv78Wlw==
+  dependencies:
+    react-script-hook "^1.2.1"
+
 "@types/aria-query@^5.0.1":
   version "5.0.1"
   resolved "https://registry.npmjs.org/@types/aria-query/-/aria-query-5.0.1.tgz"
@@ -9124,6 +9131,11 @@ react-router@6.4.2, react-router@^6.4.2:
   integrity sha512-Rb0BAX9KHhVzT1OKhMvCDMw776aTYM0DtkxqUBP8dNBom3mPXlfNs76JNGK8wKJ1IZEY1+WGj+cvZxHVk/GiKw==
   dependencies:
     "@remix-run/router" "1.0.2"
+
+react-script-hook@^1.2.1:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/react-script-hook/-/react-script-hook-1.7.2.tgz#ec130d67f9a25fcde57fbfd1faa87e5b97521948"
+  integrity sha512-fhyCEfXb94fag34UPRF0zry1XGwmVY+79iibWwTqAoOiCzYJQOYTiWJ7CnqglA9tMSV8g45cQpHCMcBwr7dwhA==
 
 react-scripts@5.0.1:
   version "5.0.1"

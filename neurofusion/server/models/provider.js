@@ -1,7 +1,7 @@
 "use strict";
 const { Model, Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class UserMetadata extends Model {
+  class Provider extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,33 +11,28 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  UserMetadata.init(
+  Provider.init(
     {
-      userEmail: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
-      userGuid: {
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      guid: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         unique: true,
       },
-      magicLinkAuthToken: DataTypes.TEXT,
-      neurosityToken: DataTypes.TEXT,
-      magicflowToken: DataTypes.TEXT,
-      magicflowLastFetched: DataTypes.DATE,
-      userLastLogin: DataTypes.DATE,
-      userConsentUsage: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
     },
     {
       sequelize,
-      modelName: "UserMetadata",
+      modelName: "Provider",
     }
   );
-  return UserMetadata;
+  return Provider;
 };
