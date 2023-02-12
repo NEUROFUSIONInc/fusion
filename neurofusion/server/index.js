@@ -41,6 +41,8 @@ app.post("/api/userlogin", userController.validateLogin);
 // All routes after this require an authorization token
 app.use(userController.tokenValidator);
 
+// TODO: endpoint to get providers user is connected to
+
 /**
  * Neurosity Routes
  */
@@ -60,6 +62,7 @@ app.get("/api/magicflow/get-token", magicFlowController.fetchToken);
 /**
  * Vital Routes
  */
+app.get("/api/vital/get-token", vitalController.generateToken);
 
 /**
  * Storage Routes

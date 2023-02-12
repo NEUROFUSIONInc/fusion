@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.UserMetadata.belongsToMany(models.Provider, {
-        through: models.UserProvider,
-      });
-      models.Provider.belongsToMany(models.UserMetadata, {
-        through: models.UserProvider,
-      });
+      // models.UserMetadata.belongsToMany(models.Provider, {
+      //   through: models.UserProvider,
+      // });
+      // models.Provider.belongsToMany(models.UserMetadata, {
+      //   through: models.UserProvider,
+      // });
     }
   }
   UserProvider.init(
