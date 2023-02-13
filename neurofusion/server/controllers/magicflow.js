@@ -8,11 +8,13 @@ exports.fetchToken = async (req, res) => {
       "Magicflow"
     );
 
-    if (userProvider) {
-      res.status(200).json({
-        magicflowToken: userProvider.providerToken,
-      });
+    if (!userProvider) {
+      throw new Error("Magicflow provider not found");
     }
+
+    res.status(200).json({
+      magicflowToken: userProvider.providerToken,
+    });
   } catch (err) {
     console.error(err);
     res.status(400).json({
@@ -36,18 +38,37 @@ exports.setToken = async (req, res) => {
       "Magicflow"
     );
 
-    if (!userProvider) {
-      throw new Error("Magicflow provider does not exist");
-    }
+    let providerLastFetched = null;
+    if (userProvider) {
+      userProvider.providerToken = magicflowToken;
+      await userProvider.save();
 
-    userProvider.providerToken = magicflowToken;
-    await userProvider.save();
+      providerLastFetched = userProvider.providerLastFetched;
+    } else {
+      const magicflowProvider = await db.Provider.findOne({
+        where: { name: "Magicflow" },
+      });
+
+      if (!magicflowProvider) {
+        return res.status(400).json({
+          error: "Magicflow provider not found",
+        });
+      }
+
+      const newUserProvider = await db.UserProvider.create({
+        userGuid: req.user.userGuid,
+        providerGuid: magicflowProvider.guid,
+        providerToken: magicflowToken,
+      });
+
+      providerLastFetched = newUserProvider.providerLastFetched;
+    }
 
     // Fetch user's magicflow data in the background
     magicFlowQueue.push({
       guid: req.user.userGuid,
       token: magicflowToken,
-      lastFetched: userProvider.providerLastFetched,
+      lastFetched: providerLastFetched,
       storageQueue, // Importing this from magicflow processor wasn't working so passing the instance
     });
 

@@ -11,9 +11,11 @@ module.exports = {
       },
       userGuid: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       providerGuid: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       providerUserId: {
         type: Sequelize.STRING,
@@ -22,7 +24,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       providerToken: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       providerOrder: {
         type: Sequelize.INTEGER,
