@@ -87,3 +87,13 @@ Project Monthly Updates - https://neurofusion.substack.com
 Dev Tasks - https://github.com/users/oreHGA/projects/1
 
 User Flows - https://www.notion.so/Fusion-User-flows-9c454c9f767a403b9384e94b1dfdc48b
+
+## Working on this repo
+
+- `git fetch`
+- `git checkout staging`
+- `git checkout -b user/<yournew-branch>`
+
+When you finish and are all set, open a PR to the `staging` branch.
+
+- staging branch will be periodically merged to prod
