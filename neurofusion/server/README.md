@@ -77,3 +77,7 @@ Notes
 ## Data Fetch Scheduling
 
 - Magicflow, fetch nightly defined in [./cron-jobs/magicflow-daily-fetch.js](./cron-jobs/magicflow-daily-fetch.js) invoked in [./index.js](./index.js)
+- Health data
+  - sleep
+  - activity
+  - workouts
