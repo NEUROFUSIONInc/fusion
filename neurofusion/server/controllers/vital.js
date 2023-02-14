@@ -87,10 +87,26 @@ exports.generateToken = async (req, res) => {
 
 exports.getDevices = async (req, res) => {
   // fetch the users devices
+  const vitalProviders = await db.Provider.findAll({
+    where: {
+      type: "vital",
+    },
+  });
+
+  const providerGuids = vitalProviders.map((provider) => provider.guid);
+
+  if (providerGuids.length === 0) {
+    return res.status(400).json({
+      error: "Vital provider not found",
+    });
+  }
+
   const userProviders = await db.UserProvider.findOne({
     where: {
       userGuid: req.user.userGuid,
-      // type: "vital",
+      providerGuid: {
+        [db.Sequelize.Op.in]: providerGuids, // not necessay since we're still calling vital anyways
+      },
     },
   });
 
