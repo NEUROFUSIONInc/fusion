@@ -5,7 +5,12 @@ import { timer } from "rxjs";
 import { takeUntil } from "rxjs/operators/index.js";
 import axios from "axios";
 
-import { v4 as uuidv4 } from "uuid";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
+
+import "react-notifications/lib/notifications.css";
 
 export default function Experiment({
   name,
@@ -22,23 +27,11 @@ export default function Experiment({
     setEventDescription(event.target.value);
   };
 
-  function getOrSetUserGuid() {
-    // TODO: move to calling the backend api to get the userGuid
-    let userGuid = localStorage.getItem("userGuid");
-    if (!userGuid) {
-      userGuid = uuidv4();
-      localStorage.setItem("userGuid", userGuid);
-    }
-    return userGuid;
-  }
-
   useEffect(() => {
     setRecordingDuration(duration);
   }, [duration]);
 
   function startRecording() {
-    // TODO: Also include the event Description for the experiment using
-    // the eventSchema in root README.md
     // record raw data
     alert("starting recording");
     // invoke all the subscriptions
@@ -210,6 +203,18 @@ export default function Experiment({
           );
         });
     }
+
+    //  generate the and upload to storage
+    let event = {
+      startTimestamp: fileTimestamp,
+      event: {
+        name: name,
+        description: eventDescription,
+        value: eventDescription,
+      },
+    };
+    // upload event metadata
+    writeDataToStore("event", event, fileTimestamp, "remoteStorage");
   }
 
   function convertToCSV(arr) {
@@ -245,10 +250,11 @@ export default function Experiment({
         ? new Date(fileTimestamp * 1000)
         : new Date(fileTimestamp);
 
-    const userGuid = getOrSetUserGuid();
-    const content = convertToCSV(data); // convert to csv format
+    const providerName = dataName == "event" ? "fusion" : "neurosity";
+
     if (storeType === "download") {
       const fileName = `${dataName}_${fileTimestamp}.csv`;
+      const content = convertToCSV(data); // convert to csv format
 
       var hiddenElement = document.createElement("a");
       hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(content);
@@ -257,18 +263,22 @@ export default function Experiment({
       hiddenElement.click();
     } else if (storeType === "remoteStorage") {
       // call the upload api
-      // TODO: test that this call actually works
       (async () => {
         const res = await axios.post(
           `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/upload`,
           {
-            provider: "neurosity",
+            provider: providerName,
             dataName: dataName,
-            userGuid: userGuid,
             fileTimestamp: fileTimestamp,
             content: data,
           }
         );
+
+        if ((res.status = 200)) {
+          NotificationManager.success(`uploading ${dataName} successful`);
+        } else {
+          NotificationManager.error(`uploading ${dataName} failed`);
+        }
       })();
     }
 
@@ -318,6 +328,8 @@ export default function Experiment({
           <button disabled={true}>Recording in progress...</button>
         )}
       </div>
+
+      <NotificationContainer />
     </>
   );
 }
