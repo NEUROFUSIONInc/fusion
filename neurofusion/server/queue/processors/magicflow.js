@@ -82,20 +82,6 @@ const queueProcessor = async ({ guid, token, lastFetched, storageQueue }) => {
   const months = getDateRange(startDate, endDate);
 
   try {
-    await Promise.allSettled(
-      months.flatMap((month) =>
-        SOURCES.map((source) =>
-          updateMagicflowData(
-            guid,
-            source,
-            token,
-            month.start,
-            month.end,
-            storageQueue
-          )
-        )
-      )
-    );
     // This will always update the last fetched even if writing to the blob store fails
     const magicflowProvider = await db.Provider.findOne({
       where: {
@@ -114,7 +100,28 @@ const queueProcessor = async ({ guid, token, lastFetched, storageQueue }) => {
       },
     });
 
-    userProvider.providerLastFetched = dayjs();
+    if (!userProvider) {
+      throw new Error("MAGICFLOW_PROCESSOR: User provider not found");
+    }
+
+    await Promise.allSettled(
+      months.flatMap((month) =>
+        SOURCES.map(async (source) => {
+          await updateMagicflowData(
+            guid,
+            source,
+            token,
+            month.start,
+            month.end,
+            storageQueue
+          );
+
+          // Update last fetched date with the end date of the last month
+          userProvider.providerLastFetched = dayjs(month.end);
+        })
+      )
+    );
+
     await userProvider.save();
   } catch (err) {
     console.error(err);
