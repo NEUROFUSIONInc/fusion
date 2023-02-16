@@ -18,7 +18,10 @@ export default function Datasets() {
   useEffect(() => {
     (async () => {
       setDatasets(
-        await getDatasets(filterStartDate, dayjs().format("YYYY-MM-DD"))
+        await getDatasets(
+          filterStartDate,
+          dayjs(filterStartDate).add(1, "day").format("YYYY-MM-DD")
+        )
       );
 
       // TODO: parse datasets into provider, dataName, time format
