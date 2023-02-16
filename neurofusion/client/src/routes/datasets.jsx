@@ -5,6 +5,8 @@ import { useNeurofusionUser } from "../services/auth";
 
 import dayjs from "dayjs";
 import axios from "axios";
+import { Icon } from "@fluentui/react/lib/Icon";
+import { IconButton } from "@fluentui/react/lib/Button";
 
 export default function Datasets() {
   const neurofusionUserInfo = useNeurofusionUser();
@@ -107,15 +109,23 @@ export default function Datasets() {
             {datasets.map((dataset) => {
               return (
                 <>
-                  <p>{dataset}</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      downloadDataset(dataset);
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
                   >
-                    Download
-                  </button>
+                    <p>{dataset}</p>
+                    <IconButton
+                      iconProps={{ iconName: "Download" }}
+                      title="Download"
+                      ariaLabel="Download"
+                      onClick={() => {
+                        downloadDataset(dataset);
+                      }}
+                    />
+                  </div>
                 </>
               );
             })}
