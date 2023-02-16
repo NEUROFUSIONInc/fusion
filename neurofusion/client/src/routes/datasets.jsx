@@ -20,7 +20,7 @@ export default function Datasets() {
       setDatasets(
         await getDatasets(
           filterStartDate,
-          dayjs(filterStartDate).add(1, "day").format("YYYY-MM-DD")
+          dayjs().add(1, "day").format("YYYY-MM-DD") // add 1 day to include today
         )
       );
 
