@@ -2,13 +2,13 @@
 
 What do we find when we stop treating our usage data across apps as a by-product but as signals that we could use to understand ourselves better?
 
-[Neurofusion](https://usefusion.app) allows you to record brain activity and correlate with other health & behaviour data like - interests, productivity data.
+[Fusion](https://usefusion.app) allows you to record brain activity and correlate with other health & behaviour data like - interests, productivity data.
 
 ## core data integrations
 
-brain activity (neurosity)
-productivity / actions on device - (magicflow, activitywatch)
-health (tryvital - oura, fitbit, glucose monitor etc)
+- brain activity (neurosity)
+- productivity / actions on device - (magicflow, activitywatch)
+- health (tryvital - oura, fitbit, glucose monitor etc)
 
 ## Data Storage
 

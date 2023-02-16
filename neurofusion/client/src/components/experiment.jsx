@@ -274,15 +274,15 @@ export default function Experiment({
           }
         );
 
-        if ((res.status = 200)) {
+        if (res.status == 200) {
           NotificationManager.success(`uploading ${dataName} successful`);
+          console.log(`Writing data for ${dataName} complete`);
         } else {
           NotificationManager.error(`uploading ${dataName} failed`);
+          console.log(`Writing data for ${dataName} failed`);
         }
       })();
     }
-
-    console.log(`Writing data for ${dataName} complete`);
   }
 
   const handleChange = (event) => {
@@ -323,9 +323,13 @@ export default function Experiment({
         ) : null}
 
         {recordingStatus == "stopped" ? (
-          <button onClick={startRecording}>Start Recording</button>
+          <button class="button" onClick={startRecording}>
+            Start Recording
+          </button>
         ) : (
-          <button disabled={true}>Recording in progress...</button>
+          <button class="button" disabled={true}>
+            Recording in progress...
+          </button>
         )}
       </div>
 

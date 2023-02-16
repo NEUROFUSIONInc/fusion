@@ -16,6 +16,7 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "bootstrap": "^5.2.3",
+    "dayjs": "^1.11.7",
     "echarts": "^5.4.0",
     "echarts-for-react": "^3.0.2",
     "magic-sdk": "^10.1.0",

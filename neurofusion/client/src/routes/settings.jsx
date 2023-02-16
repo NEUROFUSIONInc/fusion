@@ -240,7 +240,8 @@ function ConnectVital() {
 
   return (
     <>
-      <h3>Health Data (Oura/Apple Health)</h3>
+      <h3>Health Data</h3>
+      <p>Supports connecting to Oura</p>
       <button
         type="button"
         onClick={handleVitalOpen}

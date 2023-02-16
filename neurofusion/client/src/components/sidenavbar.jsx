@@ -48,7 +48,7 @@ const SideNavBar = () => {
         <img src={logo} style={logoStyle} alt="logo" width={150} />
       </div>
 
-      <h3 style={titleStyle}>NEUROFUSION</h3>
+      {/* <h3 style={titleStyle}>Fusion</h3> */}
       <ul style={listStyle}>
         <li style={itemStyle}>
           <a style={linkStyle} href="/lab">
