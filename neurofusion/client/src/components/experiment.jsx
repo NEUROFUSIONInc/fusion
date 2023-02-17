@@ -20,12 +20,16 @@ export default function Experiment({
   channelNames,
 }) {
   const [recordingDuration, setRecordingDuration] = useState(-1); // in seconds;
-  const [recordingStatus, setRecordingStatus] = useState("stopped"); // started, stopped
+  const [recordingStatus, setRecordingStatus] = useState({
+    powerByBand: "stopped",
+    rawBrainwaves: "stopped",
+    signalQuality: "stopped",
+    focus: "stopped",
+    calm: "stopped",
+    event: "stopped",
+  }); // inProgress, stopped
 
   const [eventDescription, setEventDescription] = useState("");
-  const handleEventDescriptionChange = (event) => {
-    setEventDescription(event.target.value);
-  };
 
   useEffect(() => {
     setRecordingDuration(duration);
@@ -37,7 +41,14 @@ export default function Experiment({
     // invoke all the subscriptions
     let fileTimestamp = Math.floor(Date.now() / 1000);
 
-    setRecordingStatus("started"); // started, stopped
+    setRecordingStatus({
+      powerByBand: "inProgress",
+      rawBrainwaves: "inProgress",
+      signalQuality: "inProgress",
+      focus: "inProgress",
+      calm: "inProgress",
+      event: "inProgress",
+    }); // inProgress, stopped
 
     if (notion) {
       console.log("notion initialized, starting recording");
@@ -72,7 +83,11 @@ export default function Experiment({
           }
         })
         .add(() => {
-          // now we want to have this downloaded right away
+          setRecordingStatus((recordingStatus) => ({
+            ...recordingStatus,
+            rawBrainwaves: "stopped",
+          }));
+
           writeDataToStore(
             "rawBrainwaves",
             rawBrainwavesSeries,
@@ -110,6 +125,11 @@ export default function Experiment({
           signalQualitySeries.push(signalQualityEntry);
         })
         .add(() => {
+          setRecordingStatus((recordingStatus) => ({
+            ...recordingStatus,
+            signalQuality: "stopped",
+          }));
+
           writeDataToStore(
             "signalQuality",
             signalQualitySeries,
@@ -133,6 +153,11 @@ export default function Experiment({
           focusPredictionSeries.push(focus);
         })
         .add(() => {
+          setRecordingStatus((recordingStatus) => ({
+            ...recordingStatus,
+            focus: "stopped",
+          }));
+
           writeDataToStore(
             "focus",
             focusPredictionSeries,
@@ -156,6 +181,11 @@ export default function Experiment({
           calmPredictionSeries.push(calm);
         })
         .add(() => {
+          setRecordingStatus((recordingStatus) => ({
+            ...recordingStatus,
+            calm: "stopped",
+          }));
+
           writeDataToStore(
             "calm",
             calmPredictionSeries,
@@ -195,6 +225,11 @@ export default function Experiment({
           powerByBandSeries.push(bandPowerObject);
         })
         .add(() => {
+          setRecordingStatus((recordingStatus) => ({
+            ...recordingStatus,
+            powerByBand: "stopped",
+          }));
+
           writeDataToStore(
             "powerByBand",
             powerByBandSeries,
@@ -214,6 +249,11 @@ export default function Experiment({
       },
     };
     // upload event metadata
+    setRecordingStatus((recordingStatus) => ({
+      ...recordingStatus,
+      event: "stopped",
+    }));
+    console.log(recordingStatus);
     writeDataToStore("event", event, fileTimestamp, "remoteStorage");
   }
 
@@ -233,22 +273,8 @@ export default function Experiment({
     fileTimestamp,
     storeType = "download"
   ) {
-    setRecordingStatus("stopped");
-
     // TODO: fix validation
     console.log("fileTimestamp: ", fileTimestamp);
-
-    const timestampLength = fileTimestamp.toString().length;
-    if (timestampLength != 10 && timestampLength != 13) {
-      console.log("fileTimestamp must be in seconds or milliseconds");
-      return;
-    }
-
-    // convert to milliseconds if in seconds
-    const recordingDate =
-      timestampLength == 10
-        ? new Date(fileTimestamp * 1000)
-        : new Date(fileTimestamp);
 
     const providerName = dataName == "event" ? "fusion" : "neurosity";
 
@@ -285,11 +311,6 @@ export default function Experiment({
     }
   }
 
-  const handleChange = (event) => {
-    const value = event.target.value;
-    setRecordingDuration(value);
-  };
-
   return (
     <>
       <h3>{name}</h3>
@@ -301,7 +322,7 @@ export default function Experiment({
       <textarea
         id="event_description"
         value={eventDescription}
-        onChange={handleEventDescriptionChange}
+        onChange={(event) => setEventDescription(event.target.value)}
         placeholder="e.g eyes closed, listening to music"
       ></textarea>
 
@@ -311,18 +332,22 @@ export default function Experiment({
           type="number"
           value={recordingDuration}
           placeholder="2"
-          onChange={handleChange}
+          onChange={(event) => {
+            setRecordingDuration(event.target.value);
+          }}
         ></input>
       </div>
 
       <div>
-        {recordingStatus == "started" ? (
-          <p>
-            Time left: <Timer delayResend={recordingDuration}></Timer>
-          </p>
+        {recordingStatus.rawBrainwaves == "inProgress" ? (
+          recordingDuration > 0 ? (
+            <p>
+              Time left: <Timer delayResend={recordingDuration}></Timer>
+            </p>
+          ) : null
         ) : null}
 
-        {recordingStatus == "stopped" ? (
+        {recordingStatus.rawBrainwaves == "stopped" ? (
           <button class="button" onClick={startRecording}>
             Start Recording
           </button>
