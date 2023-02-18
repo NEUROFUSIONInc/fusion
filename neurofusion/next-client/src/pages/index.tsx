@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const { data: session } = useSession();
 
   return (
-    <MainLayout dark>
+    <MainLayout>
       {session ? (
         <>
           <h1>Welcome {session.user?.email}</h1>
@@ -35,6 +35,7 @@ const Home: NextPage = () => {
       <Link href="/recordings" className="block">
         Go to another protected route (Recordings)
       </Link>
+      <div className="min-h-screen" />
     </MainLayout>
   );
 };
