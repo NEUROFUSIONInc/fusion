@@ -4,7 +4,6 @@ const blobStorage = require('../storage/blob');
 
 
 exports.uploadValidator = [
-  body("userGuid").notEmpty().isUUID().withMessage("must be a uuid"),
   body("provider").notEmpty().withMessage("must not be empty"),
   body("dataName").notEmpty().withMessage("must not be empty"),
   body("fileTimestamp").notEmpty().isNumeric().withMessage("must be a timestamp"),
@@ -23,10 +22,10 @@ exports.uploadBlob = async (req, res) => {
   const dataName = req.body.dataName;
   const fileTimestamp = req.body.fileTimestamp;
   const content = req.body.content;
-  const userGuid = req.body.userGuid;
+  const userGuid = req.user.userGuid;
   const provider = req.body.provider;
 
-  const fileName = `${userGuid}/${provider}/${fileTimestamp}-${dataName}.json`;
+  const fileName = `${userGuid}/${provider}/${dataName}_${fileTimestamp}.json`;
   const fileType = "application/json";
   const tags = {
     "guid": userGuid,
@@ -51,10 +50,6 @@ exports.uploadBlob = async (req, res) => {
 };
 
 exports.findValidator = [
-  query("userGuid")
-    .notEmpty()
-    .isUUID()
-    .withMessage("must be a uuid"),
   query("startTimestamp")
     .notEmpty()
     .isNumeric()
@@ -85,7 +80,7 @@ exports.findBlobs = async (req, res) => {
 
   const dataName = req.query.dataName;
   const provider = req.query.provider;
-  const userGuid = req.query.userGuid;
+  const userGuid = req.user.userGuid;
   const startTimestamp = req.query.startTimestamp;
   const endTimestamp = req.query.endTimestamp;
 
@@ -106,6 +101,20 @@ exports.getAndDownloadValidator = [
     .withMessage("must not be empty")
 ];
 
+/**
+ * Verify that the user that is requesting the file is the owner i.e don't let a user get another user's data
+ * 
+ * This simplify checks that the guid in the blobName is the same as the guid of the logged in user.
+ * This requires that all user files be saved under their guid subfolder, else we'll need another approach.
+ */
+const verifyFileAccess = (req, blobName) => {
+  const fileGuid = blobName.split("/")[0];
+
+  if (fileGuid !== req.user.userGuid) {
+    throw new Error("Unauthorized access");
+  }
+};
+
 exports.getBlob = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -118,6 +127,8 @@ exports.getBlob = async (req, res) => {
   const blobName = req.query.blobName;
 
   try {
+    verifyFileAccess(req, blobName);
+
     const buffer = await blobStorage.getBlobAsBuffer(blobName);
 
     res.status(200)
@@ -142,6 +153,8 @@ exports.downloadBlob = async (req, res) => {
   const blobName = req.query.blobName;
 
   try {
+    verifyFileAccess(req, blobName);
+
     const buffer = await blobStorage.getBlobAsBuffer(blobName);
     const filePaths = blobName.split("/");
     const fileName = filePaths[filePaths.length - 1];

@@ -1,8 +1,5 @@
-'use strict';
-const {
-  Model,
-  Sequelize
-} = require('sequelize');
+"use strict";
+const { Model, Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class UserMetadata extends Model {
     /**
@@ -14,29 +11,33 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  UserMetadata.init({
-    userEmail: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },userGuid: {
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false,
-      unique: true
+  UserMetadata.init(
+    {
+      userEmail: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      userGuid: {
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+        unique: true,
+      },
+      magicLinkAuthToken: DataTypes.TEXT,
+      neurosityToken: DataTypes.TEXT,
+      magicflowToken: DataTypes.TEXT,
+      magicflowLastFetched: DataTypes.DATE,
+      userLastLogin: DataTypes.DATE,
+      userConsentUsage: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
-    magicLinkAuthToken: DataTypes.TEXT,
-    neurosityToken: DataTypes.TEXT,
-    magicflowToken: DataTypes.TEXT,
-    magicflowLastFetched: DataTypes.DATE,
-    userLastLogin: DataTypes.DATE,
-    userConsentUsage: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
+    {
+      sequelize,
+      modelName: "UserMetadata",
     }
-  }, {
-    sequelize,
-    modelName: 'UserMetadata',
-  });
+  );
   return UserMetadata;
 };
