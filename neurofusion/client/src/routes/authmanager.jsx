@@ -58,6 +58,10 @@ const AuthManager = () => {
 
   const logoStyle = {};
 
+  const underline = {
+    textDecoration: "underline",
+  };
+
   return (
     <div style={EmailForm}>
       <img src={logo} style={logoStyle} alt="logo" height={150} />
@@ -73,18 +77,27 @@ const AuthManager = () => {
         />
         <p>
           By signing up, you agree to our{" "}
-          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
+          <a
+            style={underline}
+            href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73"
+          >
             Terms
           </a>
           ,{" "}
-          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
+          <a
+            style={underline}
+            href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73"
+          >
             Privacy Policy.
           </a>
           <br />
           We will perform transformations on data sources connected to serve &
           provide you insights as detailed in our{" "}
-          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
-            Data Use Policy. Learn more
+          <a
+            style={underline}
+            href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73"
+          >
+            Data Use Policy.
           </a>
         </p>
       </div>
