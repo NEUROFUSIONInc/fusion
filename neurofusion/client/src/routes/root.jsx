@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import Experiment from "../components/experiment";
-import SelfSample from "../components/selfsample";
 import SideNavBar from "../components/sidenavbar";
 import SignalQuality from "../components/signalquality";
 
@@ -32,7 +31,7 @@ export default function Root() {
     console.log("validating user login");
 
     if (
-      neurofusionUserInfo.isLoading == false &&
+      neurofusionUserInfo.isLoading === false &&
       neurofusionUserInfo.isLoggedIn !== true
     ) {
       window.location.href = "/login";
@@ -77,7 +76,7 @@ export default function Root() {
 
   return (
     <>
-      {neurofusionUserInfo.isLoggedIn == true ? (
+      {neurofusionUserInfo.isLoggedIn === true ? (
         <>
           <SideNavBar></SideNavBar>
 
@@ -122,11 +121,9 @@ export default function Root() {
                     })}
                   </select>
                 </div>
-
                 <p>
                   Your device is: <strong>{deviceStatus}</strong>
                 </p>
-
                 {deviceStatus === "online" ? (
                   <SignalQuality
                     channelNames={channelNames}
@@ -135,7 +132,6 @@ export default function Root() {
                 ) : (
                   <></>
                 )}
-
                 <div id="record-experiment">
                   <h2>Experiments</h2>
 

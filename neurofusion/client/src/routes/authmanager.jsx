@@ -63,17 +63,33 @@ const AuthManager = () => {
       <img src={logo} style={logoStyle} alt="logo" height={150} />
       <h1>Login to Fusion</h1>
 
-      <div>
+      <div style={{ width: "500px" }}>
         <label htmlFor="email">Email:</label>
         <input
           type="email"
           name="email"
-          style={{ height: "30px", width: "200px" }}
+          style={{ height: "30px", width: "100%" }}
           onChange={handleChange}
         />
+        <p>
+          By signing up, you agree to our{" "}
+          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
+            Terms
+          </a>
+          ,{" "}
+          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
+            Privacy Policy.
+          </a>
+          <br />
+          We will perform transformations on data sources connected to serve &
+          provide you insights as detailed in our{" "}
+          <a href="https://island-manicure-a10.notion.site/Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73">
+            Data Use Policy. Learn more
+          </a>
+        </p>
       </div>
 
-      <button class="button" type="button" onClick={handleSubmit}>
+      <button className="button" type="button" onClick={handleSubmit}>
         Login
       </button>
     </div>

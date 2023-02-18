@@ -34,7 +34,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <button class="button" type="button" onClick={redirectToLogin}>
+        <button className="button" type="button" onClick={redirectToLogin}>
           LOGIN
         </button>
 

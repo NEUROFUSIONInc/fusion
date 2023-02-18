@@ -1,4 +1,4 @@
-import React, { useState, useEffect, startTransition } from "react";
+import React, { useState, useEffect } from "react";
 import Timer from "./timer";
 
 import { timer } from "rxjs";
@@ -276,7 +276,7 @@ export default function Experiment({
     // TODO: fix validation
     console.log("fileTimestamp: ", fileTimestamp);
 
-    const providerName = dataName == "event" ? "fusion" : "neurosity";
+    const providerName = dataName === "event" ? "fusion" : "neurosity";
 
     if (storeType === "download") {
       const fileName = `${dataName}_${fileTimestamp}.csv`;
@@ -300,7 +300,7 @@ export default function Experiment({
           }
         );
 
-        if (res.status == 200) {
+        if (res.status === 200) {
           NotificationManager.success(`uploading ${dataName} successful`);
           console.log(`Writing data for ${dataName} complete`);
         } else {
@@ -339,7 +339,7 @@ export default function Experiment({
       </div>
 
       <div>
-        {recordingStatus.rawBrainwaves == "inProgress" ? (
+        {recordingStatus.rawBrainwaves === "inProgress" ? (
           recordingDuration > 0 ? (
             <p>
               Time left: <Timer delayResend={recordingDuration}></Timer>
@@ -347,12 +347,12 @@ export default function Experiment({
           ) : null
         ) : null}
 
-        {recordingStatus.rawBrainwaves == "stopped" ? (
-          <button class="button" onClick={startRecording}>
+        {recordingStatus.rawBrainwaves === "stopped" ? (
+          <button className="button" onClick={startRecording}>
             Start Recording
           </button>
         ) : (
-          <button class="button" disabled={true}>
+          <button className="button" disabled={true}>
             Recording in progress...
           </button>
         )}

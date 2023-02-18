@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
 
 import Root from "./routes/root";

@@ -29,7 +29,7 @@ function ConnectNeurosity() {
         `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/neurosity/get-oauth-url`
       );
 
-      if (res.status == 200) {
+      if (res.status === 200) {
         // redirects the browser to the Neurosity OAuth sign-in page
         window.location.href = res.data.url;
       } else {
@@ -116,7 +116,7 @@ function ConnectMagicFlow() {
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/magicflow/get-token`
     );
 
-    if (res.status == 200) {
+    if (res.status === 200) {
       return res.data.magicflowToken;
     } else {
       console.log("error getting magicflow token");
@@ -139,7 +139,7 @@ function ConnectMagicFlow() {
       }
     );
 
-    if (res.status == 200) {
+    if (res.status === 200) {
       return res.data.magicflowToken;
     } else {
       console.log("error setting magicflow token");
@@ -175,7 +175,7 @@ function ConnectVital() {
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-token`
     );
 
-    if (res.status == 200) {
+    if (res.status === 200) {
       console.log(res.data.linkToken);
       return res.data.linkToken;
     } else {
@@ -189,7 +189,7 @@ function ConnectVital() {
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/vital/get-devices`
     );
 
-    if (res.status == 200) {
+    if (res.status === 200) {
       setVitalDevices(res.data.devices);
       return res.data.devices;
     } else {
@@ -274,7 +274,7 @@ export default function Settings() {
 
   return (
     <>
-      {neurofusionUserInfo.isLoggedIn == true ? (
+      {neurofusionUserInfo.isLoggedIn === true ? (
         <>
           <SideNavBar></SideNavBar>
 
