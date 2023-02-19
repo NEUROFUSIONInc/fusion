@@ -5,7 +5,7 @@ const blobStorage = require("../../storage/blob");
 dotenv.config();
 
 const writeData = async (guid, provider, dataName, timestamp, content) => {
-  const fileName = `${guid}/${provider}/${timestamp}-${dataName}.json`;
+  const fileName = `${guid}/${provider}/${dataName}_${timestamp}.json`;
   const fileType = "application/json";
   const tags = {
     guid: guid,
