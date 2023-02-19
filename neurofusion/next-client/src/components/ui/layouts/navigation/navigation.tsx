@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { FC } from "react";
 import { ArrowRight } from "lucide-react";
+import { useWindowScrollPosition } from "rooks";
+import classNames from "classnames";
 
 import { Logo } from "../../logo/logo";
 import { ButtonLink } from "../../link/button-link";
@@ -8,9 +10,20 @@ import { ButtonLink } from "../../link/button-link";
 import { navigationLinks } from "./data";
 
 export const Navbar: FC = () => {
+  const { scrollY } = useWindowScrollPosition();
+  const showBorderBottom = scrollY > 16;
+
   return (
-    <header className="w-full bg-opacity-50 backdrop-blur-[12px]">
-      <nav className="border-0.5 container mx-auto flex items-center justify-between p-3 backdrop-blur-md backdrop-filter after:absolute after:inset-x-0 after:z-[-1] after:h-12 after:w-full">
+    <header
+      className={classNames(
+        "sticky left-0 right-0 top-0 z-50 flex h-16 w-full items-center bg-opacity-50 backdrop-blur-lg",
+        {
+          "border-b- border-b border-b-gray-100 shadow-sm dark:border-b-gray-800 dark:border-opacity-50":
+            showBorderBottom,
+        }
+      )}
+    >
+      <nav className="container mx-auto flex items-center justify-between p-3">
         <Logo withText />
         <div className="flex items-center justify-between">
           <div className="flex items-center">
