@@ -19,7 +19,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
-import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 
 function LogoTitle() {
@@ -72,7 +71,7 @@ function HomeScreen({ navigation }) {
       <View>
         <Button
           title="Add new prompt"
-          onPress={() => navigation.navigate("CreatePrompt")}
+          onPress={() => navigation.navigate("AuthorPrompt")}
         />
       </View>
       <StatusBar style="auto" />
@@ -80,7 +79,7 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function CreatePromptScreen({ navigation }) {
+function PromptScreen({ navigation }) {
   const [promptText, setPromptText] = React.useState("");
 
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
@@ -308,7 +307,7 @@ Notifications.setNotificationHandler({
   },
 });
 
-// TODO: set cutom catgeories based on re
+// TODO: set cutom catgeories based on prompts
 Notifications.setNotificationCategoryAsync("yesno", [
   {
     identifier: "Yes",
@@ -325,7 +324,7 @@ Notifications.setNotificationCategoryAsync("number", [
     identifier: "number",
     buttonTitle: "Respond",
     textInput: {
-      submitButtonTitle: "Submit",
+      submitButtonTitle: "Log",
       placeholder: "Enter a number",
     },
   },
@@ -336,20 +335,41 @@ Notifications.setNotificationCategoryAsync("text", [
     identifier: "text",
     buttonTitle: "Respond",
     textInput: {
-      submitButtonTitle: "Submit",
+      submitButtonTitle: "Log",
       placeholder: "Type your response here",
     },
   },
 ]);
 
 export default function App() {
+  const notificationListener = React.useRef();
+  const responseListener = React.useRef();
+
   React.useEffect(() => {
+    (async () => {
+      // notificationListener.current =
+      //   Notifications.addNotificationReceivedListener((notification) => {
+      //     // setNotification(notification);
+      //     // this logs when notifcation is set
+      //     // console.log(notification);
+      //   });
+
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log("notification response");
+          console.log(response);
+          // TODO: handle response
+        });
+    })();
+
     (async () => {
       const permissionStatus = await registerForPushNotificationsAsync();
       if (!permissionStatus) {
         console.log("Not registered for push notifications");
         return;
       }
+
+      await Notifications.cancelAllScheduledNotificationsAsync();
 
       // get the list of active prompts and schedule notifications
       // TODO: check if the notification is already scheduled  - if so, skip (hack is to clear all notifcations & reset every time)
@@ -398,9 +418,9 @@ export default function App() {
           options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
         />
         <Stack.Screen
-          name="CreatePrompt"
-          component={CreatePromptScreen}
-          options={{ title: "Create a Fusion Prompt" }}
+          name="AuthorPrompt"
+          component={PromptScreen}
+          options={{ title: "Author Prompt" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
