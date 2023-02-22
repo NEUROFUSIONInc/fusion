@@ -37,7 +37,7 @@ export default function Experiment({
 
   function startRecording() {
     // record raw data
-    alert("starting recording");
+    console.log("starting recording");
     // invoke all the subscriptions
     let fileTimestamp = Math.floor(Date.now() / 1000);
 

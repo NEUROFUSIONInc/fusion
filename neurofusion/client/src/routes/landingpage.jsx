@@ -1,7 +1,8 @@
 import logo from "../assets/logo.png";
-import dinodemo from "../assets/dinodemo.png";
 import analysisdemo from "../assets/analysisdemo_day.png";
 import "../App.css";
+
+import fusionMobileDemo from "../assets/fusionmobile_demo.png";
 
 const logoStyle = {};
 
@@ -69,6 +70,37 @@ export default function LandingPage() {
               </li>
             </ul>
           </div>
+        </div>
+
+        {/* here we talk about all the different data sources */}
+        <div class="block">
+          {/* <h3>Logging Events</h3> */}
+          <p
+            style={{
+              fontSize: "20px",
+            }}
+          >
+            Create personalized prompts that help you observe your behavioral
+            patterns over time!
+          </p>
+        </div>
+        <div class="block">
+          <img src={fusionMobileDemo} style={imageStyle}></img>
+        </div>
+
+        <div class="block">
+          <h3>How is data stored & processed?</h3>
+          <ul>
+            <li>
+              We anonymize data by default (i.e data sources connected on fusion
+              will never be stored with your name, email, or phone number)
+            </li>
+            <li>
+              When you connect a data source, we store the data in an Azure Blob
+              Storage container with a random identifier
+            </li>
+            <li>Your data is encrypted while in transit and at rest.</li>
+          </ul>
         </div>
 
         <div class="footer">
