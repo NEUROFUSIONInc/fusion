@@ -51,6 +51,15 @@ const SideNavBar = () => {
       {/* <h3 style={titleStyle}>Fusion</h3> */}
       <ul style={listStyle}>
         <li style={itemStyle}>
+          <a
+            style={linkStyle}
+            href="https://www.notion.so/Onboarding-Guide-e31bf62017b84c28833ad6ff099e254e?pvs=4"
+          >
+            Onboarding
+          </a>
+        </li>
+
+        <li style={itemStyle}>
           <a style={linkStyle} href="/lab">
             Playground
           </a>

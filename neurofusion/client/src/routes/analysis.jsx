@@ -27,9 +27,27 @@ export default function Analysis() {
   const [chartCategoryBaseData, setChartCategoryBaseData] = useState([]);
 
   const availableCategories = [
-    { key: "focus", text: "Focus" },
-    { key: "calm", text: "Calm" },
+    {
+      key: "focus",
+      text: "Focus",
+    },
+    { key: "calm", text: "Calm", description: "Calm" },
   ];
+
+  const chartDescriptions = {
+    focus: {
+      text: "Focus is predicted based on gamma brainwaves from Neurosity API. Focus > 0.3 is significant.",
+      link: "https://docs.neurosity.co/docs/api/focus",
+    },
+    calm: {
+      text: "Calm is predicted based on alpha brainwave between 7.5Hz and 12.5Hz. Calm > 0.3 is significant.",
+      link: "https://docs.neurosity.co/docs/api/calm",
+    },
+    powerSpectrum: {
+      text: "Power Spectrum",
+      link: "",
+    },
+  };
 
   const [chartCategory, setChartCategory] = useState("focus"); // focus, powerSpectrum, magicFlowContexts
 
@@ -575,6 +593,25 @@ export default function Analysis() {
               ref={brainChartRef}
               style={{ height: "500px", width: "100%", paddingTop: "20px" }}
             ></div>
+
+            {/* Chart description */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <p>
+                {chartDescriptions[chartCategory].text}&nbsp;
+                <a
+                  href={chartDescriptions[chartCategory].link}
+                  style={{ textDecoration: "underline" }}
+                >
+                  Learn more.
+                </a>
+              </p>
+            </div>
 
             {/* TODO: allow comparison across e.g productivity */}
           </main>
