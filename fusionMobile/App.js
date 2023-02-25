@@ -233,7 +233,7 @@ function PromptScreen({ navigation, route }) {
       <>
         <Text>
           Try to think of something that interests you and write a question
-          about it. For example, "Are you feeling energentic?", "Have you had a
+          about it. For example, "Are you feeling energetic?", "Have you had a
           meal?"
         </Text>
       </>
