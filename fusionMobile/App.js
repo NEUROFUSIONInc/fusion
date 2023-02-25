@@ -49,7 +49,7 @@ function HomeScreen({ navigation, route }) {
       {/* Events div  */}
       <Text style={{ fontWeight: "bold", fontSize: "30" }}>Prompts</Text>
       {/* if there were events list them */}
-      {savedPrompts ? (
+      {savedPrompts && savedPrompts?.length > 0 ? (
         <FlatList
           data={savedPrompts}
           renderItem={({ item }) => (
