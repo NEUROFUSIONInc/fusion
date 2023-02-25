@@ -25,7 +25,7 @@ function LogoTitle() {
   return <Image source={logo} style={{ width: 35, height: 35 }} />;
 }
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation, route }) {
   const [savedPrompts, setSavedPrompts] = React.useState(null);
 
   React.useEffect(() => {
@@ -54,12 +54,58 @@ function HomeScreen({ navigation }) {
           data={savedPrompts}
           renderItem={({ item }) => (
             <View style={styles.item}>
-              <Text>Prompt Text: {item.promptText}</Text>
-              <Text>Response Type: {item.responseType}</Text>
-              <Text>
-                Frequency: {item.notificationFrequency.value}{" "}
-                {item.notificationFrequency.unit}
-              </Text>
+              <View>
+                <Text>Prompt Text: {item.promptText}</Text>
+                <Text>Response Type: {item.responseType}</Text>
+                <Text>
+                  Frequency: {item.notificationFrequency.value}{" "}
+                  {item.notificationFrequency.unit}
+                </Text>
+              </View>
+
+              {/* Edit/Delete/View Prompt responses */}
+              <View>
+                <Button
+                  title="Edit"
+                  onPress={() =>
+                    navigation.navigate("AuthorPrompt", {
+                      prompt: item,
+                    })
+                  }
+                />
+                <Button
+                  title="Delete"
+                  onPress={() => {
+                    Alert.alert(
+                      "Delete Prompt",
+                      "Are you sure you want to delete this prompt?",
+                      [
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                        {
+                          text: "OK",
+                          onPress: async () => {
+                            const res = await deletePrompt(item.uuid);
+                            if (res) {
+                              setSavedPrompts(res);
+                            }
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                />
+                <Button
+                  title="View Responses"
+                  onPress={() =>
+                    navigation.navigate("ViewResponses", {
+                      prompt: item,
+                    })
+                  }
+                />
+              </View>
             </View>
           )}
           keyExtractor={(item) => item.uuid}
@@ -79,7 +125,13 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function PromptScreen({ navigation }) {
+function PromptScreen({ navigation, route }) {
+  console.log("navigation object");
+  console.log(navigation);
+  console.log("route details");
+  console.log(route);
+
+  const [promptObject, setPromptObject] = React.useState(null);
   const [promptText, setPromptText] = React.useState("");
 
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
@@ -103,6 +155,21 @@ function PromptScreen({ navigation }) {
       { label: "Hours", value: "hours" },
       { label: "Minutes", value: "minutes" },
     ]);
+
+  // set the prompt object if it was passed in
+  React.useEffect(() => {
+    if (route.params && route.params.prompt) {
+      setPromptObject(route.params.prompt);
+      setPromptText(route.params.prompt.promptText);
+      setResponseType(route.params.prompt.responseType);
+      setNotificationFrequencyUnit(
+        route.params.prompt.notificationFrequency.unit
+      );
+      setNotificationFrequencyValue(
+        route.params.prompt.notificationFrequency.value
+      );
+    }
+  }, [route.params]);
 
   // TODO: add a way to add custom options
 
@@ -128,7 +195,7 @@ function PromptScreen({ navigation }) {
     try {
       // build the prompt object
       const prompt = {
-        uuid: uuidv4(),
+        uuid: promptObject ? promptObject.uuid : uuidv4(),
         promptText: promptText,
         responseType: responseType,
         notificationFrequency: {
@@ -137,23 +204,26 @@ function PromptScreen({ navigation }) {
         },
       };
 
-      // prompts has to be an array
+      // save/update prompts
       // get the current prompts
       const currentPrompts = await readSavedPrompts();
-      if (currentPrompts) {
+
+      // Check if prompt with same UUID already exists in the array
+      const promptIndex = currentPrompts.findIndex(
+        (p) => p.uuid === prompt.uuid
+      );
+
+      if (promptIndex >= 0) {
+        // Overwrite existing prompt with the same UUID
+        currentPrompts[promptIndex] = prompt;
+      } else {
         // add the new prompt to the array
         currentPrompts.push(prompt);
-        // update the prompts
-        await AsyncStorage.setItem("prompts", JSON.stringify(currentPrompts));
-        return currentPrompts;
-      } else {
-        // create a new array
-        const newPrompts = [];
-        newPrompts.push(prompt);
-        // update the prompts
-        await AsyncStorage.setItem("prompts", JSON.stringify(newPrompts));
-        return newPrompts;
       }
+
+      // update the prompts
+      await AsyncStorage.setItem("prompts", JSON.stringify(currentPrompts));
+      return currentPrompts;
     } catch (error) {
       console.log(error);
       return null;
@@ -236,8 +306,6 @@ function PromptScreen({ navigation }) {
               } else {
                 Alert.alert("Error", "There was an error saving the prompt");
               }
-
-              navigation.navigate("Home");
             } catch (error) {
               console.log(error);
             }
@@ -247,16 +315,6 @@ function PromptScreen({ navigation }) {
     </View>
   );
 }
-
-// const prompt = {
-//   uuid: uuidv4(),
-//   promptText: "How are you feeling about work?",
-//   responseType: "text",
-//   notificationFrequency: {
-//     value: 8,
-//     unit: "hours",
-//   },
-// };
 
 const readSavedPrompts = async () => {
   try {
@@ -269,6 +327,50 @@ const readSavedPrompts = async () => {
     }
   } catch (e) {
     // error reading value
+    return null;
+  }
+};
+
+const deletePrompt = async (uuid) => {
+  try {
+    const prompts = await AsyncStorage.getItem("prompts");
+    if (prompts !== null) {
+      // value previously stored
+      console.log(prompts);
+      const promptArray = JSON.parse(prompts);
+      const newPromptArray = promptArray.filter(
+        (prompt) => prompt.uuid !== uuid
+      );
+      await AsyncStorage.setItem("prompts", JSON.stringify(newPromptArray));
+      return newPromptArray;
+    }
+  } catch (e) {
+    // error reading value
+    return null;
+  }
+};
+
+const saveFusionEvent = async (eventObj) => {
+  // TODO: update to also store data remotely
+  // first fetch events in local storage
+  try {
+    const events = await AsyncStorage.getItem("events");
+    if (events !== null) {
+      // value previously stored
+      console.log(events);
+      const eventArray = JSON.parse(events);
+      eventArray.push(eventObj);
+      await AsyncStorage.setItem("events", JSON.stringify(eventArray));
+      return eventArray;
+    } else {
+      const newEvents = [];
+      newEvents.push(eventObj);
+      await AsyncStorage.setItem("events", JSON.stringify(newEvents));
+      return newEvents;
+    }
+  } catch (e) {
+    // error reading value
+    console.log("failed to save event value");
     return null;
   }
 };
@@ -342,26 +444,10 @@ Notifications.setNotificationCategoryAsync("text", [
 ]);
 
 export default function App() {
-  const notificationListener = React.useRef();
   const responseListener = React.useRef();
 
   React.useEffect(() => {
-    (async () => {
-      // notificationListener.current =
-      //   Notifications.addNotificationReceivedListener((notification) => {
-      //     // setNotification(notification);
-      //     // this logs when notifcation is set
-      //     // console.log(notification);
-      //   });
-
-      responseListener.current =
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log("notification response");
-          console.log(response);
-          // TODO: handle response
-        });
-    })();
-
+    // validate permission status for user
     (async () => {
       const permissionStatus = await registerForPushNotificationsAsync();
       if (!permissionStatus) {
@@ -406,6 +492,51 @@ export default function App() {
           });
         });
       }
+    })();
+
+    // set notification handlers
+    (async () => {
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log("notification response");
+          console.log(response.notification);
+
+          let eventObj = {
+            name: response.notification.request.content.title,
+            description: response.notification.request.content.title,
+          };
+          const notificationCategory =
+            response.notification.request.content.categoryIdentifier;
+
+          if (
+            response.actionIdentifier ==
+            "expo.modules.notifications.actions.DEFAULT"
+          ) {
+            return;
+          }
+
+          if (notificationCategory == "yesno") {
+            eventObj["value"] = response.actionIdentifier;
+          } else if (
+            notificationCategory == "text" ||
+            notificationCategory == "number"
+          ) {
+            eventObj["value"] = response.userText;
+          }
+
+          const fusionEvent = {
+            startTimestamp: Math.floor(response.notification.date),
+            endTimestamp: Math.floor(response.notification.date),
+            event: eventObj,
+          };
+
+          // save locally
+          (async () => {
+            console.log(await saveFusionEvent(fusionEvent));
+          })();
+
+          console.log("saved fusion event");
+        });
     })();
   }, []);
 
