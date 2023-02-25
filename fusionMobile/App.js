@@ -126,11 +126,6 @@ function HomeScreen({ navigation, route }) {
 }
 
 function PromptScreen({ navigation, route }) {
-  console.log("navigation object");
-  console.log(navigation);
-  console.log("route details");
-  console.log(route);
-
   const [promptObject, setPromptObject] = React.useState(null);
   const [promptText, setPromptText] = React.useState("");
 
@@ -206,12 +201,15 @@ function PromptScreen({ navigation, route }) {
 
       // save/update prompts
       // get the current prompts
-      const currentPrompts = await readSavedPrompts();
-
-      // Check if prompt with same UUID already exists in the array
-      const promptIndex = currentPrompts.findIndex(
-        (p) => p.uuid === prompt.uuid
-      );
+      let currentPrompts = await readSavedPrompts();
+      let promptIndex = -1;
+      if (currentPrompts) {
+        // Check if prompt with same UUID already exists in the array
+        promptIndex = currentPrompts.findIndex((p) => p.uuid === prompt.uuid);
+      } else {
+        // if there are no prompts, create an empty array
+        currentPrompts = [];
+      }
 
       if (promptIndex >= 0) {
         // Overwrite existing prompt with the same UUID
@@ -508,9 +506,9 @@ export default function App() {
           const notificationCategory =
             response.notification.request.content.categoryIdentifier;
 
+          // if no response do nothing
           if (
-            response.actionIdentifier ==
-            "expo.modules.notifications.actions.DEFAULT"
+            response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
           ) {
             return;
           }
