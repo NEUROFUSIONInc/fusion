@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "fusionMobile",
+    "name": "Fusion",
     "slug": "fusion",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.neurofusion.fusion",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {

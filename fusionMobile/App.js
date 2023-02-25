@@ -407,40 +407,6 @@ Notifications.setNotificationHandler({
   },
 });
 
-// TODO: set cutom catgeories based on prompts
-Notifications.setNotificationCategoryAsync("yesno", [
-  {
-    identifier: "Yes",
-    buttonTitle: "Yes",
-  },
-  {
-    identifier: "No",
-    buttonTitle: "No",
-  },
-]);
-
-Notifications.setNotificationCategoryAsync("number", [
-  {
-    identifier: "number",
-    buttonTitle: "Respond",
-    textInput: {
-      submitButtonTitle: "Log",
-      placeholder: "Enter a number",
-    },
-  },
-]);
-
-Notifications.setNotificationCategoryAsync("text", [
-  {
-    identifier: "text",
-    buttonTitle: "Respond",
-    textInput: {
-      submitButtonTitle: "Log",
-      placeholder: "Type your response here",
-    },
-  },
-]);
-
 export default function App() {
   const responseListener = React.useRef();
 
@@ -454,6 +420,40 @@ export default function App() {
       }
 
       await Notifications.cancelAllScheduledNotificationsAsync();
+
+      // TODO: set cutom catgeories based on prompts
+      await Notifications.setNotificationCategoryAsync("yesno", [
+        {
+          identifier: "Yes",
+          buttonTitle: "Yes",
+        },
+        {
+          identifier: "No",
+          buttonTitle: "No",
+        },
+      ]);
+
+      await Notifications.setNotificationCategoryAsync("number", [
+        {
+          identifier: "number",
+          buttonTitle: "Respond",
+          textInput: {
+            submitButtonTitle: "Log",
+            placeholder: "Enter a number",
+          },
+        },
+      ]);
+
+      await Notifications.setNotificationCategoryAsync("text", [
+        {
+          identifier: "text",
+          buttonTitle: "Respond",
+          textInput: {
+            submitButtonTitle: "Log",
+            placeholder: "Type your response here",
+          },
+        },
+      ]);
 
       // get the list of active prompts and schedule notifications
       // TODO: check if the notification is already scheduled  - if so, skip (hack is to clear all notifcations & reset every time)
@@ -474,8 +474,6 @@ export default function App() {
                 prompt.notificationFrequency.value * 86400;
               break;
           }
-
-          console.log("promptIntervalSeconds", promptIntervalSeconds);
 
           await Notifications.scheduleNotificationAsync({
             content: {
@@ -510,6 +508,7 @@ export default function App() {
           if (
             response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
           ) {
+            console.log("default action - no response");
             return;
           }
 
