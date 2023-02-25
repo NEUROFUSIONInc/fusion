@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "fusionMobile",
-    "slug": "fusionMobile",
+    "slug": "fusion",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,9 +14,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neurofusion.fusion"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +30,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f79cfe2d-2f56-413a-89f8-b9fde538ac75"
+      }
+    },
+    "owner": "oreogundipe"
   }
 }
