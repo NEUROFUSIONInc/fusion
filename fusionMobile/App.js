@@ -334,7 +334,6 @@ const deletePrompt = async (uuid) => {
     const prompts = await AsyncStorage.getItem("prompts");
     if (prompts !== null) {
       // value previously stored
-      console.log(prompts);
       const promptArray = JSON.parse(prompts);
       const newPromptArray = promptArray.filter(
         (prompt) => prompt.uuid !== uuid
@@ -355,7 +354,6 @@ const saveFusionEvent = async (eventObj) => {
     const events = await AsyncStorage.getItem("events");
     if (events !== null) {
       // value previously stored
-      console.log(events);
       const eventArray = JSON.parse(events);
       eventArray.push(eventObj);
       await AsyncStorage.setItem("events", JSON.stringify(eventArray));
@@ -506,8 +504,8 @@ export default function App() {
     (async () => {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log("notification response");
-          console.log(response.notification);
+          // console.log("notification response");
+          // console.log(response.notification);
 
           let eventObj = {
             name: response.notification.request.content.title,
@@ -541,10 +539,8 @@ export default function App() {
 
           // save locally
           (async () => {
-            console.log(await saveFusionEvent(fusionEvent));
+            await saveFusionEvent(fusionEvent);
           })();
-
-          console.log("saved fusion event");
         });
     })();
   }, []);
