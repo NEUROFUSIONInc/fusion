@@ -14,12 +14,11 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.neurofusion.fusion"
+      "bundleIdentifier": "com.neurofusion.fusion",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
