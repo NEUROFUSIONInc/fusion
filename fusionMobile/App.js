@@ -426,10 +426,16 @@ export default function App() {
         {
           identifier: "Yes",
           buttonTitle: "Yes",
+          options: {
+            opensAppToForeground: false,
+          },
         },
         {
           identifier: "No",
           buttonTitle: "No",
+          options: {
+            opensAppToForeground: false,
+          },
         },
       ]);
 
@@ -441,6 +447,9 @@ export default function App() {
             submitButtonTitle: "Log",
             placeholder: "Enter a number",
           },
+          options: {
+            opensAppToForeground: false,
+          },
         },
       ]);
 
@@ -451,6 +460,9 @@ export default function App() {
           textInput: {
             submitButtonTitle: "Log",
             placeholder: "Type your response here",
+          },
+          options: {
+            opensAppToForeground: false,
           },
         },
       ]);
