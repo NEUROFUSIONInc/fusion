@@ -15,9 +15,9 @@ export const IntegrationsSection = () => {
           <div className="order-last mt-8 grid grid-cols-2 gap-0.5 lg:order-none lg:mt-0 lg:grid-cols-2">
             <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
               <Image
-                width={80}
-                height={80}
-                className="object-cover"
+                width={60}
+                height={60}
+                className="h-14 w-14 object-cover lg:h-20 lg:w-20"
                 src={
                   isLight
                     ? "/images/integrations/spotify_icon_black.png"
@@ -28,9 +28,9 @@ export const IntegrationsSection = () => {
             </div>
             <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
               <Image
-                width={80}
-                height={80}
-                className="object-cover"
+                width={60}
+                height={60}
+                className="h-14 w-14 object-cover lg:h-20 lg:w-20"
                 src={
                   isLight ? "/images/integrations/vital_icon_light.png" : "/images/integrations/vital_icon_black.jpeg"
                 }
@@ -39,9 +39,9 @@ export const IntegrationsSection = () => {
             </div>
             <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
               <Image
-                width={80}
-                height={80}
-                className="object-cover"
+                width={60}
+                height={60}
+                className="h-14 w-14 object-cover lg:h-20 lg:w-20"
                 src="/images/integrations/neurosity_icon_light.png"
                 alt="logo"
               />
