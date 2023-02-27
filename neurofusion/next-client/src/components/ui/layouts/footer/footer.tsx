@@ -26,7 +26,7 @@ export const Footer = () => {
         </nav>
         <p className="text-center">
           <span className="mx-auto mt-2 text-[14.5px] text-gray-600 dark:text-gray-400">
-            © Fusion Inc. All rights reserved. {new Date().getFullYear()}
+            © NEUROFUSION Research Inc. All rights reserved. {new Date().getFullYear()}
           </span>
         </p>
       </div>
