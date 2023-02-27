@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
-import { FC, ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
 
 export const buttonStyles = cva(
   "inline-flex items-center justify-center text-sm gap-1 hover:opacity-95 dark:hover:opacity-90 font-semibold relative rounded-md transition-colors focus:outline-none disabled:opacity-60 focus:ring-2  disabled:cursor-not-allowed",
@@ -8,6 +8,8 @@ export const buttonStyles = cva(
     variants: {
       intent: {
         primary: "bg-secondary-600 text-white focus:ring-secondary-100 focus:ring-offset-2",
+        ghost:
+          "bg-transparent focus:outline-0 border-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-dark focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:opacity-90",
       },
       fullWidth: {
         true: "w-full",
@@ -39,21 +41,25 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     rightIcon?: ReactNode;
   };
 
-export const Button: FC<ButtonProps> = ({
-  children,
-  isLoading = false,
-  intent = "primary",
-  size = "md",
-  fullWidth,
-  leftIcon,
-  rightIcon,
-  rounded,
-  className,
-  ...props
-}) => {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function button(
+  {
+    children,
+    isLoading = false,
+    intent = "primary",
+    size = "md",
+    fullWidth,
+    leftIcon,
+    rightIcon,
+    rounded,
+    className,
+    ...props
+  },
+  ref
+) {
   return (
     <button
       type="button"
+      ref={ref}
       className={buttonStyles({
         fullWidth,
         intent,
@@ -69,4 +75,4 @@ export const Button: FC<ButtonProps> = ({
       {rightIcon}
     </button>
   );
-};
+});
