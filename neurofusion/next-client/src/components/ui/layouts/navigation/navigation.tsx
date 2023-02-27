@@ -1,31 +1,33 @@
 import Link from "next/link";
-import { FC } from "react";
-import { ArrowRight } from "lucide-react";
+import { FC, useState } from "react";
+import { ArrowRight, Menu } from "lucide-react";
 import { useWindowScrollPosition } from "rooks";
 import classNames from "classnames";
 
 import { Logo } from "../../logo/logo";
 import { ButtonLink } from "../../link/button-link";
+import { Button } from "../../button/button";
 
 import { navigationLinks } from "./data";
+import { MobileMenu } from "./mobile-menu";
 
 export const Navbar: FC = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY } = useWindowScrollPosition();
   const showBorderBottom = scrollY > 16;
 
   return (
     <header
       className={classNames(
-        "sticky left-0 right-0 top-0 z-50 flex h-16 w-full items-center bg-opacity-50 backdrop-blur-lg",
+        "sticky left-0 right-0 top-0 z-10 flex h-16 w-full items-center bg-opacity-50 backdrop-blur-lg",
         {
-          "border-b- border-b border-b-gray-100 shadow-sm dark:border-b-gray-800 dark:border-opacity-50":
-            showBorderBottom,
+          "border-b border-b-gray-50/20 shadow-sm dark:border-b-gray-800 dark:border-opacity-50": showBorderBottom,
         }
       )}
     >
-      <nav className="container mx-auto flex items-center justify-between p-3">
+      <nav className="container mx-auto flex items-center justify-between p-4">
         <Logo withText />
-        <div className="flex items-center justify-between">
+        <div className="hidden items-center justify-between md:flex">
           <div className="flex items-center">
             {navigationLinks.map((link) => (
               <Link
@@ -41,7 +43,15 @@ export const Navbar: FC = () => {
             Login
           </ButtonLink>
         </div>
+        <Button
+          rightIcon={<Menu strokeWidth={2} />}
+          size="icon"
+          intent="ghost"
+          className="flex md:hidden"
+          onClick={() => setMobileMenuOpen(true)}
+        />
       </nav>
+      <MobileMenu open={mobileMenuOpen} onMobileMenuClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 };
