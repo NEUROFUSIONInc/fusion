@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { FC, ReactNode } from "react";
 
-import { Navbar } from "~/components/ui";
+import { Footer, Navbar } from "~/components/ui";
 
 interface MainLayoutProps {
   children?: ReactNode;
@@ -15,7 +15,8 @@ export const MainLayout: FC<MainLayoutProps> = ({ children, dark }) => {
       })}
     >
       <Navbar />
-      <main className="min-h-[50vh] w-full">{children}</main>
+      <main className="min-h-[60vh] w-full">{children}</main>
+      <Footer />
     </div>
   );
 };

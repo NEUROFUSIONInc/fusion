@@ -45,3 +45,12 @@ export const PrimaryWithIcon: Story = {
     rightIcon: <Plus size={16} />,
   },
 };
+
+export const Ghost: Story = {
+  args: {
+    ...Primary.args,
+    intent: "ghost",
+    children: "Ghost Button",
+    rightIcon: <Plus size={16} />,
+  },
+};
