@@ -6,21 +6,23 @@ Initial feature is customized self prompting & seeing results from connected dat
 
 Data is currently stored using AsyncStorage.
 
-TODO:
-
-- don't open app after notification is clicked
-- Ensure that prompts & notification stay in sync across mobile views
-- (done) fix bug for yes/no not prompting up buttons
-
-Next steps
-
-- Display summary for selected results
-- Connect fusion account & periodically upload logs to remote storage
-- Apple health data connection
-- UI - swipe for more (edit/delete/view responses)
-
-Deployment
+## Deployment
 
 - Generate ios build : expo build --platform ios
-
 - Submit build - eas submit --platform ios
+
+## Next steps
+
+- Display summary for selected results
+- Apple health data connection
+- UI - swipe for more (edit/delete/view responses)
+  - Allow to pause notification prompts
+- Connect fusion account & periodically upload logs to remote storage
+
+bugs:
+
+- (done) don't open app after notification is clicked
+- (done) Ensure that prompts & notification stay in sync across mobile views
+- (done) fix bug for yes/no not prompting up buttons
+
+- don't allow to have duplicate prompts
