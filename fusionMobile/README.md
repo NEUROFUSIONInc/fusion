@@ -13,11 +13,13 @@ Data is currently stored using AsyncStorage.
 
 ## Next steps
 
+- Don't reset notifications every time app loads unless changed.
 - Display summary for selected results
 - Apple health data connection
 - UI - swipe for more (edit/delete/view responses)
   - Allow to pause notification prompts
 - Connect fusion account & periodically upload logs to remote storage
+- Use "Expletus Sans" font.
 
 bugs:
 

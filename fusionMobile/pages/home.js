@@ -23,16 +23,15 @@ export function HomeScreen({ navigation, route }) {
           renderItem={({ item }) => (
             <View style={styles.item}>
               <View>
-                <Text>Prompt Text: {item.promptText}</Text>
-                <Text>Response Type: {item.responseType}</Text>
+                <Text style={styles.promptText}>{item.promptText}</Text>
                 <Text>
-                  Frequency: {item.notificationFrequency.value}{" "}
-                  {item.notificationFrequency.unit}
+                  Respond every {item.notificationFrequency.value}{" "}
+                  {item.notificationFrequency.unit} with {item.responseType}
                 </Text>
               </View>
 
               {/* Edit/Delete/View Prompt responses */}
-              <View>
+              <View style={styles.promptActions}>
                 <Button
                   title="Edit"
                   onPress={() =>
@@ -65,14 +64,14 @@ export function HomeScreen({ navigation, route }) {
                     );
                   }}
                 />
-                <Button
+                {/* <Button
                   title="View Responses"
                   onPress={() =>
                     navigation.navigate("ViewResponses", {
                       prompt: item,
                     })
                   }
-                />
+                /> */}
               </View>
             </View>
           )}
@@ -97,38 +96,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    // justifyContent: "center",
     padding: 10,
   },
-  input: {
-    height: 50,
-    // margin: 12,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    lineHeight: 25,
+  promptText: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
-  formSection: {
-    width: "100%",
-    padding: 10,
-  },
-  frequencyContainer: {
+  promptActions: {
+    display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  frequencyValueInput: {
-    width: "20%",
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-  },
-  frequencyDropDown: {
-    width: "80%",
+    justifyContent: "center",
   },
   item: {
-    // padding: 10,
-    // fontSize: 18,
+    display: "flex",
+    justifyContent: "space-between",
     margin: 10,
   },
 });
