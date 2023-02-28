@@ -6,6 +6,23 @@ Initial feature is customized self prompting & seeing results from connected dat
 
 Data is currently stored using AsyncStorage.
 
+## Prompt Structure
+
+```json
+{
+  uuid
+  promptText
+  responseType
+  notificationFrequency {
+    value
+    unit
+  }
+  notificationId (new)
+}
+```
+
+Response to prompts are saved in fusion Event schema [doc](../README.md)
+
 ## Deployment
 
 - Generate ios build : expo build --platform ios

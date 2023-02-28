@@ -111,7 +111,6 @@ export const savePrompt = async (
    * Sets or saves a prompt to the AsyncStorage
    *
    * uuid - optional parameter to set the prompt UUID, when this is passed an existing prompt will be updated
-   * setSavedPrompts - optional parameter to update the user saved prompt state
    */
   if (
     !promptText ||
