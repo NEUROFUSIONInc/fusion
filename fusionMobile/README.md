@@ -30,12 +30,17 @@ Response to prompts are saved in fusion Event schema [doc](../README.md)
 
 ## Next steps
 
-- Don't reset notifications every time app loads unless changed.
+- (done) Don't reset notifications every time app loads unless changed.
+  (done) NOTE: notifications we already scheduled for people previously - code has a workaround to clear & reset
+
 - Display summary for selected results
-- Apple health data connection
-- UI - swipe for more (edit/delete/view responses)
+  - fix ope's bug - (tap to respond also)
+- Show some default prompts that users can add/enable
   - Allow to pause notification prompts
+  - UI - swipe for more (edit/delete/view responses)
+  - Be 100% certain about notifications coming up when triggered.
 - Connect fusion account & periodically upload logs to remote storage
+- Apple health data connection
 - Use "Expletus Sans" font.
 
 bugs:
@@ -45,3 +50,5 @@ bugs:
 - (done) fix bug for yes/no not prompting up buttons
 
 - don't allow to have duplicate prompts
+
+(native gesture handler)

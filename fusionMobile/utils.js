@@ -24,40 +24,35 @@ export const PromptContextProvider = ({ children }) => {
       return;
     }
 
+    let scheduledNotifications;
     (async () => {
-      // cancel all scheduled notifications
-      await Notifications.cancelAllScheduledNotificationsAsync();
+      scheduledNotifications =
+        await Notifications.getAllScheduledNotificationsAsync();
+      console.log("scheduled notifications", scheduledNotifications);
 
-      // TODO: change this to only save prompts that have not been deleted
-    })();
-
-    savedPrompts.forEach(async (prompt) => {
-      // convert prompt interval to seconds
-      let promptIntervalSeconds;
-      switch (prompt.notificationFrequency.unit) {
-        case "hours":
-          promptIntervalSeconds = prompt.notificationFrequency.value * 3600;
-          break;
-        case "minutes":
-          promptIntervalSeconds = prompt.notificationFrequency.value * 60;
-          break;
-        case "days":
-          promptIntervalSeconds = prompt.notificationFrequency.value * 86400;
-          break;
-      }
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Fusion: ${prompt.promptText}`,
-          body: "Press & hold to log",
-          categoryIdentifier: prompt.responseType,
-        },
-        trigger: {
-          repeats: true,
-          seconds: promptIntervalSeconds,
-        },
+      // TODO: hack to flush previous notifications
+      // If scheduled notification identifier isn't a valid prompt.uuid, cancel it
+      scheduledNotifications.forEach((notification) => {
+        const prompt = savedPrompts.find(
+          (p) => p.uuid === notification.identifier
+        );
+        if (!prompt) {
+          Notifications.cancelScheduledNotificationAsync(
+            notification.identifier
+          );
+        }
       });
-    });
+
+      // If prompt is active & there's no notification, schedule it
+      savedPrompts.forEach(async (prompt) => {
+        const notification = scheduledNotifications.find(
+          (n) => n.identifier === prompt.uuid
+        );
+        if (!notification) {
+          await scheduleFusionNotification(prompt);
+        }
+      });
+    })();
   }, [savedPrompts]);
 
   return (
@@ -65,6 +60,50 @@ export const PromptContextProvider = ({ children }) => {
       {children}
     </PromptContext.Provider>
   );
+};
+
+export const scheduleFusionNotification = async (prompt) => {
+  /**
+   * Schedules a notification for a Fusion prompt
+   */
+
+  // convert prompt interval to seconds
+  let promptIntervalSeconds;
+  switch (prompt.notificationFrequency.unit) {
+    case "hours":
+      promptIntervalSeconds = prompt.notificationFrequency.value * 3600;
+      break;
+    case "minutes":
+      promptIntervalSeconds = prompt.notificationFrequency.value * 60;
+      break;
+    case "days":
+      promptIntervalSeconds = prompt.notificationFrequency.value * 86400;
+      break;
+  }
+
+  try {
+    // cancel existing notification
+    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
+
+    // schedule new notification
+    await Notifications.scheduleNotificationAsync({
+      identifier: prompt.uuid,
+      content: {
+        title: `Fusion: ${prompt.promptText}`,
+        body: "Press & hold to log",
+        categoryIdentifier: prompt.responseType,
+      },
+      trigger: {
+        repeats: true,
+        seconds: promptIntervalSeconds,
+      },
+    });
+  } catch (e) {
+    console.log("Unable to schedule notification");
+    return false;
+  }
+
+  return true;
 };
 
 export const readSavedPrompts = async () => {
@@ -91,6 +130,10 @@ export const deletePrompt = async (uuid) => {
       const newPromptArray = promptArray.filter(
         (prompt) => prompt.uuid !== uuid
       );
+
+      // cancel the notification
+      await Notifications.cancelScheduledNotificationAsync(uuid);
+
       await AsyncStorage.setItem("prompts", JSON.stringify(newPromptArray));
       return newPromptArray;
     }
@@ -111,6 +154,8 @@ export const savePrompt = async (
    * Sets or saves a prompt to the AsyncStorage
    *
    * uuid - optional parameter to set the prompt UUID, when this is passed an existing prompt will be updated
+   *
+   * TODO: add "isActive"
    */
   if (
     !promptText ||
@@ -156,6 +201,11 @@ export const savePrompt = async (
 
     // update the prompts
     await AsyncStorage.setItem("prompts", JSON.stringify(currentPrompts));
+
+    // TODO: schedule notification for the prompt here.
+    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
+    // schedule notification
+    await scheduleFusionNotification(prompt);
 
     return currentPrompts;
   } catch (error) {

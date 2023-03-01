@@ -61,8 +61,6 @@ export default function App() {
         return;
       }
 
-      await Notifications.cancelAllScheduledNotificationsAsync();
-
       // TODO: set custom catgeories based on prompts
       await Notifications.setNotificationCategoryAsync("yesno", [
         {

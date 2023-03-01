@@ -122,8 +122,6 @@ export function PromptScreen({ navigation, route }) {
         <Button
           title="Save Prompt"
           onPress={async () => {
-            // TODO: trigger function to save
-            // Pass and merge params back to home screen
             try {
               // if there is a prompt object, then we are editing an existing prompt
               const promptUuid = promptObject ? promptObject.uuid : null;
