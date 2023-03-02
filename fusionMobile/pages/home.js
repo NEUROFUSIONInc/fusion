@@ -10,7 +10,8 @@ export function HomeScreen({ navigation, route }) {
       <View>
         <Text style={{ fontSize: 15 }}>
           Track your daily activities by answering personalized prompts that
-          enable you to observe your behavioral patterns over time.
+          enable you to observe your behavioral patterns over time. Your prompts
+          & responses are stored only on your device.
         </Text>
       </View>
 
@@ -64,14 +65,14 @@ export function HomeScreen({ navigation, route }) {
                     );
                   }}
                 />
-                {/* <Button
+                <Button
                   title="View Responses"
                   onPress={() =>
                     navigation.navigate("ViewResponses", {
                       prompt: item,
                     })
                   }
-                /> */}
+                />
               </View>
             </View>
           )}

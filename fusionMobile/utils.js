@@ -215,7 +215,6 @@ export const savePrompt = async (
 };
 
 export const saveFusionEvent = async (eventObj) => {
-  // TODO: update to also store data remotely
   // first fetch events in local storage
   try {
     const events = await AsyncStorage.getItem("events");
@@ -235,5 +234,22 @@ export const saveFusionEvent = async (eventObj) => {
     // error reading value
     console.log("failed to save event value");
     return null;
+  }
+};
+
+export const getEventsForPrompt = async (prompt) => {
+  // TODO: this should mobe to using prompt uuid insteas
+  console.log("Looking for events that match", prompt);
+  const events = await AsyncStorage.getItem("events");
+  if (events !== null) {
+    // value previously stored
+    const eventArray = JSON.parse(events);
+    // console.log("responses", eventArray);
+    const filteredEvents = eventArray.filter(
+      (event) => event?.event.name === `Fusion: ${prompt.promptText}`
+    );
+    return filteredEvents;
+  } else {
+    return [];
   }
 };

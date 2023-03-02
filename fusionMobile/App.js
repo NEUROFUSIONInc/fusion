@@ -8,6 +8,7 @@ import * as Notifications from "expo-notifications";
 import logo from "./assets/icon.png";
 import { HomeScreen } from "./pages/home.js";
 import { PromptScreen } from "./pages/prompt.js";
+import { ResponsesScreen } from "./pages/responses.js";
 
 import { PromptContextProvider, saveFusionEvent } from "./utils";
 
@@ -166,6 +167,11 @@ export default function App() {
             name="AuthorPrompt"
             component={PromptScreen}
             options={{ title: "Author Prompt" }}
+          />
+          <Stack.Screen
+            name="ViewResponses"
+            component={ResponsesScreen}
+            options={{ title: "Prompt Responses" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
