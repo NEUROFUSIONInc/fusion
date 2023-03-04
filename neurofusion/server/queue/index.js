@@ -1,6 +1,7 @@
 const fastq = require('fastq');
 const magicFlowProcessor = require('./processors/magicflow');
 const storageProcessor = require('./processors/storage');
+const vitalProcessor = require('./processors/vital');
 
 
 /**
@@ -9,8 +10,10 @@ const storageProcessor = require('./processors/storage');
  */
 const magicFlowQueue = fastq.promise(magicFlowProcessor, 1);
 const storageQueue = fastq.promise(storageProcessor, 1);
+const vitalQueue = fastq.promise(vitalProcessor, 1);
 
 module.exports = {
   magicFlowQueue,
-  storageQueue
+  storageQueue,
+  vitalQueue
 };

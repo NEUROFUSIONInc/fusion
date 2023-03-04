@@ -15,6 +15,7 @@ const vitalController = require("./controllers/vital");
 
 // import cron runners
 const magicFlowCron = require("./cron-jobs/magicflow-daily-fetch");
+const vitalCron = require("./cron-jobs/vital-daily-fetch");
 
 // create express app
 const app = express();
@@ -106,4 +107,5 @@ app.listen(port, async () => {
 
   // Schedule cron jobs after db is connected (for jobs that require db query)
   cron.schedule(magicFlowCron.expression, magicFlowCron.job);
+  cron.schedule(vitalCron.expression, vitalCron.job);
 });
