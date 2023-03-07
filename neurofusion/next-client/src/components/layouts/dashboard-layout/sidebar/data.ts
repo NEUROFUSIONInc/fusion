@@ -1,4 +1,4 @@
-import { HardDrive, LayoutDashboard, Plug, SignalHigh } from "lucide-react";
+import { HardDrive, Laptop, LayoutDashboard, Moon, Plug, SignalHigh, Sun } from "lucide-react";
 
 export const sidebarLinks = [
   {
@@ -20,5 +20,20 @@ export const sidebarLinks = [
     icon: SignalHigh,
     title: "Analysis",
     href: "#",
+  },
+];
+
+export const appearanceModes = [
+  {
+    icon: Moon,
+    value: "dark",
+  },
+  {
+    icon: Sun,
+    value: "light",
+  },
+  {
+    icon: Laptop,
+    value: "system",
   },
 ];
