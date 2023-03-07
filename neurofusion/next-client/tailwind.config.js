@@ -25,7 +25,7 @@ module.exports = {
       white: colors.white,
       gray: colors.gray,
       red: colors.red,
-      fuchsia: colors.fuchsia,
+      slate: colors.slate,
       aqua: "#05F2DB", // #02DEE7
       lime: "#A8E457", // ##B6F25C
       dark: "#023059", // #112F58,
