@@ -17,9 +17,10 @@ Data is currently stored using AsyncStorage.
     value
     unit
   }
-  notificationId (new)
 }
 ```
+
+Notification identifier will be the UUID from above.
 
 Response to prompts are saved in fusion Event schema [doc](../README.md)
 
@@ -51,6 +52,8 @@ bugs:
 - (done) don't open app after notification is clicked
 - (done) Ensure that prompts & notification stay in sync across mobile views
 - (done) fix bug for yes/no not prompting up buttons
+
+- update the log to include
 
 - don't allow to have duplicate prompts
 
