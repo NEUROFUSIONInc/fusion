@@ -32,7 +32,7 @@ export const Navbar: FC = () => {
             {navigationLinks.map((link) => (
               <Link
                 key={link.title}
-                href={`/${link.href}`}
+                href={`${link.href}`}
                 className="ml-8 text-[14.5px] font-medium text-primary-800 opacity-90 last:mr-8 hover:text-primary-900 hover:opacity-100 dark:text-primary-50 dark:hover:text-white"
               >
                 {link.title}

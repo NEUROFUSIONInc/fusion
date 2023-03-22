@@ -30,7 +30,7 @@ export const MobileMenu: FC<IMobileMenuProps> = ({ open, onMobileMenuClose }) =>
                 {navigationLinks.map((link) => (
                   <Link
                     key={link.title}
-                    href={`/${link.href}`}
+                    href={`${link.href}`}
                     className="block rounded-lg py-2 px-3 text-base font-semibold leading-7"
                   >
                     {link.title}
