@@ -34,27 +34,40 @@ Response to prompts are saved in fusion Event schema [doc](../README.md)
 - (done) Don't reset notifications every time app loads unless changed.
   (done) NOTE: notifications we already scheduled for people previously - code has a workaround to clear & reset
 
-- (done) Display summary for selected results
-  - not the best but a good start
-- Show some default prompts that users can add/enable
-
-  - Allow to pause notification prompts
-  - Be 100% certain about notifications coming up when triggered.
-  - UI - swipe for more (edit/delete/view responses)
-  - fix ope's bug - (tap to respond also)
-
-- Connect fusion account & periodically upload logs to remote storage
-- Apple health data connection
-- Use "Expletus Sans" font.
-
-bugs:
-
-- (done) don't open app after notification is clicked
+- (done) Display summary for selected results- (done) don't open app after notification is clicked
 - (done) Ensure that prompts & notification stay in sync across mobile views
 - (done) fix bug for yes/no not prompting up buttons
+- include filter for "day/week/month" view
 
-- update the log to include
+Prompts
+Authoring
+
+- Show some default prompts that users can add/enable
+- Allow to set "time" for notifications
+  - "skip"?
+- Pause notification prompts
+  - fully
+  - certain times
+- UI - swipe for more (edit/delete/view responses)
+
+Responding
+
+- Allow user to tap to respond to prompts
+
+Results
+
+- Send notification to view weekly updates.
+
+Usage
+
+- Log when notifications are triggered and responded to. Just counts no identifying info.
+
+- Use "Expletus Sans" font.
+- Apple health data connection
+- Connect fusion account & periodically upload logs to remote storage
 
 - don't allow to have duplicate prompts
 
-(native gesture handler)
+change a question prompt, I save together with the notification id
+
+- make sure this works for data that was saved before it was included.

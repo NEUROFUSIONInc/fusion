@@ -126,6 +126,10 @@ export default function App() {
           // if no response do nothing
           if (
             response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
+
+            // this could be fore click
+
+            // TODO: show user options to add prompt entry! new components for sure
           ) {
             console.log("default action - no response");
             return;
