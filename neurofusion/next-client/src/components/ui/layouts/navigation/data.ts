@@ -1,14 +1,14 @@
 export const navigationLinks = [
   {
     title: "Blog",
-    href: "#",
+    href: "https://neurofusion.substack.com/",
   },
-  {
-    title: "About",
-    href: "#",
-  },
+  // {
+  //   title: "About",
+  //   href: "#",
+  // },
   {
     title: "Contact",
-    href: "#",
+    href: "mailto:ore@usefusion.app",
   },
 ];
