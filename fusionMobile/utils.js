@@ -85,6 +85,12 @@ export const scheduleFusionNotification = async (prompt) => {
     // cancel existing notification
     await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
 
+    // if platform is android assign channel
+    let triggerObject = {};
+    if (Platform.OS === "android") {
+      triggerObject["channelId"] = "default";
+    }
+
     // schedule new notification
     await Notifications.scheduleNotificationAsync({
       identifier: prompt.uuid,
@@ -94,6 +100,7 @@ export const scheduleFusionNotification = async (prompt) => {
         categoryIdentifier: prompt.responseType,
       },
       trigger: {
+        ...triggerObject,
         repeats: true,
         seconds: promptIntervalSeconds,
       },

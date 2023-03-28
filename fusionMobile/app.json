@@ -22,9 +22,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "useNextNotificationsApi": true,
       "package": "com.neurofusion.fusion"
     },
     "web": {
@@ -36,6 +37,7 @@
         "projectId": "f79cfe2d-2f56-413a-89f8-b9fde538ac75"
       }
     },
+    "plugins": ["expo-notifications"],
     "owner": "oreogundipe"
   }
 }

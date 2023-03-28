@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Image, Alert, Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 
@@ -68,13 +68,23 @@ export default function App() {
         },
       ]);
 
+      let placeholderTextInput = {};
+      let placeholderNumberInput = {};
+      if (Platform.OS !== "android") {
+        placeholderTextInput = {
+          placeholder: "Type your response here",
+        };
+        placeholderNumberInput = {
+          placeholder: "Enter a number",
+        };
+      }
       await Notifications.setNotificationCategoryAsync("number", [
         {
           identifier: "number",
           buttonTitle: "Respond",
           textInput: {
             submitButtonTitle: "Log",
-            placeholder: "Enter a number",
+            ...placeholderNumberInput,
           },
           options: {
             opensAppToForeground: false,
@@ -88,7 +98,7 @@ export default function App() {
           buttonTitle: "Respond",
           textInput: {
             submitButtonTitle: "Log",
-            placeholder: "Type your response here",
+            ...placeholderTextInput,
           },
           options: {
             opensAppToForeground: false,
@@ -101,13 +111,15 @@ export default function App() {
     (async () => {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener((response) => {
-          // console.log("notification response");
-          // console.log(response.notification);
+          console.log("notification response");
+          console.log(JSON.stringify(response));
 
           let eventObj = {
+            uuid: response.notification.request.identifier,
             name: response.notification.request.content.title,
             description: response.notification.request.content.title,
           };
+
           const notificationCategory =
             response.notification.request.content.categoryIdentifier;
 
@@ -115,13 +127,11 @@ export default function App() {
           // TODO: show user options to manually respond to prompt
           if (
             response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
-
-            // this could be fore click
           ) {
             console.log("default action - no response");
             return;
           }
-
+          // get response from notification
           if (notificationCategory == "yesno") {
             eventObj["value"] = response.actionIdentifier;
           } else if (
@@ -137,10 +147,30 @@ export default function App() {
             event: eventObj,
           };
 
+          console.log(fusionEvent);
+
           // save locally
+          // TODO: when saving, check if:
+          // 1. the event is already saved
+          // 2. if there is an event already with the same name, add the UUID if it's empty
           (async () => {
             await saveFusionEvent(fusionEvent);
+            // remove notification from system tray
+            console.log("removing notification");
+            console.log(response.notification.request.identifier);
+
+            // if (Platform.OS === "android") {
+            //   Notifications.(
+            //     response.notification.request.identifier,
+            //   );
+            // } else {
+            Notifications.dismissNotificationAsync(
+              response.notification.request.identifier
+            );
+            // }
           })();
+
+          return;
         });
     })();
   }, []);
