@@ -9,14 +9,14 @@ export function HomeScreen({ navigation, route }) {
     <View style={styles.container}>
       <View>
         <Text style={{ fontSize: 15 }}>
-          Track your daily activities by answering personalized prompts that
-          enable you to observe your behavioral patterns over time. Your prompts
-          & responses are stored only on your device.
+          Track your behavior & activities by answering prompts that are
+          tailored to you. Your prompts & responses are stored only on your
+          device.
         </Text>
       </View>
 
       {/* Events div  */}
-      <Text style={{ fontWeight: "bold", fontSize: "30" }}>Prompts</Text>
+      <Text style={{ fontWeight: "bold", fontSize: 30 }}>Prompts</Text>
       {/* if there were events list them */}
       {savedPrompts && savedPrompts?.length > 0 ? (
         <FlatList

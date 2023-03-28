@@ -1,22 +1,10 @@
 import React from "react";
 import { StyleSheet, Image, Alert, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import * as Notifications from "expo-notifications";
 
-import logo from "./assets/icon.png";
-import { HomeScreen } from "./pages/home.js";
-import { PromptScreen } from "./pages/prompt.js";
-import { ResponsesScreen } from "./pages/responses.js";
-
+import { FusionNavigation } from "./components/navbar.js";
 import { PromptContextProvider, saveFusionEvent } from "./utils";
-
-function LogoTitle() {
-  return <Image source={logo} style={{ width: 35, height: 35 }} />;
-}
-
-const Stack = createNativeStackNavigator();
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -124,12 +112,11 @@ export default function App() {
             response.notification.request.content.categoryIdentifier;
 
           // if no response do nothing
+          // TODO: show user options to manually respond to prompt
           if (
             response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
 
             // this could be fore click
-
-            // TODO: show user options to add prompt entry! new components for sure
           ) {
             console.log("default action - no response");
             return;
@@ -161,23 +148,7 @@ export default function App() {
   return (
     <PromptContextProvider>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
-          />
-          <Stack.Screen
-            name="AuthorPrompt"
-            component={PromptScreen}
-            options={{ title: "Author Prompt" }}
-          />
-          <Stack.Screen
-            name="ViewResponses"
-            component={ResponsesScreen}
-            options={{ title: "Prompt Responses" }}
-          />
-        </Stack.Navigator>
+        <FusionNavigation />
       </NavigationContainer>
     </PromptContextProvider>
   );
