@@ -37,12 +37,11 @@ export function ResponsesScreen({ navigation, route }) {
           <FlatList
             data={events}
             renderItem={({ item }) => (
-              <View key={item.uuid}>
-                <Text>{dayjs(item.startTimestamp * 1000).toString()}</Text>
+              <View key={Math.random()}>
+                <Text>{dayjs(item.startTimestamp).toString()}</Text>
                 <Text>{item.event.value}</Text>
               </View>
             )}
-            keyExtractor={(item) => item.uuid}
           />
         )
       ) : (

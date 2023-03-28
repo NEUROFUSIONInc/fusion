@@ -221,7 +221,19 @@ export const savePrompt = async (
   }
 };
 
+const updateTimestampToMs = (unixTimestamp) => {
+  if (unixTimestamp.length === 10) {
+    return unixTimestamp * 1000;
+  }
+  return unixTimestamp;
+};
+
 export const saveFusionEvent = async (eventObj) => {
+  // ensure timestamp columns are in unixTime milliseconds
+
+  eventObj["startTimestamp"] = updateTimestampToMs(eventObj["startTimestamp"]);
+  eventObj["endTimestamp"] = updateTimestampToMs(eventObj["endTimestamp"]);
+
   // first fetch events in local storage
   try {
     const events = await AsyncStorage.getItem("events");
