@@ -25,11 +25,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "useNextNotificationsApi": true
+      "package": "com.neurofusion.fusion"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "jsEngine": "hermes",
     "extra": {
       "eas": {
         "projectId": "f79cfe2d-2f56-413a-89f8-b9fde538ac75"
