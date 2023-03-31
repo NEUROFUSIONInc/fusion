@@ -26,7 +26,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "useNextNotificationsApi": true,
-      "package": "com.neurofusion.fusion"
+      "package": "com.neurofusion.fusion",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

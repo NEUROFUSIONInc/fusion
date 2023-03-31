@@ -9,6 +9,7 @@ import { HomeScreen } from "../pages/home.js";
 import { PromptScreen } from "../pages/prompt.js";
 import { ResponsesScreen } from "../pages/responses.js";
 import { AccountScreen } from "../pages/account.js";
+import { PromptEntryScreen } from "../pages/promptEntry.js";
 
 function LogoTitle() {
   return (
@@ -48,6 +49,11 @@ const PromptStack = () => {
         component={ResponsesScreen}
         options={{ title: "Prompt Responses" }}
       />
+      <Stack.Screen
+        name="PromptEntry"
+        component={PromptEntryScreen}
+        options={{ title: "Prompt Entry" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -56,7 +62,7 @@ const AccountStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name="Account"
         component={AccountScreen}
         options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
       />
@@ -81,13 +87,13 @@ export function FusionNavigation() {
         component={PromptStack}
       />
       <Tab.Screen
+        name="Profile"
+        component={AccountStack}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="account" color={color} size={26} />
           ),
         }}
-        name="Profile"
-        component={AccountStack}
       />
     </Tab.Navigator>
   );
