@@ -5,6 +5,7 @@ import * as Notifications from "expo-notifications";
 
 import { FusionNavigation } from "./components/navbar.js";
 import { PromptContextProvider, saveFusionEvent } from "./utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -16,6 +17,7 @@ const registerForPushNotificationsAsync = async () => {
     });
   }
 
+  //TODO: follow the guide again for checking on Android/iOS
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
   if (existingStatus !== "granted") {
@@ -70,6 +72,8 @@ export default function App() {
 
       let placeholderTextInput = {};
       let placeholderNumberInput = {};
+
+      // This is work around a bug in expo-notifications
       if (Platform.OS !== "android") {
         placeholderTextInput = {
           placeholder: "Type your response here",
@@ -158,16 +162,9 @@ export default function App() {
             // remove notification from system tray
             console.log("removing notification");
             console.log(response.notification.request.identifier);
-
-            // if (Platform.OS === "android") {
-            //   Notifications.(
-            //     response.notification.request.identifier,
-            //   );
-            // } else {
             Notifications.dismissNotificationAsync(
               response.notification.request.identifier
             );
-            // }
           })();
 
           return;
@@ -176,10 +173,12 @@ export default function App() {
   }, []);
 
   return (
-    <PromptContextProvider>
-      <NavigationContainer>
-        <FusionNavigation />
-      </NavigationContainer>
-    </PromptContextProvider>
+    <SafeAreaView style={{ flex: 1 }}>
+      <PromptContextProvider>
+        <NavigationContainer>
+          <FusionNavigation />
+        </NavigationContainer>
+      </PromptContextProvider>
+    </SafeAreaView>
   );
 }

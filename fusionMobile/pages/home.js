@@ -10,13 +10,15 @@ export function HomeScreen({ navigation, route }) {
       <View>
         <Text style={{ fontSize: 15 }}>
           Track your behavior & activities by answering prompts that are
-          tailored to you. Your prompts & responses are stored only on your
-          device.
+          tailored to you.{"\n\n"}Your prompts & responses are stored only on
+          your device.
         </Text>
       </View>
 
       {/* Events div  */}
-      <Text style={{ fontWeight: "bold", fontSize: 30 }}>Prompts</Text>
+      <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
+        Prompts
+      </Text>
       {/* if there were events list them */}
       {savedPrompts && savedPrompts?.length > 0 ? (
         <FlatList
@@ -77,6 +79,7 @@ export function HomeScreen({ navigation, route }) {
             </View>
           )}
           keyExtractor={(item) => item.uuid}
+          deleteItem={() => console.log("delete")}
         />
       ) : (
         <Text>None configured yet...</Text>
