@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
+import dayjs from "dayjs";
 
 export function TimePicker() {
-  const [start, setStart] = useState(new Date());
-  const [end, setEnd] = useState(new Date());
+  // defaut
+  const [start, setStart] = useState(
+    dayjs().endOf("day").subtract(2, "hour").add(1, "minute")
+  );
+  const [end, setEnd] = useState(start.add(8, "hour"));
 
   const [days, setDays] = useState({
     monday: false,
@@ -46,32 +50,32 @@ export function TimePicker() {
   };
 
   const handleStartTimeConfirm = (selectedTime) => {
-    console.warn("startTime has been picked: ", selectedTime);
-    const currentTime = selectedTime || start;
+    console.log("startTime has been picked: ", selectedTime);
+    const currentTime = dayjs(selectedTime) || start;
     setStart(currentTime);
     hideStartTimePicker();
   };
   const handleEndTimeConfirm = (selectedTime) => {
-    console.warn("startTime has been picked: ", selectedTime);
-    const currentTime = selectedTime || end;
+    console.log("endTime has been picked: ", selectedTime);
+    const currentTime = dayjs(selectedTime) || end;
     setEnd(currentTime);
     hideEndTimePicker();
   };
 
   return (
     <View style={styles.container}>
-      {/* <Text>Between</Text> */}
       <TouchableOpacity style={styles.timePicker} onPress={showStartTimePicker}>
         <Text>From</Text>
         <View>
           <Text>
-            {start.toLocaleTimeString()}
+            {start.format("h:mm A")}
             <MaterialCommunityIcons name="menu-right" size={15} />
           </Text>
         </View>
         <DateTimePickerModal
           isVisible={isStartTimePickerVisible}
           mode="time"
+          date={start.toDate()}
           onConfirm={handleStartTimeConfirm}
           onCancel={hideStartTimePicker}
         />
@@ -79,13 +83,14 @@ export function TimePicker() {
       <TouchableOpacity style={styles.timePicker} onPress={showEndTimePicker}>
         <Text>To</Text>
         <Text>
-          {end.toLocaleTimeString()}
+          {end.format("h:mm A")}
           <MaterialCommunityIcons name="menu-right" size={15} />
         </Text>
 
         <DateTimePickerModal
           isVisible={isEndTimePickerVisible}
           mode="time"
+          date={end.toDate()}
           onConfirm={handleEndTimeConfirm}
           onCancel={hideEndTimePicker}
         />
@@ -96,7 +101,7 @@ export function TimePicker() {
 
         <View style={styles.checkBoxGroup}>
           {Object.keys(days).map((day) => (
-            <View style={styles.checkBoxRow} key={Math.random()}>
+            <View style={styles.checkBoxItem} key={Math.random()}>
               <Checkbox
                 value={days[day]}
                 onValueChange={(value) => setDays({ ...days, [day]: value })}
@@ -137,9 +142,10 @@ const styles = StyleSheet.create({
   checkBoxGroup: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
+    marginTop: 10,
   },
-  checkBoxRow: {
+  checkBoxItem: {
     flexDirection: "row",
     alignItems: "center",
     marginRight: 20,
