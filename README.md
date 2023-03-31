@@ -97,3 +97,12 @@ User Flows - https://www.notion.so/Fusion-User-flows-9c454c9f767a403b9384e94b1df
 When you finish and are all set, open a PR to the `staging` branch.
 
 - staging branch will be periodically merged to prod
+
+## Contributions
+
+- AdA
+- AyM
+- EmA
+- ErB
+- KeO
+  conversations
