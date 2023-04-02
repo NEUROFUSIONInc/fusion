@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { ButtonLink } from "./button-link";
 
 const meta: Meta<typeof ButtonLink> = {
-  title: "UI/Layouts/ButtonLink",
+  title: "UI/ButtonLink",
   component: ButtonLink,
   argTypes: {
     fullWidth: {

@@ -63,7 +63,7 @@ export const IntegrationsSection = () => {
                 <p className="my-8 text-lg tracking-tight text-gray-600 dark:text-gray-400">
                   Fusion integrates with applications you already use daily!
                 </p>
-                <ButtonLink href="/auth/login" rounded>
+                <ButtonLink href="/auth/login" size="lg" rounded>
                   Start linking integrations
                 </ButtonLink>
               </div>
