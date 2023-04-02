@@ -2,10 +2,10 @@ name: Neurofusion Client
 
 on:
   push:
-    paths:
-      - "neurofusion/next-client/**"
     branches:
       - master, staging
+    paths:
+      - "neurofusion/next-client/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
