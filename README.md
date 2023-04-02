@@ -56,9 +56,13 @@ Goal build the best intuitive visualization
 
 ![](./architecture.png)
 
-### Getting started
+## Getting started
 
 - Clone the repo
+
+### Mobile App
+
+See [set up details in fusionMobile folder](./fusionMobile/README.md)
 
 ### Frontend Client
 
@@ -105,4 +109,3 @@ When you finish and are all set, open a PR to the `staging` branch.
 - EmA
 - ErB
 - KeO
-  conversations
