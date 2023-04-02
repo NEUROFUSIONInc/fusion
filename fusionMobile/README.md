@@ -24,6 +24,7 @@ Data is currently stored using AsyncStorage (SQLite)
       endTime
     }
   ]
+  isScheduled
 }
 ```
 

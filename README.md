@@ -35,14 +35,11 @@ Events are used to tag recordings. You can have multiple events within a time ra
 
 ```json
 {
-    "startTimestamp": ,
-    "endTimestamp": ,
-    "event":
-    {
-        "name",
-        "description",
-        "value"
-    }
+    startTimestamp
+    endTimestamp
+    name
+    description
+    value
 }
 ```
 

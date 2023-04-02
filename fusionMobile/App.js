@@ -6,6 +6,7 @@ import * as Notifications from "expo-notifications";
 import { FusionNavigation } from "./components/navbar.js";
 import { PromptContextProvider, saveFusionEvent } from "./utils";
 import { SafeAreaView } from "react-native-safe-area-context";
+import dayjs from "dayjs";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -146,8 +147,8 @@ export default function App() {
           }
 
           const fusionEvent = {
-            startTimestamp: Math.floor(response.notification.date),
-            endTimestamp: Math.floor(response.notification.date),
+            startTimestamp: Math.floor(response.notification.date), // when the notification was triggered
+            endTimestamp: Math.floor(dayjs().unix()), // when it was responded to
             event: eventObj,
           };
 

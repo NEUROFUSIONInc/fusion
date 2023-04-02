@@ -26,7 +26,6 @@ function openDatabase() {
   const db = SQLite.openDatabase("fusion.db");
   return db;
 }
-
 export const db = openDatabase();
 
 export const PromptContextProvider = ({ children }) => {
