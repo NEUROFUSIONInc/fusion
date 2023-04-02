@@ -3,7 +3,8 @@ name: Neurofusion Client
 on:
   push:
     branches:
-      - master, staging
+      - master
+      - staging
     paths:
       - "neurofusion/next-client/**"
 
@@ -12,7 +13,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master, staging
+      - master
+      - staging
 
 jobs:
   build_and_deploy_job:
