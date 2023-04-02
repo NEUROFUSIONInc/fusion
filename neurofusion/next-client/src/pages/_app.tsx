@@ -5,11 +5,11 @@ import { ThemeProvider } from "next-themes";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <ThemeProvider enableSystem forcedTheme={(Component as any).theme || null} attribute="class">
+    <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
+      <SessionProvider session={session}>
         <Component {...pageProps} />
-      </ThemeProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </ThemeProvider>
   );
 }
 

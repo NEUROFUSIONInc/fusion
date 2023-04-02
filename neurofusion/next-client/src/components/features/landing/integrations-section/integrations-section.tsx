@@ -64,7 +64,7 @@ export const IntegrationsSection = () => {
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum maxime ullam, sit libero debitis
                   corrupti, aspernatur delectus ipsum dolore minima distinctio?
                 </p>
-                <ButtonLink href="/auth/login" rounded>
+                <ButtonLink href="/auth/login" size="lg" rounded>
                   Start linking integrations
                 </ButtonLink>
               </div>
