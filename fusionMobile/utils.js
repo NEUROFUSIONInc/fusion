@@ -1,3 +1,4 @@
+import * as SQLite from "expo-sqlite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -6,6 +7,27 @@ import * as Notifications from "expo-notifications";
 
 // this is where we create the context
 export const PromptContext = React.createContext();
+
+/**
+ * Open the database
+ * @returns {SQLite.WebSQLDatabase | SQLite.SQLiteDatabase}
+ */
+function openDatabase() {
+  if (Platform.OS === "web") {
+    return {
+      transaction: () => {
+        return {
+          executeSql: () => {},
+        };
+      },
+    };
+  }
+
+  const db = SQLite.openDatabase("fusion.db");
+  return db;
+}
+
+export const db = openDatabase();
 
 export const PromptContextProvider = ({ children }) => {
   const [savedPrompts, setSavedPrompts] = React.useState(null);
