@@ -15,14 +15,17 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden md:flex-row">
-      <div className="flex space-x-3 p-4 md:hidden">
+      <div
+        className="sticky left-0 right-0 top-0 z-10 flex h-16 w-full items-center
+      justify-between space-x-3 bg-opacity-50 p-4 backdrop-blur-lg md:hidden"
+      >
+        <Logo className="w-8" />
         <Button rightIcon={<Menu />} size="icon" intent="ghost" onClick={() => setMobileMenuOpen(true)} />
-        <Logo className="w-7" />
       </div>
       <div className="hidden md:flex md:flex-shrink-0">
         <Sidebar />
       </div>
-      <main className="container relative mx-auto w-screen flex-1 overflow-y-auto p-4 focus:outline-none md:w-full md:p-8">
+      <main className="container relative mx-auto w-screen flex-1 overflow-y-auto p-4 focus:outline-none md:w-full md:p-9">
         {children}
       </main>
 
