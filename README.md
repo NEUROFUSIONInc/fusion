@@ -4,6 +4,8 @@ What do we find when we stop treating our usage data across apps as a by-product
 
 [Fusion](https://usefusion.app) allows you to record brain activity and correlate with other health & behaviour data like - interests, productivity data.
 
+[](./overview.png)
+
 ## core data integrations
 
 - brain activity (neurosity)
@@ -50,6 +52,7 @@ Goal build the best intuitive visualization
 - allow to see visualization side by side
 
 ## Architecture
+
 
 ![](./architecture.png)
 

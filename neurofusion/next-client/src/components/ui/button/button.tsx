@@ -3,7 +3,7 @@ import type { VariantProps } from "class-variance-authority";
 import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
 
 export const buttonStyles = cva(
-  "inline-flex items-center justify-center text-sm gap-1 hover:opacity-95 dark:hover:opacity-90 font-semibold relative rounded-md transition-colors focus:outline-none disabled:opacity-60 focus:ring-2  disabled:cursor-not-allowed",
+  "inline-flex items-center justify-center text-sm gap-1 hover:opacity-95 dark:hover:opacity-90 font-semibold relative rounded-md transition-colors focus:outline-none disabled:opacity-60 focus:ring-2  disabled:cursor-not-allowed min-w-max",
   {
     variants: {
       intent: {
