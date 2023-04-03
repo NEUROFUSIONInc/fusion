@@ -1,8 +1,8 @@
-import { DatabaseIcon, Hand } from "lucide-react";
+import { Database, Hand } from "lucide-react";
 
 export const newsletterFeatures = [
   {
-    icon: DatabaseIcon,
+    icon: Database,
     title: "Data privacy",
     description: "We anonymise and encrypt data we store.",
   },
