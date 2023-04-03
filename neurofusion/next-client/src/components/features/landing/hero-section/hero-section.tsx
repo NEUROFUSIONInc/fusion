@@ -8,8 +8,7 @@ export const HeroSection = () => {
       <div className=" w-full max-w-xl text-center md:min-w-[300px] md:text-left">
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Lorem ipsum dolor sit</h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400 md:text-xl">
-          Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet
-          fugiat veniam occaecat fugiat aliqua.
+          See how your sleep, activity, screen time & behaviour data impact your days!
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6 md:justify-start">
           <ButtonLink href="#" size="lg" rounded>
@@ -22,7 +21,7 @@ export const HeroSection = () => {
       </div>
       <Image
         loading="eager"
-        src="/images/hero.webp"
+        src="/images/prompt.png"
         width={700}
         height={500}
         alt="Fusion App Screenshot"

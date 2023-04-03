@@ -59,10 +59,9 @@ export const IntegrationsSection = () => {
           <div>
             <div className="max-w-2xl lg:p-10">
               <div className="text-center md:text-left">
-                <p className="text-5xl">First Class Integrations</p>
+                <p className="text-5xl">Connect your data</p>
                 <p className="my-8 text-lg tracking-tight text-gray-600 dark:text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum maxime ullam, sit libero debitis
-                  corrupti, aspernatur delectus ipsum dolore minima distinctio?
+                  Fusion integrates with applications you already use daily!
                 </p>
                 <ButtonLink href="/auth/login" size="lg" rounded>
                   Start linking integrations
