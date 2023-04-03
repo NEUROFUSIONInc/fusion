@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 
@@ -10,7 +10,7 @@ const LabPage: NextPage = () => {
 export default LabPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await unstable_getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return {
