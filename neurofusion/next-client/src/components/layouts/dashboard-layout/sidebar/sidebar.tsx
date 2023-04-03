@@ -1,10 +1,9 @@
 import React, { FC } from "react";
 import Link from "next/link";
 
+import { Logo } from "~/components/ui";
 import { sidebarLinks } from "./data";
 import { SidebarFooter } from "./sidebar-footer";
-
-import { Logo } from "~/components/ui";
 
 export const Sidebar: FC = () => {
   return (
