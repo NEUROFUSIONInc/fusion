@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -7,7 +7,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 
 import { MainLayout } from "~/components/layouts";
 import { LoginContainer } from "~/components/ui";
-import { magic } from "~/lib/magic";
+import { magic } from "~/lib";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -36,12 +36,12 @@ const LoginPage = () => {
 export default LoginPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await unstable_getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, authOptions);
 
   if (session) {
     return {
       redirect: {
-        destination: "/",
+        destination: "/integrations",
         permanent: false,
       },
     };
