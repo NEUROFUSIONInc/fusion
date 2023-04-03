@@ -37,7 +37,7 @@ export const Newsletter = () => {
       <div className="container mx-auto mt-20 mb-32 grid grid-cols-1 gap-y-16 gap-x-8 lg:grid-cols-2">
         <div className="mb-8py-8 px-6 text-center md:text-left">
           <h2 className="text-4xl font-bold">Subscribe to our newsletter.</h2>
-          <p className="my-8 max-w-xl">We're iterating quickly. Be the first to know about latest updates.</p>
+          <p className="my-8 max-w-xl">Updates from the team, on features, build logs, experiments and more.</p>
           <div className="flex justify-center md:justify-start">
             <div id="custom-substack-embed" />
           </div>

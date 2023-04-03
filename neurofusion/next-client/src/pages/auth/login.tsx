@@ -4,10 +4,10 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import { magic } from "~/lib/magic";
-import { authOptions } from "../api/auth/[...nextauth]";
-
 import { MainLayout } from "~/components/layouts";
 import { LoginContainer } from "~/components/ui";
+
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const LoginPage = () => {
   const router = useRouter();
