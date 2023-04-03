@@ -5,14 +5,14 @@ import { useWindowScrollPosition } from "rooks";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 
+import { logout } from "~/lib";
+
 import { Logo } from "../../logo/logo";
 import { ButtonLink } from "../../link/button-link";
 import { Button } from "../../button/button";
 
 import { navigationLinks } from "./data";
 import { MobileMenu } from "./mobile-menu";
-
-import { logout } from "~/lib";
 
 export const Navbar: FC = () => {
   const { data: session } = useSession();

@@ -1,10 +1,10 @@
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
 
-import { authOptions } from "./api/auth/[...nextauth]";
-
 import { IntegrationsContainer } from "~/components/features/integrations";
 import { DashboardLayout } from "~/components/layouts";
+
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const IntegrationsPage: NextPage = () => {
   return (

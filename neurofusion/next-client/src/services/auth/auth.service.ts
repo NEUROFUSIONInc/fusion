@@ -1,6 +1,6 @@
-import { UserCompleteLoginResponse } from "./types";
-
 import { api } from "~/config";
+
+import { UserCompleteLoginResponse } from "./types";
 
 class AuthService {
   async completeUserLogin(userEmail: string, magicLinkAuthToken: string) {
