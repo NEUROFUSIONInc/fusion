@@ -3,13 +3,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import { FC, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 import { magicFlowSteps } from "../data";
 
 import { Button, Input } from "~/components/ui";
 import { magicflowService } from "~/services";
+import { useGetMagicFlowToken } from "~/hooks";
 
 interface IMagicFlowModalProps {
   isOpen: boolean;
@@ -18,12 +19,17 @@ interface IMagicFlowModalProps {
 
 export const MagicFlowModal: FC<IMagicFlowModalProps> = ({ isOpen, onCloseModal }) => {
   const { data: sessionData } = useSession();
-  const { data } = useQuery({
-    queryKey: ["magicflowToken"],
-    queryFn: () => magicflowService.getMagicFlowToken(sessionData?.user?.authToken),
-    enabled: Boolean(sessionData?.user?.authToken),
-  });
+  const { data } = useGetMagicFlowToken();
   const [token, setToken] = useState(data?.magicflowToken || "");
+
+  const { mutate } = useMutation({
+    mutationKey: ["setMagicflowToken"],
+    mutationFn: ({ token, authToken }: { token: string; authToken: string }) =>
+      magicflowService.setMagicFlowToken(token, authToken),
+    onSuccess: () => onCloseModal(),
+  });
+
+  const handleSubmit = () => mutate({ token, authToken: sessionData?.user?.authToken || "" });
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => setToken(evt.target.value);
 
@@ -72,8 +78,10 @@ export const MagicFlowModal: FC<IMagicFlowModalProps> = ({ isOpen, onCloseModal 
           </Accordion.Root>
 
           <div className="mt-8 flex w-full flex-wrap items-center gap-4 py-6 md:flex-nowrap">
-            <Input value={token} placeholder="magicFlow token" onChange={handleChange} fullWidth />
-            <Button type="submit">Connect</Button>
+            <Input value={data?.magicflowToken} placeholder="magicFlow token" onChange={handleChange} fullWidth />
+            <Button type="submit" onClick={handleSubmit}>
+              {data?.magicflowToken ? "Update" : "Connect"}
+            </Button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
