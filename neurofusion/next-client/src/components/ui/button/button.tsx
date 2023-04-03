@@ -10,6 +10,8 @@ export const buttonStyles = cva(
         primary: "bg-secondary-600 text-white focus:ring-secondary-100 focus:ring-offset-2",
         ghost:
           "bg-transparent focus:outline-0 border-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-dark focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:opacity-90",
+        integration:
+          "bg-white shadow-sm border dark:border-slate-800 text-dark dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-dark focus:ring-offset-0 dark:focus:ring-secondary-100",
       },
       fullWidth: {
         true: "w-full",
