@@ -43,8 +43,6 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           is_static_export: true
-          IS_STATIC_EXPORT: true
-          ENABLE_ORYX_BUILD: false
           enable_oryx_buid: false
 
   close_pull_request_job:
