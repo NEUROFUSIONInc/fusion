@@ -3,11 +3,18 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 
-const RecodingPage: NextPage = () => {
-  return <div>Good, you&apos;re authenticated if you were able to make it here</div>;
+import { IntegrationsContainer } from "~/components/features/integrations";
+import { DashboardLayout } from "~/components/layouts";
+
+const IntegrationsPage: NextPage = () => {
+  return (
+    <DashboardLayout>
+      <IntegrationsContainer />
+    </DashboardLayout>
+  );
 };
 
-export default RecodingPage;
+export default IntegrationsPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
