@@ -10,8 +10,16 @@ class MagicflowService {
     return response.data;
   }
 
-  async setMagicFlowToken(magicflowToken: string) {
-    const response = await api.post<{ magicflowToken: string }>("/magicflow/set-token", { magicflowToken });
+  async setMagicFlowToken(magicflowToken: string, authToken?: string) {
+    const response = await api.post<{ magicflowToken: string }>(
+      "/magicflow/set-token",
+      { magicflowToken },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
     return response.data;
   }
 }
