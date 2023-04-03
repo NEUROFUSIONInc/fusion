@@ -8,10 +8,12 @@ import { Button } from "~/components/ui";
 
 interface IIntegrationProps {
   integration: IIntegration;
+  isConnected?: boolean;
+  loading?: boolean;
   onclick?: () => void;
 }
 
-export const Integration: FC<IIntegrationProps> = ({ integration, onclick }) => {
+export const Integration: FC<IIntegrationProps> = ({ integration, loading, isConnected, onclick }) => {
   return (
     <div className="flex max-w-md cursor-pointer flex-col items-start gap-4 rounded-md border px-8 py-6 shadow-sm transition-transform duration-300 ease-in-out hover:scale-105  dark:border-slate-800 hover:dark:shadow-gray-800">
       <div className="flex w-full justify-between">
@@ -39,12 +41,13 @@ export const Integration: FC<IIntegrationProps> = ({ integration, onclick }) => 
       </div>
       <p className="text-[15px] text-slate-700 dark:text-slate-300">{integration.description}</p>
       <Button
-        intent="integration"
+        intent={isConnected ? "dark" : "integration"}
         className="ml-auto"
+        isLoading={loading}
         leftIcon={<PlugZap className="fill-current" />}
         onClick={onclick}
       >
-        Connect
+        {isConnected ? "Connected" : "Connect"}
       </Button>
     </div>
   );
