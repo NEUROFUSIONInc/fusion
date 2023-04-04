@@ -13,17 +13,10 @@ Data is currently stored using AsyncStorage (SQLite)
   uuid
   promptText
   responseType
-  notificationFrequency {
-    value
-    unit
-  }
-  silentPeriods [
-    {
-      day
-      startTime
-      endTime
-    }
-  ]
+  notificationConfig_days
+  notificationConfig_startTime
+  notificationConfig_endTime
+  notificationConfig_countPerDay
   isScheduled
 }
 ```
@@ -48,7 +41,7 @@ In the context of prompts
 
 ### Authoring
 
-- Allow to silence prompt notifications on certain days & times
+- Allow to chose the time range for notifications on certain days & times
 - Show some default prompts that users can add/enable
 - Pause notification prompts
   - fully

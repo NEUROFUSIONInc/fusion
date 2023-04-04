@@ -8,6 +8,8 @@ import { PromptContextProvider, saveFusionEvent } from "./utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 
+import { db } from "./utils";
+
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
@@ -171,6 +173,46 @@ export default function App() {
           return;
         });
     })();
+  }, []);
+
+  /**
+   * Create the base tables for the app.
+   */
+  React.useEffect(() => {
+    db.transaction((tx) => {
+      // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
+
+      // Create prompts table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS prompts (
+          uuid TEXT PRIMARY KEY,
+          promptText TEXT,
+          responseType TEXT,
+          notificationConfig_days TEXT,
+          notificationConfig_startTime TEXT,
+          notificationConfig_endTime TEXT,
+          notificationConfig_countPerDay INTEGER,
+          isScheduled BOOLEAN
+        );`
+      );
+
+      // Create prompt responses table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS prompt_responses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          promptUuid TEXT,
+          triggerTimestamp INTEGER,
+          responseTimestamp INTEGER,
+          value TEXT,
+          FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
+        );`
+      );
+
+      tx.executeSql("select * from prompts", [], (_, { rows }) =>
+        console.log(JSON.stringify(rows))
+      );
+    });
   }, []);
 
   return (
