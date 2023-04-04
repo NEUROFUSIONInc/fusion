@@ -5,23 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import dayjs from "dayjs";
 
-export function TimePicker() {
-  // defaut
-  const [start, setStart] = useState(
-    dayjs().endOf("day").subtract(2, "hour").add(1, "minute")
-  );
-  const [end, setEnd] = useState(start.add(8, "hour"));
-
-  const [days, setDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
-  });
-
+export function TimePicker({ start, setStart, end, setEnd, days, setDays }) {
   const dayLabels = {
     monday: "Mon",
     tuesday: "Tues",
@@ -64,6 +48,8 @@ export function TimePicker() {
 
   return (
     <View style={styles.container}>
+      <Text>When do you want to be prompted?</Text>
+
       <TouchableOpacity style={styles.timePicker} onPress={showStartTimePicker}>
         <Text>From</Text>
         <View>

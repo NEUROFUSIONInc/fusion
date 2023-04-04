@@ -1,10 +1,11 @@
 import React from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import SwitchSelector from "react-native-switch-selector";
 import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
 
 import { PromptContext, savePrompt } from "../utils";
 import { TimePicker } from "../components/timepicker.js";
+
+import dayjs from "dayjs";
 
 export function PromptScreen({ navigation, route }) {
   const { setSavedPrompts } = React.useContext(PromptContext);
@@ -19,18 +20,28 @@ export function PromptScreen({ navigation, route }) {
     { label: "Yes/No", value: "yesno" },
     // { label: "Custom Options", value: "customOptions" },
   ]);
-  const [notificationFrequencyOpen, setNotificationFrequencyOpen] =
-    React.useState(false);
+
   const [notificationFrequencyUnit, setNotificationFrequencyUnit] =
     React.useState(null);
   const [notificationFrequencyValue, setNotificationFrequencyValue] =
-    React.useState(null);
-  const [notificationFrequencyItems, setNotificationFrequencyItems] =
-    React.useState([
-      { label: "Days", value: "days" },
-      { label: "Hours", value: "hours" },
-      { label: "Minutes", value: "minutes" },
-    ]);
+    React.useState(3);
+
+  const [days, setDays] = React.useState({
+    monday: true,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true,
+    saturday: true,
+    sunday: true,
+  });
+
+  const [start, setStart] = React.useState(
+    dayjs().startOf("day").add(8, "hour")
+  );
+  const [end, setEnd] = React.useState(
+    start.endOf("day").subtract(2, "hour").add(1, "minute")
+  );
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
@@ -48,20 +59,6 @@ export function PromptScreen({ navigation, route }) {
   }, [route.params]);
 
   // TODO: add a way to add custom options
-
-  const onResponseTypeOpen = React.useCallback(() => {
-    setNotificationFrequencyOpen(false);
-  }, []);
-
-  const onNotificationFrequencyOpen = React.useCallback(() => {
-    setResponseTypeOpen(false);
-  }, []);
-
-  const [silencePrompt, setSilencePrompt] = React.useState(false);
-  const silencePromptOptions = [
-    { label: "Yes", value: true },
-    { label: "No", value: false },
-  ];
 
   return (
     <View style={styles.container}>
@@ -92,7 +89,6 @@ export function PromptScreen({ navigation, route }) {
             value={responseType}
             items={responseTypeItems}
             setOpen={setResponseTypeOpen}
-            onOpen={onResponseTypeOpen}
             placeholder="Select Response Type"
             setValue={setResponseType}
             setItems={setResponseTypeItems}
@@ -100,48 +96,28 @@ export function PromptScreen({ navigation, route }) {
         </View>
 
         <View style={styles.formComponent}>
-          <Text>How often do you want to be prompted?</Text>
-          {/* select drop down */}
-          {/* the other part should be the unit  - days, hours, minutes */}
-          {/* allow configure based on number of */}
           <View style={styles.frequencyContainer}>
+            <Text>How many times?</Text>
             <TextInput
               inputMode="numeric"
               keyboardType="numeric"
-              placeholder="8"
+              placeholder="3"
               style={styles.frequencyValueInput}
               value={notificationFrequencyValue}
               onChangeText={setNotificationFrequencyValue}
             />
-            <DropDownPicker
-              open={notificationFrequencyOpen}
-              value={notificationFrequencyUnit}
-              items={notificationFrequencyItems}
-              setOpen={setNotificationFrequencyOpen}
-              onOpen={onNotificationFrequencyOpen}
-              placeholder="Set Frequency"
-              setValue={setNotificationFrequencyUnit}
-              setItems={setNotificationFrequencyItems}
-              containerStyle={styles.frequencyDropDown}
-            />
           </View>
         </View>
 
-        <View style={styles.formComponent}>
-          <Text>Disable prompts at certain times of the day?</Text>
-          <SwitchSelector
-            initial={1}
-            onPress={(value) => setSilencePrompt(value)}
-            textColor="#ccceeaa"
-            selectedColor="#7a44cf"
-            buttonColor="#ccc"
-            borderColor="#ccc"
-            hasPadding
-            options={silencePromptOptions}
-          />
-
-          {silencePrompt && <TimePicker styles={styles.formComponent} />}
-        </View>
+        <TimePicker
+          styles={styles.formComponent}
+          start={start}
+          setStart={setStart}
+          end={end}
+          setEnd={setEnd}
+          days={days}
+          setDays={setDays}
+        />
       </View>
 
       <View zIndex={2000}>
