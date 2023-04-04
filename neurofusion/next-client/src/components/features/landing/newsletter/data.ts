@@ -1,10 +1,10 @@
-import { CalendarDays, Hand } from "lucide-react";
+import { Database, Hand } from "lucide-react";
 
 export const newsletterFeatures = [
   {
-    icon: CalendarDays,
-    title: "Monthly articles",
-    description: "Updates from the team, new features, and more.",
+    icon: Database,
+    title: "Data privacy",
+    description: "Prompts & responses are stored on your device. We anonymise and encrypt data from other sources.",
   },
   {
     icon: Hand,

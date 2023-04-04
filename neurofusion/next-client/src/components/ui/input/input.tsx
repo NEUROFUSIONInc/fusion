@@ -33,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function input(
   ref
 ) {
   return (
-    <div className="flex-col space-y-1.5 tracking-wide text-primary-900 dark:text-white">
+    <div className="w-full flex-col space-y-1.5 tracking-wide text-primary-900 dark:text-white">
       <label htmlFor={id} className="md:text-md block pl-1 text-sm font-semibold">
         {label && (
           <p className="mb-1">

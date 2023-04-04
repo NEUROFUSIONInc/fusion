@@ -1,5 +1,6 @@
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
 
 export const buttonStyles = cva(
@@ -10,6 +11,9 @@ export const buttonStyles = cva(
         primary: "bg-secondary-600 text-white focus:ring-secondary-100 focus:ring-offset-2",
         ghost:
           "bg-transparent focus:outline-0 border-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-dark focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:opacity-90",
+        integration:
+          "bg-white shadow-sm border dark:border-slate-800 text-dark dark:bg-gray-700 dark:text-white focus:ring-dark focus:ring-offset-0 dark:focus:ring-secondary-100",
+        dark: "bg-slate-900 focus-visible:ring-dark focus:ring-0  focus-visible:ring-offset-2 dark:focus-visible:ring-secondary-100 dark:bg-gray-50 dark:text-primary-800",
       },
       fullWidth: {
         true: "w-full",
@@ -25,7 +29,7 @@ export const buttonStyles = cva(
         icon: "flex justify-center min-h-[30px] min-w-[30px]",
       },
       isLoading: {
-        true: "opacity-50 cursor-wait",
+        true: "opacity-80 cursor-wait",
       },
     },
     defaultVariants: {
@@ -39,6 +43,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof buttonStyles> & {
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
+    loadingText?: string;
   };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function button(
@@ -52,6 +57,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function button
     rightIcon,
     rounded,
     className,
+    loadingText = "Loading...",
     ...props
   },
   ref
@@ -70,9 +76,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function button
       })}
       {...props}
     >
-      {leftIcon}
-      {children}
-      {rightIcon}
+      {isLoading ? (
+        <>
+          <Loader2 size={14} className="animate-spin" /> <span>{loadingText}</span>
+        </>
+      ) : (
+        <>
+          {leftIcon}
+          {children}
+          {rightIcon}
+        </>
+      )}
     </button>
   );
 });

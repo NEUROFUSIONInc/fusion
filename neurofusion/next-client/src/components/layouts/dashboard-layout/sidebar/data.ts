@@ -9,7 +9,7 @@ export const sidebarLinks = [
   {
     icon: Plug,
     title: "Integrations",
-    href: "#",
+    href: "/integrations",
   },
   {
     icon: HardDrive,
