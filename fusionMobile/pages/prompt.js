@@ -81,7 +81,7 @@ export function PromptScreen({ navigation, route }) {
           />
         </View>
 
-        <View style={styles.formComponent}>
+        <View style={styles.formComponent} zIndex={5000}>
           <Text>Response Type</Text>
           {/* select button */}
           <DropDownPicker
