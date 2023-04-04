@@ -1,10 +1,10 @@
 import { useState } from "react";
 
+import { useGetMagicFlowToken } from "~/hooks";
+
 import { integrations } from "./data";
 import { Integration } from "./integration/integration";
 import { MagicFlowModal } from "./modals";
-
-import { useGetMagicFlowToken } from "~/hooks";
 
 type ModalState = "magicFlow" | "neurosity" | "spotify" | undefined;
 type IntegrationTitle = (typeof integrations)[number]["title"];

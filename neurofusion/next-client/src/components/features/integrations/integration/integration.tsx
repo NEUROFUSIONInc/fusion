@@ -2,9 +2,9 @@ import { ExternalLink, PlugZap } from "lucide-react";
 import Image from "next/image";
 import { FC } from "react";
 
-import { IIntegration } from "../data";
-
 import { Button } from "~/components/ui";
+
+import { IIntegration } from "../data";
 
 interface IIntegrationProps {
   integration: IIntegration;

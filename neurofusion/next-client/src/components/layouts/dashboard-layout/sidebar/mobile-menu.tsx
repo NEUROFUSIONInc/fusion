@@ -2,9 +2,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { FC } from "react";
 import { X } from "lucide-react";
 
-import { Sidebar } from "./sidebar";
-
 import { Button } from "~/components/ui";
+
+import { Sidebar } from "./sidebar";
 
 interface IMobileMenuProps {
   open?: boolean;

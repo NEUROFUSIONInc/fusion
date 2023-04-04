@@ -3,10 +3,10 @@ import Link from "next/link";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 
+import { Logo } from "~/components/ui";
+
 import { sidebarLinks } from "./data";
 import { SidebarFooter } from "./sidebar-footer";
-
-import { Logo } from "~/components/ui";
 
 export const Sidebar: FC = () => {
   const { pathname } = useRouter();

@@ -6,11 +6,11 @@ import { FC, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-import { magicFlowSteps } from "../data";
-
 import { Button, Input } from "~/components/ui";
 import { magicflowService } from "~/services";
 import { useGetMagicFlowToken } from "~/hooks";
+
+import { magicFlowSteps } from "../data";
 
 interface IMagicFlowModalProps {
   isOpen: boolean;

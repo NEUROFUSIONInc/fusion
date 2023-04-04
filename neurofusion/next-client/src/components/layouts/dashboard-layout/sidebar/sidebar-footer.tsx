@@ -2,9 +2,9 @@ import { ChevronsUpDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-import { appearanceModes } from "./data";
-
 import { Avatar, AvatarFallback, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+
+import { appearanceModes } from "./data";
 
 export const SidebarFooter = () => {
   const [mounted, setMounted] = useState(false);
