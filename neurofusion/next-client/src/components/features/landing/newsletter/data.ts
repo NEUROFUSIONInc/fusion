@@ -4,7 +4,7 @@ export const newsletterFeatures = [
   {
     icon: Database,
     title: "Data privacy",
-    description: "We anonymise and encrypt data we store.",
+    description: "Prompts & responses are stored on your device. We anonymise and encrypt data from other sources.",
   },
   {
     icon: Hand,
