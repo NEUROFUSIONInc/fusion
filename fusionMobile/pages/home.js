@@ -27,10 +27,10 @@ export function HomeScreen({ navigation, route }) {
             <View style={styles.item}>
               <View>
                 <Text style={styles.promptText}>{item.promptText}</Text>
-                <Text>
+                {/* <Text>
                   Respond every {item.notificationFrequency.value}{" "}
                   {item.notificationFrequency.unit} with {item.responseType}
-                </Text>
+                </Text> */}
               </View>
 
               {/* Edit/Delete/View Prompt responses */}

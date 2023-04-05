@@ -21,11 +21,7 @@ export function PromptScreen({ navigation, route }) {
     // { label: "Custom Options", value: "customOptions" },
   ]);
 
-  const [notificationFrequencyUnit, setNotificationFrequencyUnit] =
-    React.useState(null);
-  const [notificationFrequencyValue, setNotificationFrequencyValue] =
-    React.useState(3);
-
+  const [countPerDay, setCountPerDay] = React.useState(3);
   const [days, setDays] = React.useState({
     monday: true,
     tuesday: true,
@@ -45,16 +41,19 @@ export function PromptScreen({ navigation, route }) {
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
+    // TODO: fix this.. it'll break if the values are not set (old prompts are this way)
     if (route.params && route.params.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
       setResponseType(route.params.prompt.responseType);
-      setNotificationFrequencyUnit(
-        route.params.prompt.notificationFrequency.unit
-      );
-      setNotificationFrequencyValue(
-        route.params.prompt.notificationFrequency.value
-      );
+      if (route.params.prompt.notificationConfig_countPerDay)
+        setCountPerDay(route.params.prompt.notificationConfig_countPerDay);
+      if (route.params.prompt.notificationConfig_startTime)
+        setStart(route.params.prompt.notificationConfig_startTime);
+      if (route.params.prompt.notificationConfig_endTime)
+        setEnd(route.params.prompt.notificationConfig_endTime);
+      if (route.params.prompt.notificationConfig_days)
+        setDays(route.params.prompt.notificationConfig_days);
     }
   }, [route.params]);
 
@@ -103,8 +102,8 @@ export function PromptScreen({ navigation, route }) {
               keyboardType="numeric"
               placeholder="3"
               style={styles.frequencyValueInput}
-              value={notificationFrequencyValue}
-              onChangeText={setNotificationFrequencyValue}
+              value={countPerDay}
+              onChangeText={setCountPerDay}
             />
           </View>
         </View>
@@ -131,14 +130,21 @@ export function PromptScreen({ navigation, route }) {
               const res = await savePrompt(
                 promptText,
                 responseType,
-                notificationFrequencyValue,
-                notificationFrequencyUnit,
+                countPerDay,
+                start.format("HH:mm"),
+                end.format("HH:mm"),
+                days,
                 promptUuid
               );
 
               if (res) {
                 // update the saved prompts state
                 setSavedPrompts(res);
+
+                // Let the user know the prompt was saved
+                Alert.alert("Success", "Prompt saved successfully");
+
+                // navigate back to the home screen
                 navigation.navigate("Home", {
                   prompts: res,
                 });

@@ -71,18 +71,24 @@ In the context of prompts
 
 - switch storage to sqlite
 
-  - create tables
+  - (done) create tables
 
     - prompts,
     - prompt_responses
 
-  - logic to save & read from tables
+  - (done) logic to save prompts & read from tables
+
+  - logic to trigger notifications based on prompt values
+
+  - logic to save prompt responses & read
+
+  - delete logic for prompts
 
   - migrate data for existing
     - prompts
     - prompt_responses
 
-- don't allow to have duplicate prompts
+- don't allow to have prompts with duplicated `promptText`
 
 ## Planned Releases
 
@@ -91,3 +97,7 @@ Mid-april release
 - Use "Expletus Sans" font.
 - Apple health data connection
 - Connect fusion account & periodically upload logs to remote storage
+
+bugs:
+
+Change press & hold text for android

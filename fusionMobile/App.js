@@ -51,7 +51,10 @@ export default function App() {
     (async () => {
       const permissionStatus = await registerForPushNotificationsAsync();
       if (!permissionStatus) {
-        console.log("Not registered for push notifications");
+        Alert.alert(
+          "Error",
+          "Failed to register for push notifications, please quit & restart the app"
+        );
         return;
       }
 
@@ -192,8 +195,7 @@ export default function App() {
           notificationConfig_days TEXT,
           notificationConfig_startTime TEXT,
           notificationConfig_endTime TEXT,
-          notificationConfig_countPerDay INTEGER,
-          isScheduled BOOLEAN
+          notificationConfig_countPerDay INTEGER
         );`
       );
 

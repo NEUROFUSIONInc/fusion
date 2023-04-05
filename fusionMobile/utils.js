@@ -51,19 +51,8 @@ export const PromptContextProvider = ({ children }) => {
         await Notifications.getAllScheduledNotificationsAsync();
       console.log("scheduled notifications", scheduledNotifications);
 
-      // TODO: hack to flush previous notifications
-      // If scheduled notification identifier isn't a valid prompt.uuid, cancel it
-      scheduledNotifications.forEach((notification) => {
-        const prompt = savedPrompts.find(
-          (p) => p.uuid === notification.identifier
-        );
-        if (!prompt) {
-          Notifications.cancelScheduledNotificationAsync(
-            notification.identifier
-          );
-        }
-      });
-
+      // TODO: fallback to schedule any notifications not scheduled
+      // in the future will want to keep this to just scheduling on save
       // If prompt is active & there's no notification, schedule it
       savedPrompts.forEach(async (prompt) => {
         const notification = scheduledNotifications.find(
@@ -174,22 +163,26 @@ export const deletePrompt = async (uuid) => {
 export const savePrompt = async (
   promptText,
   responseType,
-  notificationFrequencyValue,
-  notificationFrequencyUnit,
+  countPerDay,
+  startTime,
+  endTime,
+  days,
   uuid = null
 ) => {
   /**
-   * Sets or saves a prompt to the AsyncStorage
+   * Sets or saves a prompt to SQLite
    *
    * uuid - optional parameter to set the prompt UUID, when this is passed an existing prompt will be updated
    *
-   * TODO: add "isActive"
    */
+
   if (
     !promptText ||
     !responseType ||
-    !notificationFrequencyValue ||
-    !notificationFrequencyUnit
+    !countPerDay ||
+    !startTime ||
+    !endTime ||
+    !days
   ) {
     console.log("missing values");
     return null;
@@ -201,41 +194,46 @@ export const savePrompt = async (
       uuid: uuid ? uuid : uuidv4(),
       promptText: promptText,
       responseType: responseType,
-      notificationFrequency: {
-        value: notificationFrequencyValue,
-        unit: notificationFrequencyUnit,
-      },
+      notificationConfig_days: JSON.stringify(days),
+      notificationConfig_startTime: startTime,
+      notificationConfig_endTime: endTime,
+      notificationConfig_countPerDay: countPerDay,
     };
 
-    // save/update prompts
-    // get the current prompts
-    let currentPrompts = await readSavedPrompts();
-    let promptIndex = -1;
-    if (currentPrompts) {
-      // Check if prompt with same UUID already exists in the array
-      promptIndex = currentPrompts.findIndex((p) => p.uuid === prompt.uuid);
-    } else {
-      // if there are no prompts, create an empty array
-      currentPrompts = [];
-    }
+    // TODO: check if prompt already exists, if so update it
+    console.log("saving prompt", prompt);
 
-    if (promptIndex >= 0) {
-      // Overwrite existing prompt with the same UUID
-      currentPrompts[promptIndex] = prompt;
-    } else {
-      // add the new prompt to the array
-      currentPrompts.push(prompt);
-    }
+    return new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        // save prompt to db
+        tx.executeSql(
+          `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            prompt.uuid,
+            prompt.promptText,
+            prompt.responseType,
+            prompt.notificationConfig_days,
+            prompt.notificationConfig_startTime,
+            prompt.notificationConfig_endTime,
+            prompt.notificationConfig_countPerDay,
+          ],
+          (_, { rows }) => {
+            console.log("prompt saved");
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
 
-    // update the prompts
-    await AsyncStorage.setItem("prompts", JSON.stringify(currentPrompts));
+        // get list of current prompts
+        tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
+          resolve(rows._array);
+        });
+      });
+    });
 
-    // TODO: schedule notification for the prompt here.
-    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
-    // schedule notification
-    await scheduleFusionNotification(prompt);
-
-    return currentPrompts;
+    // schedule notification for the prompt here.
+    // await scheduleFusionNotification(prompt);
   } catch (error) {
     console.log(error);
     return null;
