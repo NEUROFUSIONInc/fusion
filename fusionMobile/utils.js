@@ -72,57 +72,6 @@ export const PromptContextProvider = ({ children }) => {
   );
 };
 
-export const scheduleFusionNotification = async (prompt) => {
-  /**
-   * Schedules a notification for a Fusion prompt
-   */
-
-  // convert prompt interval to seconds
-  let promptIntervalSeconds;
-  switch (prompt.notificationFrequency.unit) {
-    case "hours":
-      promptIntervalSeconds = prompt.notificationFrequency.value * 3600;
-      break;
-    case "minutes":
-      promptIntervalSeconds = prompt.notificationFrequency.value * 60;
-      break;
-    case "days":
-      promptIntervalSeconds = prompt.notificationFrequency.value * 86400;
-      break;
-  }
-
-  try {
-    // cancel existing notification
-    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
-
-    // if platform is android assign channel
-    let triggerObject = {};
-    if (Platform.OS === "android") {
-      triggerObject["channelId"] = "default";
-    }
-
-    // schedule new notification
-    await Notifications.scheduleNotificationAsync({
-      identifier: prompt.uuid,
-      content: {
-        title: `Fusion: ${prompt.promptText}`,
-        body: "Press & hold to log",
-        categoryIdentifier: prompt.responseType,
-      },
-      trigger: {
-        ...triggerObject,
-        repeats: true,
-        seconds: promptIntervalSeconds,
-      },
-    });
-  } catch (e) {
-    console.log("Unable to schedule notification");
-    return false;
-  }
-
-  return true;
-};
-
 export const readSavedPrompts = async () => {
   try {
     // get list of current prompts
@@ -162,8 +111,9 @@ export const deletePrompt = async (uuid) => {
 
     await deleteFromDb();
 
-    // cancel the notification
+    // cancel the notification for it
     await Notifications.cancelScheduledNotificationAsync(uuid);
+    // TODO: there'll be multiple notifications for a single prompt, need to cancel them all
 
     // get list of current prompts
     const prompts = await readSavedPrompts();
@@ -252,6 +202,89 @@ export const savePrompt = async (
     console.log(error);
     return null;
   }
+};
+
+function getEvenlySpacedTimes(startTime, endTime, count) {
+  /**
+   * Returns an array of (count) notifications based on available times
+   */
+  const start = timeStringToMinutes(startTime);
+  const end = timeStringToMinutes(endTime);
+  const totalMinutes = end - start;
+
+  // we're adding 1 so we can skip the first and last times
+  const interval = totalMinutes / (count + 1);
+
+  const times = [];
+  for (let i = 1; i < count + 1; i++) {
+    const timeInMinutes = start + i * interval;
+    const hours = Math.floor(timeInMinutes / 60);
+    const minutes = timeInMinutes % 60;
+    const timeString = `${padZero(hours)}:${padZero(minutes)}`;
+    times.push(timeString);
+  }
+
+  return times;
+}
+
+function padZero(num) {
+  return num.toString().padStart(2, "0");
+}
+
+function timeStringToMinutes(timeString) {
+  const [hours, minutes] = timeString.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+export const scheduleFusionNotification = async (prompt) => {
+  /**
+   * Schedules a notification for a Fusion prompt
+   */
+
+  // get the available times from date ranges.
+  const availableTimes = getEvenlySpacedTimes(
+    prompt.notificationConfig_startTime,
+    prompt.notificationConfig_endTime,
+    prompt.notificationConfig_countPerDay
+  );
+
+  console.log("available times \n", availableTimes);
+
+  try {
+    // cancel existing notification
+    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
+
+    // if platform is android assign channel
+    let triggerObject = {};
+    let contentObject = {};
+    if (Platform.OS === "android") {
+      triggerObject["channelId"] = "default";
+    }
+    if (Platform.OS === "ios") {
+      contentObject["body"] = "Press & hold to log";
+    }
+
+    // TODO: add support for multiple days
+    // schedule new notification
+    await Notifications.scheduleNotificationAsync({
+      identifier: prompt.uuid,
+      content: {
+        ...contentObject,
+        title: `Fusion: ${prompt.promptText}`,
+        categoryIdentifier: prompt.responseType,
+      },
+      trigger: {
+        ...triggerObject,
+        repeats: true,
+        seconds: promptIntervalSeconds,
+      },
+    });
+  } catch (e) {
+    console.log("Unable to schedule notification");
+    return false;
+  }
+
+  return true;
 };
 
 const updateTimestampToMs = (unixTimestamp) => {
