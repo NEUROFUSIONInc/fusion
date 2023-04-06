@@ -51,9 +51,17 @@ export const PromptContextProvider = ({ children }) => {
         await Notifications.getAllScheduledNotificationsAsync();
       console.log("scheduled notifications", scheduledNotifications);
 
-      // TODO: fallback to schedule any notifications not scheduled
-      // in the future will want to keep this to just scheduling on save
-      // If prompt is active & there's no notification, schedule it
+      // TODO: Migration
+      // when an exsiting user connects, their scheduled notifications will be listed
+      // we will:
+      // - generate a prompt from the existing notification structure
+      // - delete the existing notification
+      // - schedule notification for the new prompt
+
+      // TODO: switch this to check with prompt notifications in the db.
+      // and if they're scheduled..
+      // identifier === notificationId
+      // currently this will always be true
       savedPrompts.forEach(async (prompt) => {
         const notification = scheduledNotifications.find(
           (n) => n.identifier === prompt.uuid
@@ -85,9 +93,7 @@ export const readSavedPrompts = async () => {
       });
 
     const prompts = await fetchPrompts();
-    if (prompts.length > 0) {
-      return prompts;
-    }
+    if (prompts) return prompts;
   } catch (e) {
     console.log("error reading prompts", e);
     return null;
@@ -96,6 +102,9 @@ export const readSavedPrompts = async () => {
 
 export const deletePrompt = async (uuid) => {
   try {
+    // cancel the existing notifications for prompt
+    await cancelExistingNotificationForPrompt(uuid);
+
     const deleteFromDb = () =>
       new Promise((resolve, reject) => {
         db.transaction((tx) => {
@@ -110,10 +119,6 @@ export const deletePrompt = async (uuid) => {
       });
 
     await deleteFromDb();
-
-    // cancel the notification for it
-    await Notifications.cancelScheduledNotificationAsync(uuid);
-    // TODO: there'll be multiple notifications for a single prompt, need to cancel them all
 
     // get list of current prompts
     const prompts = await readSavedPrompts();
@@ -195,9 +200,6 @@ export const savePrompt = async (
         });
       });
     });
-
-    // schedule notification for the prompt here.
-    // await scheduleFusionNotification(prompt);
   } catch (error) {
     console.log(error);
     return null;
@@ -239,6 +241,12 @@ function timeStringToMinutes(timeString) {
 export const scheduleFusionNotification = async (prompt) => {
   /**
    * Schedules a notification for a Fusion prompt
+   *
+   * - delete any existing notifications for this prompt
+   * - check if all the days are selected.
+   * - if yes, use DailyInputTrigger
+   * - if no, loop through the days and use WeeklyInputTrigger
+   * - save notificationId to sqlite
    */
 
   // get the available times from date ranges.
@@ -248,43 +256,202 @@ export const scheduleFusionNotification = async (prompt) => {
     prompt.notificationConfig_countPerDay
   );
 
-  console.log("available times \n", availableTimes);
+  let triggerObject = {};
+  let contentObject = {
+    title: `Fusion: ${prompt.promptText}`,
+    categoryIdentifier: prompt.responseType,
+  };
+  // if platform is android assign channel
+  if (Platform.OS === "android") {
+    triggerObject["channelId"] = "default";
+  }
+  if (Platform.OS === "ios") {
+    // apply notification instruction
+    contentObject["body"] = "Press & hold to log";
+  }
+
+  const daysObject =
+    typeof prompt.notificationConfig_days === "string"
+      ? JSON.parse(prompt.notificationConfig_days)
+      : prompt.notificationConfig_days;
+  const dayToNumber = {
+    sunday: 1,
+    monday: 2,
+    tuesday: 3,
+    wednesday: 4,
+    thursday: 5,
+    friday: 6,
+    saturday: 7,
+  };
 
   try {
     // cancel existing notification
-    await Notifications.cancelScheduledNotificationAsync(prompt.uuid);
+    await cancelExistingNotificationForPrompt(prompt.uuid);
 
-    // if platform is android assign channel
-    let triggerObject = {};
-    let contentObject = {};
-    if (Platform.OS === "android") {
-      triggerObject["channelId"] = "default";
-    }
-    if (Platform.OS === "ios") {
-      contentObject["body"] = "Press & hold to log";
-    }
+    for (let time of availableTimes) {
+      const [hours, minutes] = time.split(":").map(Number);
 
-    // TODO: add support for multiple days
-    // schedule new notification
-    await Notifications.scheduleNotificationAsync({
-      identifier: prompt.uuid,
-      content: {
-        ...contentObject,
-        title: `Fusion: ${prompt.promptText}`,
-        categoryIdentifier: prompt.responseType,
-      },
-      trigger: {
-        ...triggerObject,
-        repeats: true,
-        seconds: promptIntervalSeconds,
-      },
-    });
+      // loop through the days...
+      const weekdays = Object.keys(daysObject).filter(
+        (day) => daysObject[day] === true
+      );
+
+      if (weekdays.length == 7) {
+        // schedule daily notification trigger
+        const notificationId = await Notifications.scheduleNotificationAsync({
+          content: contentObject,
+          trigger: {
+            ...triggerObject,
+            hour: hours,
+            minute: minutes,
+            repeats: true,
+          },
+        });
+        // save notificationId & promptId to db
+        await saveNotificationIdForPrompt(notificationId, prompt.uuid);
+      } else {
+        for (let weekday of weekdays) {
+          // schedule weekly notification trigger
+          const notificationId = await Notifications.scheduleNotificationAsync({
+            content: contentObject,
+            trigger: {
+              ...triggerObject,
+              hour: hours,
+              minute: minutes,
+              repeats: true,
+              weekday: dayToNumber[weekday],
+            },
+          });
+          // save notificationId & promptId to db
+          await saveNotificationIdForPrompt(notificationId, prompt.uuid);
+        }
+      }
+    }
   } catch (e) {
     console.log("Unable to schedule notification");
     return false;
   }
 
   return true;
+};
+
+/**
+ * CRUD for notificationId & promptId to sqlite
+ */
+export const saveNotificationIdForPrompt = async (notificationId, promptId) => {
+  try {
+    const storeDetailsInDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
+            [notificationId, promptId],
+            (_, { rows }) => {
+              console.log("notificationId saved");
+              resolve(true);
+            },
+            (_, error) => {
+              console.log("error saving in db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    await storeDetailsInDb();
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const cancelExistingNotificationForPrompt = async (promptId) => {
+  /**
+   * Cancels the existing notification for a prompt
+   * - get all the notificationIds for the prompt
+   * - cancel all the notifications
+   * - delete the notificationIds from the db
+   */
+
+  // support the old way... when we used promptId as notificationId
+  await Notifications.cancelScheduledNotificationAsync(promptId);
+
+  // now read from the db and cancel all the notifications
+  try {
+    const notificationIds = await getNotificationIdsForPrompt(promptId);
+    for (let notificationId of notificationIds) {
+      await Notifications.cancelScheduledNotificationAsync(notificationId);
+      // delete the notificationIds from the per id
+      await deleteNotificationIdForPrompt(promptId, notificationId);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getNotificationIdsForPrompt = async (promptId) => {
+  try {
+    const getNotificationIdsFromDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT notificationId FROM prompt_notifications WHERE promptUuid = ?",
+            [promptId],
+            (_, { rows }) => {
+              const notificationIds = rows._array.map(
+                (row) => row.notificationId
+              );
+              resolve(notificationIds);
+            },
+            (_, error) => {
+              console.log("error getting notificationIds from db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    const notificationIds = await getNotificationIdsFromDb();
+    return notificationIds;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export const deleteNotificationIdForPrompt = async (
+  promptId,
+  notificationId
+) => {
+  try {
+    const deleteNotificationIdsFromDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "DELETE FROM prompt_notifications WHERE promptUuid = ? AND notificationId = ?",
+            [promptId, notificationId],
+            (_, { rows }) => {
+              console.log("notificationIds deleted");
+              resolve(true);
+            },
+            (_, error) => {
+              console.log("error deleting notificationIds from db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    await deleteNotificationIdsFromDb();
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };
 
 const updateTimestampToMs = (unixTimestamp) => {

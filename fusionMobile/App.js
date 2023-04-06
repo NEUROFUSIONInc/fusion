@@ -211,9 +211,19 @@ export default function App() {
         );`
       );
 
-      tx.executeSql("select * from prompts", [], (_, { rows }) =>
-        console.log(JSON.stringify(rows))
+      // Create prompt notifications table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS prompt_notifications (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          promptUuid TEXT,
+          notificationId TEXT,
+          FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
+        );`
       );
+
+      // tx.executeSql("select * from prompts", [], (_, { rows }) =>
+      //   console.log(JSON.stringify(rows))
+      // );
     });
   }, []);
 

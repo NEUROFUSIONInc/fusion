@@ -75,18 +75,35 @@ In the context of prompts
 
     - prompts,
     - prompt_responses
+    - prompt_notifications
 
   - (done) logic to save prompts & read from tables
 
-  - logic to trigger notifications based on prompt values
+  - (done) delete logic for prompts, prompt_notifications
+
+  - (done) logic to trigger notifications based on prompt config
+    first, we use a function to select the times to trigger
+
+    - if Mon-Sun are set, then use DailyTriggerInput https://docs.expo.dev/versions/latest/sdk/notifications/#dailytriggerinput
+      - with multiple notification instances scheduled for time periods.
+    - otherwise, use WeeklyTriggerInput https://docs.expo.dev/versions/latest/sdk/notifications/#weeklytriggerinput
+      - with multiple notification instances scheduled for time periods.
+      - repeated across selected days.
+
+  - edit prompts -- start date & end data need to be parsed
 
   - logic to save prompt responses & read
 
-  - delete logic for prompts
-
   - migrate data for existing
+
     - prompts
+
+      - read from async storage
+      - parse with some default config into db prompt..
+
     - prompt_responses
+      - read from async storage
+      -
 
 - don't allow to have prompts with duplicated `promptText`
 
@@ -100,4 +117,10 @@ Mid-april release
 
 bugs:
 
-Change press & hold text for android
+(done) Change press & hold text for android
+
+- check instances when scheduleFusionNotification is called
+
+  - there's a hook in the PromptContext...
+
+- add "isScheduled" tag to notifications
