@@ -147,20 +147,27 @@ export const readSavedPrompts = async () => {
 
 export const deletePrompt = async (uuid) => {
   try {
-    const prompts = await AsyncStorage.getItem("prompts");
-    if (prompts !== null) {
-      // value previously stored
-      const promptArray = JSON.parse(prompts);
-      const newPromptArray = promptArray.filter(
-        (prompt) => prompt.uuid !== uuid
-      );
+    const deleteFromDb = () =>
+      new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM prompts WHERE uuid = ?`,
+            [uuid],
+            (_, { rows }) => {
+              resolve(rows._array);
+            }
+          );
+        });
+      });
 
-      // cancel the notification
-      await Notifications.cancelScheduledNotificationAsync(uuid);
+    await deleteFromDb();
 
-      await AsyncStorage.setItem("prompts", JSON.stringify(newPromptArray));
-      return newPromptArray;
-    }
+    // cancel the notification
+    await Notifications.cancelScheduledNotificationAsync(uuid);
+
+    // get list of current prompts
+    const prompts = await readSavedPrompts();
+    return prompts;
   } catch (e) {
     // error reading value
     return null;
