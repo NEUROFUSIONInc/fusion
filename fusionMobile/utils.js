@@ -505,3 +505,11 @@ export const getEventsForPrompt = async (prompt) => {
     return [];
   }
 };
+
+export const convertTime = (time24) => {
+  let hour = parseInt(time24.substring(0, 2));
+  let minute = time24.substring(3, 5);
+  let suffix = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${suffix}`;
+};

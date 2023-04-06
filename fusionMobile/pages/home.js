@@ -1,9 +1,19 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
-import { PromptContext, deletePrompt } from "../utils.js";
+import { PromptContext, deletePrompt, convertTime } from "../utils.js";
 
 export function HomeScreen({ navigation, route }) {
   const { savedPrompts, setSavedPrompts } = React.useContext(PromptContext);
+
+  const dayLabels = {
+    monday: "Mon",
+    tuesday: "Tues",
+    wednesday: "Wed",
+    thursday: "Thur",
+    friday: "Fri",
+    saturday: "Sat",
+    sunday: "Sun",
+  };
 
   return (
     <View style={styles.container}>
@@ -27,10 +37,14 @@ export function HomeScreen({ navigation, route }) {
             <View style={styles.item}>
               <View>
                 <Text style={styles.promptText}>{item.promptText}</Text>
-                {/* <Text>
-                  Respond every {item.notificationFrequency.value}{" "}
-                  {item.notificationFrequency.unit} with {item.responseType}
-                </Text> */}
+                <Text>
+                  You'll be prompted {item.notificationConfig_countPerDay} times
+                  to respond with {item.responseType}
+                  {"\n"}
+                  Between {convertTime(
+                    item.notificationConfig_startTime
+                  )} and {convertTime(item.notificationConfig_endTime)}
+                </Text>
               </View>
 
               {/* Edit/Delete/View Prompt responses */}
