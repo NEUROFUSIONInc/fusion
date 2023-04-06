@@ -125,15 +125,22 @@ export const scheduleFusionNotification = async (prompt) => {
 
 export const readSavedPrompts = async () => {
   try {
-    const prompts = await AsyncStorage.getItem("prompts");
-    if (prompts !== null) {
-      // value previously stored
-      console.log(prompts);
-      const promptArray = JSON.parse(prompts);
-      return promptArray;
+    // get list of current prompts
+    const fetchPrompts = () =>
+      new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
+            resolve(rows._array);
+          });
+        });
+      });
+
+    const prompts = await fetchPrompts();
+    if (prompts.length > 0) {
+      return prompts;
     }
   } catch (e) {
-    // error reading value
+    console.log("error reading prompts", e);
     return null;
   }
 };
