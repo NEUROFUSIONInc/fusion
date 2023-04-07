@@ -90,7 +90,14 @@ In the context of prompts
       - with multiple notification instances scheduled for time periods.
       - repeated across selected days.
 
-  - edit prompts -- start date & end data need to be parsed
+  - edit prompts
+
+    - start date & end date need to be parsed
+      - get the current day, apply the hours & minutes as day.js objects
+    - after saving,
+      - need to remove notifications (for old text)
+      - create a new one
+      - we're currently relying on the main hook to reset notifications
 
   - logic to save prompt responses & read
 

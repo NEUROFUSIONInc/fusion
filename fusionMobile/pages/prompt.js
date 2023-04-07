@@ -2,7 +2,7 @@ import React from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
 
-import { PromptContext, savePrompt } from "../utils";
+import { PromptContext, readSavedPrompts, savePrompt } from "../utils";
 import { TimePicker } from "../components/timepicker.js";
 
 import dayjs from "dayjs";
@@ -21,7 +21,7 @@ export function PromptScreen({ navigation, route }) {
     // { label: "Custom Options", value: "customOptions" },
   ]);
 
-  const [countPerDay, setCountPerDay] = React.useState(3);
+  const [countPerDay, setCountPerDay] = React.useState(null);
   const [days, setDays] = React.useState({
     monday: true,
     tuesday: true,
@@ -46,14 +46,23 @@ export function PromptScreen({ navigation, route }) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
       setResponseType(route.params.prompt.responseType);
-      if (route.params.prompt.notificationConfig_countPerDay)
-        setCountPerDay(route.params.prompt.notificationConfig_countPerDay);
-      if (route.params.prompt.notificationConfig_startTime)
-        setStart(route.params.prompt.notificationConfig_startTime);
-      if (route.params.prompt.notificationConfig_endTime)
-        setEnd(route.params.prompt.notificationConfig_endTime);
-      if (route.params.prompt.notificationConfig_days)
-        setDays(route.params.prompt.notificationConfig_days);
+      if (route.params.prompt.notificationConfig_countPerDay) {
+        setCountPerDay(
+          route.params.prompt.notificationConfig_countPerDay.toString()
+        );
+      }
+      if (route.params.prompt.notificationConfig_days) {
+        if (typeof route.params.prompt.notificationConfig_days === "string") {
+          const days = JSON.parse(route.params.prompt.notificationConfig_days);
+          setDays(days);
+        } else {
+          setDays(route.params.prompt.notificationConfig_days);
+        }
+      }
+      // if (route.params.prompt.notificationConfig_startTime)
+      //   setStart(route.params.prompt.notificationConfig_startTime);
+      // if (route.params.prompt.notificationConfig_endTime)
+      //   setEnd(route.params.prompt.notificationConfig_endTime);
     }
   }, [route.params]);
 
@@ -98,11 +107,11 @@ export function PromptScreen({ navigation, route }) {
           <View style={styles.frequencyContainer}>
             <Text>How many times?</Text>
             <TextInput
+              value={countPerDay}
               inputMode="numeric"
               keyboardType="numeric"
               placeholder="3"
               style={styles.frequencyValueInput}
-              value={countPerDay}
               onChangeText={setCountPerDay}
             />
           </View>
@@ -138,20 +147,27 @@ export function PromptScreen({ navigation, route }) {
               );
 
               if (res) {
-                // update the saved prompts state
-                setSavedPrompts(res);
+                // read the saved prompts from the db
+                const savedPrompts = await readSavedPrompts();
 
-                // Let the user know the prompt was saved
-                Alert.alert("Success", "Prompt saved successfully");
+                if (savedPrompts) {
+                  // update the saved prompts state
+                  setSavedPrompts(savedPrompts);
+                  // Let the user know the prompt was saved
+                  Alert.alert("Success", "Prompt saved successfully");
 
-                // navigate back to the home screen
-                navigation.navigate("Home", {
-                  prompts: res,
-                });
+                  // navigate back to the home screen
+                  navigation.navigate("Home", {
+                    prompts: res,
+                  });
+                } else {
+                  throw new Error("There was an error reading the prompts");
+                }
               } else {
-                Alert.alert("Error", "There was an error saving the prompt");
+                throw new Error("There was an error saving the prompt");
               }
             } catch (error) {
+              Alert.alert("Error", "There was an error saving the prompt");
               console.log(error);
             }
           }}

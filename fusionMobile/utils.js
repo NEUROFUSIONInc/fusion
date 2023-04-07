@@ -67,6 +67,7 @@ export const PromptContextProvider = ({ children }) => {
           (n) => n.identifier === prompt.uuid
         );
         if (!notification) {
+          console.log("scheduling notification for prompt", prompt);
           await scheduleFusionNotification(prompt);
         }
       });
@@ -96,7 +97,7 @@ export const readSavedPrompts = async () => {
     if (prompts) return prompts;
   } catch (e) {
     console.log("error reading prompts", e);
-    return null;
+    return [];
   }
 };
 
@@ -169,35 +170,62 @@ export const savePrompt = async (
       notificationConfig_countPerDay: countPerDay,
     };
 
-    // TODO: check if prompt already exists, if so update it
+    // TODO: check for prompt with duplicate name
     console.log("saving prompt", prompt);
 
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
-        // save prompt to db
         tx.executeSql(
-          `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [
-            prompt.uuid,
-            prompt.promptText,
-            prompt.responseType,
-            prompt.notificationConfig_days,
-            prompt.notificationConfig_startTime,
-            prompt.notificationConfig_endTime,
-            prompt.notificationConfig_countPerDay,
-          ],
+          "SELECT * FROM prompts WHERE uuid = ?",
+          [prompt.uuid],
           (_, { rows }) => {
-            console.log("prompt saved");
-          },
-          (_, error) => {
-            reject(error);
+            if (rows.length > 0) {
+              console.log("updating prompt");
+              // update prompt
+              tx.executeSql(
+                `UPDATE prompts SET promptText = ?, responseType = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
+                [
+                  prompt.promptText,
+                  prompt.responseType,
+                  prompt.notificationConfig_days,
+                  prompt.notificationConfig_startTime,
+                  prompt.notificationConfig_endTime,
+                  prompt.notificationConfig_countPerDay,
+                  prompt.uuid,
+                ],
+                (_, { rows }) => {
+                  console.log("prompt updated");
+                  resolve(true);
+                },
+                (_, error) => {
+                  console.log("error updating prompt", error);
+                  reject(error);
+                }
+              );
+            } else {
+              // save prompt to db
+              tx.executeSql(
+                `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [
+                  prompt.uuid,
+                  prompt.promptText,
+                  prompt.responseType,
+                  prompt.notificationConfig_days,
+                  prompt.notificationConfig_startTime,
+                  prompt.notificationConfig_endTime,
+                  prompt.notificationConfig_countPerDay,
+                ],
+                (_, { rows }) => {
+                  console.log("prompt saved");
+                  resolve(true);
+                },
+                (_, error) => {
+                  reject(error);
+                }
+              );
+            }
           }
         );
-
-        // get list of current prompts
-        tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
-          resolve(rows._array);
-        });
       });
     });
   } catch (error) {
