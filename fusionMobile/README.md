@@ -25,7 +25,18 @@ After a prompt is created, a notification is generated.
 
 Notification identifier will be the UUID from above.
 
-Response to prompts are saved in fusion Event schema [doc](../README.md)
+Response to prompts are saved in format
+
+```json
+{
+  triggerTimestamp
+  endTimestamp
+  value
+  promptUuid
+}
+```
+
+They can eventually exported in fusion Event schema [doc](../README.md)
 
 In the context of prompts
 
@@ -99,18 +110,19 @@ In the context of prompts
       - create a new one
       - we're currently relying on the main hook to reset notifications
 
-  - logic to save prompt responses & read
+- (done) logic to save prompt responses & read
 
-  - migrate data for existing
+- Migration
 
-    - prompts
+  - prompts
 
-      - read from async storage
-      - parse with some default config into db prompt..
+    - read from async storage
+    - parse with some default config into db prompt..
 
-    - prompt_responses
-      - read from async storage
-      -
+  - prompt_responses
+    - read from async storage
+    - check the db for prompt with "Fusion: ${promptText}" - then get the promptUuid and store prompt response
+    - write to db
 
 - don't allow to have prompts with duplicated `promptText`
 

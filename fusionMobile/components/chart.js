@@ -31,7 +31,7 @@ export function FusionChart({ data, prompt }) {
     // });
 
     const seriesData = data.map((d) => {
-      return [d.startTimestamp, d.event.value];
+      return [d.responseTimestamp, d.value];
     });
 
     console.log(seriesData);

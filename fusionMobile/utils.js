@@ -249,7 +249,7 @@ function getEvenlySpacedTimes(startTime, endTime, count) {
   for (let i = 1; i < count + 1; i++) {
     const timeInMinutes = start + i * interval;
     const hours = Math.floor(timeInMinutes / 60);
-    const minutes = timeInMinutes % 60;
+    const minutes = Math.floor(timeInMinutes % 60);
     const timeString = `${padZero(hours)}:${padZero(minutes)}`;
     times.push(timeString);
   }
@@ -315,6 +315,8 @@ export const scheduleFusionNotification = async (prompt) => {
   try {
     // cancel existing notification
     await cancelExistingNotificationForPrompt(prompt.uuid);
+
+    console.log("availableTimes", availableTimes);
 
     for (let time of availableTimes) {
       const [hours, minutes] = time.split(":").map(Number);
@@ -487,6 +489,114 @@ const updateTimestampToMs = (unixTimestamp) => {
     return unixTimestamp * 1000;
   }
   return unixTimestamp;
+};
+
+export const getPromptForNotificationId = async (notificationId) => {
+  try {
+    const getPromptFromDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT promptUuid FROM prompt_notifications WHERE notificationId = ? LIMIT 1",
+            [notificationId],
+            (_, { rows }) => {
+              const promptUuid = rows._array[0].promptUuid;
+              resolve(promptUuid);
+            },
+            (_, error) => {
+              console.log("error getting promptUuid from db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    const promptUuid = await getPromptFromDb();
+    return promptUuid;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const savePromptResponse = async (responseObj) => {
+  // ensure timestamp columns are in unixTime milliseconds
+  responseObj["triggerTimestamp"] = updateTimestampToMs(
+    responseObj["triggerTimestamp"]
+  );
+  responseObj["responseTimestamp"] = updateTimestampToMs(
+    responseObj["responseTimestamp"]
+  );
+
+  // write to sqlite
+  try {
+    const storeDetailsInDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp) VALUES (?, ?, ?, ?)",
+            [
+              responseObj["promptUuid"],
+              responseObj["value"],
+              responseObj["triggerTimestamp"],
+              responseObj["responseTimestamp"],
+            ],
+            (_, { rows }) => {
+              console.log("response saved");
+              resolve(true);
+            },
+            (_, error) => {
+              console.log("error saving in db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    await storeDetailsInDb();
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const getPromptResponses = async (prompt) => {
+  try {
+    const getPromptResponsesFromDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM prompt_responses WHERE promptUuid = ?",
+            [prompt.uuid],
+            (_, { rows }) => {
+              const responses = rows._array.map((row) => {
+                return {
+                  promptUuid: row.promptUuid,
+                  value: row.value,
+                  triggerTimestamp: row.triggerTimestamp,
+                  responseTimestamp: row.responseTimestamp,
+                };
+              });
+              resolve(responses);
+            },
+            (_, error) => {
+              console.log("error getting responses from db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    const responses = await getPromptResponsesFromDb();
+    return responses;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
 
 export const saveFusionEvent = async (eventObj) => {

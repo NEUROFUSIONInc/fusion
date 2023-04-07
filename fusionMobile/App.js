@@ -4,7 +4,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 
 import { FusionNavigation } from "./components/navbar.js";
-import { PromptContextProvider, saveFusionEvent } from "./utils";
+import {
+  PromptContextProvider,
+  savePromptResponse,
+  getPromptForNotificationId,
+} from "./utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 
@@ -115,10 +119,8 @@ export default function App() {
           },
         },
       ]);
-    })();
 
-    // set notification handlers
-    (async () => {
+      // set notification handlers
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener((response) => {
           console.log("notification response");
@@ -130,18 +132,19 @@ export default function App() {
             description: response.notification.request.content.title,
           };
 
-          const notificationCategory =
-            response.notification.request.content.categoryIdentifier;
-
-          // if no response do nothing
-          // TODO: show user options to manually respond to prompt
           if (
             response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
           ) {
-            console.log("default action - no response");
+            // TODO: show user options to manually respond to prompt
+            console.log(
+              "default action - should display view for prompt entry"
+            );
             return;
           }
+
           // get response from notification
+          const notificationCategory =
+            response.notification.request.content.categoryIdentifier;
           if (notificationCategory == "yesno") {
             eventObj["value"] = response.actionIdentifier;
           } else if (
@@ -151,24 +154,31 @@ export default function App() {
             eventObj["value"] = response.userText;
           }
 
-          const fusionEvent = {
-            startTimestamp: Math.floor(response.notification.date), // when the notification was triggered
-            endTimestamp: Math.floor(dayjs().unix()), // when it was responded to
-            event: eventObj,
-          };
-
-          console.log(fusionEvent);
-
-          // save locally
-          // TODO: when saving, check if:
-          // 1. the event is already saved
-          // 2. if there is an event already with the same name, add the UUID if it's empty
           (async () => {
-            await saveFusionEvent(fusionEvent);
+            // get the promptId linked to the notification
+            const promptUuid = await getPromptForNotificationId(
+              response.notification.request.identifier
+            );
+
+            const promptResponse = {
+              promptUuid: promptUuid,
+              triggerTimestamp: Math.floor(response.notification.date),
+              responseTimestamp: Math.floor(dayjs().unix()),
+              value: eventObj["value"],
+            };
+
+            console.log(
+              "Using the new method, promptResponse:",
+              promptResponse
+            );
+
+            // save the prompt response
+            await savePromptResponse(promptResponse);
+
             // remove notification from system tray
             console.log("removing notification");
             console.log(response.notification.request.identifier);
-            Notifications.dismissNotificationAsync(
+            await Notifications.dismissNotificationAsync(
               response.notification.request.identifier
             );
           })();
@@ -185,6 +195,7 @@ export default function App() {
     db.transaction((tx) => {
       // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
       // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS prompt_notifications;`);
 
       // Create prompts table
       tx.executeSql(

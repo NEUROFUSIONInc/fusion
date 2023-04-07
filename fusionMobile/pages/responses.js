@@ -2,25 +2,25 @@ import React from "react";
 
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FusionChart } from "../components/chart.js";
-import { getEventsForPrompt } from "../utils.js";
+import { getPromptResponses } from "../utils.js";
 import dayjs from "dayjs";
 
 export function ResponsesScreen({ navigation, route }) {
   const { prompt } = route.params;
 
-  const [events, setEvents] = React.useState([]);
+  const [promptResponses, setPromptResponses] = React.useState([]);
 
   React.useEffect(() => {
     // fetch the responses for this prompt
     (async () => {
-      const res = await getEventsForPrompt(prompt);
+      const res = await getPromptResponses(prompt);
 
       // sort events
       res.sort((a, b) => {
-        return a.startTimestamp - b.startTimestamp;
+        return a.triggerTimestamp - b.triggerTimestamp;
       });
 
-      setEvents(res);
+      setPromptResponses(res);
     })();
   }, []);
 
@@ -29,17 +29,17 @@ export function ResponsesScreen({ navigation, route }) {
       <Text style={styles.promptText}>{prompt.promptText}</Text>
       <Text>Responses</Text>
 
-      {events && events.length > 0 ? (
+      {promptResponses && promptResponses.length > 0 ? (
         prompt.responseType === "yesno" ? (
-          <FusionChart data={events} prompt={prompt} />
+          <FusionChart data={promptResponses} prompt={prompt} />
         ) : (
           // list the events
           <FlatList
-            data={events}
+            data={promptResponses}
             renderItem={({ item }) => (
               <View key={Math.random()}>
-                <Text>{dayjs(item.startTimestamp).toString()}</Text>
-                <Text>{item.event.value}</Text>
+                <Text>{dayjs(item.triggerTimestamp).toString()}</Text>
+                <Text>{item.value}</Text>
               </View>
             )}
           />
