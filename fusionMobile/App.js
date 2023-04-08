@@ -8,6 +8,7 @@ import {
   PromptContextProvider,
   savePromptResponse,
   getPromptForNotificationId,
+  getNotificationIdsForPrompt,
 } from "./utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
@@ -167,20 +168,27 @@ export default function App() {
               value: eventObj["value"],
             };
 
-            console.log(
-              "Using the new method, promptResponse:",
-              promptResponse
-            );
-
             // save the prompt response
             await savePromptResponse(promptResponse);
 
-            // remove notification from system tray
-            console.log("removing notification");
-            console.log(response.notification.request.identifier);
-            await Notifications.dismissNotificationAsync(
-              response.notification.request.identifier
+            // remove all active notifications for the prompt from system tray
+            const activeNotifications =
+              await Notifications.getPresentedNotificationsAsync();
+            // find the ones that match the prompt
+            const promptNotificationsIds = await getNotificationIdsForPrompt(
+              promptUuid
             );
+
+            for (let i = 0; i < activeNotifications.length; i++) {
+              const notification = activeNotifications[i];
+              if (
+                promptNotificationsIds.includes(notification.request.identifier)
+              ) {
+                await Notifications.dismissNotificationAsync(
+                  notification.request.identifier
+                );
+              }
+            }
           })();
 
           return;

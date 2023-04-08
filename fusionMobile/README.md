@@ -101,28 +101,27 @@ In the context of prompts
       - with multiple notification instances scheduled for time periods.
       - repeated across selected days.
 
-  - edit prompts
-
-    - start date & end date need to be parsed
-      - get the current day, apply the hours & minutes as day.js objects
-    - after saving,
-      - need to remove notifications (for old text)
-      - create a new one
-      - we're currently relying on the main hook to reset notifications
+  - (done) edit prompts
 
 - (done) logic to save prompt responses & read
 
-- Migration
+## Migration to SQLite
 
-  - prompts
+(I want to make sure people don't have to lose old prompt data)
 
-    - read from async storage
-    - parse with some default config into db prompt..
+- prompts
 
-  - prompt_responses
-    - read from async storage
-    - check the db for prompt with "Fusion: ${promptText}" - then get the promptUuid and store prompt response
-    - write to db
+  - read from async storage
+  - parse with some default config into db prompt..
+    - daily, 8am - 10pm
+
+- prompt_responses
+
+  - read from async storage
+  - check the db for prompt with "Fusion: ${promptText}"
+  - get the promptUuid and store prompt response
+
+- delete ('prompts' & 'events') from async storage
 
 - don't allow to have prompts with duplicated `promptText`
 
@@ -137,9 +136,15 @@ Mid-april release
 bugs:
 
 (done) Change press & hold text for android
+(done) Clear notification tray for other similar prompts when one is answered
 
-- check instances when scheduleFusionNotification is called
-
-  - there's a hook in the PromptContext...
+- there's a hook in the PromptContext...
 
 - add "isScheduled" tag to notifications
+
+- start date & end date need to be parsed
+  - get the current day, apply the hours & minutes as day.js objects
+- after saving,
+  - need to remove notifications (for old text)
+  - create a new one
+  - we're currently relying on the main hook to reset notifications
