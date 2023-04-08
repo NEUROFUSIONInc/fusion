@@ -9,7 +9,7 @@ export const Newsletter = () => {
 
   useEffect(() => {
     window.CustomSubstackWidget = {
-      substackUrl: "https://neurofusion.substack.com",
+      substackUrl: "neurofusion.substack.com",
       placeholder: "example@gmail.com",
       buttonText: "Subscribe",
       theme: "custom",
