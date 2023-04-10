@@ -7,16 +7,16 @@ export const HeroSection = () => {
     <section className="container mx-auto my-16 flex flex-wrap items-center justify-between p-8 lg:flex-nowrap">
       <div className=" w-full max-w-xl text-center md:min-w-[300px] md:text-left">
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-          Unlock the full potential of your personal data!
+          Harness your data, augment your life
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400 md:text-xl">
           See how changes in your sleep, activity, screen time & behaviour impact your days
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6 md:justify-start">
-          <ButtonLink href="#" size="lg" rounded>
+          <ButtonLink href="https://forms.gle/wNx97ePfN5WdKbrq5" size="lg" rounded>
             Get started
           </ButtonLink>
-          <ButtonLink href="#" size="lg" intent="ghost">
+          <ButtonLink href="https://neurofusion.substack.com" size="lg" intent="ghost">
             Learn more <span aria-hidden="true">→</span>
           </ButtonLink>
         </div>
