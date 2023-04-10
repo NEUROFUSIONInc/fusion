@@ -203,57 +203,6 @@ export default function App() {
     })();
   }, []);
 
-  /**
-   * Create the base tables for the app.
-   */
-  React.useEffect(() => {
-    db.transaction((tx) => {
-      // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
-      // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
-      // tx.executeSql(`DROP TABLE IF EXISTS prompt_notifications;`);
-      // tx.executeSql(`DELETE FROM prompt_responses;`);
-
-      // Create prompts table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS prompts (
-          uuid TEXT PRIMARY KEY,
-          promptText TEXT,
-          responseType TEXT,
-          notificationConfig_days TEXT,
-          notificationConfig_startTime TEXT,
-          notificationConfig_endTime TEXT,
-          notificationConfig_countPerDay INTEGER
-        );`
-      );
-
-      // Create prompt responses table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS prompt_responses (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          promptUuid TEXT,
-          triggerTimestamp INTEGER,
-          responseTimestamp INTEGER,
-          value TEXT,
-          FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
-        );`
-      );
-
-      // Create prompt notifications table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS prompt_notifications (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          promptUuid TEXT,
-          notificationId TEXT,
-          FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
-        );`
-      );
-
-      // tx.executeSql("select * from prompts", [], (_, { rows }) =>
-      //   console.log(JSON.stringify(rows))
-      // );
-    });
-  }, []);
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <PromptContextProvider>

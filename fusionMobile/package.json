@@ -2,7 +2,7 @@
   "name": "fusionmobile",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -16,7 +16,7 @@
     "@react-navigation/native-stack": "^6.9.10",
     "dayjs": "^1.11.7",
     "echarts": "^5.4.1",
-    "expo": "~47.0.12",
+    "expo": "~47.0.14",
     "expo-asset": "~8.7.0",
     "expo-checkbox": "~2.2.2",
     "expo-dev-client": "~2.0.1",

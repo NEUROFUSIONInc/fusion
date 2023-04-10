@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import "react-native-get-random-values";
 import * as Notifications from "expo-notifications";
 import dayjs from "dayjs";
+import { Alert } from "react-native";
 
 // this is where we create the context
 export const PromptContext = React.createContext();
@@ -29,39 +30,104 @@ function openDatabase() {
 }
 export const db = openDatabase();
 
+const createBaseTables = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS prompt_notifications;`);
+      // tx.executeSql(`DELETE FROM prompt_responses;`);
+
+      // Create prompts table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS prompts (
+            uuid TEXT PRIMARY KEY,
+            promptText TEXT,
+            responseType TEXT,
+            notificationConfig_days TEXT,
+            notificationConfig_startTime TEXT,
+            notificationConfig_endTime TEXT,
+            notificationConfig_countPerDay INTEGER
+          );`,
+        [],
+        (tx, results) => {
+          // Create prompt responses table
+          tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS prompt_responses (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              promptUuid TEXT,
+              triggerTimestamp INTEGER,
+              responseTimestamp INTEGER,
+              value TEXT,
+              FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
+            );`,
+            [],
+            (tx, results) => {
+              // Create prompt notifications table
+              tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS prompt_notifications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                promptUuid TEXT,
+                notificationId TEXT,
+                FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
+              );`,
+                [],
+                (tx, results) => {
+                  // finished creating all the tables
+                  resolve(true);
+                },
+                (tx, error) => {
+                  console.log("error", error);
+                  reject(error);
+                }
+              );
+            },
+            (tx, error) => {
+              console.log("error", error);
+              reject(error);
+            }
+          );
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
 export const PromptContextProvider = ({ children }) => {
   const [savedPrompts, setSavedPrompts] = React.useState(null);
 
   React.useEffect(() => {
     (async () => {
-      const res = await readSavedPrompts();
-      if (res) {
-        setSavedPrompts(res);
+      const setupStatus = await createBaseTables();
+
+      if (!setupStatus) {
+        Alert.alert("Error", "There was an error setting up the app.");
       }
-    })();
-  }, []);
 
-  React.useEffect(() => {
-    if (!savedPrompts) {
-      return;
-    }
-
-    (async () => {
       // Migration - remove this after a few releases.
       // - should only run once, by checking if "migrated"  is "true"
       // - read prompts from AsyncStorage, call savePrompt (uses SQLite)
       // - find old responses, call savePromptResponse (uses SQLite)
       // - underlying functions will handle (notifications, etc)
-      (async () => {
+      const migratePrompts = async () => {
         const oldPrompts = await AsyncStorage.getItem("prompts");
         // check if migrated is "true"
-        const migrated = await AsyncStorage.getItem("migrated");
+        const migration_status = await AsyncStorage.getItem("migration_status");
 
-        // await AsyncStorage.removeItem("migrated");
-        if (oldPrompts && migrated !== "true") {
+        // await AsyncStorage.removeItem("migration_status");
+
+        if (oldPrompts && migration_status != "true") {
           /**
            * dismiss all notifications & cancel before migration
            */
+          Alert.alert(
+            "Update!",
+            "We just migrated your prompts! You can now customize time and days for each prompt."
+          );
           await Notifications.dismissAllNotificationsAsync();
           await Notifications.cancelAllScheduledNotificationsAsync();
 
@@ -126,9 +192,16 @@ export const PromptContextProvider = ({ children }) => {
           });
           // eventually, we delete the old prompt
           // for now, just set migrated to true
-          await AsyncStorage.setItem("migrated", "true");
+          await AsyncStorage.setItem("migration_status", "true");
         }
-      })();
+      };
+
+      await migratePrompts();
+
+      const res = await readSavedPrompts();
+      if (res) {
+        setSavedPrompts(res);
+      }
     })();
   }, []);
 
