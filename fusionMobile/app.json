@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "fusionMobile",
-    "slug": "fusionMobile",
+    "name": "Fusion",
+    "slug": "fusion",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -14,20 +14,31 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.neurofusion.fusion",
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "useNextNotificationsApi": true,
+      "package": "com.neurofusion.fusion",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "jsEngine": "hermes",
+    "extra": {
+      "eas": {
+        "projectId": "f79cfe2d-2f56-413a-89f8-b9fde538ac75"
+      }
+    },
+    "plugins": ["expo-notifications"],
+    "owner": "oreogundipe"
   }
 }
