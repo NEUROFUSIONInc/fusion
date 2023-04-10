@@ -127,9 +127,6 @@ export default function App() {
       // set notification handlers
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener((response) => {
-          console.log("notification response");
-          console.log(JSON.stringify(response));
-
           let eventObj = {
             uuid: response.notification.request.identifier,
             name: response.notification.request.content.title,
@@ -218,8 +215,7 @@ export default function App() {
           notificationConfig_days TEXT,
           notificationConfig_startTime TEXT,
           notificationConfig_endTime TEXT,
-          notificationConfig_countPerDay INTEGER,
-          isScheduled INTEGER,
+          notificationConfig_countPerDay INTEGER
         );`
       );
 

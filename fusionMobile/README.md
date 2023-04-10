@@ -17,7 +17,6 @@ Data is currently stored using AsyncStorage (SQLite)
   notificationConfig_startTime
   notificationConfig_endTime
   notificationConfig_countPerDay
-  isScheduled
 }
 ```
 
@@ -38,10 +37,10 @@ Response to prompts are saved in format
 
 They can eventually exported in fusion Event schema [doc](../README.md)
 
-In the context of prompts
+Mapping Fusion event schema to prompt_response
 
-- startTimestamp : when the prompt was sent
-- endTimestamp: when the prompt was responded to
+- startTimestamp: `triggerTimestamp` when the prompt was sent
+- endTimestamp: `responseTimestamp` when the prompt was responded to
 
 ## Deployment
 
@@ -52,11 +51,9 @@ In the context of prompts
 
 ### Authoring
 
-- Allow to chose the time range for notifications on certain days & times
+- (done) Allow to chose the time range for notifications on certain days & times
 - Show some default prompts that users can add/enable
 - Pause notification prompts
-  - fully
-  - certain times
 - UI - swipe for more (edit/delete/view responses)
 
 ### Responding
@@ -105,7 +102,7 @@ In the context of prompts
 
 - (done) logic to save prompt responses & read
 
-## Migration to SQLite
+### Migration to SQLite
 
 (I want to make sure people don't have to lose old prompt data)
 
@@ -137,16 +134,23 @@ bugs:
 (done) Change press & hold text for android
 (done) Clear notification tray for other similar prompts when one is answered
 
-edit prompts
+## Remaining items for Apr. 9
 
-- (done) add "isScheduled" tag to notifications and set. (in create notification logic)
+(done) edit prompts
 
-- don't allow to have prompts with duplicated `promptText`
-
-- start date & end date need to be parsed
-
+- (done) start date & end date need to be parsed
   - get the current day, apply the hours & minutes as day.js objects
 
+allow to respond after tapping to notifications
+
+- Input Validation
+
+  - don't set startTime for after endTime
+  - don't allow to have prompts with duplicated `promptText`
+
 - Add a modal
+
   - letting user know what changes have occured.
     - default, 3 times between 8-6pm.
+
+- Quick add prompt

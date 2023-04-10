@@ -2,7 +2,12 @@ import React from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
 
-import { PromptContext, readSavedPrompts, savePrompt } from "../utils";
+import {
+  PromptContext,
+  readSavedPrompts,
+  savePrompt,
+  getDayjsFromTimestring,
+} from "../utils";
 import { TimePicker } from "../components/timepicker.js";
 
 import dayjs from "dayjs";
@@ -59,10 +64,18 @@ export function PromptScreen({ navigation, route }) {
           setDays(route.params.prompt.notificationConfig_days);
         }
       }
-      // if (route.params.prompt.notificationConfig_startTime)
-      //   setStart(route.params.prompt.notificationConfig_startTime);
-      // if (route.params.prompt.notificationConfig_endTime)
-      //   setEnd(route.params.prompt.notificationConfig_endTime);
+      if (route.params.prompt.notificationConfig_startTime) {
+        setStart(
+          getDayjsFromTimestring(
+            route.params.prompt.notificationConfig_startTime
+          )
+        );
+      }
+      if (route.params.prompt.notificationConfig_endTime) {
+        setEnd(
+          getDayjsFromTimestring(route.params.prompt.notificationConfig_endTime)
+        );
+      }
     }
   }, [route.params]);
 

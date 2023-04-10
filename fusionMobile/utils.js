@@ -4,6 +4,7 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import "react-native-get-random-values";
 import * as Notifications from "expo-notifications";
+import dayjs from "dayjs";
 
 // this is where we create the context
 export const PromptContext = React.createContext();
@@ -46,10 +47,6 @@ export const PromptContextProvider = ({ children }) => {
     }
 
     (async () => {
-      // const res = JSON.stringify(
-      //   await Notifications.getAllScheduledNotificationsAsync()
-      // );
-      // console.log(res);
       // Migration - remove this after a few releases.
       // - should only run once, by checking if "migrated"  is "true"
       // - read prompts from AsyncStorage, call savePrompt (uses SQLite)
@@ -468,20 +465,8 @@ export const saveNotificationIdForPrompt = async (notificationId, promptId) => {
             "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
             [notificationId, promptId],
             (_, { rows }) => {
-              // set "isScheduled" to true for prompt
               console.log("notificationId saved in db");
-              tx.executeSql(
-                "UPDATE prompts SET isScheduled = ? WHERE uuid = ?",
-                [1, promptId],
-                (_, { rows }) => {
-                  resolve(true);
-                  console.log("isScheduled updated");
-                },
-                (_, error) => {
-                  console.log("error updating isScheduled");
-                  reject(error);
-                }
-              );
+              resolve(true);
             },
             (_, error) => {
               console.log("error saving in db");
@@ -513,19 +498,6 @@ export const deleteNotificationIdForPrompt = async (
             [promptId, notificationId],
             (_, { rows }) => {
               console.log("notificationIds deleted");
-              // set "isScheduled" to true for prompt
-              tx.executeSql(
-                "UPDATE prompts SET isScheduled = ? WHERE uuid = ?",
-                [0, promptId],
-                (_, { rows }) => {
-                  resolve(true);
-                  console.log("isScheduled set to false");
-                },
-                (_, error) => {
-                  console.log("error updating isScheduled");
-                  reject(error);
-                }
-              );
               resolve(true);
             },
             (_, error) => {
@@ -670,6 +642,9 @@ const updateTimestampToMs = (unixTimestamp) => {
 };
 
 export const convertTime = (time24) => {
+  /**
+   * Converts 24 hour time to 12 hour time
+   */
   let hour = parseInt(time24.substring(0, 2));
   let minute = time24.substring(3, 5);
   let suffix = hour >= 12 ? "PM" : "AM";
@@ -681,19 +656,21 @@ function getEvenlySpacedTimes(startTime, endTime, count) {
   /**
    * Returns an array of (count) notifications based on available times
    */
-  const start = timeStringToMinutes(startTime);
-  const end = timeStringToMinutes(endTime);
-  const totalMinutes = end - start;
+  const start = getDayjsFromTimestring(startTime);
+  const end = getDayjsFromTimestring(endTime);
+  const max = parseInt(count) + 1;
 
-  // we're adding 1 so we can skip the first and last times
-  const interval = totalMinutes / (count + 1);
+  // Calculate the total duration between the two times in milliseconds
+  const duration = end.diff(start);
 
+  // Calculate the duration between each of the four evenly spaced times in milliseconds
+  const interval = duration / max;
+
+  // Calculate and display the four evenly spaced times between the start and end times
   const times = [];
-  for (let i = 1; i < count + 1; i++) {
-    const timeInMinutes = start + i * interval;
-    const hours = Math.floor(timeInMinutes / 60);
-    const minutes = Math.floor(timeInMinutes % 60);
-    const timeString = `${padZero(hours)}:${padZero(minutes)}`;
+  for (let i = 1; i < max; i++) {
+    const time = start.add(interval * i);
+    const timeString = time.format("HH:mm");
     times.push(timeString);
   }
 
@@ -707,4 +684,13 @@ function padZero(num) {
 function timeStringToMinutes(timeString) {
   const [hours, minutes] = timeString.split(":").map(Number);
   return hours * 60 + minutes;
+}
+
+export function getDayjsFromTimestring(timeString) {
+  // time is in the format "HH:mm", split up and convert to a dayjs object
+  const time = timeString.split(":");
+  const hour = parseInt(time[0]);
+  const minute = parseInt(time[1]);
+
+  return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
 }
