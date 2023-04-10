@@ -37,14 +37,11 @@ Events are used to tag recordings. You can have multiple events within a time ra
 
 ```json
 {
-    "startTimestamp": ,
-    "endTimestamp": ,
-    "event":
-    {
-        "name",
-        "description",
-        "value"
-    }
+    startTimestamp
+    endTimestamp
+    name
+    description
+    value
 }
 ```
 
@@ -59,9 +56,13 @@ Goal build the best intuitive visualization
 
 ![](./architecture.png)
 
-### Getting started
+## Getting started
 
 - Clone the repo
+
+### Mobile App
+
+See [set up details in fusionMobile folder](./fusionMobile/README.md)
 
 ### Frontend Client
 
@@ -100,3 +101,11 @@ User Flows - https://www.notion.so/Fusion-User-flows-9c454c9f767a403b9384e94b1df
 When you finish and are all set, open a PR to the `staging` branch.
 
 - staging branch will be periodically merged to prod
+
+## Contributions
+
+- AdA
+- AyM
+- EmA
+- ErB
+- KeO
