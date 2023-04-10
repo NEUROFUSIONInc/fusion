@@ -188,6 +188,13 @@ export default function App() {
                   notification.request.identifier
                 );
               }
+
+              // fallback should be if notification title matches prompt title
+              if (notification.request.content.title == eventObj["name"]) {
+                await Notifications.dismissNotificationAsync(
+                  notification.request.identifier
+                );
+              }
             }
           })();
 
