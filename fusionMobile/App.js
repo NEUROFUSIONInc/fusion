@@ -63,7 +63,10 @@ export default function App() {
         return;
       }
 
-      // TODO: set custom catgeories based on prompts
+      /**
+       * Set up notification categories
+       * TODO: set custom catgeories based on prompts
+       */
       await Notifications.setNotificationCategoryAsync("yesno", [
         {
           identifier: "Yes",
@@ -204,6 +207,7 @@ export default function App() {
       // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
       // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
       // tx.executeSql(`DROP TABLE IF EXISTS prompt_notifications;`);
+      // tx.executeSql(`DELETE FROM prompt_responses;`);
 
       // Create prompts table
       tx.executeSql(
@@ -214,7 +218,8 @@ export default function App() {
           notificationConfig_days TEXT,
           notificationConfig_startTime TEXT,
           notificationConfig_endTime TEXT,
-          notificationConfig_countPerDay INTEGER
+          notificationConfig_countPerDay INTEGER,
+          isScheduled INTEGER,
         );`
       );
 

@@ -45,34 +45,95 @@ export const PromptContextProvider = ({ children }) => {
       return;
     }
 
-    let scheduledNotifications;
     (async () => {
-      scheduledNotifications =
-        await Notifications.getAllScheduledNotificationsAsync();
-      console.log("scheduled notifications", scheduledNotifications);
+      // const res = JSON.stringify(
+      //   await Notifications.getAllScheduledNotificationsAsync()
+      // );
+      // console.log(res);
+      // Migration - remove this after a few releases.
+      // - should only run once, by checking if "migrated"  is "true"
+      // - read prompts from AsyncStorage, call savePrompt (uses SQLite)
+      // - find old responses, call savePromptResponse (uses SQLite)
+      // - underlying functions will handle (notifications, etc)
+      (async () => {
+        const oldPrompts = await AsyncStorage.getItem("prompts");
+        // check if migrated is "true"
+        const migrated = await AsyncStorage.getItem("migrated");
 
-      // TODO: Migration
-      // when an exsiting user connects, their scheduled notifications will be listed
-      // we will:
-      // - generate a prompt from the existing notification structure
-      // - delete the existing notification
-      // - schedule notification for the new prompt
+        // await AsyncStorage.removeItem("migrated");
+        if (oldPrompts && migrated !== "true") {
+          /**
+           * dismiss all notifications & cancel before migration
+           */
+          await Notifications.dismissAllNotificationsAsync();
+          await Notifications.cancelAllScheduledNotificationsAsync();
 
-      // TODO: switch this to check with prompt notifications in the db.
-      // and if they're scheduled..
-      // identifier === notificationId
-      // currently this will always be true
-      savedPrompts.forEach(async (prompt) => {
-        const notification = scheduledNotifications.find(
-          (n) => n.identifier === prompt.uuid
-        );
-        if (!notification) {
-          console.log("scheduling notification for prompt", prompt);
-          await scheduleFusionNotification(prompt);
+          const parsedPrompts = JSON.parse(oldPrompts);
+          parsedPrompts.forEach(async (prompt) => {
+            // if prompt doesn't have a uuid, generate one
+            console.log("migrating prompt - ", prompt.promptText);
+            if (!prompt.uuid) {
+              prompt.uuid = uuidv4(); // very unlikely but being defensive
+            }
+            // create a new prompt in the db
+            const status = await savePrompt(
+              prompt.promptText,
+              prompt.responseType,
+              3,
+              "08:00",
+              "18:00",
+              {
+                monday: true,
+                tuesday: true,
+                wednesday: true,
+                thursday: true,
+                friday: true,
+                saturday: true,
+                sunday: true,
+              },
+              prompt.uuid
+            );
+
+            if (status) {
+              // fetch old prompt responses and store in db
+              const responses = await AsyncStorage.getItem("events");
+
+              if (responses) {
+                console.log("saving responses for - ", prompt.promptText);
+                const parsedResponses = JSON.parse(responses);
+                parsedResponses.forEach(async (response) => {
+                  console.log(
+                    "evaluating, response name: ",
+                    response.event.name
+                  );
+                  if (response.event.name === `Fusion: ${prompt.promptText}`) {
+                    console.log("response name matches promptText");
+                    // save using the new flow
+                    const status = await savePromptResponse({
+                      promptUuid: prompt.uuid,
+                      triggerTimestamp: updateTimestampToMs(
+                        response.startTimestamp
+                      ),
+                      responseTimestamp: updateTimestampToMs(
+                        response.startTimestamp
+                      ),
+                      value: response.event.value,
+                    });
+                    if (status) {
+                      console.log("save response status: ", status);
+                    }
+                  }
+                });
+              }
+            }
+          });
+          // eventually, we delete the old prompt
+          // for now, just set migrated to true
+          await AsyncStorage.setItem("migrated", "true");
         }
-      });
+      })();
     })();
-  }, [savedPrompts]);
+  }, []);
 
   return (
     <PromptContext.Provider value={{ savedPrompts, setSavedPrompts }}>
@@ -173,98 +234,74 @@ export const savePrompt = async (
     // TODO: check for prompt with duplicate name
     console.log("saving prompt", prompt);
 
-    return new Promise((resolve, reject) => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          "SELECT * FROM prompts WHERE uuid = ?",
-          [prompt.uuid],
-          (_, { rows }) => {
-            if (rows.length > 0) {
-              console.log("updating prompt");
-              // update prompt
-              tx.executeSql(
-                `UPDATE prompts SET promptText = ?, responseType = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
-                [
-                  prompt.promptText,
-                  prompt.responseType,
-                  prompt.notificationConfig_days,
-                  prompt.notificationConfig_startTime,
-                  prompt.notificationConfig_endTime,
-                  prompt.notificationConfig_countPerDay,
-                  prompt.uuid,
-                ],
-                (_, { rows }) => {
-                  console.log("prompt updated");
-                  resolve(true);
-                },
-                (_, error) => {
-                  console.log("error updating prompt", error);
-                  reject(error);
-                }
-              );
-            } else {
-              // save prompt to db
-              tx.executeSql(
-                `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [
-                  prompt.uuid,
-                  prompt.promptText,
-                  prompt.responseType,
-                  prompt.notificationConfig_days,
-                  prompt.notificationConfig_startTime,
-                  prompt.notificationConfig_endTime,
-                  prompt.notificationConfig_countPerDay,
-                ],
-                (_, { rows }) => {
-                  console.log("prompt saved");
-                  resolve(true);
-                },
-                (_, error) => {
-                  reject(error);
-                }
-              );
+    const saveToDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM prompts WHERE uuid = ?",
+            [prompt.uuid],
+            (_, { rows }) => {
+              if (rows.length > 0) {
+                console.log("updating prompt");
+                // update prompt
+                tx.executeSql(
+                  `UPDATE prompts SET promptText = ?, responseType = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
+                  [
+                    prompt.promptText,
+                    prompt.responseType,
+                    prompt.notificationConfig_days,
+                    prompt.notificationConfig_startTime,
+                    prompt.notificationConfig_endTime,
+                    prompt.notificationConfig_countPerDay,
+                    prompt.uuid,
+                  ],
+                  (_, { rows }) => {
+                    console.log("prompt updated");
+                    resolve(true);
+                  },
+                  (_, error) => {
+                    console.log("error updating prompt", error);
+                    reject(error);
+                  }
+                );
+              } else {
+                // save prompt to db
+                tx.executeSql(
+                  `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                  [
+                    prompt.uuid,
+                    prompt.promptText,
+                    prompt.responseType,
+                    prompt.notificationConfig_days,
+                    prompt.notificationConfig_startTime,
+                    prompt.notificationConfig_endTime,
+                    prompt.notificationConfig_countPerDay,
+                  ],
+                  (_, { rows }) => {
+                    console.log("prompt saved");
+                    resolve(true);
+                  },
+                  (_, error) => {
+                    reject(error);
+                  }
+                );
+              }
             }
-          }
-        );
+          );
+        });
       });
-    });
+    };
+
+    const saveStatus = await saveToDb();
+    if (saveStatus) {
+      await scheduleFusionNotification(prompt);
+      return true;
+    }
   } catch (error) {
     console.log(error);
     return null;
   }
 };
-
-function getEvenlySpacedTimes(startTime, endTime, count) {
-  /**
-   * Returns an array of (count) notifications based on available times
-   */
-  const start = timeStringToMinutes(startTime);
-  const end = timeStringToMinutes(endTime);
-  const totalMinutes = end - start;
-
-  // we're adding 1 so we can skip the first and last times
-  const interval = totalMinutes / (count + 1);
-
-  const times = [];
-  for (let i = 1; i < count + 1; i++) {
-    const timeInMinutes = start + i * interval;
-    const hours = Math.floor(timeInMinutes / 60);
-    const minutes = Math.floor(timeInMinutes % 60);
-    const timeString = `${padZero(hours)}:${padZero(minutes)}`;
-    times.push(timeString);
-  }
-
-  return times;
-}
-
-function padZero(num) {
-  return num.toString().padStart(2, "0");
-}
-
-function timeStringToMinutes(timeString) {
-  const [hours, minutes] = timeString.split(":").map(Number);
-  return hours * 60 + minutes;
-}
 
 export const scheduleFusionNotification = async (prompt) => {
   /**
@@ -275,6 +312,7 @@ export const scheduleFusionNotification = async (prompt) => {
    * - if yes, use DailyInputTrigger
    * - if no, loop through the days and use WeeklyInputTrigger
    * - save notificationId to sqlite
+   * - update 'isScheuled' for prompt
    */
 
   // get the available times from date ranges.
@@ -313,7 +351,7 @@ export const scheduleFusionNotification = async (prompt) => {
   };
 
   try {
-    // cancel existing notification
+    // cancel existing notifications for prompt
     await cancelExistingNotificationForPrompt(prompt.uuid);
 
     console.log("availableTimes", availableTimes);
@@ -337,11 +375,12 @@ export const scheduleFusionNotification = async (prompt) => {
             repeats: true,
           },
         });
+
         // save notificationId & promptId to db
         await saveNotificationIdForPrompt(notificationId, prompt.uuid);
       } else {
         for (let weekday of weekdays) {
-          // schedule weekly notification trigger
+          // schedule weekly notification trigger for every day selected
           const notificationId = await Notifications.scheduleNotificationAsync({
             content: contentObject,
             trigger: {
@@ -365,38 +404,6 @@ export const scheduleFusionNotification = async (prompt) => {
   return true;
 };
 
-/**
- * CRUD for notificationId & promptId to sqlite
- */
-export const saveNotificationIdForPrompt = async (notificationId, promptId) => {
-  try {
-    const storeDetailsInDb = () => {
-      return new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-          tx.executeSql(
-            "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
-            [notificationId, promptId],
-            (_, { rows }) => {
-              console.log("notificationId saved");
-              resolve(true);
-            },
-            (_, error) => {
-              console.log("error saving in db");
-              reject(error);
-            }
-          );
-        });
-      });
-    };
-
-    await storeDetailsInDb();
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
-
 export const cancelExistingNotificationForPrompt = async (promptId) => {
   /**
    * Cancels the existing notification for a prompt
@@ -404,9 +411,6 @@ export const cancelExistingNotificationForPrompt = async (promptId) => {
    * - cancel all the notifications
    * - delete the notificationIds from the db
    */
-
-  // support the old way... when we used promptId as notificationId
-  await Notifications.cancelScheduledNotificationAsync(promptId);
 
   // now read from the db and cancel all the notifications
   try {
@@ -452,6 +456,50 @@ export const getNotificationIdsForPrompt = async (promptId) => {
   }
 };
 
+/**
+ * Create prompt_notications entry in sqlite
+ */
+export const saveNotificationIdForPrompt = async (notificationId, promptId) => {
+  try {
+    const storeDetailsInDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
+            [notificationId, promptId],
+            (_, { rows }) => {
+              // set "isScheduled" to true for prompt
+              console.log("notificationId saved in db");
+              tx.executeSql(
+                "UPDATE prompts SET isScheduled = ? WHERE uuid = ?",
+                [1, promptId],
+                (_, { rows }) => {
+                  resolve(true);
+                  console.log("isScheduled updated");
+                },
+                (_, error) => {
+                  console.log("error updating isScheduled");
+                  reject(error);
+                }
+              );
+            },
+            (_, error) => {
+              console.log("error saving in db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    await storeDetailsInDb();
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
 export const deleteNotificationIdForPrompt = async (
   promptId,
   notificationId
@@ -465,6 +513,19 @@ export const deleteNotificationIdForPrompt = async (
             [promptId, notificationId],
             (_, { rows }) => {
               console.log("notificationIds deleted");
+              // set "isScheduled" to true for prompt
+              tx.executeSql(
+                "UPDATE prompts SET isScheduled = ? WHERE uuid = ?",
+                [0, promptId],
+                (_, { rows }) => {
+                  resolve(true);
+                  console.log("isScheduled set to false");
+                },
+                (_, error) => {
+                  console.log("error updating isScheduled");
+                  reject(error);
+                }
+              );
               resolve(true);
             },
             (_, error) => {
@@ -482,13 +543,6 @@ export const deleteNotificationIdForPrompt = async (
     console.log(error);
     return false;
   }
-};
-
-const updateTimestampToMs = (unixTimestamp) => {
-  if (unixTimestamp.length === 10) {
-    return unixTimestamp * 1000;
-  }
-  return unixTimestamp;
 };
 
 export const getPromptForNotificationId = async (notificationId) => {
@@ -599,49 +653,20 @@ export const getPromptResponses = async (prompt) => {
   }
 };
 
-export const saveFusionEvent = async (eventObj) => {
-  // ensure timestamp columns are in unixTime milliseconds
-
-  eventObj["startTimestamp"] = updateTimestampToMs(eventObj["startTimestamp"]);
-  eventObj["endTimestamp"] = updateTimestampToMs(eventObj["endTimestamp"]);
-
-  // first fetch events in local storage
-  try {
-    const events = await AsyncStorage.getItem("events");
-    if (events !== null) {
-      // value previously stored
-      const eventArray = JSON.parse(events);
-      eventArray.push(eventObj);
-      await AsyncStorage.setItem("events", JSON.stringify(eventArray));
-      return eventArray;
-    } else {
-      const newEvents = [];
-      newEvents.push(eventObj);
-      await AsyncStorage.setItem("events", JSON.stringify(newEvents));
-      return newEvents;
+/**
+ * Helper functions
+ */
+const updateTimestampToMs = (unixTimestamp) => {
+  /**
+   * Converts unix timestamp to milliseconds
+   */
+  if (unixTimestamp.length === 10) {
+    if (typeof unixTimestamp === "string") {
+      unixTimestamp = parseInt(unixTimestamp);
     }
-  } catch (e) {
-    // error reading value
-    console.log("failed to save event value");
-    return null;
+    return unixTimestamp * 1000;
   }
-};
-
-export const getEventsForPrompt = async (prompt) => {
-  // TODO: this should mobe to using prompt uuid insteas
-  console.log("Looking for events that match", prompt);
-  const events = await AsyncStorage.getItem("events");
-  if (events !== null) {
-    // value previously stored
-    const eventArray = JSON.parse(events);
-    // console.log("responses", eventArray);
-    const filteredEvents = eventArray.filter(
-      (event) => event?.event.name === `Fusion: ${prompt.promptText}`
-    );
-    return filteredEvents;
-  } else {
-    return [];
-  }
+  return unixTimestamp;
 };
 
 export const convertTime = (time24) => {
@@ -651,3 +676,35 @@ export const convertTime = (time24) => {
   hour = hour % 12 || 12;
   return `${hour}:${minute} ${suffix}`;
 };
+
+function getEvenlySpacedTimes(startTime, endTime, count) {
+  /**
+   * Returns an array of (count) notifications based on available times
+   */
+  const start = timeStringToMinutes(startTime);
+  const end = timeStringToMinutes(endTime);
+  const totalMinutes = end - start;
+
+  // we're adding 1 so we can skip the first and last times
+  const interval = totalMinutes / (count + 1);
+
+  const times = [];
+  for (let i = 1; i < count + 1; i++) {
+    const timeInMinutes = start + i * interval;
+    const hours = Math.floor(timeInMinutes / 60);
+    const minutes = Math.floor(timeInMinutes % 60);
+    const timeString = `${padZero(hours)}:${padZero(minutes)}`;
+    times.push(timeString);
+  }
+
+  return times;
+}
+
+function padZero(num) {
+  return num.toString().padStart(2, "0");
+}
+
+function timeStringToMinutes(timeString) {
+  const [hours, minutes] = timeString.split(":").map(Number);
+  return hours * 60 + minutes;
+}

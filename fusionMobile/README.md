@@ -84,7 +84,7 @@ In the context of prompts
 
   - (done) create tables
 
-    - prompts,
+    - prompts
     - prompt_responses
     - prompt_notifications
 
@@ -109,21 +109,20 @@ In the context of prompts
 
 (I want to make sure people don't have to lose old prompt data)
 
-- prompts
+- (done) prompts
 
   - read from async storage
   - parse with some default config into db prompt..
     - daily, 8am - 10pm
 
-- prompt_responses
+- (done) prompt_responses
 
   - read from async storage
   - check the db for prompt with "Fusion: ${promptText}"
   - get the promptUuid and store prompt response
 
-- delete ('prompts' & 'events') from async storage
-
-- don't allow to have prompts with duplicated `promptText`
+- (done) delete ('prompts' & 'events') from async storage
+  - using "migrated" value in AsyncStorage
 
 ## Planned Releases
 
@@ -138,13 +137,16 @@ bugs:
 (done) Change press & hold text for android
 (done) Clear notification tray for other similar prompts when one is answered
 
-- there's a hook in the PromptContext...
+edit prompts
 
-- add "isScheduled" tag to notifications
+- (done) add "isScheduled" tag to notifications and set. (in create notification logic)
+
+- don't allow to have prompts with duplicated `promptText`
 
 - start date & end date need to be parsed
+
   - get the current day, apply the hours & minutes as day.js objects
-- after saving,
-  - need to remove notifications (for old text)
-  - create a new one
-  - we're currently relying on the main hook to reset notifications
+
+- Add a modal
+  - letting user know what changes have occured.
+    - default, 3 times between 8-6pm.
