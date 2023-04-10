@@ -149,6 +149,14 @@ export function PromptScreen({ navigation, route }) {
               // if there is a prompt object, then we are editing an existing prompt
               const promptUuid = promptObject ? promptObject.uuid : null;
 
+              if (start >= end) {
+                Alert.alert(
+                  "Error",
+                  "The start time must be before the end time"
+                );
+                return;
+              }
+
               const res = await savePrompt(
                 promptText,
                 responseType,
