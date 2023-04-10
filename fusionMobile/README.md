@@ -44,7 +44,7 @@ Mapping Fusion event schema to prompt_response
 
 ## Deployment
 
-- Generate ios build : expo build --platform ios
+- Generate ios build : eas build --platform ios
 - Submit build - eas submit --platform ios
 
 ## Prompts

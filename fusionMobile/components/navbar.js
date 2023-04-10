@@ -86,7 +86,7 @@ export function FusionNavigation() {
         }}
         component={PromptStack}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Profile"
         component={AccountStack}
         options={{
@@ -94,7 +94,7 @@ export function FusionNavigation() {
             <MaterialCommunityIcons name="account" color={color} size={26} />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
