@@ -1,6 +1,15 @@
 import React from "react";
 import DropDownPicker from "react-native-dropdown-picker";
-import { StyleSheet, Text, View, Button, TextInput, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import {
   PromptContext,
@@ -82,123 +91,125 @@ export function PromptScreen({ navigation, route }) {
   // TODO: add a way to add custom options
 
   return (
-    <View style={styles.container}>
-      <>
-        <Text>
-          Think of something that interests you and write a question about it.
-          {"\n\n"}E.g: "Are you feeling energetic?", "Have you had a meal?"
-        </Text>
-      </>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <>
+          <Text>
+            Think of something that interests you and write a question about it.
+            {"\n\n"}E.g: "Are you feeling energetic?", "Have you had a meal?"
+          </Text>
+        </>
 
-      <View style={styles.formSection} zIndex={10000}>
-        <View style={styles.formComponent}>
-          <Text>Prompt Text</Text>
-          <TextInput
-            multiline
-            placeholder="e.g How are you feeling about work?"
-            style={styles.input}
-            value={promptText}
-            onChangeText={setPromptText}
-          />
-        </View>
-
-        <View style={styles.formComponent} zIndex={5000}>
-          <Text>Response Type</Text>
-          {/* select button */}
-          <DropDownPicker
-            open={responseTypeOpen}
-            value={responseType}
-            items={responseTypeItems}
-            setOpen={setResponseTypeOpen}
-            placeholder="Select Response Type"
-            setValue={setResponseType}
-            setItems={setResponseTypeItems}
-          />
-        </View>
-
-        <View style={styles.formComponent}>
-          <View style={styles.frequencyContainer}>
-            <Text>How many times?</Text>
+        <View style={styles.formSection} zIndex={10000}>
+          <View style={styles.formComponent}>
+            <Text>Prompt Text</Text>
             <TextInput
-              value={countPerDay}
-              inputMode="numeric"
-              keyboardType="numeric"
-              placeholder="3"
-              style={styles.frequencyValueInput}
-              onChangeText={setCountPerDay}
+              multiline
+              placeholder="e.g How are you feeling about work?"
+              style={styles.input}
+              value={promptText}
+              onChangeText={setPromptText}
             />
           </View>
+
+          <View style={styles.formComponent} zIndex={5000}>
+            <Text>Response Type</Text>
+            {/* select button */}
+            <DropDownPicker
+              open={responseTypeOpen}
+              value={responseType}
+              items={responseTypeItems}
+              setOpen={setResponseTypeOpen}
+              placeholder="Select Response Type"
+              setValue={setResponseType}
+              setItems={setResponseTypeItems}
+            />
+          </View>
+
+          <View style={styles.formComponent}>
+            <View style={styles.frequencyContainer}>
+              <Text>How many times?</Text>
+              <TextInput
+                value={countPerDay}
+                inputMode="numeric"
+                keyboardType="numeric"
+                placeholder="3"
+                style={styles.frequencyValueInput}
+                onChangeText={setCountPerDay}
+              />
+            </View>
+          </View>
+
+          <TimePicker
+            styles={styles.formComponent}
+            start={start}
+            setStart={setStart}
+            end={end}
+            setEnd={setEnd}
+            days={days}
+            setDays={setDays}
+          />
         </View>
 
-        <TimePicker
-          styles={styles.formComponent}
-          start={start}
-          setStart={setStart}
-          end={end}
-          setEnd={setEnd}
-          days={days}
-          setDays={setDays}
-        />
-      </View>
+        <View zIndex={2000}>
+          <Button
+            title="Save Prompt"
+            onPress={async () => {
+              try {
+                // if there is a prompt object, then we are editing an existing prompt
+                const promptUuid = promptObject ? promptObject.uuid : null;
 
-      <View zIndex={2000}>
-        <Button
-          title="Save Prompt"
-          onPress={async () => {
-            try {
-              // if there is a prompt object, then we are editing an existing prompt
-              const promptUuid = promptObject ? promptObject.uuid : null;
-
-              if (start >= end) {
-                Alert.alert(
-                  "Error",
-                  "The start time must be before the end time"
-                );
-                return;
-              }
-
-              const res = await savePrompt(
-                promptText,
-                responseType,
-                countPerDay,
-                start.format("HH:mm"),
-                end.format("HH:mm"),
-                days,
-                promptUuid
-              );
-
-              if (res) {
-                // read the saved prompts from the db
-                const savedPrompts = await readSavedPrompts();
-
-                if (savedPrompts) {
-                  // update the saved prompts state
-                  setSavedPrompts(savedPrompts);
-                  // Let the user know the prompt was saved
-                  Alert.alert("Success", "Prompt saved successfully");
-
-                  // navigate back to the home screen
-                  navigation.navigate("Home");
-                } else {
-                  throw new Error("There was an error reading the prompts");
+                if (start >= end) {
+                  Alert.alert(
+                    "Error",
+                    "The start time must be before the end time"
+                  );
+                  return;
                 }
-              } else {
-                throw new Error("There was an error saving the prompt");
-              }
-            } catch (error) {
-              Alert.alert("Error", "There was an error saving the prompt");
-              console.log(error);
-            }
-          }}
-        />
-      </View>
 
-      {/* {!route.params?.prompt && (
+                const res = await savePrompt(
+                  promptText,
+                  responseType,
+                  countPerDay,
+                  start.format("HH:mm"),
+                  end.format("HH:mm"),
+                  days,
+                  promptUuid
+                );
+
+                if (res) {
+                  // read the saved prompts from the db
+                  const savedPrompts = await readSavedPrompts();
+
+                  if (savedPrompts) {
+                    // update the saved prompts state
+                    setSavedPrompts(savedPrompts);
+                    // Let the user know the prompt was saved
+                    Alert.alert("Success", "Prompt saved successfully");
+
+                    // navigate back to the home screen
+                    navigation.navigate("Home");
+                  } else {
+                    throw new Error("There was an error reading the prompts");
+                  }
+                } else {
+                  throw new Error("There was an error saving the prompt");
+                }
+              } catch (error) {
+                Alert.alert("Error", "There was an error saving the prompt");
+                console.log(error);
+              }
+            }}
+          />
+        </View>
+
+        {/* {!route.params?.prompt && (
         <View>
           <Text>Or, chose prompt from preset options</Text>
         </View>
       )} */}
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
