@@ -126,7 +126,7 @@ export const PromptContextProvider = ({ children }) => {
            */
           Alert.alert(
             "Update!",
-            "We just migrated your prompts! You can now customize time and days for each prompt."
+            "You can now set the time period & days for each prompt.\nCurrent default is 3 prompts per day, between 8am and 6pm."
           );
           await Notifications.dismissAllNotificationsAsync();
           await Notifications.cancelAllScheduledNotificationsAsync();
