@@ -10,6 +10,7 @@ import { GridComponent } from "echarts/components";
 // import { SVGRenderer, SkiaChart } from "wrn-echarts";
 import dayjs from "dayjs";
 import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
+import { updateTimestampToMs } from "../utils.js";
 
 echarts.use([SVGRenderer, LineChart, GridComponent]);
 
@@ -31,7 +32,7 @@ export function FusionChart({ data, prompt }) {
     // });
 
     const seriesData = data.map((d) => {
-      return [d.responseTimestamp, d.value];
+      return [updateTimestampToMs(d.responseTimestamp), d.value];
     });
 
     console.log(seriesData);

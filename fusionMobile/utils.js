@@ -701,14 +701,14 @@ export const getPromptResponses = async (prompt) => {
 /**
  * Helper functions
  */
-const updateTimestampToMs = (unixTimestamp) => {
+export const updateTimestampToMs = (unixTimestamp) => {
   /**
    * Converts unix timestamp to milliseconds
    */
-  if (unixTimestamp.length === 10) {
-    if (typeof unixTimestamp === "string") {
-      unixTimestamp = parseInt(unixTimestamp);
-    }
+  if (typeof unixTimestamp === "string") {
+    unixTimestamp = parseInt(unixTimestamp);
+  }
+  if (unixTimestamp.toString().length === 10) {
     return unixTimestamp * 1000;
   }
   return unixTimestamp;

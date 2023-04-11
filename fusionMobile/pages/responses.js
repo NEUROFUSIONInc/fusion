@@ -2,7 +2,7 @@ import React from "react";
 
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FusionChart } from "../components/chart.js";
-import { getPromptResponses } from "../utils.js";
+import { getPromptResponses, updateTimestampToMs } from "../utils.js";
 import dayjs from "dayjs";
 
 export function ResponsesScreen({ navigation, route }) {
@@ -38,7 +38,9 @@ export function ResponsesScreen({ navigation, route }) {
             data={promptResponses}
             renderItem={({ item }) => (
               <View key={Math.random()}>
-                <Text>{dayjs(item.triggerTimestamp).toString()}</Text>
+                <Text>
+                  {dayjs(updateTimestampToMs(item.triggerTimestamp)).toString()}
+                </Text>
                 <Text>{item.value}</Text>
               </View>
             )}
