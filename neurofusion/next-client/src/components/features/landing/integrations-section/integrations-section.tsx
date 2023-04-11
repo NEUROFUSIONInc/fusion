@@ -63,8 +63,11 @@ export const IntegrationsSection = () => {
                 <p className="my-8 text-lg tracking-tight text-gray-600 dark:text-gray-400">
                   Fusion integrates with applications you already use daily!
                 </p>
-                <ButtonLink href="https://forms.gle/wNx97ePfN5WdKbrq5" size="lg" rounded>
-                  Join the beta
+                <ButtonLink href="https://play.google.com/apps/testing/com.neurofusion.fusion" size="lg" rounded>
+                  Join beta on Android
+                </ButtonLink>
+                <ButtonLink href="https://testflight.apple.com/join/wU9TD7Jk" size="lg" rounded>
+                  Join beta on iPhone
                 </ButtonLink>
               </div>
             </div>
