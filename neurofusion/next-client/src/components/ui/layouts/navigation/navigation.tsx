@@ -43,13 +43,13 @@ export const Navbar: FC = () => {
               </Link>
             ))}
           </div>
-          {session ? (
+          {/* {session ? (
             <Button onClick={logout}>Logout</Button>
           ) : (
             <ButtonLink href="/auth/login" rounded rightIcon={<ArrowRight size={16} />}>
               Login
             </ButtonLink>
-          )}
+          )} */}
         </div>
         <Button
           rightIcon={<Menu strokeWidth={2} />}
