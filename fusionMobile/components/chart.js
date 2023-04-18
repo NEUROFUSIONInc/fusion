@@ -68,12 +68,34 @@ export function FusionChart({ data, prompt }) {
   }, [startDate]);
 
   useEffect(() => {
-    const seriesData = data.map((d) => {
-      return [updateTimestampToMs(d.responseTimestamp), d.value];
-    });
+    const seriesData = data
+      .filter((d) => {
+        const responseTimestamp = updateTimestampToMs(d.responseTimestamp);
+        switch (timePeriod) {
+          case "day":
+            return (
+              dayjs(responseTimestamp).isAfter(startDate) &&
+              dayjs(responseTimestamp).isBefore(startDate.endOf("day"))
+            );
+          case "week":
+            return (
+              dayjs(responseTimestamp).isAfter(startDate) &&
+              dayjs(responseTimestamp).isBefore(startDate.endOf("week"))
+            );
+          case "month":
+            return (
+              dayjs(responseTimestamp).isAfter(startDate) &&
+              dayjs(responseTimestamp).isBefore(startDate.endOf("month"))
+            );
+        }
+      })
+      .map((d) => {
+        return [updateTimestampToMs(d.responseTimestamp), d.value];
+      });
 
-    // TODO: only capture distinct values
     console.log(seriesData);
+
+    // here we now build the values based on prompt settings
 
     const option = {
       xAxis: {
