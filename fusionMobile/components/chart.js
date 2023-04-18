@@ -96,7 +96,6 @@ export function FusionChart({ data, prompt }) {
     console.log(seriesData);
 
     // here we now build the values based on prompt settings
-
     const option = {
       xAxis: {
         type: "time",
@@ -112,10 +111,47 @@ export function FusionChart({ data, prompt }) {
             }
           },
         },
+        min: () => {
+          switch (timePeriod) {
+            case "day":
+              return startDate.startOf("day").valueOf();
+            case "week":
+              return startDate.startOf("week").valueOf();
+            case "month":
+              return startDate.startOf("month").valueOf();
+          }
+        },
+        max: () => {
+          switch (timePeriod) {
+            case "day":
+              return startDate.endOf("day").valueOf();
+            case "week":
+              return startDate.endOf("week").valueOf();
+            case "month":
+              return startDate.endOf("month").valueOf();
+          }
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "rgba(128, 128, 128, 0.1)", // Set the color of the grid lines
+            width: 1, // Set the thickness of the grid lines
+            type: "solid", // Set the style of the grid lines
+          },
+        },
       },
       yAxis: {
         type: "category",
         data: ["No", "Yes"],
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLabel: {
+          show: true,
+        },
       },
       series: [
         {
@@ -124,9 +160,6 @@ export function FusionChart({ data, prompt }) {
           smooth: true,
           symbol: "none",
           itemStyle: {
-            color: "#7a44cf",
-          },
-          areaStyle: {
             color: "#7a44cf",
           },
         },
@@ -139,7 +172,7 @@ export function FusionChart({ data, prompt }) {
       chart = echarts.init(svgChartRef.current, "light", {
         renderer: "svg",
         width: 400,
-        height: 400,
+        height: 300,
       });
       chart.setOption(option);
     }
@@ -164,7 +197,7 @@ export function FusionChart({ data, prompt }) {
   }
 
   return (
-    <View>
+    <View style={{ marginTop: 10 }}>
       <SwitchSelector
         options={timePeriodOptions}
         initial={1}

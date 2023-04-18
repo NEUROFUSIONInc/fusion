@@ -27,7 +27,6 @@ export function ResponsesScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <Text style={styles.promptText}>{prompt.promptText}</Text>
-      <Text>Responses</Text>
 
       {promptResponses && promptResponses.length > 0 ? (
         prompt.responseType === "yesno" ? (
