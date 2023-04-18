@@ -2,13 +2,15 @@ import React, { FC } from "react";
 import Link from "next/link";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-
-import { Logo } from "~/components/ui";
+import { useSession } from "next-auth/react";
 
 import { sidebarLinks } from "./data";
 import { SidebarFooter } from "./sidebar-footer";
 
+import { Logo } from "~/components/ui";
+
 export const Sidebar: FC = () => {
+  const { data: session } = useSession();
   const { pathname } = useRouter();
 
   return (
@@ -41,7 +43,7 @@ export const Sidebar: FC = () => {
         </nav>
       </div>
       <div className="flex flex-shrink-0">
-        <SidebarFooter />
+        <SidebarFooter user={session?.user} />
       </div>
     </aside>
   );
