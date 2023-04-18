@@ -68,28 +68,28 @@ export function FusionChart({ data, prompt }) {
   }, [startDate]);
 
   useEffect(() => {
-    // const formattedData = sortedEvents.map((d) => {
-    //   const value = d.event.value === "Yes" ? 1 : -1;
-    //   return { timestamp: d.startTimestamp, value: value };
-    // });
-
-    // console.log(formattedData);
-
-    // let cumulativeSum = 0;
-    // const seriesData = formattedData.map((d) => {
-    //   cumulativeSum += d.value;
-    //   return [d.timestamp, cumulativeSum];
-    // });
-
     const seriesData = data.map((d) => {
       return [updateTimestampToMs(d.responseTimestamp), d.value];
     });
 
+    // TODO: only capture distinct values
     console.log(seriesData);
+
     const option = {
       xAxis: {
         type: "time",
         gap: true,
+        axisLabel: {
+          formatter: (value) => {
+            if (timePeriod === "day") {
+              return dayjs(value).format("ha");
+            } else if (timePeriod === "week") {
+              return dayjs(value).format("ddd");
+            } else if (timePeriod === "month") {
+              return dayjs(value).format("D");
+            }
+          },
+        },
       },
       yAxis: {
         type: "category",
