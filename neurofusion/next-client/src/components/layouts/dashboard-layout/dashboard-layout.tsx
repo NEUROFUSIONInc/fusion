@@ -1,10 +1,10 @@
 import React, { FC, ReactNode, useState } from "react";
 import { Menu } from "lucide-react";
 
-import { Button, Logo } from "~/components/ui";
-
 import { Sidebar } from "./sidebar/sidebar";
 import { MobileMenu } from "./sidebar/mobile-menu";
+
+import { Button, Logo } from "~/components/ui";
 
 interface DashboardLayoutProps {
   children?: ReactNode;

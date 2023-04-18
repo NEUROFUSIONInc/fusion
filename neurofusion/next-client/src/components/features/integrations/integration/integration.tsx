@@ -2,9 +2,9 @@ import { ExternalLink, PlugZap } from "lucide-react";
 import Image from "next/image";
 import { FC } from "react";
 
-import { Button } from "~/components/ui";
-
 import { IIntegration } from "../data";
+
+import { Button } from "~/components/ui";
 
 interface IIntegrationProps {
   integration: IIntegration;
@@ -44,6 +44,7 @@ export const Integration: FC<IIntegrationProps> = ({ integration, loading, isCon
         intent={isConnected ? "dark" : "integration"}
         className="ml-auto"
         isLoading={loading}
+        disabled={loading}
         leftIcon={<PlugZap className="fill-current" />}
         onClick={onclick}
       >
