@@ -34,7 +34,7 @@ Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&ut
   `brew install mkcert` (if you're using macOS) or
   by downloading the appropriate package for your system from the mkcert Github repository: https://github.com/FiloSottile/mkcert
 
-- Once mkcert is installed, run the following commands to create a local certificate authority and generate a certificate for localhost:
+- Once mkcert is installed, run the following commands in the `next-client` path to create a local certificate authority and generate a certificate for localhost:
 
 ```
 mkcert -install
@@ -48,11 +48,25 @@ mv localhost.pem cert/
 mv localhost-key.pem cert/
 ```
 
-- update your `.env.local` file to include
+- Install the HTTPS proxy and run the proxy with the commands below:
 
 ```
-HTTPS=true
+npm install -g local-ssl-proxy
 ```
+
+- To run the following commands in different terminals
+
+  - Start your Next.JS server (First Step)
+
+  ```
+  npm run dev
+  ```
+
+  - Run the proxy to target port 3000,
+
+  ```
+  local-ssl-proxy --source 3000 --target 3001 --cert localhost.pem --key localhost-key.pem
+  ```
 
 - Start the local server using
 
