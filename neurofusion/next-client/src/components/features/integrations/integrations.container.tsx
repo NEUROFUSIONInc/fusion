@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { useGetMagicFlowToken } from "~/hooks";
-
 import { integrations } from "./data";
 import { Integration } from "./integration/integration";
-import { MagicFlowModal } from "./modals";
+import { MagicFlowModal, NeurosityModal } from "./modals";
+
+import { useGetMagicFlowToken, useNeurosityState } from "~/hooks";
 
 type ModalState = "magicFlow" | "neurosity" | "spotify" | undefined;
 type IntegrationTitle = (typeof integrations)[number]["title"];
@@ -12,6 +12,7 @@ type IntegrationTitle = (typeof integrations)[number]["title"];
 export const IntegrationsContainer = () => {
   const [modalOpen, setModalOpen] = useState<ModalState>();
   const { data: magicflowData, isLoading: magicflowLoading } = useGetMagicFlowToken();
+  const { user, loading: neurosityLoading, connectNeurosityAccount } = useNeurosityState();
 
   function handleIntegrationClick(integrationTitle: IntegrationTitle) {
     switch (integrationTitle) {
@@ -19,7 +20,11 @@ export const IntegrationsContainer = () => {
         // call function for Spotify integration
         break;
       case "Neurosity":
-        // call function for Neurosity integration
+        if (user) {
+          setModalOpen("neurosity");
+        } else {
+          connectNeurosityAccount();
+        }
         break;
       case "MagicFlow":
         setModalOpen("magicFlow");
@@ -39,7 +44,7 @@ export const IntegrationsContainer = () => {
         return false;
       case "Neurosity":
         // check if Neurosity is connected
-        return false;
+        return Boolean(user);
       case "MagicFlow":
         // check if MagicFlow is connected
         return Boolean(magicflowData?.magicflowToken);
@@ -58,8 +63,7 @@ export const IntegrationsContainer = () => {
         return false;
       case "Neurosity":
         // check if Neurosity is connected
-
-        return false;
+        return neurosityLoading;
       case "MagicFlow":
         // check if MagicFlow is connected
         return magicflowLoading;
@@ -88,7 +92,12 @@ export const IntegrationsContainer = () => {
           />
         ))}
       </div>
-      <MagicFlowModal isOpen={modalOpen === "magicFlow"} onCloseModal={() => setModalOpen(undefined)} />
+      {modalOpen === "magicFlow" && (
+        <MagicFlowModal isOpen={modalOpen === "magicFlow"} onCloseModal={() => setModalOpen(undefined)} />
+      )}
+      {modalOpen === "neurosity" && (
+        <NeurosityModal isOpen={modalOpen === "neurosity"} onCloseModal={() => setModalOpen(undefined)} />
+      )}
     </section>
   );
 };

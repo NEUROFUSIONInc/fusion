@@ -1,7 +1,7 @@
-import { SessionProvider } from "next-auth/react";
-import type { AppProps } from "next/app";
-import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider, Hydrate } from "@tanstack/react-query";
+import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
 import React from "react";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";

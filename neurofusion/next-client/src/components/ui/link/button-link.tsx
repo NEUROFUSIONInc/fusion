@@ -1,8 +1,8 @@
 import { UrlObject } from "url";
 
+import classNames from "classnames";
 import Link, { LinkProps } from "next/link";
 import { AnchorHTMLAttributes, FC } from "react";
-import classNames from "classnames";
 
 import { ButtonProps, buttonStyles } from "../button/button";
 

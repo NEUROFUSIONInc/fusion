@@ -1,16 +1,18 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "node_modules/next/dist/bin/next start -p $PORT",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint . --cache --ext .ts,.tsx"
+    "lint": "eslint . --cache --ext .ts,.tsx",
+    "lint:fix": "eslint . --cache --ext .ts,.tsx --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.10",
     "@magic-sdk/admin": "^1.8.0",
+    "@neurosity/sdk": "^6.5.4",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-avatar": "^1.0.1",
     "@radix-ui/react-dialog": "^1.0.2",
@@ -51,6 +53,7 @@
     "eslint-config-next": "^13.1.5",
     "eslint-config-prettier": "^8.6.0",
     "eslint-define-config": "^1.15.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-storybook": "^0.6.10",
     "eslint-plugin-unused-imports": "^2.0.0",
