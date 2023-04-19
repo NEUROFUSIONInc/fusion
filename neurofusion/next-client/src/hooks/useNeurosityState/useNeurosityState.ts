@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import { useEffect, useReducer } from "react";
 import { Neurosity } from "@neurosity/sdk";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useEffect, useReducer } from "react";
 
 import { neurosityReducer, initialState, DeviceInfo } from "./config";
 

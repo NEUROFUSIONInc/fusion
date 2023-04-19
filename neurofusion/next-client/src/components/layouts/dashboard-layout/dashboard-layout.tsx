@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, useState } from "react";
 import { Menu } from "lucide-react";
+import React, { FC, ReactNode, useState } from "react";
 
-import { Sidebar } from "./sidebar/sidebar";
 import { MobileMenu } from "./sidebar/mobile-menu";
+import { Sidebar } from "./sidebar/sidebar";
 
 import { Button, Logo } from "~/components/ui";
 

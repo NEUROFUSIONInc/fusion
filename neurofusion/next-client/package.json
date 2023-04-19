@@ -6,7 +6,8 @@
     "start": "node_modules/next/dist/bin/next start -p $PORT",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint . --cache --ext .ts,.tsx"
+    "lint": "eslint . --cache --ext .ts,.tsx",
+    "lint:fix": "eslint . --cache --ext .ts,.tsx --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.10",
@@ -52,6 +53,7 @@
     "eslint-config-next": "^13.1.5",
     "eslint-config-prettier": "^8.6.0",
     "eslint-define-config": "^1.15.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-storybook": "^0.6.10",
     "eslint-plugin-unused-imports": "^2.0.0",

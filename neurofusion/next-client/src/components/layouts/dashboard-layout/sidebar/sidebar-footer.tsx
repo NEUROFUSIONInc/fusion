@@ -1,7 +1,7 @@
 import { ChevronsUpDown } from "lucide-react";
+import { User } from "next-auth";
 import { useTheme } from "next-themes";
 import { FC, useEffect, useState } from "react";
-import { User } from "next-auth";
 
 import { appearanceModes } from "./data";
 

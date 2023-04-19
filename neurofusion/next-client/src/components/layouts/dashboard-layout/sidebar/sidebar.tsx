@@ -1,8 +1,8 @@
-import React, { FC } from "react";
-import Link from "next/link";
 import classNames from "classnames";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import React, { FC } from "react";
 
 import { sidebarLinks } from "./data";
 import { SidebarFooter } from "./sidebar-footer";
