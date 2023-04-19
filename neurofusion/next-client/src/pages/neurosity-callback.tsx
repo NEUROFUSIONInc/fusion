@@ -17,7 +17,7 @@ export default function NeurosityCallback() {
         body: JSON.stringify(oauthResult),
       });
       // alert("user is logged in successfully");
-      window.location.href = "/settings";
+      window.location.href = "/integrations";
     }
 
     window.location.href = "/integrations";
