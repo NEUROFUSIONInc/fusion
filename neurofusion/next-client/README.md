@@ -41,12 +41,7 @@ mkcert -install
 mkcert localhost
 ```
 
-- Move the generated localhost.pem and localhost-key.pem files to the `cert` directory of your Next.js project.
-
-```
-mv localhost.pem cert/
-mv localhost-key.pem cert/
-```
+- The `mkcert localhost` command will create two `*.pem` files that are automatically ignored by git
 
 - Install the HTTPS proxy and run the proxy with the commands below:
 
