@@ -26,7 +26,7 @@ export const IntegrationsSection = () => {
                 alt="logo"
               />
             </div>
-            <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
+            {/* <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
               <Image
                 width={60}
                 height={60}
@@ -36,13 +36,22 @@ export const IntegrationsSection = () => {
                 }
                 alt="logo"
               />
-            </div>
+            </div> */}
             <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
               <Image
                 width={60}
                 height={60}
                 className="h-14 w-14 object-cover lg:h-20 lg:w-20"
                 src="/images/integrations/neurosity_icon_light.png"
+                alt="logo"
+              />
+            </div>
+            <div className="bg-gray-5 col-span-1 flex justify-center px-4 py-8 md:justify-start lg:justify-center">
+              <Image
+                width={200}
+                height={40}
+                className="object-contain"
+                src="/images/integrations/activitywatch_icon.png"
                 alt="logo"
               />
             </div>
@@ -63,9 +72,15 @@ export const IntegrationsSection = () => {
                 <p className="my-8 text-lg tracking-tight text-gray-600 dark:text-gray-400">
                   Fusion integrates with applications you already use daily!
                 </p>
-                <ButtonLink href="https://forms.gle/wNx97ePfN5WdKbrq5" size="lg" rounded>
-                  Join the beta
-                </ButtonLink>
+
+                <div className="mt-10 flex items-center justify-center gap-x-6 sm:justify-start md:justify-start">
+                  <ButtonLink href="https://play.google.com/apps/testing/com.neurofusion.fusion" size="lg" rounded>
+                    Join beta on Android
+                  </ButtonLink>
+                  <ButtonLink href="https://testflight.apple.com/join/wU9TD7Jk" size="lg" rounded>
+                    Join beta on iPhone
+                  </ButtonLink>
+                </div>
               </div>
             </div>
           </div>

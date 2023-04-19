@@ -1,18 +1,14 @@
 export const footerLinks = [
   {
     title: "Blog",
-    href: "#",
+    href: "https://neurofusion.substack.com/",
   },
   {
-    title: "About",
-    href: "#",
-  },
-  {
-    title: "Integrations",
-    href: "#",
+    title: "Privacy Policy",
+    href: "https://island-manicure-a10.notion.site/Fusion-Data-Use-Privacy-Policy-e6f36d7cf99e4c1180bcafdece020e73",
   },
   {
     title: "Contact",
-    href: "#",
+    href: "mailto:ore@usefusion.app",
   },
 ];

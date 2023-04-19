@@ -10,14 +10,14 @@ export const HeroSection = () => {
           Harness your data, augment your life
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400 md:text-xl">
-          See how changes in your sleep, activity, screen time & behaviour impact your days
+          Bringing together data on sleep, health vitals, screen time, and behaviour to provide insights into how they impact your lifestyle
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6 md:justify-start">
-          <ButtonLink href="https://forms.gle/wNx97ePfN5WdKbrq5" size="lg" rounded>
-            Get started
+          <ButtonLink href="https://play.google.com/apps/testing/com.neurofusion.fusion" size="lg" rounded>
+            Join beta on Android
           </ButtonLink>
-          <ButtonLink href="https://neurofusion.substack.com" size="lg" intent="ghost">
-            Learn more <span aria-hidden="true">→</span>
+          <ButtonLink href="https://testflight.apple.com/join/wU9TD7Jk" size="lg" rounded>
+            Join beta on iPhone
           </ButtonLink>
         </div>
       </div>
