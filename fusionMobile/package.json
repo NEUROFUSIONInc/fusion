@@ -35,6 +35,7 @@
     "react-native-device-info": "^10.6.0",
     "react-native-dropdown-picker": "^5.4.4",
     "react-native-get-random-values": "^1.8.0",
+    "react-native-health": "^1.14.0",
     "react-native-modal-datetime-picker": "^14.0.1",
     "react-native-paper": "^5.5.2",
     "react-native-permissions": "^3.8.0",

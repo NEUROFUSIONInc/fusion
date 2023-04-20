@@ -86,8 +86,8 @@
 
     <!-- Health tracker -->
     <key>NSHealthUpdateUsageDescription</key>
-    <string>For updating health data stored with Apple</string>
+    <string>Share data with other apps</string>
     <key>NSHealthShareUsageDescription</key>
-    <string>For reading health data stored with Apple</string>
+    <string>Read and understand health data.</string>
   </dict>
 </plist>

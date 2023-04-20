@@ -1,52 +1,72 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 
-import {
-  AuthorizationPermissions,
-  FitnessDataType,
-  FitnessTracker,
-  GoogleFitDataType,
-  HealthKitDataType,
-  HealthKit,
-  HealthKitWriteData,
-  HealthKitUnitType,
-} from "@kilohealth/rn-fitness-tracker";
+import AppleHealthKit, {
+  HealthValue,
+  HealthKitPermissions,
+} from "react-native-health";
 
+/* Permission options */
 const permissions = {
-  healthReadPermissions: [
-    HealthKitDataType.HeartRate,
-    HealthKitDataType.StepCount,
-    HealthKitDataType.Workout,
-  ],
-  healthWritePermissions: [
-    HealthKitDataType.HeartRate,
-    HealthKitDataType.StepCount,
-    HealthKitDataType.Workout,
-  ],
-  // googleFitReadPermissions: [GoogleFitDataType.Steps],
-  // googleFitWritePermissions: [GoogleFitDataType.Steps],
+  permissions: {
+    read: [
+      AppleHealthKit.Constants.Permissions.HeartRate,
+      AppleHealthKit.Constants.Permissions.RestingHeartRate,
+      AppleHealthKit.Constants.Permissions.HeartRateVariability,
+      AppleHealthKit.Constants.Permissions.WalkingHeartRateAverage,
+      AppleHealthKit.Constants.Permissions.OxygenSaturation,
+      AppleHealthKit.Constants.Permissions.BodyTemperature,
+      AppleHealthKit.Constants.Permissions.BloodPressureSystolic,
+      AppleHealthKit.Constants.Permissions.BloodPressureDiastolic,
+      AppleHealthKit.Constants.Permissions.RespiratoryRate,
+      AppleHealthKit.Constants.Permissions.BloodGlucose,
+      // Sleep
+      AppleHealthKit.Constants.Permissions.SleepAnalysis,
+      // Activity
+      AppleHealthKit.Constants.Permissions.ActivitySummary,
+      AppleHealthKit.Constants.Permissions.Steps,
+      AppleHealthKit.Constants.Permissions.StepCount,
+      AppleHealthKit.Constants.Permissions.PushCount,
+      AppleHealthKit.Constants.Permissions.DistanceWalkingRunning,
+      AppleHealthKit.Constants.Permissions.DistanceCycling,
+      AppleHealthKit.Constants.Permissions.DistanceSwimming,
+      AppleHealthKit.Constants.Permissions.BasalEnergyBurned,
+      AppleHealthKit.Constants.Permissions.ExerciseTime,
+      AppleHealthKit.Constants.Permissions.StandTime,
+      AppleHealthKit.Constants.Permissions.Workout,
+      // Mindfulness
+      AppleHealthKit.Constants.Permissions.MindfulSession,
+    ],
+    write: [],
+  },
 };
 
 export function HealthScreen({ navigation, route }) {
   React.useEffect(() => {
-    const getStepsToday = async () => {
-      try {
-        const authorized = await FitnessTracker.authorize(permissions);
+    // TODO: check the user is on iphone
+    AppleHealthKit.initHealthKit(permissions, (error) => {
+      /* Called after we receive a response from the system */
 
-        if (!authorized) return;
-
-        const stepsToday = await FitnessTracker.getStatisticTodayTotal(
-          FitnessDataType.Steps
-        );
-
-        // returns the number of steps walked today, e.g. 320
-        console.log(stepsToday);
-      } catch (error) {
-        // Handle error here
-        console.log(error);
+      if (error) {
+        console.log("[ERROR] Cannot grant permissions!");
       }
-    };
-    getStepsToday();
+
+      /* Can now read or write to HealthKit */
+
+      const options = {
+        startDate: new Date(2020, 1, 1).toISOString(),
+      };
+
+      AppleHealthKit.getHeartRateSamples(options, (callbackError, results) => {
+        /* Samples are now collected from HealthKit */
+      });
+
+      AppleHealthKit.getSleepSamples(options, (callbackError, results) => {
+        /* Samples are now collected from HealthKit */
+        console.log(results);
+        console.log(callbackError);
+      });
+    });
   }, []);
 
   return (
