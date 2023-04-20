@@ -13,17 +13,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 
-import {
-  AuthorizationPermissions,
-  FitnessDataType,
-  FitnessTracker,
-  GoogleFitDataType,
-  HealthKitDataType,
-  HealthKit,
-  HealthKitWriteData,
-  HealthKitUnitType,
-} from "@kilohealth/rn-fitness-tracker";
-
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
@@ -56,21 +45,6 @@ Notifications.setNotificationHandler({
     };
   },
 });
-
-const permissions = {
-  healthReadPermissions: [
-    HealthKitDataType.HeartRate,
-    HealthKitDataType.StepCount,
-    HealthKitDataType.Workout,
-  ],
-  healthWritePermissions: [
-    HealthKitDataType.HeartRate,
-    HealthKitDataType.StepCount,
-    HealthKitDataType.Workout,
-  ],
-  // googleFitReadPermissions: [GoogleFitDataType.Steps],
-  // googleFitWritePermissions: [GoogleFitDataType.Steps],
-};
 
 export default function App() {
   const responseListener = React.useRef();
@@ -225,27 +199,6 @@ export default function App() {
           return;
         });
     })();
-  }, []);
-
-  React.useEffect(() => {
-    const getStepsToday = async () => {
-      try {
-        const authorized = await FitnessTracker.authorize(permissions);
-
-        if (!authorized) return;
-
-        const stepsToday = await FitnessTracker.getStatisticTodayTotal(
-          FitnessDataType.Steps
-        );
-
-        // returns the number of steps walked today, e.g. 320
-        console.log(stepsToday);
-      } catch (error) {
-        // Handle error here
-        console.log(error);
-      }
-    };
-    getStepsToday();
   }, []);
 
   return (

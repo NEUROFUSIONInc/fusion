@@ -10,6 +10,7 @@ import { PromptScreen } from "../pages/prompt.js";
 import { ResponsesScreen } from "../pages/responses.js";
 import { AccountScreen } from "../pages/account.js";
 import { PromptEntryScreen } from "../pages/promptEntry.js";
+import { HealthScreen } from "../pages/health";
 
 function LogoTitle() {
   return (
@@ -70,9 +71,27 @@ const AccountStack = () => {
   );
 };
 
+const HealthStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="HealthScreen"
+        component={HealthScreen}
+        options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 export function FusionNavigation() {
   return (
-    <Tab.Navigator activeColor="#023059" initialRouteName="Prompts">
+    <Tab.Navigator
+      activeColor="#023059"
+      initialRouteName="Prompts"
+      screenOptions={{
+        tabBarStyle: { height: 30 },
+      }}
+    >
       <Tab.Screen
         name="Prompts"
         options={{
@@ -80,21 +99,35 @@ export function FusionNavigation() {
             <MaterialCommunityIcons
               name="head-question"
               color={color}
-              size={26}
+              size={20}
             />
           ),
         }}
         component={PromptStack}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
+        name="Health"
+        component={HealthStack}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="heart-pulse"
+              color={color}
+              size={20}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
         name="Profile"
         component={AccountStack}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
+            <MaterialCommunityIcons name="account" color={color} size={20} />
           ),
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 }
