@@ -89,7 +89,7 @@ export function FusionNavigation() {
       activeColor="#023059"
       initialRouteName="Prompts"
       screenOptions={{
-        tabBarStyle: { height: 30 },
+        tabBarStyle: { height: 20 },
       }}
     >
       <Tab.Screen
@@ -102,6 +102,7 @@ export function FusionNavigation() {
               size={20}
             />
           ),
+          tabBarStyle: { height: 10 },
         }}
         component={PromptStack}
       />
@@ -119,12 +120,30 @@ export function FusionNavigation() {
         }}
       />
 
+      {/* <Tab.Screen
+        name="Actions"
+        component={HealthStack}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="road-variant"
+              color={color}
+              size={20}
+            />
+          ),
+        }}
+      /> */}
+
       <Tab.Screen
-        name="Profile"
+        name="Community"
         component={AccountStack}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={20} />
+            <MaterialCommunityIcons
+              name="nature-people"
+              color={color}
+              size={20}
+            />
           ),
         }}
       />
