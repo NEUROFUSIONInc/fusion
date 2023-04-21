@@ -13,6 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 
+import appInsights from "./utils/appInsights.js";
+
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
@@ -199,6 +201,10 @@ export default function App() {
           return;
         });
     })();
+  }, []);
+
+  React.useEffect(() => {
+    appInsights.trackEvent({ name: "App Started", properties: {} });
   }, []);
 
   return (
