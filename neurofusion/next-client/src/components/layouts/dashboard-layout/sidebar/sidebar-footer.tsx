@@ -1,12 +1,17 @@
 import { ChevronsUpDown } from "lucide-react";
+import { User } from "next-auth";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
-import { Avatar, AvatarFallback, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import { FC, useEffect, useState } from "react";
 
 import { appearanceModes } from "./data";
 
-export const SidebarFooter = () => {
+import { Avatar, AvatarFallback, AvatarImage, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+
+interface ISidebarFooterProps {
+  user?: User;
+}
+
+export const SidebarFooter: FC<ISidebarFooterProps> = ({ user }) => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -20,12 +25,13 @@ export const SidebarFooter = () => {
       <div className="group relative flex w-full items-center justify-between rounded-md border p-2 hover:cursor-pointer hover:bg-slate-50 dark:border-slate-700/60 dark:hover:border-transparent dark:hover:bg-slate-800">
         <div className="flex items-center space-x-4">
           <Avatar>
-            <AvatarFallback className="">KO</AvatarFallback>
+            {user?.image && <AvatarImage src={user?.image} alt={user?.name || "User Avatar"} />}
+            <AvatarFallback>{user?.name?.substring(0, 1).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-flex-col">
-            <p className="text-[14px] font-medium">kelechi o</p>
+            <p className="w-[90%] truncate text-[14px] font-medium">{user?.name?.split("@")[0]}</p>
             <p className=" max-w-[120px] truncate text-[12.5px] text-slate-600 dark:text-slate-400 lg:max-w-[160px]">
-              kelechio@someting.com
+              {user?.email}
             </p>
           </div>
         </div>

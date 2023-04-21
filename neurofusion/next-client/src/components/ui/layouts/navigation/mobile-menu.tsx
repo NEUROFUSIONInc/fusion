@@ -1,11 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { FC } from "react";
 import { ArrowRight, X } from "lucide-react";
 import Link from "next/link";
+import { FC } from "react";
 
 import { Button } from "../../button/button";
-import { Logo } from "../../logo/logo";
 import { ButtonLink } from "../../link/button-link";
+import { Logo } from "../../logo/logo";
 
 import { navigationLinks } from "./data";
 

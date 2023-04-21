@@ -1,16 +1,16 @@
 import * as Accordion from "@radix-ui/react-accordion";
 import * as Dialog from "@radix-ui/react-dialog";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
-import { FC, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-
-import { Button, Input } from "~/components/ui";
-import { magicflowService } from "~/services";
-import { useGetMagicFlowToken } from "~/hooks";
+import { FC, useState } from "react";
 
 import { magicFlowSteps } from "../data";
+
+import { Button, Input } from "~/components/ui";
+import { useGetMagicFlowToken } from "~/hooks";
+import { magicflowService } from "~/services";
 
 interface IMagicFlowModalProps {
   isOpen: boolean;

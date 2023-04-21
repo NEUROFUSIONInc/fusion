@@ -1,10 +1,10 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { FC } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { Input } from "../../input/input";
 import { Button } from "../../button/button";
+import { Input } from "../../input/input";
 
 const validationSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email address"),

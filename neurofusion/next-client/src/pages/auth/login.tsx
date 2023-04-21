@@ -1,13 +1,13 @@
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
-
-import { magic } from "~/lib";
-import { MainLayout } from "~/components/layouts";
-import { LoginContainer } from "~/components/ui";
 
 import { authOptions } from "../api/auth/[...nextauth]";
+
+import { MainLayout } from "~/components/layouts";
+import { LoginContainer } from "~/components/ui";
+import { magic } from "~/lib";
 
 const LoginPage = () => {
   const router = useRouter();

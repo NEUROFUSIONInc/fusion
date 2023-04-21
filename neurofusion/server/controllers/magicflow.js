@@ -83,7 +83,7 @@ exports.setToken = async (req, res) => {
   }
 };
 
-async function fetchUserProvider(userGuid, providerName) {
+const fetchUserProvider = async (userGuid, providerName) => {
   // get the magicflow provider guid
   // TODO: load this object on app startup and store it in memory
   const magicflowProvider = await db.Provider.findOne({
@@ -104,4 +104,5 @@ async function fetchUserProvider(userGuid, providerName) {
   });
 
   return userProvider;
-}
+};
+exports.fetchUserProvider = fetchUserProvider;

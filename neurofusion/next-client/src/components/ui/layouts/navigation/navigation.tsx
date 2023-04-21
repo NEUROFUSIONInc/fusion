@@ -1,22 +1,16 @@
+import classNames from "classnames";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { FC, useState } from "react";
-import { Menu } from "lucide-react";
-// import { ArrowRight } from "lucide-react";
 import { useWindowScrollPosition } from "rooks";
-import classNames from "classnames";
-// import { useSession } from "next-auth/react";
 
-// import { logout } from "~/lib";
-
-import { Logo } from "../../logo/logo";
-// import { ButtonLink } from "../../link/button-link";
 import { Button } from "../../button/button";
+import { Logo } from "../../logo/logo";
 
 import { navigationLinks } from "./data";
 import { MobileMenu } from "./mobile-menu";
 
 export const Navbar: FC = () => {
-  // const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollY } = useWindowScrollPosition();
   const showBorderBottom = scrollY > 16;
@@ -44,13 +38,6 @@ export const Navbar: FC = () => {
               </Link>
             ))}
           </div>
-          {/* {session ? (
-            <Button onClick={logout}>Logout</Button>
-          ) : (
-            <ButtonLink href="/auth/login" rounded rightIcon={<ArrowRight size={16} />}>
-              Login
-            </ButtonLink>
-          )} */}
         </div>
         <Button
           rightIcon={<Menu strokeWidth={2} />}

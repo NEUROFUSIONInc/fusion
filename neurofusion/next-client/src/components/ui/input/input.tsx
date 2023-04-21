@@ -1,6 +1,6 @@
-import { InputHTMLAttributes, ReactNode, forwardRef } from "react";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
+import { InputHTMLAttributes, ReactNode, forwardRef } from "react";
 
 const styles = cva(
   "text-left font-medium dark:font-normal box-border rounded-md text-md text-primary-900 border dark:bg-transparent dark:border-secondary-400 dark:text-white dark:border-opacity-50 dark:focus:ring-secondary-700 dark:focus:border-opacity-100 border-gray-200 block focus:ring-dark focus:border-primary-900 focus:border-[1.5px] focus:outline-none disabled:bg-gray-100 dark:disabled:bg-gray-700 dark:disabled:border-gray-600 dark:disabled:placeholder:text-gray-300 disabled:placeholder:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed",

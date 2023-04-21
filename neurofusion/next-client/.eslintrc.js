@@ -4,7 +4,7 @@ const { defineConfig } = require("eslint-define-config");
 module.exports = defineConfig({
   root: true,
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "unused-imports"],
+  plugins: ["@typescript-eslint", "unused-imports", "import"],
   extends: [
     "next/core-web-vitals",
     "plugin:@shopify/typescript",
@@ -30,6 +30,37 @@ module.exports = defineConfig({
       rules: {
         "react/react-in-jsx-scope": "off",
         "unused-imports/no-unused-imports": "error",
+        "import/order": [
+          1,
+          {
+            // groups: ["external", "builtin", "internal", "sibling", "parent", "index"],
+            "newlines-between": "always",
+            pathGroups: [
+              {
+                pattern: "components",
+                group: "internal",
+              },
+              {
+                pattern: "common",
+                group: "internal",
+              },
+              {
+                pattern: "routes/ **",
+                group: "internal",
+              },
+              {
+                pattern: "assets/**",
+                group: "internal",
+                position: "after",
+              },
+            ],
+            pathGroupsExcludedImportTypes: ["internal"],
+            alphabetize: {
+              order: "asc",
+              caseInsensitive: true,
+            },
+          },
+        ],
         "unused-imports/no-unused-vars": [
           "warn",
           {

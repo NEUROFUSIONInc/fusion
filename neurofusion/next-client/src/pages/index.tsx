@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 
-import { MainLayout } from "~/components/layouts";
 import { FeatureSection, HeroSection, IntegrationsSection, Newsletter } from "~/components/features/landing";
+import { MainLayout } from "~/components/layouts";
 
 const Home: NextPage = () => {
   return (
