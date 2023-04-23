@@ -8,6 +8,13 @@ export interface IIntegration {
 
 export const integrations = [
   {
+    title: "Fusion (Health & Behavior)",
+    href: "https://usefusion.app/download",
+    imageUrl: "/images/logo.png",
+    description: "Connect your health data from Apple Health, Google Fit with the Fusion mobile app.",
+    active: true,
+  },
+  {
     title: "Spotify",
     href: "https://spotify.com",
     imageUrl: "/images/integrations/spotify_icon_green.png",
@@ -31,10 +38,10 @@ export const integrations = [
     active: true,
   },
   {
-    title: "Vital",
-    href: "https://tryvital.io",
-    imageUrl: "/images/integrations/vital_icon_light.png",
-    description: "Connect your health data from Apple Health, Fitbit, Oura and more through Vital.",
+    title: "ActivityWatch",
+    href: "https://activitywatch.net",
+    imageUrl: "/images/integrations/activitywatch_icon.png",
+    description: "ActivityWatch is an open source app that automatically tracks how you spend time on your devices.",
     active: true,
   },
 ] as const;
