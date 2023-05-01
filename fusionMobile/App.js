@@ -204,7 +204,7 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    appInsights.trackEvent({ name: "App Started", properties: {} });
+    appInsights.trackEvent({ name: "app_started", properties: {} });
   }, []);
 
   return (

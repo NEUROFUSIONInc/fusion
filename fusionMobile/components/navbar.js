@@ -121,7 +121,7 @@ export function FusionNavigation() {
       />
 
       {/* <Tab.Screen
-        name="Actions"
+        name="Quests"
         component={HealthStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -135,15 +135,11 @@ export function FusionNavigation() {
       /> */}
 
       <Tab.Screen
-        name="Community"
+        name="Account"
         component={AccountStack}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="nature-people"
-              color={color}
-              size={20}
-            />
+            <MaterialCommunityIcons name="account" color={color} size={20} />
           ),
         }}
       />

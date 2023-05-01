@@ -55,15 +55,17 @@ Mapping Fusion event schema to prompt_response
 - Show some default prompts that users can add/enable
 - Pause notification prompts
 - UI - swipe for more (edit/delete/view responses)
+- When the person chooses 1 as number of times, only show one time to select.
 
 ### Responding
 
-- Save response at the time of entry & also when it was generated.
+- (done) Save response at the time of entry & also when it was generated.
 - Allow user to tap to respond to prompts (create prompt component)
 
 ### Results
 
-- include filter for "day/week/month" view
+- (done) include filter for "day/week/month" view
+  - clearly identify periods of missing data
 - Send notification to view weekly updates.
 - Compare values for one week vs. last period
 - Textual summary with contributing factors. - chatbox below to ask questions & reason over displayed data
@@ -75,9 +77,32 @@ Mapping Fusion event schema to prompt_response
 - Log when notifications are triggered and responded to. Just counts no identifying info.
   - Random guid per device instance which can be regenerated (or pubkey)
 
+We will be using [Azure Application Insights] for event tracking.
+
+- PageViews (for screen loads)
+
+  - name: <name_of_component>
+
+- Custom Events (for user actions)
+  - app_started
+  - prompt_created
+    - identifier (randomly generated, different from what's in the local db)
+    - notificationConfig
+  - prompt_edited
+    - identifier (randomly generated, different from what's in the local db)
+    - notificationConfig
+  - prompt_deleted
+    - identifier (randomly generated, different from what's in the local db)
+  - prompt_notification_trigger
+    - identifier
+    - unixTimestamp
+  - prompt_notification_response
+    - identifier
+    - unixTimestamp
+
 ## Stability
 
-- switch storage to sqlite
+- (done) switch storage to sqlite
 
   - (done) create tables
 
@@ -126,7 +151,7 @@ Mapping Fusion event schema to prompt_response
 Mid-april release
 
 - Use "Expletus Sans" font.
-- Apple health data connection
+- Apple health data connection & chat integration
 - Connect fusion account & periodically upload logs to remote storage
 
 bugs:

@@ -1,19 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 import { PromptContext, deletePrompt, convertTime } from "../utils.js";
+import appInsights from "../utils/appInsights.js";
 
 export function HomeScreen({ navigation, route }) {
   const { savedPrompts, setSavedPrompts } = React.useContext(PromptContext);
 
-  const dayLabels = {
-    monday: "Mon",
-    tuesday: "Tues",
-    wednesday: "Wed",
-    thursday: "Thur",
-    friday: "Fri",
-    saturday: "Sat",
-    sunday: "Sun",
-  };
+  React.useEffect(() => {
+    appInsights.trackPageView({ name: "Home" });
+  }, []);
 
   return (
     <View style={styles.container}>

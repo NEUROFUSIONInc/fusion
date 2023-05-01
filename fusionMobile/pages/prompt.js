@@ -20,6 +20,7 @@ import {
 import { TimePicker } from "../components/timepicker.js";
 
 import dayjs from "dayjs";
+import appInsights from "../utils/appInsights";
 
 export function PromptScreen({ navigation, route }) {
   const { setSavedPrompts } = React.useContext(PromptContext);
@@ -89,6 +90,14 @@ export function PromptScreen({ navigation, route }) {
   }, [route.params]);
 
   // TODO: add a way to add custom options
+  React.useEffect(() => {
+    appInsights.trackEvent({
+      name: "screen_load",
+      properties: {
+        screen: "Prompt",
+      },
+    });
+  });
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

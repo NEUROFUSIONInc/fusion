@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FusionChart } from "../components/chart.js";
 import { getPromptResponses, updateTimestampToMs } from "../utils.js";
 import dayjs from "dayjs";
+import appInsights from "../utils/appInsights.js";
 
 export function ResponsesScreen({ navigation, route }) {
   const { prompt } = route.params;
@@ -22,6 +23,8 @@ export function ResponsesScreen({ navigation, route }) {
 
       setPromptResponses(res);
     })();
+
+    appInsights.trackPageView({ name: "Responses", properties: {} });
   }, []);
 
   return (

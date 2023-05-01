@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  FlatList,
+  Platform,
+} from "react-native";
 
 import AppleHealthKit, {
   HealthValue,
@@ -44,29 +52,36 @@ const permissions = {
 export function HealthScreen({ navigation, route }) {
   React.useEffect(() => {
     // TODO: check the user is on iphone
-    AppleHealthKit.initHealthKit(permissions, (error) => {
-      /* Called after we receive a response from the system */
+    if (Platform.OS === "ios") {
+      AppleHealthKit.initHealthKit(permissions, (error) => {
+        /* Called after we receive a response from the system */
 
-      if (error) {
-        console.log("[ERROR] Cannot grant permissions!");
-      }
+        if (error) {
+          console.log("[ERROR] Cannot grant permissions!");
+        }
 
-      /* Can now read or write to HealthKit */
+        /* Can now read or write to HealthKit */
 
-      const options = {
-        startDate: new Date(2020, 1, 1).toISOString(),
-      };
+        const options = {
+          startDate: new Date(2020, 1, 1).toISOString(),
+        };
 
-      AppleHealthKit.getHeartRateSamples(options, (callbackError, results) => {
-        /* Samples are now collected from HealthKit */
+        AppleHealthKit.getHeartRateSamples(
+          options,
+          (callbackError, results) => {
+            /* Samples are now collected from HealthKit */
+          }
+        );
+
+        AppleHealthKit.getSleepSamples(options, (callbackError, results) => {
+          /* Samples are now collected from HealthKit */
+          console.log(results);
+          console.log(callbackError);
+        });
       });
-
-      AppleHealthKit.getSleepSamples(options, (callbackError, results) => {
-        /* Samples are now collected from HealthKit */
-        console.log(results);
-        console.log(callbackError);
-      });
-    });
+    } else if (Platform.OS === "android") {
+      // use the other library.
+    }
   }, []);
 
   return (
