@@ -63,20 +63,6 @@ npm install -g local-ssl-proxy
   local-ssl-proxy --source 3000 --target 3001 --cert localhost.pem --key localhost-key.pem
   ```
 
-- To run the following commands in different terminals
-
-  - Start your Next.JS server (First Step)
-
-  ```
-  npm run dev
-  ```
-
-  - Run the proxy to target port 3000,
-
-  ```
-  local-ssl-proxy --source 3000 --target 3001 --cert localhost.pem --key localhost-key.pem
-  ```
-
 - Start the local server using
 
 ```
