@@ -25,7 +25,6 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "useNextNotificationsApi": true,
       "package": "com.neurofusion.fusion",
       "versionCode": 5
     },
