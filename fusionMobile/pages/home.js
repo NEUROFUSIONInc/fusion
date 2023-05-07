@@ -81,7 +81,7 @@ export function HomeScreen({ navigation, route }) {
                               appInsights.trackEvent(
                                 { name: "prompt_deleted" },
                                 {
-                                  identifier: maskPromptId(item.uuid),
+                                  identifier: await maskPromptId(item.uuid),
                                 }
                               );
 

@@ -30,13 +30,15 @@ export function ResponsesScreen({ navigation, route }) {
   }, []);
 
   React.useEffect(() => {
-    appInsights.trackPageView({
-      name: "Prompt Responses",
-      properties: {
-        identifier: maskPromptId(prompt.uuid),
-        response_count: promptResponses?.length,
-      },
-    });
+    (async () => {
+      appInsights.trackPageView({
+        name: "Prompt Responses",
+        properties: {
+          identifier: await maskPromptId(prompt.uuid),
+          response_count: promptResponses?.length,
+        },
+      });
+    })();
   }, [prompt, promptResponses]);
 
   return (

@@ -178,7 +178,7 @@ export default function App() {
                 name: "prompt_notification_response",
               },
               {
-                identifier: maskPromptId(promptUuid),
+                identifier: await maskPromptId(promptUuid),
                 triggerTimestamp: promptResponse.triggerTimestamp,
                 responseTimestamp: promptResponse.responseTimestamp,
               }

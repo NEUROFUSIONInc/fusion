@@ -371,7 +371,7 @@ export const savePrompt = async (
       appInsights.trackEvent(
         { name: "prompt_saved" },
         {
-          identifier: maskPromptId(prompt.uuid),
+          identifier: await maskPromptId(prompt.uuid),
           action_type: uuid ? "update" : "create",
           response_type: prompt.responseType,
           notification_config: JSON.stringify({
