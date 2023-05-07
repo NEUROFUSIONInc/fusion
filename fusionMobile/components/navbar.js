@@ -63,7 +63,7 @@ const AccountStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Account"
+        name="Profile"
         component={AccountScreen}
         options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
       />
@@ -106,7 +106,8 @@ export function FusionNavigation() {
         }}
         component={PromptStack}
       />
-      <Tab.Screen
+
+      {/* <Tab.Screen
         name="Health"
         component={HealthStack}
         options={{
@@ -118,7 +119,7 @@ export function FusionNavigation() {
             />
           ),
         }}
-      />
+      /> */}
 
       {/* <Tab.Screen
         name="Quests"
