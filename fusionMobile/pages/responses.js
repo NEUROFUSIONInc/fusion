@@ -2,7 +2,11 @@ import React from "react";
 
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FusionChart } from "../components/chart.js";
-import { getPromptResponses, updateTimestampToMs } from "../utils.js";
+import {
+  getPromptResponses,
+  updateTimestampToMs,
+  maskPromptId,
+} from "../utils.js";
 import dayjs from "dayjs";
 import appInsights from "../utils/appInsights.js";
 
@@ -23,9 +27,17 @@ export function ResponsesScreen({ navigation, route }) {
 
       setPromptResponses(res);
     })();
-
-    appInsights.trackPageView({ name: "Responses", properties: {} });
   }, []);
+
+  React.useEffect(() => {
+    appInsights.trackPageView({
+      name: "Prompt Responses",
+      properties: {
+        identifier: maskPromptId(prompt.uuid),
+        response_count: promptResponses?.length,
+      },
+    });
+  }, [prompt, promptResponses]);
 
   return (
     <View style={styles.container}>

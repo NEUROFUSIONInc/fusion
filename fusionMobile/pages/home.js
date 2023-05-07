@@ -1,14 +1,24 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
-import { PromptContext, deletePrompt, convertTime } from "../utils.js";
+import {
+  PromptContext,
+  deletePrompt,
+  convertTime,
+  maskPromptId,
+} from "../utils.js";
 import appInsights from "../utils/appInsights.js";
 
 export function HomeScreen({ navigation, route }) {
   const { savedPrompts, setSavedPrompts } = React.useContext(PromptContext);
 
   React.useEffect(() => {
-    appInsights.trackPageView({ name: "Home" });
-  }, []);
+    appInsights.trackPageView({
+      name: "Home",
+      properties: {
+        prompt_count: savedPrompts?.length,
+      },
+    });
+  }, [savedPrompts]);
 
   return (
     <View style={styles.container}>
@@ -68,6 +78,13 @@ export function HomeScreen({ navigation, route }) {
                           onPress: async () => {
                             const res = await deletePrompt(item.uuid);
                             if (res) {
+                              appInsights.trackEvent(
+                                { name: "prompt_deleted" },
+                                {
+                                  identifier: maskPromptId(item.uuid),
+                                }
+                              );
+
                               setSavedPrompts(res);
                             }
                           },

@@ -6,7 +6,8 @@ import "react-native-get-random-values";
 import * as Notifications from "expo-notifications";
 import dayjs from "dayjs";
 import { Alert } from "react-native";
-
+import * as Crypto from "expo-crypto";
+import appInsights from "./utils/appInsights";
 // this is where we create the context
 export const PromptContext = React.createContext();
 
@@ -365,6 +366,23 @@ export const savePrompt = async (
     const saveStatus = await saveToDb();
     if (saveStatus) {
       await scheduleFusionNotification(prompt);
+
+      // app insights tracking
+      appInsights.trackEvent(
+        { name: "prompt_saved" },
+        {
+          identifier: maskPromptId(prompt.uuid),
+          action_type: uuid ? "update" : "create",
+          response_type: prompt.responseType,
+          notification_config: JSON.stringify({
+            days: prompt.notificationConfig_days,
+            start_time: prompt.notificationConfig_startTime,
+            end_time: prompt.notificationConfig_endTime,
+            count_per_day: prompt.notificationConfig_countPerDay,
+          }),
+        }
+      );
+
       return true;
     }
   } catch (error) {
@@ -766,4 +784,17 @@ export function getDayjsFromTimestring(timeString) {
   const minute = parseInt(time[1]);
 
   return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
+}
+
+export async function maskPromptId(promptId) {
+  /**
+   * Basically takes a prompt ID and generates a hashed version to be stored for analytics.
+   *
+   */
+  const hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    promptId
+  );
+
+  return hash;
 }

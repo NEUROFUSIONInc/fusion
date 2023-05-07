@@ -81,24 +81,29 @@ We will be using [Azure Application Insights] for event tracking.
 
 - PageViews (for screen loads)
 
-  - name: <name_of_component>
+  - name: <name_of_component> e.g
+    (done) Home, (prompt_count: number)
+    (done) Author Prompt, (intent : create, edit)
+    (done) Prompt Responses, (promptId, responseCount)
+    (done) Account
 
 - Custom Events (for user actions)
-  - app_started
-  - prompt_created
+
+  - (done) app_started
+  - (done) prompt_saved
     - identifier (randomly generated, different from what's in the local db)
-    - notificationConfig
-  - prompt_edited
+    - action_type: "create" / "update"
+    - notification_config
+  - (done) prompt_deleted
+
     - identifier (randomly generated, different from what's in the local db)
-    - notificationConfig
-  - prompt_deleted
-    - identifier (randomly generated, different from what's in the local db)
-  - prompt_notification_trigger
+
+  - (done) prompt_notification_response
     - identifier
-    - unixTimestamp
-  - prompt_notification_response
-    - identifier
-    - unixTimestamp
+    - triggerTimestamp
+    - responseTimestamp
+
+TODO: handle when user is offline :p
 
 ## Stability
 
@@ -179,3 +184,11 @@ allow to respond after tapping to notifications
     - default, 3 times between 8-6pm.
 
 - Quick add prompt
+
+(notes on notifications)
+
+- remove other ones when a new one is presented (we should only have one in the tray at a time)
+
+- come back to resync feature
+
+- add summary in the response page

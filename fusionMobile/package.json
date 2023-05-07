@@ -27,6 +27,7 @@
     "expo-dev-client": "~2.2.1",
     "expo-device": "~5.2.1",
     "expo-file-system": "~15.2.2",
+    "expo-mail-composer": "~12.1.1",
     "expo-notifications": "~0.18.1",
     "expo-permissions": "~14.1.1",
     "expo-splash-screen": "~0.18.2",

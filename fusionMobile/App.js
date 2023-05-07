@@ -9,6 +9,7 @@ import {
   savePromptResponse,
   getPromptForNotificationId,
   getNotificationIdsForPrompt,
+  maskPromptId,
 } from "./utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
@@ -171,6 +172,18 @@ export default function App() {
             // save the prompt response
             await savePromptResponse(promptResponse);
 
+            // track event
+            appInsights.trackEvent(
+              {
+                name: "prompt_notification_response",
+              },
+              {
+                identifier: maskPromptId(promptUuid),
+                triggerTimestamp: promptResponse.triggerTimestamp,
+                responseTimestamp: promptResponse.responseTimestamp,
+              }
+            );
+
             // remove all active notifications for the prompt from system tray
             const activeNotifications =
               await Notifications.getPresentedNotificationsAsync();
@@ -204,7 +217,7 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    appInsights.trackEvent({ name: "app_started", properties: {} });
+    appInsights.trackEvent({ name: "app_started" });
   }, []);
 
   return (

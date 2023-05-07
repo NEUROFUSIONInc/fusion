@@ -56,7 +56,6 @@ export function PromptScreen({ navigation, route }) {
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
-    // TODO: fix this.. it'll break if the values are not set (old prompts are this way)
     if (route.params && route.params.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
@@ -86,18 +85,22 @@ export function PromptScreen({ navigation, route }) {
           getDayjsFromTimestring(route.params.prompt.notificationConfig_endTime)
         );
       }
+
+      appInsights.trackPageView({
+        name: "Author Prompt",
+        properties: {
+          intent: "edit",
+        },
+      });
+    } else {
+      appInsights.trackPageView({
+        name: "Author Prompt",
+        properties: {
+          intent: "create",
+        },
+      });
     }
   }, [route.params]);
-
-  // TODO: add a way to add custom options
-  React.useEffect(() => {
-    appInsights.trackEvent({
-      name: "screen_load",
-      properties: {
-        screen: "Prompt",
-      },
-    });
-  });
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
