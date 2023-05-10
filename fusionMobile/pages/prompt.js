@@ -9,6 +9,7 @@ import {
   Alert,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 
 import {
@@ -112,56 +113,64 @@ export function PromptScreen({ navigation, route }) {
           </Text>
         </>
 
-        <View style={styles.formSection} zIndex={10000}>
-          <View style={styles.formComponent}>
-            <Text>Prompt Text</Text>
-            <TextInput
-              multiline
-              placeholder="e.g How are you feeling about work?"
-              style={styles.input}
-              value={promptText}
-              onChangeText={setPromptText}
-            />
-          </View>
-
-          <View style={styles.formComponent} zIndex={5000}>
-            <Text>Response Type</Text>
-            {/* select button */}
-            <DropDownPicker
-              open={responseTypeOpen}
-              value={responseType}
-              items={responseTypeItems}
-              setOpen={setResponseTypeOpen}
-              placeholder="Select Response Type"
-              setValue={setResponseType}
-              setItems={setResponseTypeItems}
-            />
-          </View>
-
-          <View style={styles.formComponent}>
-            <View style={styles.frequencyContainer}>
-              <Text>How many times?</Text>
+        <ScrollView
+          style={{
+            width: "100%",
+          }}
+          horizontal={false} // Set horizontal prop to false to disable horizontal scrolling
+          contentContainerStyle={{ flexGrow: 1 }} // Set flexGrow to 1 to enable vertical scrolling
+        >
+          <View style={styles.formSection} zIndex={10000}>
+            <View style={styles.formComponent}>
+              <Text>Prompt Text</Text>
               <TextInput
-                value={countPerDay}
-                inputMode="numeric"
-                keyboardType="numeric"
-                placeholder="3"
-                style={styles.frequencyValueInput}
-                onChangeText={setCountPerDay}
+                multiline
+                placeholder="e.g How are you feeling about work?"
+                style={styles.input}
+                value={promptText}
+                onChangeText={setPromptText}
               />
             </View>
-          </View>
 
-          <TimePicker
-            styles={styles.formComponent}
-            start={start}
-            setStart={setStart}
-            end={end}
-            setEnd={setEnd}
-            days={days}
-            setDays={setDays}
-          />
-        </View>
+            <View style={styles.formComponent} zIndex={5000}>
+              <Text>Response Type</Text>
+              {/* select button */}
+              <DropDownPicker
+                open={responseTypeOpen}
+                value={responseType}
+                items={responseTypeItems}
+                setOpen={setResponseTypeOpen}
+                placeholder="Select Response Type"
+                setValue={setResponseType}
+                setItems={setResponseTypeItems}
+              />
+            </View>
+
+            <View style={styles.formComponent}>
+              <View style={styles.frequencyContainer}>
+                <Text>How many times?</Text>
+                <TextInput
+                  value={countPerDay}
+                  inputMode="numeric"
+                  keyboardType="numeric"
+                  placeholder="3"
+                  style={styles.frequencyValueInput}
+                  onChangeText={setCountPerDay}
+                />
+              </View>
+            </View>
+
+            <TimePicker
+              styles={styles.formComponent}
+              start={start}
+              setStart={setStart}
+              end={end}
+              setEnd={setEnd}
+              days={days}
+              setDays={setDays}
+            />
+          </View>
+        </ScrollView>
 
         <View zIndex={2000}>
           <Button
