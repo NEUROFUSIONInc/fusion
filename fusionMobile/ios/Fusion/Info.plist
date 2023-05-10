@@ -52,6 +52,12 @@
         </dict>
       </dict>
     </dict>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Read and understand health data.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>Share data with other apps</string>
+    <key>NSMotionUsageDescription</key>
+    <string>For fetching data on your steps</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
@@ -78,16 +84,5 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-
-
-    <!-- Fitness tracker -->
-    <key>NSMotionUsageDescription</key>
-    <string>For fetching data on your steps</string>
-
-    <!-- Health tracker -->
-    <key>NSHealthUpdateUsageDescription</key>
-    <string>Share data with other apps</string>
-    <key>NSHealthShareUsageDescription</key>
-    <string>Read and understand health data.</string>
   </dict>
 </plist>

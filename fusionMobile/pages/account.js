@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Button, Alert, TextInput } from "react-native";
 import * as MailComposer from "expo-mail-composer";
 import appInsights from "../utils/appInsights";
+import { resyncOldPrompts } from "../utils";
 
 export function AccountScreen({ navigation, route }) {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -17,7 +18,7 @@ export function AccountScreen({ navigation, route }) {
       <Text>Hey there, you're currently using Fusion anonymously!</Text>
       <Text>(more personalization features to come in the future)</Text>
 
-      {/* <Button
+      <Button
         title="Resync missing Prompts / Responses"
         onPress={() => {
           Alert.alert("Resync", "Are you sure you want to resync your data?", [
@@ -28,14 +29,12 @@ export function AccountScreen({ navigation, route }) {
             {
               text: "OK",
               onPress: async () => {
-                // TODO: resync
-                // check if prompt currently exists, if not, add it
-                // check if response currently exists, if not, add it
+                await resyncOldPrompts();
               },
             },
           ]);
         }}
-      ></Button> */}
+      ></Button>
 
       <View style={styles.formSection}>
         <View style={styles.formHeader}>

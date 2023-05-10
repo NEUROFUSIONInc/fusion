@@ -8,6 +8,8 @@ import dayjs from "dayjs";
 import { Alert } from "react-native";
 import * as Crypto from "expo-crypto";
 import appInsights from "./utils/appInsights";
+import * as Updates from "expo-updates";
+
 // this is where we create the context
 export const PromptContext = React.createContext();
 
@@ -109,96 +111,6 @@ export const PromptContextProvider = ({ children }) => {
         Alert.alert("Error", "There was an error setting up the app.");
       }
 
-      // Migration - remove this after a few releases.
-      // - should only run once, by checking if "migrated"  is "true"
-      // - read prompts from AsyncStorage, call savePrompt (uses SQLite)
-      // - find old responses, call savePromptResponse (uses SQLite)
-      // - underlying functions will handle (notifications, etc)
-      const migratePrompts = async () => {
-        const oldPrompts = await AsyncStorage.getItem("prompts");
-        // check if migrated is "true"
-        const migration_status = await AsyncStorage.getItem("migration_status");
-
-        // await AsyncStorage.removeItem("migration_status");
-
-        if (oldPrompts && migration_status != "true") {
-          /**
-           * dismiss all notifications & cancel before migration
-           */
-          Alert.alert(
-            "Update!",
-            "You can now set the time period & days for each prompt.\nCurrent default is 3 prompts per day, between 8am and 6pm."
-          );
-          await Notifications.dismissAllNotificationsAsync();
-          await Notifications.cancelAllScheduledNotificationsAsync();
-
-          const parsedPrompts = JSON.parse(oldPrompts);
-          parsedPrompts.forEach(async (prompt) => {
-            // if prompt doesn't have a uuid, generate one
-            console.log("migrating prompt - ", prompt.promptText);
-            if (!prompt.uuid) {
-              prompt.uuid = uuidv4(); // very unlikely but being defensive
-            }
-            // create a new prompt in the db
-            const status = await savePrompt(
-              prompt.promptText,
-              prompt.responseType,
-              3,
-              "08:00",
-              "18:00",
-              {
-                monday: true,
-                tuesday: true,
-                wednesday: true,
-                thursday: true,
-                friday: true,
-                saturday: true,
-                sunday: true,
-              },
-              prompt.uuid
-            );
-
-            if (status) {
-              // fetch old prompt responses and store in db
-              const responses = await AsyncStorage.getItem("events");
-
-              if (responses) {
-                console.log("saving responses for - ", prompt.promptText);
-                const parsedResponses = JSON.parse(responses);
-                parsedResponses.forEach(async (response) => {
-                  console.log(
-                    "evaluating, response name: ",
-                    response.event.name
-                  );
-                  if (response.event.name === `Fusion: ${prompt.promptText}`) {
-                    console.log("response name matches promptText");
-                    // save using the new flow
-                    const status = await savePromptResponse({
-                      promptUuid: prompt.uuid,
-                      triggerTimestamp: updateTimestampToMs(
-                        response.startTimestamp
-                      ),
-                      responseTimestamp: updateTimestampToMs(
-                        response.startTimestamp
-                      ),
-                      value: response.event.value,
-                    });
-                    if (status) {
-                      console.log("save response status: ", status);
-                    }
-                  }
-                });
-              }
-            }
-          });
-          // eventually, we delete the old prompt
-          // for now, just set migrated to true
-          await AsyncStorage.setItem("migration_status", "true");
-        }
-      };
-
-      await migratePrompts();
-
       const res = await readSavedPrompts();
       if (res) {
         setSavedPrompts(res);
@@ -278,6 +190,7 @@ export const savePrompt = async (
    *
    */
 
+  // TODO: better error handling with response
   if (
     !promptText ||
     !responseType ||
@@ -797,4 +710,123 @@ export async function maskPromptId(promptId) {
   );
 
   return hash;
+}
+
+export async function fetchExistingPromptsForText(promptText) {
+  // look in the sqlite db for the prompt
+  // return the prompt info if it exists
+  // return null if it doesn't exist
+  try {
+    const getPromptFromDb = () => {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM prompts WHERE promptText = ?",
+            [promptText],
+            (_, { rows }) => {
+              const prompt = rows._array.map((row) => {
+                return {
+                  uuid: row.uuid,
+                };
+              });
+              resolve(prompt);
+            },
+            (_, error) => {
+              console.log("error getting prompt from db");
+              reject(error);
+            }
+          );
+        });
+      });
+    };
+
+    const prompt = await getPromptFromDb();
+    return prompt;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function resyncOldPrompts() {
+  const oldPrompts = await AsyncStorage.getItem("prompts");
+  if (oldPrompts) {
+    /**
+     * dismiss all notifications & cancel before migration
+     */
+
+    // getting the prompts that are in localstorage.
+    const parsedPrompts = JSON.parse(oldPrompts);
+
+    parsedPrompts.forEach(async (prompt) => {
+      // if prompt doesn't have a uuid, generate one
+      console.log("resyncing prompt - ", prompt.promptText);
+      if (!prompt.uuid) {
+        prompt.uuid = uuidv4(); // very unlikely but being defensive
+      }
+
+      // check the db if a prompt with the same name already exists if yes, skip
+      const existingPrompts = await fetchExistingPromptsForText(
+        prompt.promptText
+      );
+      const promptExists = existingPrompts.length > 0;
+
+      let savePromptStatus;
+
+      if (promptExists) {
+        prompt.uuid = existingPrompts[0].uuid;
+      } else {
+        // create a new prompt in the db
+        savePromptStatus = await savePrompt(
+          prompt.promptText,
+          prompt.responseType,
+          3,
+          "08:00",
+          "18:00",
+          {
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: true,
+            sunday: true,
+          },
+          prompt.uuid
+        );
+      }
+
+      if (savePromptStatus || promptExists) {
+        // fetch old prompt responses and store in db
+        const responses = await AsyncStorage.getItem("events");
+
+        if (responses) {
+          console.log("saving responses for - ", prompt.promptText);
+          const parsedResponses = JSON.parse(responses);
+          parsedResponses.forEach(async (response) => {
+            console.log("evaluating, response name: ", response.event.name);
+            if (response.event.name === `Fusion: ${prompt.promptText}`) {
+              console.log("response name matches promptText");
+              // save using the new flow
+              const status = await savePromptResponse({
+                promptUuid: prompt.uuid,
+                triggerTimestamp: updateTimestampToMs(response.startTimestamp),
+                responseTimestamp: updateTimestampToMs(response.startTimestamp),
+                value: response.event.value,
+              });
+              if (status) {
+                console.log("save response status: ", status);
+              }
+            }
+          });
+        }
+      }
+    });
+
+    Alert.alert(
+      "Prompts & Responses Synced",
+      "Force close & restart the app if it doesn't happend automatically."
+    );
+
+    await Updates.reloadAsync();
+  }
 }
