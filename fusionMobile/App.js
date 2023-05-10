@@ -1,8 +1,6 @@
 import React from "react";
 import { Alert, Platform } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
-
 import { FusionNavigation } from "./components/navbar.js";
 import {
   PromptContextProvider,
@@ -15,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 
 import appInsights from "./utils/appInsights.js";
+import { useNavigation } from "@react-navigation/native";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -42,7 +41,34 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => {
+  handleNotification: async (notification) => {
+    // get the prompt id for this notification
+    const promptUuid = await getPromptForNotificationId(
+      notification.request.identifier
+    );
+
+    // remove all active notifications for the prompt from system tray
+    // that aren't the current one
+    const activeNotifications =
+      await Notifications.getPresentedNotificationsAsync();
+
+    // find the ones that match the prompt
+    const promptNotificationsIds = await getNotificationIdsForPrompt(
+      promptUuid
+    );
+
+    // only want notification ids for the active prompts
+    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
+      promptNotificationsIds.includes(element.request.identifier)
+    );
+
+    // dismiss all existing notifications - the new notification gets presented after
+    for (let i = 0; i < activeNotificationsForPrompt.length; i++) {
+      await Notifications.dismissNotificationAsync(
+        activeNotificationsForPrompt[i].request.identifier
+      );
+    }
+
     return {
       shouldShowAlert: true,
     };
@@ -51,6 +77,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const responseListener = React.useRef();
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     // validate permission status for user
@@ -59,7 +86,7 @@ export default function App() {
       if (!permissionStatus) {
         Alert.alert(
           "Error",
-          "Failed to register for push notifications, please quit & restart the app"
+          "Failed to register for push notifications, please quit, turn on notifications for fusion & restart the app"
         );
         return;
       }
@@ -127,46 +154,39 @@ export default function App() {
 
       // set notification handlers
       responseListener.current =
-        Notifications.addNotificationResponseReceivedListener((response) => {
-          let eventObj = {
-            uuid: response.notification.request.identifier,
-            name: response.notification.request.content.title,
-            description: response.notification.request.content.title,
-          };
-
-          if (
-            response.actionIdentifier == Notifications.DEFAULT_ACTION_IDENTIFIER
-          ) {
-            // TODO: show user options to manually respond to prompt
-            console.log(
-              "default action - should display view for prompt entry"
-            );
-            return;
-          }
-
-          // get response from notification
-          const notificationCategory =
-            response.notification.request.content.categoryIdentifier;
-          if (notificationCategory == "yesno") {
-            eventObj["value"] = response.actionIdentifier;
-          } else if (
-            notificationCategory == "text" ||
-            notificationCategory == "number"
-          ) {
-            eventObj["value"] = response.userText;
-          }
-
-          (async () => {
-            // get the promptId linked to the notification
+        Notifications.addNotificationResponseReceivedListener(
+          async (response) => {
             const promptUuid = await getPromptForNotificationId(
               response.notification.request.identifier
             );
 
+            if (
+              response.actionIdentifier ==
+              Notifications.DEFAULT_ACTION_IDENTIFIER
+            ) {
+              navigation.navigate("PromptEntry", { promptUuid });
+              return;
+            }
+
+            // get response from notification
+            let response_value;
+            const notificationCategory =
+              response.notification.request.content.categoryIdentifier;
+            if (notificationCategory == "yesno") {
+              response_value = response.actionIdentifier;
+            } else if (
+              notificationCategory == "text" ||
+              notificationCategory == "number"
+            ) {
+              response_value = response.userText;
+            }
+
+            // create prompt object
             const promptResponse = {
               promptUuid: promptUuid,
               triggerTimestamp: Math.floor(response.notification.date),
               responseTimestamp: Math.floor(dayjs().unix()),
-              value: eventObj["value"],
+              value: response_value,
             };
 
             // save the prompt response
@@ -184,35 +204,9 @@ export default function App() {
               }
             );
 
-            // remove all active notifications for the prompt from system tray
-            const activeNotifications =
-              await Notifications.getPresentedNotificationsAsync();
-            // find the ones that match the prompt
-            const promptNotificationsIds = await getNotificationIdsForPrompt(
-              promptUuid
-            );
-
-            for (let i = 0; i < activeNotifications.length; i++) {
-              const notification = activeNotifications[i];
-              if (
-                promptNotificationsIds.includes(notification.request.identifier)
-              ) {
-                await Notifications.dismissNotificationAsync(
-                  notification.request.identifier
-                );
-              }
-
-              // fallback should be if notification title matches prompt title
-              if (notification.request.content.title == eventObj["name"]) {
-                await Notifications.dismissNotificationAsync(
-                  notification.request.identifier
-                );
-              }
-            }
-          })();
-
-          return;
-        });
+            return;
+          }
+        );
     })();
   }, []);
 
@@ -223,9 +217,7 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <PromptContextProvider>
-        <NavigationContainer>
-          <FusionNavigation />
-        </NavigationContainer>
+        <FusionNavigation />
       </PromptContextProvider>
     </SafeAreaView>
   );
