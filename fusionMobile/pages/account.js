@@ -74,7 +74,7 @@ export function AccountScreen({ navigation, route }) {
 
         <TextInput
           multiline
-          placeholder="Have an idea for a new feature? Or question? Type in here!"
+          placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
           style={styles.input}
           value={feedbackText}
           onChangeText={setFeedbackText}
