@@ -12,8 +12,8 @@ Data is currently stored using AsyncStorage (SQLite)
 {
   uuid
   promptText
-  responseType
-  notificationConfig_days
+  responseType - "number", "yesno", "text"
+  notificationConfig_days - json.stringify of "{"monday": true, "tuesday": false ....., "sunday": true}"
   notificationConfig_startTime
   notificationConfig_endTime
   notificationConfig_countPerDay
@@ -21,8 +21,6 @@ Data is currently stored using AsyncStorage (SQLite)
 ```
 
 After a prompt is created, a notification is generated.
-
-Notification identifier will be the UUID from above.
 
 Response to prompts are saved in format
 
@@ -45,6 +43,7 @@ Mapping Fusion event schema to prompt_response
 ## Deployment
 
 - Generate ios build : eas build --platform ios
+  - to build android locally `eas build --local --platform=android`
 - Submit build - eas submit --platform ios
 
 ## Prompts
