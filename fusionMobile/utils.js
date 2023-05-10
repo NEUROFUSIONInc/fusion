@@ -827,6 +827,15 @@ export async function resyncOldPrompts() {
       "Force close & restart the app if it doesn't happend automatically."
     );
 
+    appInsights.trackEvent(
+      {
+        name: "resyncOldPrompts",
+      },
+      {
+        promptCount: parsedPrompts.length,
+      }
+    );
+
     await Updates.reloadAsync();
   }
 }
