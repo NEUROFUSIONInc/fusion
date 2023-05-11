@@ -1,19 +1,18 @@
 import React from "react";
 import { Alert, Platform } from "react-native";
 import * as Notifications from "expo-notifications";
-import { FusionNavigation } from "./components/navbar.js";
 import {
   PromptContextProvider,
   savePromptResponse,
   getPromptForNotificationId,
   getNotificationIdsForPrompt,
   maskPromptId,
-} from "./utils";
+  appInsights,
+} from "./src/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
-
-import appInsights from "./utils/appInsights.js";
 import { useNavigation } from "@react-navigation/native";
+import { FusionNavigation } from "./src/navigation";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -41,7 +40,7 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 Notifications.setNotificationHandler({
-  handleNotification: async (notification) => {
+  handleNotification: async notification => {
     // get the prompt id for this notification
     const promptUuid = await getPromptForNotificationId(
       notification.request.identifier
@@ -54,11 +53,11 @@ Notifications.setNotificationHandler({
 
     // find the ones that match the prompt
     const promptNotificationsIds = await getNotificationIdsForPrompt(
-      promptUuid
+      promptUuid || ""
     );
 
     // only want notification ids for the active prompts
-    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
+    const activeNotificationsForPrompt = activeNotifications.filter(element =>
       promptNotificationsIds.includes(element.request.identifier)
     );
 
@@ -71,12 +70,16 @@ Notifications.setNotificationHandler({
 
     return {
       shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
     };
   },
 });
 
 export default function App() {
-  const responseListener = React.useRef();
+  const responseListener = React.useRef<
+    Notifications.Subscription | undefined
+  >();
   const navigation = useNavigation();
 
   React.useEffect(() => {
@@ -112,8 +115,8 @@ export default function App() {
         },
       ]);
 
-      let placeholderTextInput = {};
-      let placeholderNumberInput = {};
+      let placeholderTextInput = { placeholder: "" };
+      let placeholderNumberInput = { placeholder: "" };
 
       // This is work around a bug in expo-notifications
       if (Platform.OS !== "android") {
@@ -124,6 +127,7 @@ export default function App() {
           placeholder: "Enter a number",
         };
       }
+
       await Notifications.setNotificationCategoryAsync("number", [
         {
           identifier: "number",
@@ -155,7 +159,7 @@ export default function App() {
       // set notification handlers
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
-          async (response) => {
+          async response => {
             const promptUuid = await getPromptForNotificationId(
               response.notification.request.identifier
             );
@@ -169,9 +173,12 @@ export default function App() {
             }
 
             // get response from notification
-            let response_value;
-            const notificationCategory =
-              response.notification.request.content.categoryIdentifier;
+            let response_value: string | undefined;
+            let notificationCategory: string | null = "";
+            if ("categoryIdentifier" in response.notification.request.content) {
+              notificationCategory =
+                response.notification.request.content.categoryIdentifier;
+            }
             if (notificationCategory == "yesno") {
               response_value = response.actionIdentifier;
             } else if (
@@ -183,10 +190,10 @@ export default function App() {
 
             // create prompt object
             const promptResponse = {
-              promptUuid: promptUuid,
+              promptUuid: promptUuid || "", // ensure promptUuid is always of type string
               triggerTimestamp: Math.floor(response.notification.date),
               responseTimestamp: Math.floor(dayjs().unix()),
-              value: response_value,
+              value: response_value || "",
             };
 
             // save the prompt response
@@ -198,7 +205,7 @@ export default function App() {
                 name: "prompt_notification_response",
               },
               {
-                identifier: await maskPromptId(promptUuid),
+                identifier: await maskPromptId(promptUuid || ""),
                 triggerTimestamp: promptResponse.triggerTimestamp,
                 responseTimestamp: promptResponse.responseTimestamp,
               }
