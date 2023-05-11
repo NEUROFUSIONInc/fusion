@@ -487,6 +487,8 @@ PODS:
     - React-Core
   - RNFitnessTracker (3.1.0):
     - React
+  - RNGestureHandler (2.9.0):
+    - React-Core
   - RNPermissions (3.8.0):
     - React-Core
   - RNScreens (3.20.0):
@@ -565,6 +567,7 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFitnessTracker (from `../node_modules/@kilohealth/rn-fitness-tracker`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -706,6 +709,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNFitnessTracker:
     :path: "../node_modules/@kilohealth/rn-fitness-tracker"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -785,6 +790,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 00247f26c34683c80be94207f488f6f13448586e
   RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
   RNFitnessTracker: 3d80a66cbb25525ec0f92e8bdb1bf506837577d4
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNPermissions: 03f5493af1f64398626fbbcda964960536b26ad9
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
@@ -793,4 +799,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 491a54574e9b2175528cdebb0d4f8a2b59053d0f
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1
