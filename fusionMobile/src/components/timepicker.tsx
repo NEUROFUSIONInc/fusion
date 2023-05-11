@@ -4,8 +4,25 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import dayjs from "dayjs";
+import { NotificationConfigDays, Days } from "~/@types";
 
-export function TimePicker({ start, setStart, end, setEnd, days, setDays }) {
+type TimePickerProps = {
+  start: dayjs.Dayjs;
+  setStart: (time: dayjs.Dayjs) => void;
+  end: dayjs.Dayjs;
+  setEnd: (time: dayjs.Dayjs) => void;
+  days: NotificationConfigDays;
+  setDays: (days: NotificationConfigDays) => void;
+};
+
+export function TimePicker({
+  start,
+  setStart,
+  end,
+  setEnd,
+  days,
+  setDays,
+}: TimePickerProps) {
   const dayLabels = {
     monday: "Mon",
     tuesday: "Tues",
@@ -33,13 +50,13 @@ export function TimePicker({ start, setStart, end, setEnd, days, setDays }) {
     setEndTimePickerVisibility(false);
   };
 
-  const handleStartTimeConfirm = (selectedTime) => {
+  const handleStartTimeConfirm = (selectedTime: Date) => {
     console.log("startTime has been picked: ", selectedTime);
     const currentTime = dayjs(selectedTime) || start;
     setStart(currentTime);
     hideStartTimePicker();
   };
-  const handleEndTimeConfirm = (selectedTime) => {
+  const handleEndTimeConfirm = (selectedTime: Date) => {
     console.log("endTime has been picked: ", selectedTime);
     const currentTime = dayjs(selectedTime) || end;
     setEnd(currentTime);
@@ -86,13 +103,13 @@ export function TimePicker({ start, setStart, end, setEnd, days, setDays }) {
         <Text>Days of week</Text>
 
         <View style={styles.checkBoxGroup}>
-          {Object.keys(days).map((day) => (
+          {Object.keys(days).map(day => (
             <View style={styles.checkBoxItem} key={Math.random()}>
               <Checkbox
-                value={days[day]}
-                onValueChange={(value) => setDays({ ...days, [day]: value })}
+                value={days[day as Days]}
+                onValueChange={value => setDays({ ...days, [day]: value })}
               />
-              <Text style={styles.checkBoxLabel}>{dayLabels[day]}</Text>
+              <Text style={styles.checkBoxLabel}>{dayLabels[day as Days]}</Text>
             </View>
           ))}
         </View>
