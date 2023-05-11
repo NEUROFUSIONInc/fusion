@@ -1,18 +1,7 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Alert,
-  FlatList,
-  Platform,
-} from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 
-import AppleHealthKit, {
-  HealthValue,
-  HealthKitPermissions,
-} from "react-native-health";
+import AppleHealthKit from "react-native-health";
 
 /* Permission options */
 const permissions = {
@@ -34,13 +23,10 @@ const permissions = {
       AppleHealthKit.Constants.Permissions.ActivitySummary,
       AppleHealthKit.Constants.Permissions.Steps,
       AppleHealthKit.Constants.Permissions.StepCount,
-      AppleHealthKit.Constants.Permissions.PushCount,
       AppleHealthKit.Constants.Permissions.DistanceWalkingRunning,
       AppleHealthKit.Constants.Permissions.DistanceCycling,
       AppleHealthKit.Constants.Permissions.DistanceSwimming,
       AppleHealthKit.Constants.Permissions.BasalEnergyBurned,
-      AppleHealthKit.Constants.Permissions.ExerciseTime,
-      AppleHealthKit.Constants.Permissions.StandTime,
       AppleHealthKit.Constants.Permissions.Workout,
       // Mindfulness
       AppleHealthKit.Constants.Permissions.MindfulSession,
@@ -49,11 +35,11 @@ const permissions = {
   },
 };
 
-export function HealthScreen({ navigation, route }) {
+export function HealthScreen() {
   React.useEffect(() => {
     // TODO: check the user is on iphone
     if (Platform.OS === "ios") {
-      AppleHealthKit.initHealthKit(permissions, (error) => {
+      AppleHealthKit.initHealthKit(permissions, error => {
         /* Called after we receive a response from the system */
 
         if (error) {

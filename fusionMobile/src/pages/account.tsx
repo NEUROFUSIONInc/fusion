@@ -1,14 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, TextInput } from "react-native";
 import * as MailComposer from "expo-mail-composer";
-import appInsights from "../utils/appInsights";
-import { resyncOldPrompts } from "../utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { resyncOldPrompts, appInsights } from "~/utils";
 
-export function AccountScreen({ navigation, route }) {
+export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
-
   const [oldPromptExist, setOldPromptExist] = React.useState(false);
+
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Account",
@@ -16,7 +15,7 @@ export function AccountScreen({ navigation, route }) {
   }, []);
 
   React.useEffect(() => {
-    validatePromptStatus().then((res) => {
+    validatePromptStatus().then(res => {
       setOldPromptExist(res);
     });
   }, []);
@@ -29,6 +28,7 @@ export function AccountScreen({ navigation, route }) {
       if (parsedPrompts.length > 0) {
         return true;
       }
+      return false;
     } else {
       return false;
     }

@@ -1,15 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
-import {
-  PromptContext,
-  deletePrompt,
-  convertTime,
-  maskPromptId,
-} from "../utils.js";
-import appInsights from "../utils/appInsights.js";
+import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
+import { usePrompts } from "~/hooks";
+import { useNavigation } from "@react-navigation/native";
 
-export function HomeScreen({ navigation, route }) {
-  const { savedPrompts, setSavedPrompts } = React.useContext(PromptContext);
+export function HomeScreen() {
+  const navigation = useNavigation();
+  const { savedPrompts, setSavedPrompts } = usePrompts();
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -104,8 +101,7 @@ export function HomeScreen({ navigation, route }) {
               </View>
             </View>
           )}
-          keyExtractor={(item) => item.uuid}
-          deleteItem={() => console.log("delete")}
+          keyExtractor={item => item.uuid}
         />
       ) : (
         <Text>None configured yet...</Text>

@@ -12,24 +12,30 @@ import {
   ScrollView,
 } from "react-native";
 
+import dayjs from "dayjs";
 import {
   PromptContext,
-  readSavedPrompts,
-  savePrompt,
   getDayjsFromTimestring,
-} from "../utils";
-import { TimePicker } from "../components/timepicker.js";
+  savePrompt,
+  readSavedPrompts,
+  appInsights,
+} from "~/utils";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
+import { TimePicker } from "~/components/timepicker";
+import { usePrompts } from "~/hooks";
+import { Prompt, PromptResponseType } from "~/@types";
 
-import dayjs from "dayjs";
-import appInsights from "../utils/appInsights";
+export function PromptScreen() {
+  const route = useRoute<RouteProp<"AuthorPrompt">>();
+  const navigation = useNavigation<PromptScreenNavigationProp>();
+  const { setSavedPrompts } = usePrompts();
 
-export function PromptScreen({ navigation, route }) {
-  const { setSavedPrompts } = React.useContext(PromptContext);
-
-  const [promptObject, setPromptObject] = React.useState(null);
+  const [promptObject, setPromptObject] = React.useState<Prompt | null>(null);
   const [promptText, setPromptText] = React.useState("");
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
-  const [responseType, setResponseType] = React.useState(null);
+  const [responseType, setResponseType] =
+    React.useState<PromptResponseType | null>(null);
   const [responseTypeItems, setResponseTypeItems] = React.useState([
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
@@ -37,7 +43,9 @@ export function PromptScreen({ navigation, route }) {
     // { label: "Custom Options", value: "customOptions" },
   ]);
 
-  const [countPerDay, setCountPerDay] = React.useState(null);
+  const [countPerDay, setCountPerDay] = React.useState<string | undefined>(
+    undefined
+  );
   const [days, setDays] = React.useState({
     monday: true,
     tuesday: true,
@@ -120,7 +128,7 @@ export function PromptScreen({ navigation, route }) {
           horizontal={false} // Set horizontal prop to false to disable horizontal scrolling
           contentContainerStyle={{ flexGrow: 1 }} // Set flexGrow to 1 to enable vertical scrolling
         >
-          <View style={styles.formSection} zIndex={10000}>
+          <View style={[styles.formSection, { zIndex: 10000 }]}>
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
@@ -132,7 +140,7 @@ export function PromptScreen({ navigation, route }) {
               />
             </View>
 
-            <View style={styles.formComponent} zIndex={5000}>
+            <View style={[styles.formComponent, { zIndex: 5000 }]}>
               <Text>Response Type</Text>
               {/* select button */}
               <DropDownPicker
@@ -161,7 +169,6 @@ export function PromptScreen({ navigation, route }) {
             </View>
 
             <TimePicker
-              styles={styles.formComponent}
               start={start}
               setStart={setStart}
               end={end}
@@ -172,7 +179,7 @@ export function PromptScreen({ navigation, route }) {
           </View>
         </ScrollView>
 
-        <View zIndex={2000}>
+        <View style={{ zIndex: 2000 }}>
           <Button
             title="Save Prompt"
             onPress={async () => {
@@ -190,8 +197,8 @@ export function PromptScreen({ navigation, route }) {
 
                 const res = await savePrompt(
                   promptText,
-                  responseType,
-                  countPerDay,
+                  responseType!,
+                  parseInt(countPerDay || "0"),
                   start.format("HH:mm"),
                   end.format("HH:mm"),
                   days,
@@ -239,12 +246,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    // justifyContent: "center",
     padding: 10,
   },
   input: {
     height: 50,
-    // margin: 12,
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -269,8 +274,6 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   item: {
-    // padding: 10,
-    // fontSize: 18,
     margin: 10,
   },
   formComponent: {
