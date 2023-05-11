@@ -2,18 +2,24 @@ import React from "react";
 
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FusionChart } from "../components/chart.js";
+import dayjs from "dayjs";
 import {
   getPromptResponses,
   updateTimestampToMs,
   maskPromptId,
-} from "../utils.js";
-import dayjs from "dayjs";
-import appInsights from "../utils/appInsights.js";
+  appInsights,
+} from "~/utils";
+import { useRoute } from "@react-navigation/native";
+import { RouteProp } from "~/navigation/types.js";
+import { PromptResponse } from "~/@types/index.js";
 
-export function ResponsesScreen({ navigation, route }) {
+export function ResponsesScreen() {
+  const route = useRoute<RouteProp<"ViewResponses">>();
   const { prompt } = route.params;
 
-  const [promptResponses, setPromptResponses] = React.useState([]);
+  const [promptResponses, setPromptResponses] = React.useState<
+    PromptResponse[]
+  >([]);
 
   React.useEffect(() => {
     // fetch the responses for this prompt
