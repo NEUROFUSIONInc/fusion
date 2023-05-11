@@ -2,7 +2,7 @@ import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ReactNativePlugin } from "@microsoft/applicationinsights-react-native";
 
 const RNPlugin = new ReactNativePlugin();
-const appInsights = new ApplicationInsights({
+export const appInsights = new ApplicationInsights({
   config: {
     connectionString:
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
@@ -10,7 +10,7 @@ const appInsights = new ApplicationInsights({
     disableDeviceCollection: true,
   },
 });
-appInsights.addTelemetryInitializer((envelope) => {
+appInsights.addTelemetryInitializer(envelope => {
   envelope.tags["ai.cloud.role"] = "FusionMobile";
   envelope.tags["ai.device.osVersion"] = RNPlugin.getDevice().osVersion;
   envelope.tags["ai.device.osName"] = RNPlugin.getDevice().osName;
@@ -24,5 +24,3 @@ appInsights.addTelemetryInitializer((envelope) => {
   envelope.baseData;
 });
 appInsights.loadAppInsights();
-
-export default appInsights;
