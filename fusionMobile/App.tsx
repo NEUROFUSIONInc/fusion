@@ -168,7 +168,10 @@ export default function App() {
               response.actionIdentifier ==
               Notifications.DEFAULT_ACTION_IDENTIFIER
             ) {
-              navigation.navigate("PromptEntry", { promptUuid });
+              navigation.navigate("PromptEntry", {
+                promptUuid: promptUuid,
+                triggerTimestamp: Math.floor(response.notification.date),
+              });
               return;
             }
 

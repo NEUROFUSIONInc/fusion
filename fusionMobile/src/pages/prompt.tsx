@@ -161,7 +161,7 @@ export function PromptScreen() {
                   value={countPerDay}
                   inputMode="numeric"
                   keyboardType="numeric"
-                  placeholder="3"
+                  placeholder="e.g 3"
                   style={styles.frequencyValueInput}
                   onChangeText={setCountPerDay}
                 />

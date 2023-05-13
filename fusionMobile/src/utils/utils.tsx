@@ -48,7 +48,7 @@ export const db = openDatabase();
 
 const createBaseTables = () => {
   return new Promise((resolve, reject) => {
-    db.transaction(tx => {
+    db.transaction((tx) => {
       // tx.executeSql(`DROP TABLE IF EXISTS prompt_responses;`);
       // tx.executeSql(`DROP TABLE IF EXISTS prompts;`);
       // tx.executeSql(`DROP TABLE IF EXISTS prompt_notifications;`);
@@ -150,7 +150,7 @@ export const readSavedPrompts = async () => {
     // get list of current prompts
     const fetchPrompts = () =>
       new Promise<Prompt[]>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
             resolve(rows._array);
           });
@@ -172,7 +172,7 @@ export const deletePrompt = async (uuid: string) => {
 
     const deleteFromDb = () =>
       new Promise((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             `DELETE FROM prompts WHERE uuid = ?`,
             [uuid],
@@ -239,7 +239,7 @@ export const savePrompt = async (
 
     const saveToDb = () => {
       return new Promise<boolean>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "SELECT * FROM prompts WHERE uuid = ?",
             [prompt.uuid],
@@ -384,7 +384,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
 
       // loop through the days...
       const weekdays = Object.keys(daysObject).filter(
-        day => daysObject[day as Days] === true
+        (day) => daysObject[day as Days] === true
       );
 
       if (weekdays.length == 7) {
@@ -452,13 +452,13 @@ export const getNotificationIdsForPrompt = async (promptId: string) => {
   try {
     const getNotificationIdsFromDb = () => {
       return new Promise<string[]>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "SELECT notificationId FROM prompt_notifications WHERE promptUuid = ?",
             [promptId],
             (_, { rows }) => {
               const notificationIds = rows._array.map(
-                row => row.notificationId
+                (row) => row.notificationId
               );
               resolve(notificationIds);
             },
@@ -490,7 +490,7 @@ export const saveNotificationIdForPrompt = async (
   try {
     const storeDetailsInDb = () => {
       return new Promise<boolean>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
             [notificationId, promptId],
@@ -523,7 +523,7 @@ export const deleteNotificationIdForPrompt = async (
   try {
     const deleteNotificationIdsFromDb = () => {
       return new Promise<boolean>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "DELETE FROM prompt_notifications WHERE promptUuid = ? AND notificationId = ?",
             [promptId, notificationId],
@@ -553,7 +553,7 @@ export const getPromptForNotificationId = async (notificationId: string) => {
   try {
     const getPromptFromDb = () => {
       return new Promise<string>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "SELECT promptUuid FROM prompt_notifications WHERE notificationId = ? LIMIT 1",
             [notificationId],
@@ -592,7 +592,7 @@ export const savePromptResponse = async (responseObj: PromptResponse) => {
   try {
     const storeDetailsInDb = () => {
       return new Promise<boolean>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp) VALUES (?, ?, ?, ?)",
             [
@@ -627,12 +627,12 @@ export const getPromptResponses = async (prompt: Prompt) => {
   try {
     const getPromptResponsesFromDb = () => {
       return new Promise<PromptResponse[]>((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "SELECT * FROM prompt_responses WHERE promptUuid = ?",
             [prompt.uuid],
             (_, { rows }) => {
-              const responses = rows._array.map(row => {
+              const responses = rows._array.map((row) => {
                 return {
                   promptUuid: row.promptUuid,
                   value: row.value,
@@ -747,6 +747,55 @@ export async function maskPromptId(promptId: string) {
   return hash;
 }
 
+export async function fetchPromptById(promptUuid: string) {
+  try {
+    const getPromptFromDb = () => {
+      return new Promise<Prompt | null>((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM prompts WHERE uuid = ?",
+            [promptUuid],
+            (_, { rows }) => {
+              const prompts = rows._array.map((row) => {
+                return {
+                  uuid: row.uuid,
+                  promptText: row.promptText,
+                  responseType: row.responseType,
+                  notificationConfig_days: JSON.parse(
+                    row.notificationConfig_days
+                  ),
+                  notificationConfig_startTime:
+                    row.notificationConfig_startTime,
+                  notificationConfig_endTime: row.notificationConfig_endTime,
+                  notificationConfig_countPerDay:
+                    row.notificationConfig_countPerDay,
+                };
+              });
+
+              if (prompts.length > 0) {
+                const prompt = prompts[0];
+                resolve(prompt);
+              } else {
+                console.log("prompt lengeth is zero");
+                resolve(null);
+              }
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+    };
+
+    const prompt = await getPromptFromDb();
+    return prompt;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function fetchExistingPromptsForText(promptText: string) {
   // look in the sqlite db for the prompt
   // return the prompt info if it exists
@@ -758,12 +807,12 @@ export async function fetchExistingPromptsForText(promptText: string) {
           uuid: string;
         }[]
       >((resolve, reject) => {
-        db.transaction(tx => {
+        db.transaction((tx) => {
           tx.executeSql(
             "SELECT * FROM prompts WHERE promptText = ?",
             [promptText],
             (_, { rows }) => {
-              const prompt = rows._array.map(row => {
+              const prompt = rows._array.map((row) => {
                 return {
                   uuid: row.uuid,
                 };
@@ -797,7 +846,7 @@ export async function resyncOldPrompts() {
     // getting the prompts that are in localstorage.
     const parsedPrompts = JSON.parse(oldPrompts) as Prompt[];
 
-    parsedPrompts.forEach(async prompt => {
+    parsedPrompts.forEach(async (prompt) => {
       // if prompt doesn't have a uuid, generate one
       console.log("resyncing prompt - ", prompt.promptText);
       if (!prompt.uuid) {
@@ -844,7 +893,7 @@ export async function resyncOldPrompts() {
           const parsedResponses = JSON.parse(
             responses
           ) as PromptResponseWithEvent[];
-          parsedResponses.forEach(async response => {
+          parsedResponses.forEach(async (response) => {
             console.log("evaluating, response name: ", response.event.name);
             if (response.event.name === `Fusion: ${prompt.promptText}`) {
               console.log("response name matches promptText");
