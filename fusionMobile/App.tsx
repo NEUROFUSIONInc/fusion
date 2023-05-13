@@ -9,10 +9,11 @@ import {
   maskPromptId,
   appInsights,
 } from "./src/utils";
-import { SafeAreaView } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 import { useNavigation } from "@react-navigation/native";
 import { FusionNavigation } from "./src/navigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -40,7 +41,7 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 Notifications.setNotificationHandler({
-  handleNotification: async notification => {
+  handleNotification: async (notification) => {
     // get the prompt id for this notification
     const promptUuid = await getPromptForNotificationId(
       notification.request.identifier
@@ -57,7 +58,7 @@ Notifications.setNotificationHandler({
     );
 
     // only want notification ids for the active prompts
-    const activeNotificationsForPrompt = activeNotifications.filter(element =>
+    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
       promptNotificationsIds.includes(element.request.identifier)
     );
 
@@ -81,6 +82,7 @@ export default function App() {
     Notifications.Subscription | undefined
   >();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   React.useEffect(() => {
     // validate permission status for user
@@ -159,10 +161,15 @@ export default function App() {
       // set notification handlers
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
-          async response => {
+          async (response) => {
             const promptUuid = await getPromptForNotificationId(
               response.notification.request.identifier
             );
+
+            if (!promptUuid) {
+              console.log("unable to fetch prompt uuid for notification id");
+              return;
+            }
 
             if (
               response.actionIdentifier ==
@@ -225,10 +232,16 @@ export default function App() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View
+      style={{
+        paddingTop: insets.top,
+        // paddingBottom: insets.bottom,
+        flex: 1,
+      }}
+    >
       <PromptContextProvider>
         <FusionNavigation />
       </PromptContextProvider>
-    </SafeAreaView>
+    </View>
   );
 }

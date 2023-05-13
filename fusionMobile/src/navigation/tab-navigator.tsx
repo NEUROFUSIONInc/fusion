@@ -10,7 +10,7 @@ export const FusionNavigation = () => {
     <Tab.Navigator
       activeColor="#023059"
       initialRouteName="Prompts"
-      barStyle={{ height: 70 }}
+      barStyle={{ height: 70, marginBottom: 20 }}
     >
       <Tab.Screen
         name="Prompts"
