@@ -1,6 +1,16 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, Alert, TextInput } from "react-native";
-import * as MailComposer from "expo-mail-composer";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resyncOldPrompts, appInsights } from "~/utils";
 import * as Linking from "expo-linking";
@@ -36,82 +46,91 @@ export function AccountScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Hey there, you're currently using Fusion anonymously!</Text>
-      <Text>(more personalization features to come in the future)</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ width: "100%" }}>
+          <View style={{ alignItems: "center" }}>
+            <Text>Hey there, you're currently using Fusion anonymously!</Text>
+            <Text>(more personalization features to come in the future)</Text>
+          </View>
+          {/* Resync old prompts */}
+          {oldPromptExist && (
+            <Button
+              title="Resync missing Prompts / Responses"
+              onPress={() => {
+                Alert.alert(
+                  "Resync",
+                  "Are you sure you want to resync your data?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: async () => {
+                        await resyncOldPrompts();
+                      },
+                    },
+                  ]
+                );
+              }}
+            ></Button>
+          )}
 
-      {/* Resync old prompts */}
-      {oldPromptExist && (
-        <Button
-          title="Resync missing Prompts / Responses"
-          onPress={() => {
-            Alert.alert(
-              "Resync",
-              "Are you sure you want to resync your data?",
-              [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "OK",
-                  onPress: async () => {
-                    await resyncOldPrompts();
-                  },
-                },
-              ]
-            );
-          }}
-        ></Button>
-      )}
+          <View style={styles.formSection}>
+            <View style={styles.formHeader}>
+              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
+                Feedback
+              </Text>
+              <Text>Help shape how we build!</Text>
+            </View>
 
-      <View style={styles.formSection}>
-        <View style={styles.formHeader}>
-          <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-            Feedback
-          </Text>
-          <Text>Help shape how we build!</Text>
+            <TextInput
+              multiline
+              placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
+              style={styles.input}
+              value={feedbackText}
+              onChangeText={setFeedbackText}
+            />
+            <Button
+              title="Send Feedback"
+              onPress={async () => {
+                // send feedback
+                const recipient = "ore@usefusion.app";
+                const subject = "Fusion Feedback";
+                const body = feedbackText;
+
+                const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
+                  subject
+                )}&body=${encodeURIComponent(body)}`;
+
+                Alert.alert(
+                  "Send Feedback",
+                  "About to navigate to your mail app. Continue",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "OK",
+                      onPress: () => {
+                        setFeedbackText("");
+                        Linking.openURL(mailtoUrl);
+                      },
+                    },
+                  ]
+                );
+              }}
+            ></Button>
+          </View>
         </View>
-
-        <TextInput
-          multiline
-          placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
-          style={styles.input}
-          value={feedbackText}
-          onChangeText={setFeedbackText}
-        />
-        <Button
-          title="Send Feedback"
-          onPress={async () => {
-            // send feedback
-            const recipient = "ore@usefusion.app";
-            const subject = "Fusion Feedback";
-            const body = feedbackText;
-
-            const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
-              subject
-            )}&body=${encodeURIComponent(body)}`;
-
-            Alert.alert(
-              "Send Feedback",
-              "About to navigate to your mail app. Continue",
-              [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "OK",
-                  onPress: () => {
-                    Linking.openURL(mailtoUrl);
-                  },
-                },
-              ]
-            );
-          }}
-        ></Button>
-      </View>
-    </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
