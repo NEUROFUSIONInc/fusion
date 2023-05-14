@@ -61,7 +61,7 @@ Before submission, we need to run `npx expo prebuild
 ### Responding
 
 - (done) Save response at the time of entry & also when it was generated.
-- Allow user to tap to respond to prompts (create prompt component)
+- (done) Allow user to tap to respond to prompts (create prompt component)
 
 ### Results
 

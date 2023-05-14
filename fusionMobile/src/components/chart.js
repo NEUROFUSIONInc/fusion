@@ -69,7 +69,7 @@ export function FusionChart({ data, prompt }) {
 
   useEffect(() => {
     const seriesData = data
-      .filter(d => {
+      .filter((d) => {
         const responseTimestamp = updateTimestampToMs(d.responseTimestamp);
         switch (timePeriod) {
           case "day":
@@ -89,7 +89,7 @@ export function FusionChart({ data, prompt }) {
             );
         }
       })
-      .map(d => {
+      .map((d) => {
         return [updateTimestampToMs(d.responseTimestamp), d.value];
       });
 
@@ -101,7 +101,7 @@ export function FusionChart({ data, prompt }) {
         type: "time",
         gap: true,
         axisLabel: {
-          formatter: value => {
+          formatter: (value) => {
             if (timePeriod === "day") {
               return dayjs(value).format("ha");
             } else if (timePeriod === "week") {
@@ -158,7 +158,8 @@ export function FusionChart({ data, prompt }) {
           data: seriesData,
           type: "line",
           smooth: true,
-          symbol: "none",
+          symbol: "circle",
+          symbolSize: 5,
           itemStyle: {
             color: "#7a44cf",
           },
@@ -201,7 +202,7 @@ export function FusionChart({ data, prompt }) {
       <SwitchSelector
         options={timePeriodOptions}
         initial={1}
-        onPress={value => setTimePeriod(value)}
+        onPress={(value) => setTimePeriod(value)}
         textColor={"#7a44cf"}
         selectedColor={"#fff"}
         buttonColor={"#7a44cf"}
