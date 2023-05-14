@@ -46,6 +46,8 @@ Mapping Fusion event schema to prompt_response
   - to build android locally `eas build --local --platform=android`
 - Submit build - eas submit --platform ios
 
+Before submission, we need to run `npx expo prebuild
+
 ## Prompts
 
 ### Authoring

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, Alert, TextInput } from "react-native";
 import * as MailComposer from "expo-mail-composer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resyncOldPrompts, appInsights } from "~/utils";
+import * as Linking from "expo-linking";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -15,7 +16,7 @@ export function AccountScreen() {
   }, []);
 
   React.useEffect(() => {
-    validatePromptStatus().then(res => {
+    validatePromptStatus().then((res) => {
       setOldPromptExist(res);
     });
   }, []);
@@ -83,19 +84,30 @@ export function AccountScreen() {
           title="Send Feedback"
           onPress={async () => {
             // send feedback
-            const mailStatus = await MailComposer.composeAsync({
-              recipients: ["ore@usefusion.app"],
-              subject: "Fusion Feedback",
-              body: feedbackText,
-            });
+            const recipient = "ore@usefusion.app";
+            const subject = "Fusion Feedback";
+            const body = feedbackText;
 
-            if (mailStatus.status === MailComposer.MailComposerStatus.SENT) {
-              Alert.alert(
-                "Feedback sent!",
-                "Thanks for your feedback! We'll get back to you shortly."
-              );
-              setFeedbackText("");
-            }
+            const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
+              subject
+            )}&body=${encodeURIComponent(body)}`;
+
+            Alert.alert(
+              "Send Feedback",
+              "About to navigate to your mail app. Continue",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: () => {
+                    Linking.openURL(mailtoUrl);
+                  },
+                },
+              ]
+            );
           }}
         ></Button>
       </View>

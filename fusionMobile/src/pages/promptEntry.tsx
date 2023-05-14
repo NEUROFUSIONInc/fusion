@@ -7,6 +7,10 @@ import {
   Alert,
   FlatList,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import {
   fetchPromptById,
@@ -89,70 +93,77 @@ export function PromptEntryScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {promptObject && (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
-          <View style={{ marginBottom: 20 }}>
-            <Text style={styles.text}>{promptObject.promptText}</Text>
-            <Text style={styles.actionDescription}>
-              Enter your response below
-            </Text>
-          </View>
-
-          {/* if the prompt is a yes/no prompt, show the yes/no buttons */}
-          {promptObject.responseType == "yesno" && (
-            <View style={styles.optionsContainer}>
-              {yesnoOptions.map(({ label, value }) => {
-                return (
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      value={userResponse == value}
-                      onValueChange={() => {
-                        setUserResponse(value);
-                      }}
-                    />
-                    <Text>&nbsp;&nbsp;{label}</Text>
-                  </View>
-                );
-              })}
-            </View>
-          )}
-
-          {/* if the prompt is a text prompt, show the text input */}
-          {promptObject.responseType == "text" && (
+          {promptObject && (
             <View>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                onChangeText={setUserResponse}
-                value={userResponse}
-                style={styles.textInput}
-              />
+              <View style={{ marginBottom: 20 }}>
+                <Text style={styles.text}>{promptObject.promptText}</Text>
+                <Text style={styles.actionDescription}>
+                  Enter your response below
+                </Text>
+              </View>
+
+              {/* if the prompt is a yes/no prompt, show the yes/no buttons */}
+              {promptObject.responseType == "yesno" && (
+                <View style={styles.optionsContainer}>
+                  {yesnoOptions.map(({ label, value }) => {
+                    return (
+                      <View style={styles.checkboxContainer}>
+                        <Checkbox
+                          value={userResponse == value}
+                          onValueChange={() => {
+                            setUserResponse(value);
+                          }}
+                        />
+                        <Text>&nbsp;&nbsp;{label}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              )}
+
+              {/* if the prompt is a text prompt, show the text input */}
+              {promptObject.responseType == "text" && (
+                <View>
+                  <TextInput
+                    multiline={true}
+                    numberOfLines={4}
+                    onChangeText={setUserResponse}
+                    value={userResponse}
+                    style={styles.textInput}
+                  />
+                </View>
+              )}
+
+              {/* if the prompt is a multiple choice prompt, show the options */}
+              {promptObject.responseType == "number" && (
+                <View>
+                  <TextInput
+                    inputMode="numeric"
+                    keyboardType="numeric"
+                    onChangeText={setUserResponse}
+                    value={userResponse}
+                    style={styles.numberInput}
+                  />
+                </View>
+              )}
+
+              <View style={{ marginTop: 20 }}>
+                <Button
+                  title="Save Entry"
+                  onPress={handleSavePromptResponse}
+                ></Button>
+              </View>
             </View>
           )}
-
-          {/* if the prompt is a multiple choice prompt, show the options */}
-          {promptObject.responseType == "number" && (
-            <View>
-              <TextInput
-                inputMode="numeric"
-                keyboardType="numeric"
-                onChangeText={setUserResponse}
-                value={userResponse}
-                style={styles.numberInput}
-              />
-            </View>
-          )}
-
-          <View style={{ marginTop: 20 }}>
-            <Button
-              title="Save Entry"
-              onPress={handleSavePromptResponse}
-            ></Button>
-          </View>
         </View>
-      )}
-    </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
