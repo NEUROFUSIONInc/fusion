@@ -76,7 +76,7 @@ export function PromptEntryScreen() {
       // track event
       appInsights.trackEvent(
         {
-          name: "prompt_notification_response",
+          name: "prompt_response",
         },
         {
           identifier: await maskPromptId(promptResponse.promptUuid),

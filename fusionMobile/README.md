@@ -99,7 +99,7 @@ We will be using [Azure Application Insights] for event tracking.
 
     - identifier (randomly generated, different from what's in the local db)
 
-  - (done) prompt_notification_response
+  - (done) prompt_response (changed in Fusion_ios_1.0.01_14 from `prompt_notification_response`)
     - identifier
     - triggerTimestamp
     - responseTimestamp
@@ -193,3 +193,19 @@ allow to respond after tapping to notifications
 - come back to resync feature
 
 - add summary in the response page
+
+# Android Feedback
+
+-
+
+# IOS Feedback
+
+- move request notification when prompt is being created for the first time
+
+- when a person selects one time, change the selector to just one time
+
+* include screenshots...
+
+## Change log
+
+- Usage - `prompt_notification_response` is now `prompt_response`

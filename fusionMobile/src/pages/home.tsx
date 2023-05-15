@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
 import { usePrompts } from "~/hooks";
 import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 
 export function HomeScreen() {
   const navigation = useNavigation();
@@ -52,6 +53,25 @@ export function HomeScreen() {
               {/* Edit/Delete/View Prompt responses */}
               <View style={styles.promptActions}>
                 <Button
+                  title="Log"
+                  onPress={() =>
+                    navigation.navigate("PromptEntry", {
+                      promptUuid: item.uuid,
+                      triggerTimestamp: Math.floor(dayjs().unix()),
+                    })
+                  }
+                ></Button>
+
+                <Button
+                  title="History"
+                  onPress={() =>
+                    navigation.navigate("ViewResponses", {
+                      prompt: item,
+                    })
+                  }
+                />
+
+                <Button
                   title="Edit"
                   onPress={() =>
                     navigation.navigate("AuthorPrompt", {
@@ -59,6 +79,7 @@ export function HomeScreen() {
                     })
                   }
                 />
+
                 <Button
                   title="Delete"
                   onPress={() => {
@@ -90,18 +111,10 @@ export function HomeScreen() {
                     );
                   }}
                 />
-                <Button
-                  title="View Responses"
-                  onPress={() =>
-                    navigation.navigate("ViewResponses", {
-                      prompt: item,
-                    })
-                  }
-                />
               </View>
             </View>
           )}
-          keyExtractor={item => item.uuid}
+          keyExtractor={(item) => item.uuid}
         />
       ) : (
         <Text>None configured yet...</Text>

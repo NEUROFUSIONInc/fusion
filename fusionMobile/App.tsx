@@ -212,7 +212,7 @@ export default function App() {
             // track event
             appInsights.trackEvent(
               {
-                name: "prompt_notification_response",
+                name: "prompt_response",
               },
               {
                 identifier: await maskPromptId(promptUuid || ""),
