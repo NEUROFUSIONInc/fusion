@@ -1,12 +1,20 @@
-import * as SQLite from "expo-sqlite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
-import { v4 as uuidv4 } from "uuid";
-import "react-native-get-random-values";
-import * as Notifications from "expo-notifications";
 import dayjs from "dayjs";
-import { NotificationContentInput } from "expo-notifications";
-import { NotificationTriggerInput } from "expo-notifications";
+import * as Crypto from "expo-crypto";
+import * as Notifications from "expo-notifications";
+import {
+  NotificationContentInput,
+  NotificationTriggerInput,
+} from "expo-notifications";
+import * as SQLite from "expo-sqlite";
+import * as Updates from "expo-updates";
+import React from "react";
+import { Alert, Platform } from "react-native";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
+
+import { appInsights } from "./appInsights";
+
 import {
   Days,
   NotificationConfigDays,
@@ -15,10 +23,6 @@ import {
   PromptResponseType,
   PromptResponseWithEvent,
 } from "~/@types";
-import { Alert, Platform } from "react-native";
-import { appInsights } from "./appInsights";
-import * as Crypto from "expo-crypto";
-import * as Updates from "expo-updates";
 
 // this is where we create the context
 export const PromptContext = React.createContext<null | {
@@ -66,7 +70,7 @@ const createBaseTables = () => {
             notificationConfig_countPerDay INTEGER
           );`,
         [],
-        (tx, results) => {
+        (tx) => {
           // Create prompt responses table
           tx.executeSql(
             `CREATE TABLE IF NOT EXISTS prompt_responses (
@@ -78,7 +82,7 @@ const createBaseTables = () => {
               FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
             );`,
             [],
-            (tx, results) => {
+            (tx) => {
               // Create prompt notifications table
               tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS prompt_notifications (
@@ -88,7 +92,7 @@ const createBaseTables = () => {
                 FOREIGN KEY (promptUuid) REFERENCES prompts(uuid)
               );`,
                 [],
-                (tx, results) => {
+                () => {
                   // finished creating all the tables
                   resolve(true);
                 },
@@ -149,7 +153,7 @@ export const readSavedPrompts = async () => {
   try {
     // get list of current prompts
     const fetchPrompts = () =>
-      new Promise<Prompt[]>((resolve, reject) => {
+      new Promise<Prompt[]>((resolve) => {
         db.transaction((tx) => {
           tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
             resolve(rows._array);
@@ -171,7 +175,7 @@ export const deletePrompt = async (uuid: string) => {
     await cancelExistingNotificationForPrompt(uuid);
 
     const deleteFromDb = () =>
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         db.transaction((tx) => {
           tx.executeSql(
             `DELETE FROM prompts WHERE uuid = ?`,
@@ -190,6 +194,7 @@ export const deletePrompt = async (uuid: string) => {
     return prompts;
   } catch (e) {
     // error reading value
+    console.log("error deleting prompt", e);
     return null;
   }
 };
@@ -226,8 +231,8 @@ export const savePrompt = async (
     // build the prompt object
     const prompt = {
       uuid: uuid ? uuid : uuidv4(),
-      promptText: promptText,
-      responseType: responseType,
+      promptText,
+      responseType,
       notificationConfig_days: JSON.stringify(days),
       notificationConfig_startTime: startTime,
       notificationConfig_endTime: endTime,
@@ -258,7 +263,7 @@ export const savePrompt = async (
                     prompt.notificationConfig_countPerDay,
                     prompt.uuid,
                   ],
-                  (_, { rows }) => {
+                  () => {
                     console.log("prompt updated");
                     resolve(true);
                   },
@@ -281,7 +286,7 @@ export const savePrompt = async (
                     prompt.notificationConfig_endTime,
                     prompt.notificationConfig_countPerDay,
                   ],
-                  (_, { rows }) => {
+                  () => {
                     console.log("prompt saved");
                     resolve(true);
                   },
@@ -344,8 +349,8 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     prompt.notificationConfig_countPerDay
   );
 
-  let triggerObject: NotificationTriggerInput = {};
-  let contentObject: NotificationContentInput = {
+  const triggerObject: NotificationTriggerInput = {};
+  const contentObject: NotificationContentInput = {
     title: `Fusion: ${prompt.promptText}`,
     categoryIdentifier: prompt.responseType,
   };
@@ -379,7 +384,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
 
     console.log("availableTimes", availableTimes);
 
-    for (let time of availableTimes) {
+    for (const time of availableTimes) {
       const [hours, minutes] = time.split(":").map(Number);
 
       // loop through the days...
@@ -387,7 +392,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
         (day) => daysObject[day as Days] === true
       );
 
-      if (weekdays.length == 7) {
+      if (weekdays.length === 7) {
         // schedule daily notification trigger
         const notificationId = await Notifications.scheduleNotificationAsync({
           content: contentObject,
@@ -402,7 +407,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
         // save notificationId & promptId to db
         await saveNotificationIdForPrompt(notificationId, prompt.uuid);
       } else {
-        for (let weekday of weekdays) {
+        for (const weekday of weekdays) {
           // schedule weekly notification trigger for every day selected
           const notificationId = await Notifications.scheduleNotificationAsync({
             content: contentObject,
@@ -420,7 +425,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
       }
     }
   } catch (e) {
-    console.log("Unable to schedule notification");
+    console.log("Unable to schedule notification", e);
     return false;
   }
 
@@ -438,7 +443,7 @@ export const cancelExistingNotificationForPrompt = async (promptId: string) => {
   // now read from the db and cancel all the notifications
   try {
     const notificationIds = await getNotificationIdsForPrompt(promptId);
-    for (let notificationId of notificationIds) {
+    for (const notificationId of notificationIds) {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
       // delete the notificationIds from the per id
       await deleteNotificationIdForPrompt(promptId, notificationId);
@@ -494,7 +499,7 @@ export const saveNotificationIdForPrompt = async (
           tx.executeSql(
             "INSERT INTO prompt_notifications (notificationId, promptUuid) VALUES (?, ?)",
             [notificationId, promptId],
-            (_, { rows }) => {
+            () => {
               console.log("notificationId saved in db");
               resolve(true);
             },
@@ -527,7 +532,7 @@ export const deleteNotificationIdForPrompt = async (
           tx.executeSql(
             "DELETE FROM prompt_notifications WHERE promptUuid = ? AND notificationId = ?",
             [promptId, notificationId],
-            (_, { rows }) => {
+            () => {
               console.log("notificationIds deleted");
               resolve(true);
             },
@@ -601,7 +606,7 @@ export const savePromptResponse = async (responseObj: PromptResponse) => {
               responseObj["triggerTimestamp"],
               responseObj["responseTimestamp"],
             ],
-            (_, { rows }) => {
+            () => {
               console.log("response saved");
               resolve(true);
             },
@@ -668,7 +673,7 @@ export const updateTimestampToMs = (unixTimestamp: string | number) => {
    * Converts unix timestamp to milliseconds
    */
   if (typeof unixTimestamp === "string") {
-    unixTimestamp = parseInt(unixTimestamp);
+    unixTimestamp = parseInt(unixTimestamp, 10);
   }
   if (unixTimestamp.toString().length === 10) {
     return unixTimestamp * 1000;
@@ -680,9 +685,9 @@ export const convertTime = (time24: string) => {
   /**
    * Converts 24 hour time to 12 hour time
    */
-  let hour = parseInt(time24.substring(0, 2));
-  let minute = time24.substring(3, 5);
-  let suffix = hour >= 12 ? "PM" : "AM";
+  let hour = parseInt(time24.substring(0, 2), 10);
+  const minute = time24.substring(3, 5);
+  const suffix = hour >= 12 ? "PM" : "AM";
   hour = hour % 12 || 12;
   return `${hour}:${minute} ${suffix}`;
 };
@@ -716,20 +721,11 @@ function getEvenlySpacedTimes(
   return times;
 }
 
-function padZero(num: number) {
-  return num.toString().padStart(2, "0");
-}
-
-function timeStringToMinutes(timeString: string) {
-  const [hours, minutes] = timeString.split(":").map(Number);
-  return hours * 60 + minutes;
-}
-
 export function getDayjsFromTimestring(timeString: string) {
   // time is in the format "HH:mm", split up and convert to a dayjs object
   const time = timeString.split(":");
-  const hour = parseInt(time[0]);
-  const minute = parseInt(time[1]);
+  const hour = parseInt(time[0], 10);
+  const minute = parseInt(time[1], 10);
 
   return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
 }
