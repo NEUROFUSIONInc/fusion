@@ -12,3 +12,7 @@ web-build/
 
 # macOS
 .DS_Store
+
+
+# key
+*pc-api-*.json

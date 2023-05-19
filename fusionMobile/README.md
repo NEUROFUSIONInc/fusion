@@ -209,3 +209,7 @@ allow to respond after tapping to notifications
 ## Change log
 
 - Usage - `prompt_notification_response` is now `prompt_response`
+
+# Notes from integrating with bluetooth
+
+- Following this doc: https://docs.neurosity.co/docs/api/bluetooth-react-native
