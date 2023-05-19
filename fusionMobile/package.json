@@ -6,7 +6,10 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "postinstall": "patch-package && npx react-native setup-ios-permissions && pod-install"
+    "postinstall": "patch-package && npx react-native setup-ios-permissions && pod-install",
+    "lint": "eslint . --cache --ext .ts,.tsx",
+    "lint:fix": "eslint . --cache --ext .ts,.tsx --fix",
+    "format": "npm run lint:fix && prettier --write ."
   },
   "dependencies": {
     "@kilohealth/rn-fitness-tracker": "^3.1.0",
@@ -67,11 +70,21 @@
     "@types/react-native": "^0.72.0",
     "@types/react-test-renderer": "^18.0.0",
     "@types/uuid": "^9.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
     "babel-plugin-module-resolver": "^5.0.0",
     "patch-package": "^7.0.0",
     "pod-install": "0.1.38",
     "postinstall-postinstall": "^2.1.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-universe": "^11.2.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.8.8",
     "typescript": "^4.9.4"
+  },
+  "eslintConfig": {
+    "extends": "universe/native"
   },
   "private": true
 }
