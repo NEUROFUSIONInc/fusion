@@ -1,5 +1,6 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
 import React from "react";
-import DropDownPicker from "react-native-dropdown-picker";
 import {
   StyleSheet,
   Text,
@@ -11,20 +12,18 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 
-import dayjs from "dayjs";
+import { Prompt, PromptResponseType } from "~/@types";
+import { TimePicker } from "~/components/timepicker";
+import { usePrompts } from "~/hooks";
+import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
 import {
-  PromptContext,
   getDayjsFromTimestring,
   savePrompt,
   readSavedPrompts,
   appInsights,
 } from "~/utils";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
-import { TimePicker } from "~/components/timepicker";
-import { usePrompts } from "~/hooks";
-import { Prompt, PromptResponseType } from "~/@types";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -65,7 +64,7 @@ export function PromptScreen() {
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
-    if (route.params && route.params.prompt) {
+    if (route.params?.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
       setResponseType(route.params.prompt.responseType);
@@ -198,7 +197,7 @@ export function PromptScreen() {
                 const res = await savePrompt(
                   promptText,
                   responseType!,
-                  parseInt(countPerDay || "0"),
+                  parseInt(countPerDay ?? "0", 10),
                   start.format("HH:mm"),
                   end.format("HH:mm"),
                   days,

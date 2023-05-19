@@ -1,29 +1,28 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
+import Checkbox from "expo-checkbox";
 import React from "react";
 import {
   StyleSheet,
   Text,
   View,
   Button,
-  Alert,
-  FlatList,
   TextInput,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+
+import { Prompt } from "~/@types/index.js";
+import { PromptScreenNavigationProp } from "~/navigation/prompt-navigator";
+import { RouteProp } from "~/navigation/types.js";
 import {
   fetchPromptById,
   savePromptResponse,
   maskPromptId,
   appInsights,
 } from "~/utils";
-import Checkbox from "expo-checkbox";
-import dayjs from "dayjs";
-import { Prompt } from "~/@types/index.js";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { RouteProp } from "~/navigation/types.js";
-import { PromptScreenNavigationProp } from "~/navigation/prompt-navigator";
 
 // this component is to allow a user make a prompt entry.
 export function PromptEntryScreen() {
@@ -44,7 +43,7 @@ export function PromptEntryScreen() {
   const [userResponse, setUserResponse] = React.useState("");
 
   React.useEffect(() => {
-    if (route.params && route.params.promptUuid) {
+    if (route.params?.promptUuid) {
       console.log(route.params.promptUuid);
       (async () => {
         const res = await fetchPromptById(route.params.promptUuid);
@@ -109,13 +108,13 @@ export function PromptEntryScreen() {
               </View>
 
               {/* if the prompt is a yes/no prompt, show the yes/no buttons */}
-              {promptObject.responseType == "yesno" && (
+              {promptObject.responseType === "yesno" && (
                 <View style={styles.optionsContainer}>
                   {yesnoOptions.map(({ label, value }) => {
                     return (
                       <View style={styles.checkboxContainer}>
                         <Checkbox
-                          value={userResponse == value}
+                          value={userResponse === value}
                           onValueChange={() => {
                             setUserResponse(value);
                           }}
@@ -128,10 +127,10 @@ export function PromptEntryScreen() {
               )}
 
               {/* if the prompt is a text prompt, show the text input */}
-              {promptObject.responseType == "text" && (
+              {promptObject.responseType === "text" && (
                 <View>
                   <TextInput
-                    multiline={true}
+                    multiline
                     numberOfLines={4}
                     onChangeText={setUserResponse}
                     value={userResponse}
@@ -141,7 +140,7 @@ export function PromptEntryScreen() {
               )}
 
               {/* if the prompt is a multiple choice prompt, show the options */}
-              {promptObject.responseType == "number" && (
+              {promptObject.responseType === "number" && (
                 <View>
                   <TextInput
                     inputMode="numeric"
@@ -154,10 +153,7 @@ export function PromptEntryScreen() {
               )}
 
               <View style={{ marginTop: 20 }}>
-                <Button
-                  title="Save Entry"
-                  onPress={handleSavePromptResponse}
-                ></Button>
+                <Button title="Save Entry" onPress={handleSavePromptResponse} />
               </View>
             </View>
           )}
