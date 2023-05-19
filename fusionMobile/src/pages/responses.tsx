@@ -1,17 +1,18 @@
-import React from "react";
-
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import { FusionChart } from "../components/chart.js";
+import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+import { FusionChart } from "../components/chart.js";
+
+import { PromptResponse } from "~/@types/index.js";
+import { RouteProp } from "~/navigation/types.js";
 import {
   getPromptResponses,
   updateTimestampToMs,
   maskPromptId,
   appInsights,
 } from "~/utils";
-import { useRoute } from "@react-navigation/native";
-import { RouteProp } from "~/navigation/types.js";
-import { PromptResponse } from "~/@types/index.js";
 
 export function ResponsesScreen() {
   const route = useRoute<RouteProp<"ViewResponses">>();

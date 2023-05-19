@@ -1,9 +1,10 @@
-import React from "react";
-import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
-import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
-import { usePrompts } from "~/hooks";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
+import React from "react";
+import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
+
+import { usePrompts } from "~/hooks";
+import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
 
 export function HomeScreen() {
   const navigation = useNavigation();
@@ -60,7 +61,7 @@ export function HomeScreen() {
                       triggerTimestamp: Math.floor(dayjs().unix()),
                     })
                   }
-                ></Button>
+                />
 
                 <Button
                   title="History"
