@@ -1,5 +1,6 @@
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+
 import { AccountStack } from "./account-navigator";
 import { PromptStack } from "./prompt-navigator";
 
