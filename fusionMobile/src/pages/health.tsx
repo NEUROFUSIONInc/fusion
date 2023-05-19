@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, View, Platform } from "react-native";
-
 import AppleHealthKit from "react-native-health";
 
 /* Permission options */
@@ -39,7 +38,7 @@ export function HealthScreen() {
   React.useEffect(() => {
     // TODO: check the user is on iphone
     if (Platform.OS === "ios") {
-      AppleHealthKit.initHealthKit(permissions, error => {
+      AppleHealthKit.initHealthKit(permissions, (error) => {
         /* Called after we receive a response from the system */
 
         if (error) {
@@ -56,6 +55,8 @@ export function HealthScreen() {
           options,
           (callbackError, results) => {
             /* Samples are now collected from HealthKit */
+            console.log(results);
+            console.log(callbackError);
           }
         );
 

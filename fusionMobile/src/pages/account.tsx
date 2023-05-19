@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
 import React from "react";
 import {
   StyleSheet,
@@ -12,9 +14,8 @@ import {
   Keyboard,
   Switch,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { resyncOldPrompts, appInsights } from "~/utils";
-import * as Linking from "expo-linking";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -84,7 +85,7 @@ export function AccountScreen() {
                   ]
                 );
               }}
-            ></Button>
+            />
           )}
 
           {/* Feedback component */}
@@ -133,7 +134,7 @@ export function AccountScreen() {
                   ]
                 );
               }}
-            ></Button>
+            />
           </View>
 
           {/* Opt in to Reasearch Program */}
