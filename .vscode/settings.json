@@ -6,6 +6,7 @@
     "source.fixAll.eslint": true,
     "source.fixAll.format": true
   },
+  "eslint.workingDirectories": ["./fusionMobile", "./neurofusion/next-client"],
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ]
