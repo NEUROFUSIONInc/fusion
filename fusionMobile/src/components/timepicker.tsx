@@ -1,9 +1,10 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import Checkbox from "expo-checkbox";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Checkbox from "expo-checkbox";
-import dayjs from "dayjs";
+
 import { NotificationConfigDays, Days } from "~/@types";
 
 type TimePickerProps = {
@@ -103,11 +104,11 @@ export function TimePicker({
         <Text>Days of week</Text>
 
         <View style={styles.checkBoxGroup}>
-          {Object.keys(days).map(day => (
+          {Object.keys(days).map((day) => (
             <View style={styles.checkBoxItem} key={Math.random()}>
               <Checkbox
                 value={days[day as Days]}
-                onValueChange={value => setDays({ ...days, [day]: value })}
+                onValueChange={(value) => setDays({ ...days, [day]: value })}
               />
               <Text style={styles.checkBoxLabel}>{dayLabels[day as Days]}</Text>
             </View>

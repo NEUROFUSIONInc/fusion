@@ -1,8 +1,8 @@
-import React from "react";
 import { registerRootComponent } from "expo";
-import { NavigationContainer } from "./src/navigation/navigation-container";
+import React from "react";
 
 import App from "./App";
+import { NavigationContainer } from "./src/navigation/navigation-container";
 
 const MainApp = () => {
   return (
