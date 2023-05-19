@@ -1,6 +1,11 @@
-import React from "react";
-import { Alert, Platform } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 import * as Notifications from "expo-notifications";
+import React from "react";
+import { Alert, Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { FusionNavigation } from "./src/navigation";
 import {
   PromptContextProvider,
   savePromptResponse,
@@ -9,11 +14,6 @@ import {
   maskPromptId,
   appInsights,
 } from "./src/utils";
-import dayjs from "dayjs";
-import { useNavigation } from "@react-navigation/native";
-import { FusionNavigation } from "./src/navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View } from "react-native";
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -54,7 +54,7 @@ Notifications.setNotificationHandler({
 
     // find the ones that match the prompt
     const promptNotificationsIds = await getNotificationIdsForPrompt(
-      promptUuid || ""
+      promptUuid ?? ""
     );
 
     // only want notification ids for the active prompts
@@ -172,11 +172,11 @@ export default function App() {
             }
 
             if (
-              response.actionIdentifier ==
+              response.actionIdentifier ===
               Notifications.DEFAULT_ACTION_IDENTIFIER
             ) {
               navigation.navigate("PromptEntry", {
-                promptUuid: promptUuid,
+                promptUuid,
                 triggerTimestamp: Math.floor(response.notification.date),
               });
               return;
@@ -189,21 +189,21 @@ export default function App() {
               notificationCategory =
                 response.notification.request.content.categoryIdentifier;
             }
-            if (notificationCategory == "yesno") {
+            if (notificationCategory === "yesno") {
               response_value = response.actionIdentifier;
             } else if (
-              notificationCategory == "text" ||
-              notificationCategory == "number"
+              notificationCategory === "text" ||
+              notificationCategory === "number"
             ) {
               response_value = response.userText;
             }
 
             // create prompt object
             const promptResponse = {
-              promptUuid: promptUuid || "", // ensure promptUuid is always of type string
+              promptUuid, // ensure promptUuid is always of type string
               triggerTimestamp: Math.floor(response.notification.date),
               responseTimestamp: Math.floor(dayjs().unix()),
-              value: response_value || "",
+              value: response_value ?? "",
             };
 
             // save the prompt response
@@ -220,8 +220,6 @@ export default function App() {
                 responseTimestamp: promptResponse.responseTimestamp,
               }
             );
-
-            return;
           }
         );
     })();

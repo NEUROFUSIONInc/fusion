@@ -10,7 +10,7 @@ export const appInsights = new ApplicationInsights({
     disableDeviceCollection: true,
   },
 });
-appInsights.addTelemetryInitializer(envelope => {
+appInsights.addTelemetryInitializer((envelope) => {
   envelope.tags["ai.cloud.role"] = "FusionMobile";
   envelope.tags["ai.device.osVersion"] = RNPlugin.getDevice().osVersion;
   envelope.tags["ai.device.osName"] = RNPlugin.getDevice().osName;

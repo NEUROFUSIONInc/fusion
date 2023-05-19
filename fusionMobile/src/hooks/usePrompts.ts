@@ -1,4 +1,5 @@
 import { useContext } from "react";
+
 import { PromptContext } from "../utils";
 
 export const usePrompts = () => {
