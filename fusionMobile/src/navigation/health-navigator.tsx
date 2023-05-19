@@ -2,6 +2,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
+
 import { Logo } from "~/components/logo";
 import { HealthScreen } from "~/pages/health";
 

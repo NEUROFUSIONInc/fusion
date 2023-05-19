@@ -3,6 +3,7 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 import * as React from "react";
+
 import { Prompt } from "~/@types";
 import { Logo } from "~/components/logo";
 import { HomeScreen } from "~/pages/home";
