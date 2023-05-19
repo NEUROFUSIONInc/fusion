@@ -10,6 +10,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Switch,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { resyncOldPrompts, appInsights } from "~/utils";
@@ -44,6 +45,11 @@ export function AccountScreen() {
       return false;
     }
   };
+
+  const [brainRecordingEnabled, setBrainRecordingEnabled] =
+    React.useState(false);
+
+  const handleBrainRecordingToggle = async () => {};
 
   return (
     <KeyboardAvoidingView
@@ -81,6 +87,7 @@ export function AccountScreen() {
             ></Button>
           )}
 
+          {/* Feedback component */}
           <View style={styles.formSection}>
             <View style={styles.formHeader}>
               <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
@@ -127,6 +134,34 @@ export function AccountScreen() {
                 );
               }}
             ></Button>
+          </View>
+
+          {/* Opt in to Reasearch Program */}
+          <View style={styles.formSection}>
+            <View style={styles.formHeader}>
+              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
+                Research Program
+              </Text>
+            </View>
+
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+            >
+              <Text
+                style={{
+                  lineHeight: 30,
+                }}
+              >
+                Enable brain recordings
+              </Text>
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={brainRecordingEnabled ? "#f5dd4b" : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={handleBrainRecordingToggle}
+                value={brainRecordingEnabled}
+              />
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
