@@ -8,10 +8,25 @@ export interface IIntegration {
 
 export const integrations = [
   {
+    title: "Neurosity",
+    href: "https://neurosity.co",
+    imageUrl: "/images/integrations/neurosity_icon_light.png",
+    description:
+      "Neurosity is a wearable device that helps you train your brain to be more focused, calm, and productive.",
+    active: true,
+  },
+  {
     title: "Fusion (Health & Behavior)",
     href: "https://usefusion.app/download",
     imageUrl: "/images/logo.png",
-    description: "Connect your health data from Apple Health, Google Fit with the Fusion mobile app.",
+    description: "Connect your behavior and health data from Apple Health, Google Fit with the Fusion mobile app.",
+    active: true,
+  },
+  {
+    title: "ActivityWatch",
+    href: "https://activitywatch.net",
+    imageUrl: "/images/integrations/activitywatch_icon.png",
+    description: "ActivityWatch is an open source app that automatically tracks how you spend time on your devices.",
     active: true,
   },
   {
@@ -23,25 +38,10 @@ export const integrations = [
     active: false,
   },
   {
-    title: "Neurosity",
-    href: "https://neurosity.co",
-    imageUrl: "/images/integrations/neurosity_icon_light.png",
-    description:
-      "Neurosity is a wearable device that helps you train your brain to be more focused, calm, and productive.",
-    active: true,
-  },
-  {
     title: "MagicFlow",
     href: "https://magicflow.com",
     imageUrl: "/images/integrations/magicflow_icon.webp",
     description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
-    active: true,
-  },
-  {
-    title: "ActivityWatch",
-    href: "https://activitywatch.net",
-    imageUrl: "/images/integrations/activitywatch_icon.png",
-    description: "ActivityWatch is an open source app that automatically tracks how you spend time on your devices.",
     active: true,
   },
 ] as const;

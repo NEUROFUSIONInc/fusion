@@ -100,9 +100,12 @@ We will be using [Azure Application Insights] for event tracking.
     - identifier (randomly generated, different from what's in the local db)
 
   - (done) prompt_response (changed in Fusion_ios_1.0.01_14 from `prompt_notification_response`)
+
     - identifier
     - triggerTimestamp
     - responseTimestamp
+
+  - (todo) prompt_notification
 
 TODO: handle when user is offline :p
 
