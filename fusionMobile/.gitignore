@@ -13,6 +13,5 @@ web-build/
 # macOS
 .DS_Store
 
-
-# key
-*pc-api-*.json
+.eslintcache
+*pc-api*.json
