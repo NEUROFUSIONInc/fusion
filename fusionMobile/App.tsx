@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
 import { Alert, Platform, View } from "react-native";
@@ -77,7 +78,7 @@ Notifications.setNotificationHandler({
   },
 });
 
-export default function App() {
+function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
   >();
@@ -243,3 +244,11 @@ export default function App() {
     </View>
   );
 }
+
+let AppEntryPoint = App;
+
+if (Constants.expoConfig?.extra?.storybookEnabled === "true") {
+  AppEntryPoint = require("./.storybook").default;
+}
+
+export default AppEntryPoint;
