@@ -1,5 +1,5 @@
-import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ReactNativePlugin } from "@microsoft/applicationinsights-react-native";
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 
 const RNPlugin = new ReactNativePlugin();
 export const appInsights = new ApplicationInsights({
