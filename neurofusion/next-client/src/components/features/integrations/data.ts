@@ -8,14 +8,6 @@ export interface IIntegration {
 
 export const integrations = [
   {
-    title: "Neurosity",
-    href: "https://neurosity.co",
-    imageUrl: "/images/integrations/neurosity_icon_light.png",
-    description:
-      "Neurosity is a wearable device that helps you train your brain to be more focused, calm, and productive.",
-    active: true,
-  },
-  {
     title: "Fusion (Health & Behavior)",
     href: "https://usefusion.app/download",
     imageUrl: "/images/logo.png",
@@ -23,26 +15,35 @@ export const integrations = [
     active: true,
   },
   {
-    title: "ActivityWatch",
-    href: "https://activitywatch.net",
-    imageUrl: "/images/integrations/activitywatch_icon.png",
-    description: "ActivityWatch is an open source app that automatically tracks how you spend time on your devices.",
+    title: "Neurosity (EEG Brain Data)",
+    href: "https://neurosity.co",
+    imageUrl: "/images/integrations/neurosity_icon_light.png",
+    description:
+      "Neurosity is a wearable device that measures EEG brain activity. It also predicts how focused & calm you are in a given moment.",
     active: true,
   },
   {
-    title: "Spotify",
+    title: "MagicFlow (Productivity)",
+    href: "https://magicflow.com",
+    imageUrl: "/images/integrations/magicflow_icon.webp",
+    description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
+    active: true,
+  },
+  {
+    title: "ActivityWatch (Screen Time)",
+    href: "https://activitywatch.net",
+    imageUrl: "/images/integrations/activitywatch_icon.png",
+    description:
+      "ActivityWatch is an open source, privacy first app that automatically tracks how you spend time on your devices.",
+    active: true,
+  },
+  {
+    title: "Spotify (Music)",
     href: "https://spotify.com",
     imageUrl: "/images/integrations/spotify_icon_green.png",
     description:
       "A digital streaming service that gives you access to millions of songs and content from all over the world.",
     active: false,
-  },
-  {
-    title: "MagicFlow",
-    href: "https://magicflow.com",
-    imageUrl: "/images/integrations/magicflow_icon.webp",
-    description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
-    active: true,
   },
 ] as const;
 
