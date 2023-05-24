@@ -1,4 +1,5 @@
 export interface IIntegration {
+  slug: string;
   title: string;
   href: string;
   imageUrl: string;
@@ -8,6 +9,7 @@ export interface IIntegration {
 
 export const integrations = [
   {
+    slug: "fusion",
     title: "Fusion (Health & Behavior)",
     href: "https://usefusion.app/download",
     imageUrl: "/images/logo.png",
@@ -15,6 +17,7 @@ export const integrations = [
     active: true,
   },
   {
+    slug: "neurosity",
     title: "Neurosity (EEG Brain Data)",
     href: "https://neurosity.co",
     imageUrl: "/images/integrations/neurosity_icon_light.png",
@@ -23,6 +26,7 @@ export const integrations = [
     active: true,
   },
   {
+    slug: "magicflow",
     title: "MagicFlow (Productivity)",
     href: "https://magicflow.com",
     imageUrl: "/images/integrations/magicflow_icon.webp",
@@ -30,6 +34,7 @@ export const integrations = [
     active: true,
   },
   {
+    slug: "activitywatch",
     title: "ActivityWatch (Screen Time)",
     href: "https://activitywatch.net",
     imageUrl: "/images/integrations/activitywatch_icon.png",
@@ -38,6 +43,7 @@ export const integrations = [
     active: true,
   },
   {
+    slug: "spotify",
     title: "Spotify (Music)",
     href: "https://spotify.com",
     imageUrl: "/images/integrations/spotify_icon_green.png",
