@@ -1,4 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { NestableScrollContainer, NestableDraggableFlatList } from "react-native-draggable-flatlist"
 import dayjs from "dayjs";
 import React from "react";
 import {
@@ -11,8 +12,13 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import DraggableFlatList, {
+  ScaleDecorator,
+  RenderItemParams,
+} from "react-native-draggable-flatlist";
 
 import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
@@ -24,6 +30,7 @@ import {
   readSavedPrompts,
   appInsights,
 } from "~/utils";
+import { black } from "react-native-paper/lib/typescript/src/styles/themes/v2/colors";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -32,6 +39,7 @@ export function PromptScreen() {
 
   const [promptObject, setPromptObject] = React.useState<Prompt | null>(null);
   const [promptText, setPromptText] = React.useState("");
+  const [customOptionsInputText, setcustomOptionsInputText] = React.useState("");
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
   const [responseType, setResponseType] =
     React.useState<PromptResponseType | null>(null);
@@ -39,8 +47,19 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    // { label: "Custom Options", value: "customOptions" },
+    { label: "Custom Options", value: "customOptions"},
   ]);
+
+  const [customOptions, setCustomOptions] = React.useState<string[]>(
+    []
+  )
+
+  React.useEffect(() =>
+  {
+    setCustomOptions(customOptionsInputText.split(";"))
+  }
+  ,[customOptionsInputText])
+
 
   const [countPerDay, setCountPerDay] = React.useState<string | undefined>(
     undefined
@@ -92,6 +111,13 @@ export function PromptScreen() {
         setEnd(
           getDayjsFromTimestring(route.params.prompt.notificationConfig_endTime)
         );
+      }
+
+      if (route.params.prompt.additionalMeta){
+        let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta)
+        if(additionalMetaObj["customOptionText"]!=null){
+          setcustomOptionsInputText(additionalMetaObj["customOptionText"])
+        }
       }
 
       appInsights.trackPageView({
@@ -153,6 +179,30 @@ export function PromptScreen() {
               />
             </View>
 
+            {
+              responseType == "customOptions" ? (
+                  <View style={styles.formComponent}>
+
+                  <Text>Add options seperated by semicolons</Text>
+
+                  {customOptions.map((option) => (
+                    <View>
+                      <Text style={[
+                          styles.draggableListItem,
+                        ]}>{option}</Text>
+                    </View>
+                  ))}
+
+                  <TextInput
+                    placeholder="e.g Energetic;Neutral;Tired"
+                    style={styles.input}
+                    value={customOptionsInputText}
+                    onChangeText={setcustomOptionsInputText}
+                  />
+                  </View>
+              ) : null
+            }
+
             <View style={styles.formComponent}>
               <View style={styles.frequencyContainer}>
                 <Text>How many times?</Text>
@@ -194,9 +244,20 @@ export function PromptScreen() {
                   return;
                 }
 
+                let additionalMeta = "";
+                responseType == "customOptions" ? additionalMeta = JSON.stringify({"customOptionText":customOptionsInputText}): null;
+                if((new Set(customOptions)).size != customOptions.length){
+                  throw new Error("Duplicates in custom prompt");
+                }
+                if(customOptions.includes("")){
+                  throw new Error("Empty entry in custom prompts");
+                }
+               
+
                 const res = await savePrompt(
                   promptText,
                   responseType!,
+                  additionalMeta,
                   parseInt(countPerDay ?? "0", 10),
                   start.format("HH:mm"),
                   end.format("HH:mm"),
@@ -223,7 +284,7 @@ export function PromptScreen() {
                   throw new Error("There was an error saving the prompt");
                 }
               } catch (error) {
-                Alert.alert("Error", "There was an error saving the prompt");
+                Alert.alert("Error", String(error));
                 console.log(error);
               }
             }}
@@ -278,4 +339,14 @@ const styles = StyleSheet.create({
   formComponent: {
     marginTop: 10,
   },
+  draggableListItem: {    
+  alignItems: "center",    
+  justifyContent: "center",   
+  borderBottomWidth:1,
+  borderBottomColor:"black",
+  padding:3,
+  paddingLeft:10,
+  }
+  
+  ,
 });

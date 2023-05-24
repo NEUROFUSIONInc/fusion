@@ -94,7 +94,24 @@ const createBaseTables = () => {
                 [],
                 () => {
                   // finished creating all the tables
-                  resolve(true);
+                  tx.executeSql("PRAGMA table_info(prompts)", [], (tx, results) => {
+                    let columnExists = false;
+                    for (let i = 0; i < results.rows.length; i++) {
+                        if (results.rows.item(i).name === "additionalMeta") {
+                            columnExists = true;
+                            break;
+                        }
+                    }
+                    if (!columnExists) {
+                        tx.executeSql("ALTER TABLE prompts ADD COLUMN additionalMeta TEXT", [], (tx, results) => {
+                            console.log("Column added successfully");
+                            resolve(true);
+                        }, 
+                        );
+                    }
+                    resolve(true);
+                  }
+                  ); 
                 },
                 (tx, error) => {
                   console.log("error", error);
@@ -116,6 +133,7 @@ const createBaseTables = () => {
           return Boolean(error);
         }
       );
+     
     });
   });
 };
@@ -202,6 +220,7 @@ export const deletePrompt = async (uuid: string) => {
 export const savePrompt = async (
   promptText: string,
   responseType: PromptResponseType,
+  additionalMeta: string,
   countPerDay: number,
   startTime: string,
   endTime: string,
@@ -227,12 +246,15 @@ export const savePrompt = async (
     return null;
   }
 
+    // TODO: check for prompt with duplicate name
+
   try {
     // build the prompt object
     const prompt = {
       uuid: uuid ? uuid : uuidv4(),
       promptText,
       responseType,
+      additionalMeta,
       notificationConfig_days: JSON.stringify(days),
       notificationConfig_startTime: startTime,
       notificationConfig_endTime: endTime,
@@ -253,10 +275,11 @@ export const savePrompt = async (
                 console.log("updating prompt");
                 // update prompt
                 tx.executeSql(
-                  `UPDATE prompts SET promptText = ?, responseType = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
+                  `UPDATE prompts SET promptText = ?, responseType = ?, additionalMeta = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
                   [
                     prompt.promptText,
                     prompt.responseType,
+                    prompt.additionalMeta,
                     prompt.notificationConfig_days,
                     prompt.notificationConfig_startTime,
                     prompt.notificationConfig_endTime,
@@ -276,11 +299,12 @@ export const savePrompt = async (
               } else {
                 // save prompt to db
                 tx.executeSql(
-                  `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                  `INSERT INTO prompts (uuid, promptText, responseType, additionalMeta, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                   [
                     prompt.uuid,
                     prompt.promptText,
                     prompt.responseType,
+                    prompt.additionalMeta,
                     prompt.notificationConfig_days,
                     prompt.notificationConfig_startTime,
                     prompt.notificationConfig_endTime,
@@ -349,10 +373,18 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     prompt.notificationConfig_countPerDay
   );
 
+  let responseTypeMap = prompt.responseType.toString();
+  if(prompt.responseType="customOptions"){
+    createCustomOptionNotificationIdentifier(prompt.additionalMeta,prompt.uuid);
+    responseTypeMap = prompt.uuid+"-customOptions";
+  }
+
+  
+
   const triggerObject: NotificationTriggerInput = {};
   const contentObject: NotificationContentInput = {
     title: `Fusion: ${prompt.promptText}`,
-    categoryIdentifier: prompt.responseType,
+    categoryIdentifier: responseTypeMap,
   };
   // if platform is android assign channel
   if (Platform.OS === "android") {
@@ -641,6 +673,7 @@ export const getPromptResponses = async (prompt: Prompt) => {
                 return {
                   promptUuid: row.promptUuid,
                   value: row.value,
+                  additionalMeta:row.additionalMeta,
                   triggerTimestamp: row.triggerTimestamp,
                   responseTimestamp: row.responseTimestamp,
                 } as PromptResponse;
@@ -765,6 +798,9 @@ export async function fetchPromptById(promptUuid: string) {
                   notificationConfig_endTime: row.notificationConfig_endTime,
                   notificationConfig_countPerDay:
                     row.notificationConfig_countPerDay,
+                  additionalMeta: row.additionalMeta ? JSON.parse(
+                    row.additionalMeta
+                  ) : row.additionalMeta
                 };
               });
 
@@ -926,4 +962,17 @@ export async function resyncOldPrompts() {
 
     await Updates.reloadAsync();
   }
+}
+
+export async function createCustomOptionNotificationIdentifier(customOptions : string, promptId: string){
+  let customOptionList = JSON.parse(customOptions)["customOptionText"].split(";");
+  let notificationOptions = customOptionList.map(option => ({
+    identifier: option,
+    buttonTitle: option,
+    options: {
+      opensAppToForeground: false,
+    },
+  }));
+  
+  await Notifications.setNotificationCategoryAsync(promptId+"-customOptions", notificationOptions);
 }

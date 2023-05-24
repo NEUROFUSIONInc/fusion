@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.neurofusion.fusion",
@@ -34,10 +36,11 @@
     "jsEngine": "hermes",
     "extra": {
       "eas": {
-        "projectId": "f79cfe2d-2f56-413a-89f8-b9fde538ac75"
+        "projectId": "c8ac2508-eed5-4832-9625-e58968c44a21"
       }
     },
-    "plugins": ["expo-notifications"],
-    "owner": "oreogundipe"
+    "plugins": [
+      "expo-notifications"
+    ]
   }
 }
