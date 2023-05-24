@@ -39,6 +39,7 @@
         "projectId": "c8ac2508-eed5-4832-9625-e58968c44a21"
       }
     },
+    "owner": "oreogundipe",
     "plugins": [
       "expo-notifications"
     ]
