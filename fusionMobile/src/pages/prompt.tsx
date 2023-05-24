@@ -1,5 +1,4 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { NestableScrollContainer, NestableDraggableFlatList } from "react-native-draggable-flatlist"
 import dayjs from "dayjs";
 import React from "react";
 import {
@@ -15,11 +14,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import DraggableFlatList, {
-  ScaleDecorator,
-  RenderItemParams,
-} from "react-native-draggable-flatlist";
-
 import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
