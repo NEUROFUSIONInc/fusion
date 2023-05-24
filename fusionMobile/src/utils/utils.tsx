@@ -963,7 +963,7 @@ export async function resyncOldPrompts() {
     await Updates.reloadAsync();
   }
 }
-
+//Creates custom NotificationCategory with the name promptId+"-customOptions" containing customOptions selection
 export async function createCustomOptionNotificationIdentifier(customOptions : string, promptId: string){
   let customOptionList = JSON.parse(customOptions)["customOptionText"].split(";");
   let notificationOptions = customOptionList.map(option => ({
