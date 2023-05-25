@@ -41,7 +41,7 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    { label: "Custom Options", value: "customOptions"},
+    { label: "Custom Options", value: "customOptions"}, //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
   ]);
 
   const [customOptions, setCustomOptions] = React.useState<string[]>(
@@ -50,14 +50,13 @@ export function PromptScreen() {
 
   React.useEffect(() =>
   {
-    setCustomOptions(customOptionsInputText.split(";"))
+    setCustomOptions(customOptionsInputText.split(";")) // semicolon seperated parsing into CustomOptions List
   }
   ,[customOptionsInputText])
 
 
   const [countPerDay, setCountPerDay] = React.useState<string | undefined>(
-    undefined
-  );
+    undefined );
   const [days, setDays] = React.useState({
     monday: true,
     tuesday: true,
@@ -67,7 +66,6 @@ export function PromptScreen() {
     saturday: true,
     sunday: true,
   });
-
   const [start, setStart] = React.useState(
     dayjs().startOf("day").add(8, "hour")
   );
@@ -107,7 +105,7 @@ export function PromptScreen() {
         );
       }
 
-      if (route.params.prompt.additionalMeta){
+      if (route.params.prompt.additionalMeta){ // if there is additionalMeta to parse, parse for reentry into fields
         let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta)
         if(additionalMetaObj["customOptionText"]!=null){
           setcustomOptionsInputText(additionalMetaObj["customOptionText"])
@@ -245,6 +243,9 @@ export function PromptScreen() {
                 }
                 if(customOptions.includes("")){
                   throw new Error("Empty entry in custom prompts");
+                }
+                if(customOptions.length<2){
+                  throw new Error("At least two custom prompts are required");
                 }
                
 

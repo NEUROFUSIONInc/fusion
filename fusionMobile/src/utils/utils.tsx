@@ -374,7 +374,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
   );
 
   let responseTypeMap = prompt.responseType.toString();
-  if(prompt.responseType="customOptions"){
+  if(prompt.responseType="customOptions"){ // if custom option generate bespoke notificationtypes with the custom option selections 
     createCustomOptionNotificationIdentifier(prompt.additionalMeta,prompt.uuid);
     responseTypeMap = prompt.uuid+"-customOptions";
   }

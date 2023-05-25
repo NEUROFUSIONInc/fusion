@@ -54,8 +54,8 @@ export function PromptEntryScreen() {
 
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   React.useEffect(() => {
-    if (promptObject?.additionalMeta) {
-      setCustomOptions(promptObject.additionalMeta["customOptionText"].split(";"));
+    if (promptObject?.responseType=="customOptions") {
+      setCustomOptions(promptObject.additionalMeta["customOptionText"].split(";")); //generates customOptions from additionalMeta
     }
   }, [promptObject])
 
@@ -159,7 +159,8 @@ export function PromptEntryScreen() {
                 </View>
               )}
 
-              {promptObject.responseType === "customOptions" && (customOptions.length > 0) && (
+              {/* if the prompt is a custom prompt, show the custom options */
+              promptObject.responseType === "customOptions" && (customOptions.length > 0) && (
                 
                 <View style={styles.customOptionsContainer}>
                   {customOptions.map((option) => (
