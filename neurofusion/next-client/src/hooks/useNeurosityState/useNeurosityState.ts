@@ -8,9 +8,7 @@ import { neurosityReducer, initialState, DeviceInfo } from "./config";
 
 import { API_URL } from "~/config";
 
-const neurosity = new Neurosity({
-  autoSelectDevice: false,
-});
+import { neurosity } from "~/services";
 
 export function useNeurosityState() {
   const [state, dispatch] = useReducer(neurosityReducer, initialState);
@@ -153,5 +151,6 @@ export async function connectToNeurosityDevice(deviceId: string) {
   const device = await neurosity.selectDevice((devices) => {
     return devices.find((device) => device.deviceId === deviceId) as DeviceInfo;
   });
+  console.log("connecting to device", device);
   return device;
 }
