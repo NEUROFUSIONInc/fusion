@@ -10,7 +10,7 @@ What do we find when we stop treating our usage data across apps as a by-product
 
 - brain activity (neurosity)
 - productivity / actions on device - (magicflow, activitywatch)
-- health (tryvital - oura, fitbit, glucose monitor etc)
+- health (directly from Apple Health / Google Fit)
 
 ## Data Storage
 

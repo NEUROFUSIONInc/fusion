@@ -11,9 +11,9 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-
 import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
@@ -32,6 +32,8 @@ export function PromptScreen() {
 
   const [promptObject, setPromptObject] = React.useState<Prompt | null>(null);
   const [promptText, setPromptText] = React.useState("");
+  const [customOptionsInputText, setcustomOptionsInputText] =
+    React.useState("");
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
   const [responseType, setResponseType] =
     React.useState<PromptResponseType | null>(null);
@@ -39,8 +41,14 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    // { label: "Custom Options", value: "customOptions" },
+    //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
+    { label: "Custom Options", value: "customOptions" },
   ]);
+
+  const [customOptions, setCustomOptions] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    setCustomOptions(customOptionsInputText.split(" ").join("").split(";")); // semicolon seperated parsing into CustomOptions List
+  }, [customOptionsInputText]);
 
   const [countPerDay, setCountPerDay] = React.useState<string | undefined>(
     undefined
@@ -54,7 +62,6 @@ export function PromptScreen() {
     saturday: true,
     sunday: true,
   });
-
   const [start, setStart] = React.useState(
     dayjs().startOf("day").add(8, "hour")
   );
@@ -94,6 +101,14 @@ export function PromptScreen() {
         );
       }
 
+      if (route.params.prompt.additionalMeta) {
+        // if there is additionalMeta to parse, parse for reentry into fields
+        let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta);
+        if (additionalMetaObj["customOptionText"] != null) {
+          setcustomOptionsInputText(additionalMetaObj["customOptionText"]);
+        }
+      }
+
       appInsights.trackPageView({
         name: "Author Prompt",
         properties: {
@@ -131,7 +146,6 @@ export function PromptScreen() {
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
-                multiline
                 placeholder="e.g How are you feeling about work?"
                 style={styles.input}
                 value={promptText}
@@ -152,6 +166,25 @@ export function PromptScreen() {
                 setItems={setResponseTypeItems}
               />
             </View>
+
+            {responseType == "customOptions" ? (
+              <View style={styles.formComponent}>
+                <Text>Add options below and seperate them with ';'</Text>
+
+                <TextInput
+                  placeholder="e.g Energetic;Neutral;Tired"
+                  style={styles.input}
+                  value={customOptionsInputText}
+                  onChangeText={setcustomOptionsInputText}
+                />
+
+                {customOptions.map((option) => (
+                  <View style={{ marginTop: 5 }}>
+                    <Text style={[styles.customOptionsListItem]}>{option}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
 
             <View style={styles.formComponent}>
               <View style={styles.frequencyContainer}>
@@ -194,9 +227,26 @@ export function PromptScreen() {
                   return;
                 }
 
+                let additionalMeta = "";
+                responseType == "customOptions"
+                  ? (additionalMeta = JSON.stringify({
+                      customOptionText: customOptionsInputText,
+                    }))
+                  : null;
+                if (new Set(customOptions).size != customOptions.length) {
+                  throw new Error("Duplicates in custom prompt");
+                }
+                if (customOptions.includes("")) {
+                  throw new Error("Empty entry in custom prompts");
+                }
+                if (customOptions.length < 2) {
+                  throw new Error("At least two custom prompts are required");
+                }
+
                 const res = await savePrompt(
                   promptText,
                   responseType!,
+                  additionalMeta,
                   parseInt(countPerDay ?? "0", 10),
                   start.format("HH:mm"),
                   end.format("HH:mm"),
@@ -223,7 +273,7 @@ export function PromptScreen() {
                   throw new Error("There was an error saving the prompt");
                 }
               } catch (error) {
-                Alert.alert("Error", "There was an error saving the prompt");
+                Alert.alert("Error", String(error));
                 console.log(error);
               }
             }}
@@ -252,7 +302,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
-    lineHeight: 25,
   },
   formSection: {
     width: "100%",
@@ -277,5 +326,13 @@ const styles = StyleSheet.create({
   },
   formComponent: {
     marginTop: 10,
+  },
+  customOptionsListItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+    padding: 3,
+    paddingLeft: 10,
   },
 });

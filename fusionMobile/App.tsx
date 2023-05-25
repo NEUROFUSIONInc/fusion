@@ -189,7 +189,7 @@ export default function App() {
               notificationCategory =
                 response.notification.request.content.categoryIdentifier;
             }
-            if (notificationCategory === "yesno") {
+            if (notificationCategory === "yesno"|| notificationCategory?.endsWith("customOptions")) {
               response_value = response.actionIdentifier;
             } else if (
               notificationCategory === "text" ||
