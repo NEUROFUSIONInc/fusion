@@ -94,24 +94,30 @@ const createBaseTables = () => {
                 [],
                 () => {
                   // finished creating all the tables
-                  tx.executeSql("PRAGMA table_info(prompts)", [], (tx, results) => {
-                    let columnExists = false;
-                    for (let i = 0; i < results.rows.length; i++) {
+                  tx.executeSql(
+                    "PRAGMA table_info(prompts)",
+                    [],
+                    (tx, results) => {
+                      let columnExists = false;
+                      for (let i = 0; i < results.rows.length; i++) {
                         if (results.rows.item(i).name === "additionalMeta") {
-                            columnExists = true;
-                            break;
+                          columnExists = true;
+                          break;
                         }
-                    }
-                    if (!columnExists) {
-                        tx.executeSql("ALTER TABLE prompts ADD COLUMN additionalMeta TEXT", [], (tx, results) => {
+                      }
+                      if (!columnExists) {
+                        tx.executeSql(
+                          "ALTER TABLE prompts ADD COLUMN additionalMeta TEXT",
+                          [],
+                          (tx, results) => {
                             console.log("Column added successfully");
                             resolve(true);
-                        }, 
+                          }
                         );
+                      }
+                      resolve(true);
                     }
-                    resolve(true);
-                  }
-                  ); 
+                  );
                 },
                 (tx, error) => {
                   console.log("error", error);
@@ -133,7 +139,6 @@ const createBaseTables = () => {
           return Boolean(error);
         }
       );
-     
     });
   });
 };
@@ -246,7 +251,7 @@ export const savePrompt = async (
     return null;
   }
 
-    // TODO: check for prompt with duplicate name
+  // TODO: check for prompt with duplicate name
 
   try {
     // build the prompt object
@@ -374,12 +379,14 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
   );
 
   let responseTypeMap = prompt.responseType.toString();
-  if(prompt.responseType="customOptions"){ // if custom option generate bespoke notificationtypes with the custom option selections 
-    createCustomOptionNotificationIdentifier(prompt.additionalMeta,prompt.uuid);
-    responseTypeMap = prompt.uuid+"-customOptions";
+  if ((prompt.responseType = "customOptions")) {
+    // if custom option generate bespoke notificationtypes with the custom option selections
+    createCustomOptionNotificationIdentifier(
+      prompt.additionalMeta,
+      prompt.uuid
+    );
+    responseTypeMap = prompt.uuid + "-customOptions";
   }
-
-  
 
   const triggerObject: NotificationTriggerInput = {};
   const contentObject: NotificationContentInput = {
@@ -673,7 +680,7 @@ export const getPromptResponses = async (prompt: Prompt) => {
                 return {
                   promptUuid: row.promptUuid,
                   value: row.value,
-                  additionalMeta:row.additionalMeta,
+                  additionalMeta: row.additionalMeta,
                   triggerTimestamp: row.triggerTimestamp,
                   responseTimestamp: row.responseTimestamp,
                 } as PromptResponse;
@@ -798,9 +805,9 @@ export async function fetchPromptById(promptUuid: string) {
                   notificationConfig_endTime: row.notificationConfig_endTime,
                   notificationConfig_countPerDay:
                     row.notificationConfig_countPerDay,
-                  additionalMeta: row.additionalMeta ? JSON.parse(
-                    row.additionalMeta
-                  ) : row.additionalMeta
+                  additionalMeta: row.additionalMeta
+                    ? JSON.parse(row.additionalMeta)
+                    : row.additionalMeta,
                 };
               });
 
@@ -901,6 +908,7 @@ export async function resyncOldPrompts() {
         savePromptStatus = await savePrompt(
           prompt.promptText,
           prompt.responseType,
+          "",
           3,
           "08:00",
           "18:00",
@@ -964,15 +972,22 @@ export async function resyncOldPrompts() {
   }
 }
 //Creates custom NotificationCategory with the name promptId+"-customOptions" containing customOptions selection
-export async function createCustomOptionNotificationIdentifier(customOptions : string, promptId: string){
-  let customOptionList = JSON.parse(customOptions)["customOptionText"].split(";");
-  let notificationOptions = customOptionList.map(option => ({
+export async function createCustomOptionNotificationIdentifier(
+  customOptions: string,
+  promptId: string
+) {
+  let customOptionList =
+    JSON.parse(customOptions)["customOptionText"].split(";");
+  let notificationOptions = customOptionList.map((option) => ({
     identifier: option,
     buttonTitle: option,
     options: {
       opensAppToForeground: false,
     },
   }));
-  
-  await Notifications.setNotificationCategoryAsync(promptId+"-customOptions", notificationOptions);
+
+  await Notifications.setNotificationCategoryAsync(
+    promptId + "-customOptions",
+    notificationOptions
+  );
 }

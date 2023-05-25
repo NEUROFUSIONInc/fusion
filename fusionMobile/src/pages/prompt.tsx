@@ -24,7 +24,6 @@ import {
   readSavedPrompts,
   appInsights,
 } from "~/utils";
-import { black } from "react-native-paper/lib/typescript/src/styles/themes/v2/colors";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -33,7 +32,8 @@ export function PromptScreen() {
 
   const [promptObject, setPromptObject] = React.useState<Prompt | null>(null);
   const [promptText, setPromptText] = React.useState("");
-  const [customOptionsInputText, setcustomOptionsInputText] = React.useState("");
+  const [customOptionsInputText, setcustomOptionsInputText] =
+    React.useState("");
   const [responseTypeOpen, setResponseTypeOpen] = React.useState(false);
   const [responseType, setResponseType] =
     React.useState<PromptResponseType | null>(null);
@@ -41,22 +41,18 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    { label: "Custom Options", value: "customOptions"}, //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
+    //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
+    { label: "Custom Options", value: "customOptions" },
   ]);
 
-  const [customOptions, setCustomOptions] = React.useState<string[]>(
-    [] 
-  )
-
-  React.useEffect(() =>
-  {
-    setCustomOptions(customOptionsInputText.split(";")) // semicolon seperated parsing into CustomOptions List
-  }
-  ,[customOptionsInputText])
-
+  const [customOptions, setCustomOptions] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    setCustomOptions(customOptionsInputText.split(" ").join("").split(";")); // semicolon seperated parsing into CustomOptions List
+  }, [customOptionsInputText]);
 
   const [countPerDay, setCountPerDay] = React.useState<string | undefined>(
-    undefined );
+    undefined
+  );
   const [days, setDays] = React.useState({
     monday: true,
     tuesday: true,
@@ -105,10 +101,11 @@ export function PromptScreen() {
         );
       }
 
-      if (route.params.prompt.additionalMeta){ // if there is additionalMeta to parse, parse for reentry into fields
-        let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta)
-        if(additionalMetaObj["customOptionText"]!=null){
-          setcustomOptionsInputText(additionalMetaObj["customOptionText"])
+      if (route.params.prompt.additionalMeta) {
+        // if there is additionalMeta to parse, parse for reentry into fields
+        let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta);
+        if (additionalMetaObj["customOptionText"] != null) {
+          setcustomOptionsInputText(additionalMetaObj["customOptionText"]);
         }
       }
 
@@ -149,7 +146,6 @@ export function PromptScreen() {
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
-                multiline
                 placeholder="e.g How are you feeling about work?"
                 style={styles.input}
                 value={promptText}
@@ -171,29 +167,24 @@ export function PromptScreen() {
               />
             </View>
 
-            {
-              responseType == "customOptions" ? (
-                  <View style={styles.formComponent}>
+            {responseType == "customOptions" ? (
+              <View style={styles.formComponent}>
+                <Text>Add options below and seperate them with ';'</Text>
 
-                  <Text>Add options seperated by semicolons</Text>
+                <TextInput
+                  placeholder="e.g Energetic;Neutral;Tired"
+                  style={styles.input}
+                  value={customOptionsInputText}
+                  onChangeText={setcustomOptionsInputText}
+                />
 
-                  {customOptions.map((option) => (
-                    <View>
-                      <Text style={[
-                          styles.draggableListItem,
-                        ]}>{option}</Text>
-                    </View>
-                  ))}
-
-                  <TextInput
-                    placeholder="e.g Energetic;Neutral;Tired"
-                    style={styles.input}
-                    value={customOptionsInputText}
-                    onChangeText={setcustomOptionsInputText}
-                  />
+                {customOptions.map((option) => (
+                  <View style={{ marginTop: 5 }}>
+                    <Text style={[styles.customOptionsListItem]}>{option}</Text>
                   </View>
-              ) : null
-            }
+                ))}
+              </View>
+            ) : null}
 
             <View style={styles.formComponent}>
               <View style={styles.frequencyContainer}>
@@ -237,17 +228,20 @@ export function PromptScreen() {
                 }
 
                 let additionalMeta = "";
-                responseType == "customOptions" ? additionalMeta = JSON.stringify({"customOptionText":customOptionsInputText}): null;
-                if((new Set(customOptions)).size != customOptions.length){
+                responseType == "customOptions"
+                  ? (additionalMeta = JSON.stringify({
+                      customOptionText: customOptionsInputText,
+                    }))
+                  : null;
+                if (new Set(customOptions).size != customOptions.length) {
                   throw new Error("Duplicates in custom prompt");
                 }
-                if(customOptions.includes("")){
+                if (customOptions.includes("")) {
                   throw new Error("Empty entry in custom prompts");
                 }
-                if(customOptions.length<2){
+                if (customOptions.length < 2) {
                   throw new Error("At least two custom prompts are required");
                 }
-               
 
                 const res = await savePrompt(
                   promptText,
@@ -308,7 +302,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
-    lineHeight: 25,
   },
   formSection: {
     width: "100%",
@@ -334,14 +327,12 @@ const styles = StyleSheet.create({
   formComponent: {
     marginTop: 10,
   },
-  draggableListItem: {    
-  alignItems: "center",    
-  justifyContent: "center",   
-  borderBottomWidth:1,
-  borderBottomColor:"black",
-  padding:3,
-  paddingLeft:10,
-  }
-  
-  ,
+  customOptionsListItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+    padding: 3,
+    paddingLeft: 10,
+  },
 });

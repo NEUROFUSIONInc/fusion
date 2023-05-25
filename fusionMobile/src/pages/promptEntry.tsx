@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexWrap: 'wrap',
     alignContent:"center",
-    height:200,
     flexDirection:"row"
   },
   checkboxContainer: {
