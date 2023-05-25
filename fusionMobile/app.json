@@ -14,13 +14,11 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.neurofusion.fusion",
-      "buildNumber": "14"
+      "buildNumber": "15"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,8 +38,6 @@
       }
     },
     "owner": "oreogundipe",
-    "plugins": [
-      "expo-notifications"
-    ]
+    "plugins": ["expo-notifications"]
   }
 }
