@@ -45,7 +45,7 @@ export function PromptScreen() {
   ]);
 
   const [customOptions, setCustomOptions] = React.useState<string[]>(
-    []
+    [] 
   )
 
   React.useEffect(() =>
