@@ -228,19 +228,20 @@ export function PromptScreen() {
                 }
 
                 let additionalMeta = "";
-                responseType == "customOptions"
-                  ? (additionalMeta = JSON.stringify({
-                      customOptionText: customOptionsInputText,
-                    }))
-                  : null;
-                if (new Set(customOptions).size != customOptions.length) {
-                  throw new Error("Duplicates in custom prompt");
-                }
-                if (customOptions.includes("")) {
-                  throw new Error("Empty entry in custom prompts");
-                }
-                if (customOptions.length < 2) {
-                  throw new Error("At least two custom prompts are required");
+                if (responseType == "customOptions") {
+                  additionalMeta = JSON.stringify({
+                    customOptionText: customOptionsInputText,
+                  });
+
+                  if (new Set(customOptions).size != customOptions.length) {
+                    throw new Error("Duplicates in custom prompt");
+                  }
+                  if (customOptions.includes("")) {
+                    throw new Error("Empty entry in custom prompts");
+                  }
+                  if (customOptions.length < 2) {
+                    throw new Error("At least two custom prompts are required");
+                  }
                 }
 
                 const res = await savePrompt(
