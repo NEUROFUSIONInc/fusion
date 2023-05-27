@@ -43,7 +43,8 @@ export const IntegrationsContainer = () => {
   const isIntegrationConnected = (integrationSlug: IntegrationSlug) => {
     switch (integrationSlug) {
       case "fusion":
-      // check if fusion is connected
+        // check if fusion is connected
+        return false;
       case "spotify":
         // check if Spotify is connected
         return false;

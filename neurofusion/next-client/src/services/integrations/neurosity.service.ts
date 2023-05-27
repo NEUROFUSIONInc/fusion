@@ -1,15 +1,25 @@
-import { api } from "~/config";
+/* eslint-disable import/no-extraneous-dependencies */
 import { Neurosity } from "@neurosity/sdk";
-import { Epoch, PSD, PowerByBand } from "@neurosity/sdk/dist/esm/types/brainwaves";
+import { Epoch, PSD } from "@neurosity/sdk/dist/esm/types/brainwaves";
 
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { interval, fromEvent, takeUntil, takeWhile } from "rxjs";
+import { takeWhile } from "rxjs";
 
 export const neurosity = new Neurosity({
   autoSelectDevice: false,
 });
+
+export interface PowerByBand {
+  data: {
+    gamma: number[];
+    beta: number[];
+    alpha: number[];
+    theta: number[];
+    delta: number[];
+  };
+}
 
 class NeurosityService {
   rawBrainwavesSeries: any = [];
@@ -22,7 +32,7 @@ class NeurosityService {
 
   recordingStatus: "not-started" | "started" | "stopped" = "not-started";
 
-  recordingStartTimestamp: number = 0;
+  recordingStartTimestamp = 0;
 
   async stopRecording() {
     this.recordingStatus = "stopped";
@@ -42,19 +52,19 @@ class NeurosityService {
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((brainwaves) => {
         // get the number of samples in each entry
-        let epochData = brainwaves as Epoch;
-        let samples = epochData.data[0].length;
+        const epochData = brainwaves as Epoch;
+        const samples = epochData.data[0].length;
         let index = 0;
         for (index; index < samples; index++) {
-          let brainwaveEntry: any = {};
-          brainwaveEntry["index"] = index;
-          brainwaveEntry["unixTimestamp"] = epochData.info.startTime;
+          const brainwaveEntry: any = {};
+          brainwaveEntry.index = index;
+          brainwaveEntry.unixTimestamp = epochData.info.startTime;
 
-          let ch_index = 0;
-          for (ch_index; ch_index < channelNames.length; ch_index++) {
-            let ch_name = channelNames[ch_index];
+          let chIndex = 0;
+          for (chIndex; chIndex < channelNames.length; chIndex++) {
+            const chName = channelNames[chIndex];
 
-            brainwaveEntry[ch_name] = epochData.data[ch_index][index];
+            brainwaveEntry[chName] = epochData.data[chIndex][index];
           }
           this.rawBrainwavesSeries.push(brainwaveEntry);
         }
@@ -76,25 +86,23 @@ class NeurosityService {
       .brainwaves("powerByBand")
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((brainwaves) => {
-        let bandPowerObject: any = {};
+        const bandPowerObject: any = {};
 
-        bandPowerObject["unixTimestamp"] = dayjs().valueOf();
+        bandPowerObject.unixTimestamp = dayjs().valueOf();
 
-        let powerByBand = brainwaves as PowerByBand;
+        // TODO: fix hack/contact neurosity team
+        const powerByBand = brainwaves as unknown as PowerByBand;
 
         // loop to get a single entry containing power from all channels
         let index = 0;
         for (index; index < channelNames.length; index++) {
-          let ch_name = channelNames[index];
+          const chName = channelNames[index];
 
-          console.log("index", index);
-          console.log(powerByBand);
-
-          bandPowerObject[ch_name + "_alpha"] = powerByBand.data.alpha[index];
-          bandPowerObject[ch_name + "_beta"] = powerByBand.data.beta[index];
-          bandPowerObject[ch_name + "_delta"] = powerByBand.data.delta[index];
-          bandPowerObject[ch_name + "_gamma"] = powerByBand.data.gamma[index];
-          bandPowerObject[ch_name + "_theta"] = powerByBand.data.theta[index];
+          bandPowerObject[`${chName}_alpha`] = powerByBand.data.alpha[index];
+          bandPowerObject[`${chName}_beta`] = powerByBand.data.beta[index];
+          bandPowerObject[`${chName}_delta`] = powerByBand.data.delta[index];
+          bandPowerObject[`${chName}_gamma`] = powerByBand.data.gamma[index];
+          bandPowerObject[`${chName}_theta`] = powerByBand.data.theta[index];
         }
 
         this.powerByBandSeries.push(bandPowerObject);
@@ -111,15 +119,15 @@ class NeurosityService {
       .signalQuality()
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((signalQuality) => {
-        let signalQualityEntry: any = {};
-        signalQualityEntry["unixTimestamp"] = dayjs().valueOf();
+        const signalQualityEntry: any = {};
+        signalQualityEntry.unixTimestamp = dayjs().valueOf();
 
         // loop to get a single entry containing power from all channels
         let index = 0;
         for (index; index < channelNames.length; index++) {
-          let ch_name = channelNames[index];
-          signalQualityEntry[ch_name + "_value"] = signalQuality[index].standardDeviation;
-          signalQualityEntry[ch_name + "_status"] = signalQuality[index].status;
+          const chName = channelNames[index];
+          signalQualityEntry[`${chName}_value`] = signalQuality[index].standardDeviation;
+          signalQualityEntry[`${chName}_status`] = signalQuality[index].status;
         }
 
         this.signalQualitySeries.push(signalQualityEntry);
@@ -141,17 +149,17 @@ class NeurosityService {
       .brainwaves("psd")
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((brainwaves) => {
-        let fftEntry: any = {};
-        fftEntry["unixTimestamp"] = dayjs().valueOf();
+        const fftEntry: any = {};
+        fftEntry.unixTimestamp = dayjs().valueOf();
 
-        let epochData = brainwaves as PSD;
+        const epochData = brainwaves as PSD;
 
         // loop to get a single entry containing power from all channels
         let index = 0;
         for (index; index < channelNames.length; index++) {
-          let ch_name = channelNames[index];
+          const chName = channelNames[index];
 
-          fftEntry[ch_name] = epochData.psd[index].join(";");
+          fftEntry[chName] = epochData.psd[index].join(";");
         }
 
         this.fftSeries.push(fftEntry);
@@ -230,8 +238,8 @@ function writeDataToStore(dataName: string, data: any, fileTimestamp: string, st
     const fileName = `${dataName}_${fileTimestamp}.csv`;
     const content = convertToCSV(data); // convert to csv format
 
-    var hiddenElement = document.createElement("a");
-    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(content);
+    const hiddenElement = document.createElement("a");
+    hiddenElement.href = `data:text/csv;charset=utf-8,${encodeURI(content)}`;
     hiddenElement.target = "_blank";
     hiddenElement.download = fileName;
     hiddenElement.click();
@@ -240,8 +248,8 @@ function writeDataToStore(dataName: string, data: any, fileTimestamp: string, st
     (async () => {
       const res = await axios.post(`${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/upload`, {
         provider: providerName,
-        dataName: dataName,
-        fileTimestamp: fileTimestamp,
+        dataName: dataName, // eslint-disable-line object-shorthand
+        fileTimestamp: fileTimestamp, // eslint-disable-line object-shorthand
         content: data,
       });
 

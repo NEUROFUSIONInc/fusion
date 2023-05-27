@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-import { Neurosity } from "@neurosity/sdk";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useReducer } from "react";

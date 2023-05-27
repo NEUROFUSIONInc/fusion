@@ -1,9 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/self-closing-comp */
+import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
 import { FC, useState, useEffect } from "react";
 import { Button } from "../../ui/button/button";
 
 import { neurosityService, neurosity } from "~/services";
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
-import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
 
 export const Experiment: FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -14,28 +16,19 @@ export const Experiment: FC = () => {
   const [connectedDevice, setConnectedDevice] = useState<DeviceInfo | null>(null);
 
   async function startNeurosityRecording() {
-    console.log("about to start recording");
     if (connectedDevice) {
       neurosityService.startRecording(connectedDevice?.channelNames);
-    } else {
-      window.alert("Please connect to a device");
     }
   }
 
   async function stopNeurosityRecording() {
-    console.log("about to stop recording");
     neurosityService.stopRecording();
   }
 
   useEffect(() => {
-    console.log("user", user);
-    console.log("selectedDevice", neurositySelectedDevice);
     if (user && neurositySelectedDevice) {
-      console.log("connecting to device");
       (async () => {
-        console.log("about to make call");
         const connectedDevice = await connectToNeurosityDevice(neurositySelectedDevice);
-        console.log("connectedDevice", connectedDevice);
         if (!connectedDevice) return;
         setConnectedDevice(connectedDevice);
       })();
@@ -44,13 +37,17 @@ export const Experiment: FC = () => {
         await neurosity.status().subscribe((status) => {
           if (status.state !== deviceStatus) {
             let deviceState: any = status.state;
-            status.sleepMode ? (deviceState = "sleep") : (deviceState = status.state);
+            if (status.sleepMode) {
+              deviceState = "sleep";
+            } else {
+              deviceState = status.state;
+            }
             setDeviceStatus(deviceState);
           }
         });
       })();
     }
-  }, [user]);
+  }, [user, deviceStatus, neurositySelectedDevice]);
 
   return (
     <div>
@@ -61,10 +58,10 @@ export const Experiment: FC = () => {
 
       <h1 style={{ marginTop: 10 }}>Flappy Birds</h1>
 
-      <p>Press "Spacebar" to start the game. We will be recording brain activity</p>
+      <p>Press 'Spacebar' to start the game. We will be recording brain activity</p>
       <>
         <iframe
-          src="https://codesandbox.io/embed/flappy-bird-forked-1c4g6n?fontsize=14&hidenavigation=1&theme=dark&view=preview"
+          src="https://codesandbox.io/embed/flappy-bird-forked-h2h00z?fontsize=14&hidenavigation=1&theme=dark"
           style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
           title="flappy-bird"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
@@ -106,4 +103,3 @@ export const Experiment: FC = () => {
     </div>
   );
 };
-``;
