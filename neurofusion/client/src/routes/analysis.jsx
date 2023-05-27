@@ -32,6 +32,11 @@ export default function Analysis() {
       text: "Focus",
     },
     { key: "calm", text: "Calm", description: "Calm" },
+    {
+      key: "powerSpectrum",
+      text: "Power Spectrum",
+      description: "Brain Power Over Time",
+    },
   ];
 
   const chartDescriptions = {
@@ -44,7 +49,7 @@ export default function Analysis() {
       link: "https://docs.neurosity.co/docs/api/calm",
     },
     powerSpectrum: {
-      text: "Power Spectrum",
+      text: "Brain activity power over time. Power is measured in microvolts squared.",
       link: "",
     },
   };
@@ -90,8 +95,8 @@ export default function Analysis() {
       dataName = chartCategory;
       provider = "neurosity";
     } else if (chartCategory === "powerSpectrum") {
-      dataName = "eegPowerSpectrum";
-      provider = "fusion";
+      dataName = "powerByBand";
+      provider = "neurosity";
     }
 
     // fetch the base data

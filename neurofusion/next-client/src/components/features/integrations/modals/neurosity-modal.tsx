@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { FC, useState } from "react";
 
 import { Button } from "~/components/ui";
-import { useNeurosityState } from "~/hooks";
+import { updateNeurositySelectedDevice, useNeurosityState } from "~/hooks";
 
 interface INeurosityModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
           className="data-[state=open]:animate-overlayShow fixed inset-0 bg-slate-900/50"
           onPointerDown={onCloseModal}
         />
-        <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] z-30 h-auto max-h-[85vh] w-[450px] max-w-[90vw] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-[6px] bg-white p-8 focus:outline-none dark:bg-slate-800 md:w-[600px]">
+        <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-[50%] top-[50%] z-30 h-auto max-h-[85vh] w-[450px] max-w-[90vw] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-[6px] bg-white p-8 focus:outline-none dark:bg-slate-800 md:w-[600px]">
           <Dialog.Title className="mb-1 w-10/12 font-body text-lg md:w-full md:text-2xl">
             Update Neurosity account
           </Dialog.Title>
@@ -35,7 +35,7 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
           </Dialog.Description>
 
           <Dialog.Close
-            className="absolute top-10 right-8 rounded-full  opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800"
+            className="absolute right-8 top-10 rounded-full  opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800"
             onClick={onCloseModal}
           >
             <X />
@@ -48,6 +48,7 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
             <select
               id="countries"
               className="focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+              onChange={updateNeurositySelectedDevice}
             >
               {devices.map((device) => {
                 if (device.deviceId === neurositySelectedDevice) {
