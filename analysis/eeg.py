@@ -25,14 +25,13 @@ data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
 # the common band names, ordered by frequency
 bands_ordered = ["delta", "theta", "alpha", "beta", "gamma"]
 
-
 import os
 import json
 import re
 
 def rnOccur(arr,v,n):
     for x in range(len(arr)-1,0,-1):
-        if arr[x] == v:
+        if arr[x] in v:
             if n == 0: return x
             n-=1
     return -1
@@ -41,29 +40,53 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
     def __init__(self,fold):
         self.categories = dict()
         self.tagIdMap = dict()
-        files = next(os.walk(fold))
-        for f in files[2]:
-            if f[-5:] == ".json":
-                id = f[f.rindex("_")+1:-5]
+        if not os.path.exists(fold): raise Exception(fold+ " is not a valid folder")
+        files = []
+        folds = [fold]
+        while folds: 
+            filesTemp = next(os.walk(folds[0]))
+            folds.pop(0)
+            files+=[os.path.join(filesTemp[0],x) for x in filesTemp[2]]
+            folds+=[os.path.join(filesTemp[0],x) for x in filesTemp[1]]
+        for f in files:
+            if f[-5:] == ".json" or f[-4:] == ".csv" and "_" in f:
+                id = f[f.rindex("_")+1:f.rindex(".")]
 
                 if id not in self.tagIdMap: self.tagIdMap[id] = dict()
                 
-                type = f[rnOccur(f,"_",1)+1:f.rindex("_")]
+                type = f[rnOccur(f,["_","/","\\"],1)+1:f.rindex("_")]
                 # print(type,id,f)
 
-                self.tagIdMap[id][type] = os.path.join(files[0],f)
+                self.tagIdMap[id][type] = f
 
                 if type == "event":
-                    with open(os.path.join(files[0],f),"r") as of:
-                        tagInfo = json.load(of)["event"]["description"]
-                        if tagInfo not in self.categories: self.categories[tagInfo] = list()
-                        self.categories[tagInfo].append(id)
+                    with open(f,"r") as of:
+                        tagInfo = json.load(of)
+                        if tagInfo["event"]["description"] not in self.categories: self.categories[tagInfo["event"]["description"]] = list()
+                        self.categories[tagInfo["event"]["description"]].append(id)
+                        self.tagIdMap[id]["Meta"] = tagInfo
+
+    def addMeta(self,metaCsvLoc,groupCol,timeStampCol = "startTimestamp"):  # add meta from csv table for categorization
+        with open(metaCsvLoc,"r") as f:
+            metaCsv = pd.read_csv(f)
+            metaCsv = metaCsv.set_index(timeStampCol)
+            for i,row in metaCsv.iterrows():
+                i = str(i)
+                if i not in self.tagIdMap:
+                    print(i,"Meta available but no associated recordings")
+                    continue
+                if row[groupCol] not in self.categories: self.categories[row[groupCol]] = list()
+                self.categories[row[groupCol]].append(i)
+                meta = dict()
+                for x in metaCsv.columns:
+                    meta[x] = row[x]
+                self.tagIdMap[i]["Meta"] = dict(row)
 
     def prune(self): # removes all events without all eeg files from dataset
         for x in list(self.categories.keys()):
             for y in self.categories[x]:
-                print(x,y,self.tagIdMap[y])
-                if len(self.tagIdMap[y])<2:
+                # print(x,y,self.tagIdMap[y])
+                if len(self.tagIdMap[y])<3:
                     self.categories[x].remove(y)
                     del self.tagIdMap[y]
 
@@ -100,7 +123,6 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
 
         self.categories[newTag] = newCategory
 
-
 def load_data():
     filesets = load_fileset()
     df = pd.DataFrame()
@@ -109,7 +131,6 @@ def load_data():
         # pprint(result)
         df = df.append(result, ignore_index=True)
     return df
-
 
 def load_session(files: dict) -> dict:
     """
@@ -211,7 +232,6 @@ def load_sessions():
     for timestamp, files in filesets.items():
         sessions[timestamp] = load_session(files)
     return sessions
-
 
 def load_fileset(
     dir=data_dir,
