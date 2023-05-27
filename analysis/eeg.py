@@ -26,6 +26,81 @@ data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
 bands_ordered = ["delta", "theta", "alpha", "beta", "gamma"]
 
 
+import os
+import json
+import re
+
+def rnOccur(arr,v,n):
+    for x in range(len(arr)-1,0,-1):
+        if arr[x] == v:
+            if n == 0: return x
+            n-=1
+    return -1
+
+class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveniant bundles
+    def __init__(self,fold):
+        self.categories = dict()
+        self.tagIdMap = dict()
+        files = next(os.walk(fold))
+        for f in files[2]:
+            if f[-5:] == ".json":
+                id = f[f.rindex("_")+1:-5]
+
+                if id not in self.tagIdMap: self.tagIdMap[id] = dict()
+                
+                type = f[rnOccur(f,"_",1)+1:f.rindex("_")]
+                # print(type,id,f)
+
+                self.tagIdMap[id][type] = os.path.join(files[0],f)
+
+                if type == "event":
+                    with open(os.path.join(files[0],f),"r") as of:
+                        tagInfo = json.load(of)["event"]["description"]
+                        if tagInfo not in self.categories: self.categories[tagInfo] = list()
+                        self.categories[tagInfo].append(id)
+
+    def prune(self): # removes all events without all eeg files from dataset
+        for x in list(self.categories.keys()):
+            for y in self.categories[x]:
+                print(x,y,self.tagIdMap[y])
+                if len(self.tagIdMap[y])<2:
+                    self.categories[x].remove(y)
+                    del self.tagIdMap[y]
+
+
+            if len(self.categories[x]) == 0: del self.categories[x]
+
+    def extractById(self, id): # extracts all json file locs with aan associated with an event id
+        return self.tagIdMap[str(id)]
+    
+    def extractByTags(self, tag): #extract based on tags
+        ret = dict()
+        for x in self.categories[str(tag)]:
+            ret[x] = self.tagIdMap[x]
+        return ret
+
+    def mergeTagsWithRegex(self,reg,newTag): # merge tags that have matching regex
+        newCategory = list()
+        oldTags = list()
+        for tag in self.categories:
+            if re.search(reg,tag):
+                newCategory+= list(self.categories[tag])
+                oldTags.append(tag)
+        for tag in oldTags: del self.categories[tag]
+
+        self.categories[newTag] = newCategory
+
+    def mergeCategories(self,categories,newTag): # merge two tag groups
+        newCategory = list()
+        oldTags = list()
+        for tag in categories:
+                newCategory+= list(self.categories[tag])
+                oldTags.append(tag)
+        for tag in oldTags: del self.categories[tag]
+
+        self.categories[newTag] = newCategory
+
+
 def load_data():
     filesets = load_fileset()
     df = pd.DataFrame()
