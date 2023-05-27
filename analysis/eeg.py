@@ -132,7 +132,56 @@ def load_data():
         df = df.append(result, ignore_index=True)
     return df
 
-def load_session(files: dict) -> dict:
+# generate summary of the signalQuality across channels
+def get_signal_quality_summary(signalQuality):
+    channel_good_percentage = {}
+
+    for col in signalQuality:
+        if col in ['CP3_status', 'C3_status', 'F5_status', 'PO3_status', 'PO4_status', 'F6_status', 'C4_status', 'CP4_status']:
+            channel_states = signalQuality[col].value_counts()
+            
+            no_of_okay_samples = 0
+
+            if 'good' in channel_states:
+                no_of_okay_samples += channel_states['good']
+            if 'great' in channel_states:
+                no_of_okay_samples += channel_states['great']
+
+            percentage_good = no_of_okay_samples / len(signalQuality[col])
+
+            col_name_split = col.split('_')
+
+            channel_good_percentage[col_name_split[0]] = percentage_good
+
+    # this helps us know what channels to discard in our analysis
+    return channel_good_percentage
+
+def get_rolling_powerByBand(powerByBand, signalQuality, window_size=5):
+    # we want to split the recording for a session in to 5sec chunks average
+    # see if there's any difference in the average. 
+
+    # we will discard any channels that have less than 70% good samples
+    channel_good_percentage = get_signal_quality_summary(signalQuality)
+
+    # we will discard any channels that have less than 70% good samples
+    for entry in channel_good_percentage:
+        if channel_good_percentage[entry] < 0.7:
+            del powerByBand[entry + '_alpha']
+            del powerByBand[entry + '_beta']
+            del powerByBand[entry + '_delta']
+            del powerByBand[entry + '_gamma']
+            del powerByBand[entry + '_theta']
+
+    # we will split the recording in to 5sec chunks
+    powerByBand_rolling = powerByBand.median() #.rolling(window=window_size).mean()
+
+    # we will discard the first 5sec of the recording
+    # powerByBand_rolling = powerByBand_rolling[window_size:]
+
+    return powerByBand_rolling
+
+# TODO specify channels 
+def load_session(files: dict, QualityCutoffFilter=0) -> dict:
     """
     Takes a session of EEG data, computes some metrics, and returns them.
 
@@ -255,6 +304,6 @@ def load_fileset(
 
 
 if __name__ == "__main__":
-    df = load_data()
-    print(df)
-    print(df.describe())
+    # df = load_data()
+    # print(df)
+    # print(df.describe())
