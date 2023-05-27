@@ -134,7 +134,9 @@ function getOAuthParams() {
 }
 
 export function getNeurositySelectedDevice() {
-  return localStorage.getItem("neurositySelectedDevice");
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("neurositySelectedDevice");
+  }
 }
 
 export function updateNeurositySelectedDevice(event: React.ChangeEvent<HTMLSelectElement>) {
