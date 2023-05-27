@@ -47,7 +47,7 @@ export const Experiment: FC = () => {
         });
       })();
     }
-  }, [user, deviceStatus, neurositySelectedDevice]);
+  }, [user, neurositySelectedDevice]);
 
   return (
     <div>
