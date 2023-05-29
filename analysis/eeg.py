@@ -304,6 +304,6 @@ def load_fileset(
 
 
 if __name__ == "__main__":
-    # df = load_data()
-    # print(df)
-    # print(df.describe())
+    df = load_data()
+    print(df)
+    print(df.describe())
