@@ -17,6 +17,9 @@ from collections import defaultdict
 import pandas as pd
 import datetime
 import pytz
+import os
+import json
+
 
 data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
 
@@ -25,8 +28,6 @@ data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
 # the common band names, ordered by frequency
 bands_ordered = ["delta", "theta", "alpha", "beta", "gamma"]
 
-import os
-import json
 import re
 
 def rnOccur(arr,v,n):
