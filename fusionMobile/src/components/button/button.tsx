@@ -1,24 +1,79 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import { FC } from "react";
-import {
-  Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  View,
-} from "react-native";
+import { Pressable, Text, TouchableOpacityProps } from "react-native";
 
-export interface ButtonProps extends TouchableOpacityProps {
-  variant?: "primary" | "secondary";
-  title: string;
-}
+import { ActivityIndicator } from "../activity-indicator";
 
-export const Button: FC<ButtonProps> = ({ title, ...props }) => (
-  <View>
-    <TouchableOpacity
-      className="py-2 px-4 bg-secondary-600 rounded-md"
-      activeOpacity={0.9}
-      {...props}
-    >
-      <Text className="text-white">{title}</Text>
-    </TouchableOpacity>
-  </View>
+const buttonStyles = cva(
+  "flex flex-row active:opacity-90 self-start relative disabled:opacity-70 items-center w-auto justify-center min-w-max rounded-md",
+  {
+    variants: {
+      variant: {
+        primary: "bg-white",
+        secondary: "bg-primary-900",
+        outline: "bg-transparent border-2 border-white active:opacity-75",
+        "outline-dark": "bg-transparent border-2 border-primary-900",
+      },
+      disabled: {
+        true: "opacity-70",
+      },
+      rounded: {
+        true: "rounded-full",
+      },
+      fullWidth: {
+        true: "w-full",
+      },
+      size: {
+        xs: "px-3 py-3 text-xs",
+        sm: "px-3 py-2.5 leading-4 text-sm",
+        md: "px-5 py-3.5",
+        lg: "px-5 py-4",
+        icon: "flex justify-center min-h-[30px] min-w-[30px]",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  }
+);
+
+const buttonTextStyles = cva("font-sans text-base", {
+  variants: {
+    variant: {
+      primary: "text-secondary-900",
+      secondary: "text-white",
+      outline: "text-white",
+      "outline-dark": "text-primary-900",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+  },
+});
+
+export type ButtonProps = TouchableOpacityProps &
+  VariantProps<typeof buttonStyles> & {
+    title: string;
+    loading?: boolean;
+  };
+
+export const Button: FC<ButtonProps> = ({
+  title,
+  variant,
+  disabled,
+  rounded,
+  size,
+  fullWidth,
+  loading,
+  ...props
+}) => (
+  <Pressable
+    className={buttonStyles({ variant, disabled, size, rounded, fullWidth })}
+    disabled={disabled}
+    {...props}
+  >
+    {loading && <ActivityIndicator size="small" className="mr-2" />}
+    <Text className={buttonTextStyles({ variant })}>{title}</Text>
+  </Pressable>
 );
