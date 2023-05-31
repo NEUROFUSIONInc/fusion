@@ -3,9 +3,15 @@ import { NativeModules, NativeEventEmitter, Platform } from "react-native";
 import BleManager from "react-native-ble-manager";
 import { STREAMING_MODE } from "@neurosity/sdk/dist/esm/types/streaming";
 
+(async () => {
+  let state = await BleManager.checkState();
+  console.log("BLE state:", state);
+})();
+
 export const neurosity = new Neurosity({
-  autoSelectDevice: true,
+  autoSelectDevice: false,
   bluetoothTransport: new ReactNativeTransport({
+    autoConnect: false,
     BleManager,
     bleManagerEmitter: new NativeEventEmitter(NativeModules.BleManager),
     platform: Platform.OS,

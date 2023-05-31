@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Prompt, PromptResponseType } from "~/@types";

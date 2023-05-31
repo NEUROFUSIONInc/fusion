@@ -1,12 +1,26 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-
+import React from "react";
 import { AccountStack } from "./account-navigator";
 import { PromptStack } from "./prompt-navigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { QuestStack } from "./quest-navigator";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export const FusionNavigation = () => {
+  const [researchOptIn, setResearchOptIn] = React.useState("false");
+
+  React.useEffect(() => {
+    const getResearchOptIn = async () => {
+      const val = await AsyncStorage.getItem("researchProgramMember");
+      if (val) {
+        setResearchOptIn(val);
+      }
+    };
+    getResearchOptIn();
+  });
+
   return (
     <Tab.Navigator
       activeColor="#023059"
@@ -27,6 +41,22 @@ export const FusionNavigation = () => {
         component={PromptStack}
       />
 
+      {researchOptIn == "true" && (
+        <Tab.Screen
+          name="Quests"
+          component={QuestStack}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="road-variant"
+                color={color}
+                size={20}
+              />
+            ),
+          }}
+        />
+      )}
+
       {/* <Tab.Screen
         name="Health"
         component={HealthStack}
@@ -34,20 +64,6 @@ export const FusionNavigation = () => {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="heart-pulse"
-              color={color}
-              size={20}
-            />
-          ),
-        }}
-      /> */}
-
-      {/* <Tab.Screen
-        name="Quests"
-        component={HealthStack}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="road-variant"
               color={color}
               size={20}
             />

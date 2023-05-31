@@ -17,9 +17,16 @@ import {
 
 import { resyncOldPrompts, appInsights } from "~/utils";
 
+import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
+import { useMemo, useState } from "react";
+
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
   const [oldPromptExist, setOldPromptExist] = React.useState(false);
+
+  const [pubkey, setPubkey] = React.useState("");
+  const [nsec, setNsec] = React.useState("");
+  const [npub, setNpub] = React.useState("");
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -50,7 +57,10 @@ export function AccountScreen() {
   const [brainRecordingEnabled, setBrainRecordingEnabled] =
     React.useState(false);
 
-  const handleBrainRecordingToggle = async () => {};
+  const handleBrainRecordingToggle = async () => {
+    setBrainRecordingEnabled(!brainRecordingEnabled);
+    await AsyncStorage.setItem("researchProgramMember", "true");
+  };
 
   return (
     <KeyboardAvoidingView
@@ -61,8 +71,56 @@ export function AccountScreen() {
         <View style={{ width: "100%" }}>
           <View style={{ alignItems: "center" }}>
             <Text>Hey there, you're currently using Fusion anonymously!</Text>
-            <Text>(more personalization features to come in the future)</Text>
           </View>
+
+          {/* Generate / display npub information */}
+          <Button
+            title="Generate npub"
+            onPress={() => {
+              Alert.alert(
+                "Generate npub",
+                "Are you sure you want to generate a new npub?",
+                [
+                  {
+                    text: "Cancel",
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: async () => {
+                      const privkey = generatePrivateKey();
+
+                      const pubkey = getPublicKey(privkey);
+                      const npub = nip19.npubEncode(pubkey);
+                      const nsec = nip19.nsecEncode(privkey);
+
+                      // Alert.alert("npub", npub);
+                      setPubkey(pubkey);
+                      setNpub(npub);
+                      setNsec(nsec);
+                    },
+                  },
+                ]
+              );
+            }}
+          />
+
+          {/* Display npub information */}
+          {pubkey && (
+            <View style={styles.formSection}>
+              <View style={styles.formHeader}>
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}
+                >
+                  npub
+                </Text>
+              </View>
+
+              <Text style={{ lineHeight: 30 }}>npub: {npub}</Text>
+              <Text style={{ lineHeight: 30 }}>nsec: {nsec}</Text>
+            </View>
+          )}
+
           {/* Resync old prompts */}
           {oldPromptExist && (
             <Button

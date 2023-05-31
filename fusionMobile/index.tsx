@@ -1,3 +1,4 @@
+import "./globals.js";
 import { registerRootComponent } from "expo";
 import React from "react";
 
