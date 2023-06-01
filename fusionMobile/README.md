@@ -12,7 +12,8 @@ Data is currently stored using AsyncStorage (SQLite)
 {
   uuid
   promptText
-  responseType - "number", "yesno", "text"
+  responseType - "number", "yesno", "text", "customOptions"
+  additionalMeta - json.stringify of dictionary for customOption maps
   notificationConfig_days - json.stringify of "{"monday": true, "tuesday": false ....., "sunday": true}"
   notificationConfig_startTime
   notificationConfig_endTime
