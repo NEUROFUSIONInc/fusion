@@ -4,7 +4,7 @@ import Svg, { Path } from "react-native-svg";
 
 export const Users = ({ color = "#5E6068", ...props }: SvgProps) => {
   return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" {...props}>
       <Path
         d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z"
         stroke={color}
