@@ -26,6 +26,7 @@
     "@react-navigation/material-bottom-tabs": "^6.2.15",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "class-variance-authority": "^0.6.0",
     "dayjs": "^1.11.7",
     "echarts": "^5.4.2",
     "expo": "~48.0.15",
