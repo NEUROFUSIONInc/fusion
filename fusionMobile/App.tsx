@@ -83,7 +83,7 @@ Notifications.setNotificationHandler({
 });
 
 SplashScreen.preventAutoHideAsync();
-
+        
 function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
