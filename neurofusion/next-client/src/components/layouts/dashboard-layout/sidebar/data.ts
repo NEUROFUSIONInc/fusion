@@ -3,8 +3,8 @@ import { HardDrive, Laptop, LayoutDashboard, Moon, Plug, SignalHigh, Sun } from 
 export const sidebarLinks = [
   {
     icon: LayoutDashboard,
-    title: "Dashboard",
-    href: "#",
+    title: "Lab",
+    href: "/playground",
   },
   {
     icon: Plug,

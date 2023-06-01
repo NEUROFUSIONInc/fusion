@@ -5,9 +5,14 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 import { DashboardLayout } from "~/components/layouts";
+import { Experiment } from "~/components/lab";
 
 const PlaygroundPage: NextPage = () => {
-  return <DashboardLayout />;
+  return (
+    <DashboardLayout>
+      <Experiment />
+    </DashboardLayout>
+  );
 };
 
 export default PlaygroundPage;
