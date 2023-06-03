@@ -16,6 +16,20 @@ global.STORIES = [
     importPathMatcher:
       "^\\.[\\\\/](?:src\\/components(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)(?!\\.)(?=.)[^/]*?\\.stories\\.(?:ts|tsx|js|jsx)?)$",
   },
+  {
+    titlePrefix: "",
+    directory: "./src/screens",
+    files: "**/*.stories.?(ts|tsx|js|jsx)",
+    importPathMatcher:
+      "^\\.[\\\\/](?:src\\/screens(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)(?!\\.)(?=.)[^/]*?\\.stories\\.(?:ts|tsx|js|jsx)?)$",
+  },
+  {
+    titlePrefix: "",
+    directory: "./src/navigation",
+    files: "**/*.stories.?(ts|tsx|js|jsx)",
+    importPathMatcher:
+      "^\\.[\\\\/](?:src\\/navigation(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)(?!\\.)(?=.)[^/]*?\\.stories\\.(?:ts|tsx|js|jsx)?)$",
+  },
 ];
 
 import "@storybook/addon-ondevice-controls/register";
@@ -49,7 +63,13 @@ try {
 const getStories = () => {
   return {
     "./src/components/button/button.stories.tsx": require("../src/components/button/button.stories.tsx"),
+    "./src/components/day-chip/day-chip.stories.tsx": require("../src/components/day-chip/day-chip.stories.tsx"),
     "./src/components/logo/logo.stories.tsx": require("../src/components/logo/logo.stories.tsx"),
+    "./src/components/option/option.stories.tsx": require("../src/components/option/option.stories.tsx"),
+    "./src/components/select/select.stories.tsx": require("../src/components/select/select.stories.tsx"),
+    "./src/components/tag/tag.stories.tsx": require("../src/components/tag/tag.stories.tsx"),
+    "./src/components/timepicker/timepicker.stories.tsx": require("../src/components/timepicker/timepicker.stories.tsx"),
+    "./src/navigation/navigation.stories.tsx": require("../src/navigation/navigation.stories.tsx"),
   };
 };
 

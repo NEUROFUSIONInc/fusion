@@ -1,6 +1,6 @@
-import { getStorybookUI } from '@storybook/react-native';
+import { getStorybookUI } from "@storybook/react-native";
 
-import './storybook.requires';
+import "./storybook.requires";
 
 const StorybookUIRoot = getStorybookUI({});
 

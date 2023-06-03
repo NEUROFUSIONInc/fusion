@@ -1,11 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
+import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import * as SplashScreen from "expo-splash-screen";
 import React from "react";
-import { Alert, Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Alert, Platform } from "react-native";
 
+import { FontLoader } from "./FontLoader";
 import { FusionNavigation } from "./src/navigation";
 import {
   PromptContextProvider,
@@ -15,6 +17,8 @@ import {
   maskPromptId,
   appInsights,
 } from "./src/utils";
+
+Logs.enableExpoCliLogging();
 
 const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
@@ -78,12 +82,13 @@ Notifications.setNotificationHandler({
   },
 });
 
+SplashScreen.preventAutoHideAsync();
+        
 function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
   >();
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
 
   React.useEffect(() => {
     // validate permission status for user
@@ -229,19 +234,12 @@ function App() {
   React.useEffect(() => {
     appInsights.trackEvent({ name: "app_started" });
   }, []);
-
   return (
-    <View
-      style={{
-        paddingTop: insets.top,
-        // paddingBottom: insets.bottom,
-        flex: 1,
-      }}
-    >
+    <FontLoader>
       <PromptContextProvider>
         <FusionNavigation />
       </PromptContextProvider>
-    </View>
+    </FontLoader>
   );
 }
 

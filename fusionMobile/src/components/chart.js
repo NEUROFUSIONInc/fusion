@@ -3,17 +3,18 @@
  */
 
 // let's get this bread!
-import React, { useRef, useEffect } from "react";
-import * as echarts from "echarts/core";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import dayjs from "dayjs";
 import { LineChart } from "echarts/charts";
 import { GridComponent } from "echarts/components";
+import * as echarts from "echarts/core";
+import React, { useRef, useEffect } from "react";
 // import { SVGRenderer, SkiaChart } from "wrn-echarts";
-import dayjs from "dayjs";
-import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
-import { updateTimestampToMs } from "../utils/index";
 import { View, StyleSheet, Text } from "react-native";
 import SwitchSelector from "react-native-switch-selector";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
+
+import { updateTimestampToMs } from "../utils/index";
 
 echarts.use([SVGRenderer, LineChart, GridComponent]);
 
@@ -203,10 +204,10 @@ export function FusionChart({ data, prompt }) {
         options={timePeriodOptions}
         initial={1}
         onPress={(value) => setTimePeriod(value)}
-        textColor={"#7a44cf"}
-        selectedColor={"#fff"}
-        buttonColor={"#7a44cf"}
-        borderColor={"#7a44cf"}
+        textColor="#7a44cf"
+        selectedColor="#fff"
+        buttonColor="#7a44cf"
+        borderColor="#7a44cf"
         hasPadding
         borderRadius={5}
       />
@@ -217,7 +218,7 @@ export function FusionChart({ data, prompt }) {
         <MaterialCommunityIcons
           name="arrow-left-drop-circle"
           size={30}
-          color={"#7a44cf"}
+          color="#7a44cf"
           onPress={() => updateStartDate(-1)}
         />
         {/* date - this should pop up a date selector */}
@@ -226,7 +227,7 @@ export function FusionChart({ data, prompt }) {
         <MaterialCommunityIcons
           name="arrow-right-drop-circle"
           size={30}
-          color={"#7a44cf"}
+          color="#7a44cf"
           onPress={() => updateStartDate(1)}
         />
       </View>

@@ -1,19 +1,25 @@
-import React, { useState } from "react";
-
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
+import React, { useState } from "react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
+
 import { DashboardLayout } from "~/components/layouts";
 
+interface Channel {
+  name: string;
+  x: number;
+  y: number;
+}
+
 const PlaygroundPage: NextPage = () => {
-  const [selectedChannels, setSelectedChannels] = useState([]);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
 
   // Define a function to generate an array of channel locations for the 10-10 montage
-  const generateChannelLocations = (headCircumference: number, numChannels: number) => {
+  const generateChannelLocations = (headCircumference: number, numChannels: number): Channel[] => {
     const radius = headCircumference / (2 * Math.PI); // Calculate the radius of the head
     const angleIncrement = (2 * Math.PI) / numChannels; // Calculate the angle increment between channels
-    const channelLocations = [];
+    const channelLocations: Channel[] = [];
 
     // Loop over the channels and calculate their x, y coordinates
     for (let i = 0; i < numChannels; i++) {
@@ -28,10 +34,10 @@ const PlaygroundPage: NextPage = () => {
     return channelLocations;
   };
 
-  const channelLocations = generateChannelLocations(56, 19); // Generate channel locations for a head circumference of 56cm and 19 channels
+  const channelLocations: Channel[] = generateChannelLocations(56, 19); // Generate channel locations for a head circumference of 56cm and 19 channels
 
   // Define a function to render a single channel point
-  const renderChannelPoint = (channel: { name: any; x: any; y: any }) => {
+  const renderChannelPoint = (channel: Channel) => {
     const isSelected = selectedChannels.includes(channel.name);
     const fill = isSelected ? "red" : "black";
     const radius = isSelected ? 10 : 5;
@@ -58,7 +64,7 @@ const PlaygroundPage: NextPage = () => {
   };
 
   // Define a function to handle channel selection
-  const handleChannelSelect = (channelName: any) => {
+  const handleChannelSelect = (channelName: string) => {
     if (selectedChannels.includes(channelName)) {
       setSelectedChannels(selectedChannels.filter((name) => name !== channelName));
     } else {

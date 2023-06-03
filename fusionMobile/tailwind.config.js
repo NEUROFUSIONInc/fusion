@@ -49,6 +49,14 @@ module.exports = {
         DEFAULT: "#6249D8",
       },
     },
+    fontFamily: {
+      "sans-light": ["wsh-light"],
+      sans: ["wsh-reg"],
+      "sans-medium": ["wsh-med"],
+      "sans-semibold": ["wsh-semi"],
+      "sans-bold": ["wsh-bold"],
+      "sans-black": ["wsh-xbold"],
+    },
   },
   plugins: [],
 };

@@ -29,9 +29,6 @@ export const IntegrationsContainer = () => {
       case "MagicFlow":
         setModalOpen("magicFlow");
         break;
-      case "Vital":
-        // call function for Vital integration
-        break;
       default:
       // handle default case (optional)
     }
@@ -48,9 +45,6 @@ export const IntegrationsContainer = () => {
       case "MagicFlow":
         // check if MagicFlow is connected
         return Boolean(magicflowData?.magicflowToken);
-      case "Vital":
-        // check if Vital is connected
-        return false;
       default:
         return false;
     }
@@ -67,9 +61,6 @@ export const IntegrationsContainer = () => {
       case "MagicFlow":
         // check if MagicFlow is connected
         return magicflowLoading;
-      case "Vital":
-        // check if Vital is connected
-        return false;
       default:
         return false;
     }
@@ -78,7 +69,7 @@ export const IntegrationsContainer = () => {
   return (
     <section>
       <h1 className="text-4xl">Integrations and all connected apps</h1>
-      <p className="mt-2 mb-10 text-lg dark:text-slate-400">
+      <p className="mb-10 mt-2 text-lg dark:text-slate-400">
         Supercharge your workflow and connect to tools you use everyday{" "}
       </p>
       <div className="flex flex-wrap gap-8">
