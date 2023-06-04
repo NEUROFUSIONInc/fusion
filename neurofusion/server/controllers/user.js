@@ -4,6 +4,24 @@ require("dotenv").config();
 /* 1. Setup Magic Admin SDK */
 const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
 
+const { RelayPool } = require("nostr-relaypool");
+const {
+  getEventHash,
+  getSignature,
+  generatePrivateKey,
+  getPublicKey,
+  nip19,
+  nip04,
+} = require("nostr-tools");
+
+let relays = ["ws://127.0.0.1:6969"];
+
+// create publicKey & privateKey to sign messages as fusion
+const privateKey = generatePrivateKey();
+const publicKey = getPublicKey(privateKey);
+
+let relayPool = new RelayPool(relays);
+
 const db = require("../models/index");
 
 exports.tokenValidator = async (req, res, next) => {
@@ -97,6 +115,61 @@ exports.validateLogin = async (req, res) => {
       });
       return;
     }
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      body: {
+        error: "Unable to validate login",
+      },
+    });
+    return;
+  }
+};
+
+exports.validateNostrLogin = async (req, res) => {
+  if (!req.body.pubkey) {
+    res.status(401).json({
+      body: {
+        error: "pubkey is required",
+      },
+    });
+    return;
+  }
+
+  try {
+    // TODO: log the pubKey in db
+    // now try to save the account / generate one
+    // connect to the relayPool and then drop message
+    const userInfo = {
+      pubkey: req.body.pubkey,
+    };
+    const authToken = jwt.sign(userInfo, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY,
+    });
+
+    const content = await nip04.encrypt(privateKey, req.body.pubkey, authToken);
+
+    const event = {
+      content: content,
+      created_at: Math.floor(Date.now() / 1000),
+      kind: 4,
+      pubkey: publicKey,
+      tags: [["p", req.body.pubkey]],
+    };
+
+    event.id = getEventHash(event);
+
+    // we sign the message with fusion server private key
+    event.sig = getSignature(event, privateKey);
+    console.log(event);
+    relayPool.publish(event, ["ws://127.0.0.1:6969"]);
+
+    res.status(200).json({
+      body: {
+        success: true,
+        message: "User token sent to relay pool",
+      },
+    });
   } catch (e) {
     console.log(e);
     res.status(400).json({
