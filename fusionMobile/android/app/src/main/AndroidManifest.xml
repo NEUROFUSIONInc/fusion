@@ -1,9 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.neurofusion.fusion">
-  <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28"/>
-  <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-  <uses-permission android:name="android.permission.BLUETOOTH" tools:remove="android:maxSdkVersion"/>
-  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" tools:remove="android:maxSdkVersion"/>
   <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
   <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
   <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
