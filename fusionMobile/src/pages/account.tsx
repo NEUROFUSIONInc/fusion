@@ -19,13 +19,14 @@ import {
   appInsights,
   createNostrAccount,
   getNostrAccount,
-  relay,
+  // relay,
 } from "~/utils";
 
 import axios from "axios";
 
 import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
 import { useMemo, useState, useRef } from "react";
+import { Pressable } from "react-native";
 
 // import crypto from "isomorphic-webcrypto";
 
@@ -136,10 +137,7 @@ export function AccountScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           <View style={{ alignItems: "center" }}>
@@ -148,9 +146,18 @@ export function AccountScreen() {
 
           {/* Display npub information */}
           {nostrAccount && (
-            <View style={styles.formSection}>
-              <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
-            </View>
+            <Pressable
+              onPress={() =>
+                Alert.alert(
+                  "Your keys",
+                  `privateKey: ${nostrAccount.privkey}\n\n\nYou can use this on other Nostr Clients.`
+                )
+              }
+            >
+              <View style={styles.formSection}>
+                <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
+              </View>
+            </Pressable>
           )}
 
           {/* Feedback component */}
@@ -203,7 +210,7 @@ export function AccountScreen() {
           </View>
 
           {/* Opt in to Reasearch Program */}
-          <View style={styles.formSection}>
+          {/* <View style={styles.formSection}>
             <View style={styles.formHeader}>
               <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
                 Research Program
@@ -228,7 +235,7 @@ export function AccountScreen() {
                 value={brainRecordingEnabled}
               />
             </View>
-          </View>
+          </View> */}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

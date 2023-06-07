@@ -4,6 +4,7 @@ import BleManager from "react-native-ble-manager";
 import { STREAMING_MODE } from "@neurosity/sdk/dist/esm/types/streaming";
 
 (async () => {
+  // TODO: only do this when we're not on emulator
   let state = await BleManager.checkState();
   console.log("BLE state:", state);
 })();
