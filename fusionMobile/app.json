@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.neurofusion.fusion",
-      "buildNumber": "15"
+      "buildNumber": "16"
     },
     "android": {
       "adaptiveIcon": {
