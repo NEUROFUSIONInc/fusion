@@ -42,33 +42,6 @@ const registerForPushNotificationsAsync = async () => {
 
 Notifications.setNotificationHandler({
   handleNotification: async (notification) => {
-    // get the prompt id for this notification
-    const promptUuid = await getPromptForNotificationId(
-      notification.request.identifier
-    );
-
-    // remove all active notifications for the prompt from system tray
-    // that aren't the current one
-    const activeNotifications =
-      await Notifications.getPresentedNotificationsAsync();
-
-    // find the ones that match the prompt
-    const promptNotificationsIds = await getNotificationIdsForPrompt(
-      promptUuid ?? ""
-    );
-
-    // only want notification ids for the active prompts
-    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
-      promptNotificationsIds.includes(element.request.identifier)
-    );
-
-    // dismiss all existing notifications - the new notification gets presented after
-    for (let i = 0; i < activeNotificationsForPrompt.length; i++) {
-      await Notifications.dismissNotificationAsync(
-        activeNotificationsForPrompt[i].request.identifier
-      );
-    }
-
     return {
       shouldShowAlert: true,
       shouldPlaySound: false,
@@ -164,6 +137,11 @@ export default function App() {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
+            // remove notification from tray
+            Notifications.dismissNotificationAsync(
+              response.notification.request.identifier
+            );
+
             const promptUuid = await getPromptForNotificationId(
               response.notification.request.identifier
             );
@@ -171,6 +149,18 @@ export default function App() {
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
               return;
+            }
+
+            // dismiss all other notifications for this prompt
+            const notificationIds = await getNotificationIdsForPrompt(
+              promptUuid
+            );
+            if (notificationIds) {
+              await Promise.all(
+                notificationIds.map((id) =>
+                  Notifications.dismissNotificationAsync(id)
+                )
+              );
             }
 
             if (

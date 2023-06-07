@@ -258,7 +258,6 @@ export function PromptScreen() {
                   days,
                   promptUuid
                 );
-                console.log("response", res);
 
                 if (res) {
                   // read the saved prompts from the db

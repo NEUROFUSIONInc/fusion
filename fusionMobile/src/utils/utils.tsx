@@ -152,7 +152,6 @@ const createBaseTables = () => {
         );`,
         [],
         (tx) => {
-          console.log("user_account table created");
           resolve(true);
         },
         (tx, error) => {
@@ -420,8 +419,8 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
   const triggerObject: NotificationTriggerInput = {};
   const contentObject: NotificationContentInput = {
     title: `Fusion: ${prompt.promptText}`,
-    categoryIdentifier: notificationIdentifier,
   };
+
   // if platform is android assign channel
   if (Platform.OS === "android") {
     triggerObject["channelId"] = "default";
@@ -445,6 +444,18 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     friday: 6,
     saturday: 7,
   };
+
+  // one more quirk for Android - https://github.com/expo/expo/issues/20500
+  // responding from the notification menu doesn't work for
+  // text & number responses
+  if (
+    Platform.OS === "android" &&
+    ["text", "number"].includes(prompt.responseType)
+  ) {
+    // make it like just a normal notification by not providing a categoryIdentifier
+  } else {
+    contentObject["categoryIdentifier"] = notificationIdentifier;
+  }
 
   try {
     // cancel existing notifications for prompt

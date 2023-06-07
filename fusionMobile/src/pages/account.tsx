@@ -176,37 +176,40 @@ export function AccountScreen() {
               value={feedbackText}
               onChangeText={setFeedbackText}
             />
-            <Button
-              title="Send Feedback"
-              onPress={async () => {
-                // send feedback
-                const recipient = "ore@usefusion.app";
-                const subject = "Fusion Feedback";
-                const body = feedbackText;
 
-                const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
-                  subject
-                )}&body=${encodeURIComponent(body)}`;
+            <View style={{ marginTop: 20 }}>
+              <Button
+                title="Send Feedback"
+                onPress={async () => {
+                  // send feedback
+                  const recipient = "ore@usefusion.app";
+                  const subject = "Fusion Feedback";
+                  const body = feedbackText;
 
-                Alert.alert(
-                  "Send Feedback",
-                  "About to navigate to your mail app. Continue",
-                  [
-                    {
-                      text: "Cancel",
-                      style: "cancel",
-                    },
-                    {
-                      text: "OK",
-                      onPress: () => {
-                        setFeedbackText("");
-                        Linking.openURL(mailtoUrl);
+                  const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
+                    subject
+                  )}&body=${encodeURIComponent(body)}`;
+
+                  Alert.alert(
+                    "Send Feedback",
+                    "About to navigate to your mail app. Continue",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
                       },
-                    },
-                  ]
-                );
-              }}
-            />
+                      {
+                        text: "OK",
+                        onPress: () => {
+                          setFeedbackText("");
+                          Linking.openURL(mailtoUrl);
+                        },
+                      },
+                    ]
+                  );
+                }}
+              />
+            </View>
           </View>
 
           {/* Opt in to Reasearch Program */}
