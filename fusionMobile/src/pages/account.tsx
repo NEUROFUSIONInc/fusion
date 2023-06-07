@@ -15,51 +15,124 @@ import {
   Switch,
 } from "react-native";
 
-import { resyncOldPrompts, appInsights } from "~/utils";
+import {
+  appInsights,
+  createNostrAccount,
+  getNostrAccount,
+  relay,
+} from "~/utils";
 
-import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
-import { useMemo, useState } from "react";
+import axios from "axios";
+
+import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
+import { useMemo, useState, useRef } from "react";
+
+// import crypto from "isomorphic-webcrypto";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
-  const [oldPromptExist, setOldPromptExist] = React.useState(false);
 
-  const [pubkey, setPubkey] = React.useState("");
-  const [nsec, setNsec] = React.useState("");
-  const [npub, setNpub] = React.useState("");
+  const [nostrAccount, setNostrAccount] = React.useState<{
+    npub: string;
+    pubkey: string;
+    privkey: string;
+  } | null>(null);
+
+  const now = useRef(Date.now());
 
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Account",
     });
-  }, []);
 
+    (async () => {
+      setNostrAccount(await getNostrAccount());
+      setBrainRecordingEnabled(await getResearchProgramStatus());
+    })();
+  }, []);
   React.useEffect(() => {
-    validatePromptStatus().then((res) => {
-      setOldPromptExist(res);
-    });
-  }, []);
+    (async () => {
+      if (!nostrAccount) {
+        // generate a new account for user
+        const privkey = generatePrivateKey();
 
-  const validatePromptStatus = async () => {
-    const oldPrompts = await AsyncStorage.getItem("prompts");
-    if (oldPrompts) {
-      const parsedPrompts = JSON.parse(oldPrompts);
+        const pubkey = getPublicKey(privkey);
+        const npub = nip19.npubEncode(pubkey);
 
-      if (parsedPrompts.length > 0) {
-        return true;
+        const saveStatus = await createNostrAccount(npub, pubkey, privkey);
+        if (saveStatus) {
+          setNostrAccount(await getNostrAccount());
+        }
+      } else {
+        // let's query for an event that exists
+        // try {
+        //   // await crypto.ensureSecure();
+        //   await relay.connect();
+        //   let sub = relay.sub(
+        //     [
+        //       {
+        //         kinds: [4],
+        //         "#p": [nostrAccount.pubkey],
+        //         since: Math.floor(now.current / 1000),
+        //       },
+        //     ],
+        //     {}
+        //   );
+        //   sub.on("event", async (event) => {
+        //     console.log("we got the event we wanted:", event);
+        //     console.log("decoding...");
+        //     const decoded = await nip04.decrypt(
+        //       nostrAccount.privkey,
+        //       "fdf7a56cb4113a3a520cad232959838ccc907b593c9f8871e5cce86b18cd6edd",
+        //       event.content
+        //     );
+        //     console.log("access token", decoded);
+        //   });
+        // } catch (error) {
+        //   console.log(error);
+        // }
+        // try {
+        //   // make api call to backend server to get a token for account
+        //   const res = await axios.post("http://localhost:4000/api/nostrlogin", {
+        //     pubkey: nostrAccount.pubkey,
+        //   });
+        //   console.log(res.status);
+        //   console.log(res.data);
+        // } catch (error) {
+        //   console.log(error);
+        // }
+        // store the authToken in secure store
       }
-      return false;
+    })();
+  }, [nostrAccount]);
+
+  const [brainRecordingEnabled, setBrainRecordingEnabled] =
+    React.useState(false);
+
+  const getResearchProgramStatus = async () => {
+    const researchProgramMember = await AsyncStorage.getItem(
+      "researchProgramMember"
+    );
+
+    if (researchProgramMember == "true") {
+      return true;
     } else {
       return false;
     }
   };
 
-  const [brainRecordingEnabled, setBrainRecordingEnabled] =
-    React.useState(false);
-
   const handleBrainRecordingToggle = async () => {
+    // toggle brain recording value
+    console.log(
+      "about to toggle brain recording value from",
+      brainRecordingEnabled
+    );
+    if (brainRecordingEnabled == true) {
+      await AsyncStorage.setItem("researchProgramMember", "false");
+    } else {
+      await AsyncStorage.setItem("researchProgramMember", "true");
+    }
     setBrainRecordingEnabled(!brainRecordingEnabled);
-    await AsyncStorage.setItem("researchProgramMember", "true");
   };
 
   return (
@@ -70,80 +143,14 @@ export function AccountScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           <View style={{ alignItems: "center" }}>
-            <Text>Hey there, you're currently using Fusion anonymously!</Text>
+            <Text>Hey there, you're using Fusion anonymously!</Text>
           </View>
 
-          {/* Generate / display npub information */}
-          <Button
-            title="Generate npub"
-            onPress={() => {
-              Alert.alert(
-                "Generate npub",
-                "Are you sure you want to generate a new npub?",
-                [
-                  {
-                    text: "Cancel",
-                    style: "cancel",
-                  },
-                  {
-                    text: "OK",
-                    onPress: async () => {
-                      const privkey = generatePrivateKey();
-
-                      const pubkey = getPublicKey(privkey);
-                      const npub = nip19.npubEncode(pubkey);
-                      const nsec = nip19.nsecEncode(privkey);
-
-                      // Alert.alert("npub", npub);
-                      setPubkey(pubkey);
-                      setNpub(npub);
-                      setNsec(nsec);
-                    },
-                  },
-                ]
-              );
-            }}
-          />
-
           {/* Display npub information */}
-          {pubkey && (
+          {nostrAccount && (
             <View style={styles.formSection}>
-              <View style={styles.formHeader}>
-                <Text
-                  style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}
-                >
-                  npub
-                </Text>
-              </View>
-
-              <Text style={{ lineHeight: 30 }}>npub: {npub}</Text>
-              <Text style={{ lineHeight: 30 }}>nsec: {nsec}</Text>
+              <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
             </View>
-          )}
-
-          {/* Resync old prompts */}
-          {oldPromptExist && (
-            <Button
-              title="Resync missing Prompts / Responses"
-              onPress={() => {
-                Alert.alert(
-                  "Resync",
-                  "Are you sure you want to resync your data?",
-                  [
-                    {
-                      text: "Cancel",
-                      style: "cancel",
-                    },
-                    {
-                      text: "OK",
-                      onPress: async () => {
-                        await resyncOldPrompts();
-                      },
-                    },
-                  ]
-                );
-              }}
-            />
           )}
 
           {/* Feedback component */}

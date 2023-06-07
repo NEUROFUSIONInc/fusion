@@ -114,8 +114,9 @@ const createBaseTables = () => {
                             resolve(true);
                           }
                         );
+                      } else {
+                        resolve(true);
                       }
-                      resolve(true);
                     }
                   );
                 },
@@ -132,6 +133,25 @@ const createBaseTables = () => {
               return Boolean(error);
             }
           );
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS user_account (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          npub TEXT NOT NULL UNIQUE,
+          pubkey TEXT NOT NULL UNIQUE,
+          privkey TEXT NOT NULL
+        );`,
+        [],
+        (tx) => {
+          console.log("user_account table created");
+          resolve(true);
         },
         (tx, error) => {
           console.log("error", error);
@@ -990,4 +1010,78 @@ export async function createCustomOptionNotificationIdentifier(
     promptId + "-customOptions",
     notificationOptions
   );
+}
+
+// Create a local account & save details
+export async function createNostrAccount(
+  npub: string,
+  pubkey: string,
+  privkey: string
+) {
+  try {
+    const saveAccountToDb = () => {
+      return new Promise<boolean>((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO user_account (npub, pubkey, privkey) VALUES (?, ?, ?)",
+            [npub, pubkey, privkey],
+            (_, { rows }) => {
+              resolve(true);
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+    };
+
+    const saveAccountStatus = await saveAccountToDb();
+    return saveAccountStatus;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function getNostrAccount() {
+  try {
+    const getAccountFromDb = () => {
+      return new Promise<{
+        npub: string;
+        pubkey: string;
+        privkey: string;
+      } | null>((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM user_account",
+            [],
+            (_, { rows }) => {
+              if (rows._array.length === 0) {
+                resolve(null);
+              } else {
+                const account = rows._array[0];
+                resolve({
+                  npub: account.npub,
+                  pubkey: account.pubkey,
+                  privkey: account.privkey,
+                });
+              }
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+    };
+
+    const account = await getAccountFromDb();
+    return account;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }

@@ -71,7 +71,6 @@ export function QuestsScreen() {
       }
     }
   }, [availableDevices]);
-  p;
 
   React.useEffect(() => {
     if (selectedDevice) {
