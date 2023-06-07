@@ -16,15 +16,6 @@ import {
 } from "./src/utils";
 
 const registerForPushNotificationsAsync = async () => {
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
   //TODO: follow the guide again for checking on Android/iOS
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
@@ -35,6 +26,15 @@ const registerForPushNotificationsAsync = async () => {
   if (finalStatus !== "granted") {
     Alert.alert("Error", "Failed to get push token for push notification!");
     return false;
+  }
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
   }
 
   return true;
@@ -159,6 +159,8 @@ export default function App() {
       ]);
 
       // set notification handlers
+      // what happens when a user responds to notification
+      // even in background
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {

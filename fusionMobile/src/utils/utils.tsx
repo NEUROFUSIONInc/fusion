@@ -94,6 +94,8 @@ const createBaseTables = () => {
                 [],
                 () => {
                   // finished creating all the tables
+                  // add "additionalMeta TEXT" column to prompts table
+                  // TODO: operations like this should move to sequelize
                   tx.executeSql(
                     "PRAGMA table_info(prompts)",
                     [],
@@ -398,20 +400,27 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     prompt.notificationConfig_countPerDay
   );
 
-  let responseTypeMap = prompt.responseType.toString();
-  if ((prompt.responseType = "customOptions")) {
+  let notificationIdentifier = prompt.responseType.toString();
+  if (prompt.responseType == "customOptions") {
     // if custom option generate bespoke notificationtypes with the custom option selections
-    createCustomOptionNotificationIdentifier(
-      prompt.additionalMeta,
-      prompt.uuid
+    const customOptions = JSON.parse(prompt.additionalMeta)[
+      "customOptionText"
+    ].split(";");
+    const identifier = await createCustomOptionNotificationIdentifier(
+      customOptions
     );
-    responseTypeMap = prompt.uuid + "-customOptions";
+    if (!identifier) {
+      console.log("error generating custom option notification identifier");
+      return false;
+    } else {
+      notificationIdentifier = identifier;
+    }
   }
 
   const triggerObject: NotificationTriggerInput = {};
   const contentObject: NotificationContentInput = {
     title: `Fusion: ${prompt.promptText}`,
-    categoryIdentifier: responseTypeMap,
+    categoryIdentifier: notificationIdentifier,
   };
   // if platform is android assign channel
   if (Platform.OS === "android") {
@@ -419,7 +428,7 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
   }
   if (Platform.OS === "ios") {
     // apply notification instruction
-    contentObject["body"] = "Press & hold to log";
+    contentObject["body"] = "Press & hold or swipe to log";
   }
 
   const daysObject =
@@ -500,6 +509,7 @@ export const cancelExistingNotificationForPrompt = async (promptId: string) => {
    */
 
   // now read from the db and cancel all the notifications
+  // TODO: Be sure to delete the notification category when noitifcation is being canceled
   try {
     const notificationIds = await getNotificationIdsForPrompt(promptId);
     for (const notificationId of notificationIds) {
@@ -993,12 +1003,9 @@ export async function resyncOldPrompts() {
 }
 //Creates custom NotificationCategory with the name promptId+"-customOptions" containing customOptions selection
 export async function createCustomOptionNotificationIdentifier(
-  customOptions: string,
-  promptId: string
+  customOptions: string[]
 ) {
-  let customOptionList =
-    JSON.parse(customOptions)["customOptionText"].split(";");
-  let notificationOptions = customOptionList.map((option) => ({
+  let notificationOptions = customOptions.map((option: any) => ({
     identifier: option,
     buttonTitle: option,
     options: {
@@ -1006,10 +1013,17 @@ export async function createCustomOptionNotificationIdentifier(
     },
   }));
 
-  await Notifications.setNotificationCategoryAsync(
-    promptId + "-customOptions",
-    notificationOptions
-  );
+  const categoryIdentifier = Crypto.randomUUID() + "-customOptions";
+  try {
+    await Notifications.setNotificationCategoryAsync(
+      categoryIdentifier,
+      notificationOptions
+    );
+    return categoryIdentifier;
+  } catch (error) {
+    console.log("Unable to create notification category", error);
+    return null;
+  }
 }
 
 // Create a local account & save details
