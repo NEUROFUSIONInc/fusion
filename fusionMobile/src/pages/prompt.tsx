@@ -11,8 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
-  TouchableOpacity,
-  FlatList,
+  Pressable,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Prompt, PromptResponseType } from "~/@types";
@@ -137,7 +136,7 @@ export function PromptScreen() {
           horizontal={false} // Set horizontal prop to false to disable horizontal scrolling
           contentContainerStyle={{ flexGrow: 1 }} // Set flexGrow to 1 to enable vertical scrolling
         >
-          <View style={[styles.formSection, { zIndex: 10000 }]}>
+          <Pressable style={[styles.formSection, { zIndex: 10000 }]}>
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
@@ -174,7 +173,7 @@ export function PromptScreen() {
                 />
 
                 {customOptions.map((option) => (
-                  <View style={{ marginTop: 5 }}>
+                  <View key={option} style={{ marginTop: 5 }}>
                     <Text style={[styles.customOptionsListItem]}>{option}</Text>
                   </View>
                 ))}
@@ -203,7 +202,7 @@ export function PromptScreen() {
               days={days}
               setDays={setDays}
             />
-          </View>
+          </Pressable>
         </ScrollView>
 
         <View style={{ zIndex: 2000 }}>

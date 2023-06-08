@@ -170,6 +170,7 @@ export function PromptEntryScreen() {
                     <View style={styles.customOptionsContainer}>
                       {customOptions.map((option) => (
                         <View
+                          key={option}
                           style={[{ marginTop: 10 }, styles.checkboxContainer]}
                         >
                           <Checkbox
