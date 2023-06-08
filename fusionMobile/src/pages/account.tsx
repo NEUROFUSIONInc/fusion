@@ -20,6 +20,8 @@ import {
   createNostrAccount,
   getNostrAccount,
   // relay,
+  readSavedPrompts,
+  getPromptResponses,
 } from "~/utils";
 
 import axios from "axios";
@@ -136,6 +138,25 @@ export function AccountScreen() {
     setBrainRecordingEnabled(!brainRecordingEnabled);
   };
 
+  const exportData = async () => {
+    // get all the available prompts
+    // get all the responses
+    // 2 csv files .. responses.csv and prompts.csv
+    try {
+      // const prompts = await readSavedPrompts();
+      // if (!prompts || prompts.length < 1 ) {
+      //   Alert.alert("No prompts to export");
+      //   return;
+      // }
+      // prompts.forEach((prompt) => {
+      //   const responses = await getPromptResponses(prompt);
+      //   //
+      // });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -212,6 +233,21 @@ export function AccountScreen() {
             </View>
           </View>
 
+          {/* Export Data */}
+          <View style={styles.formSection}>
+            {/* <View style={styles.formHeader}>
+              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
+                Export Data
+              </Text>
+              <Text>
+                Export your data to use on other Nostr clients or to backup.
+              </Text>
+            </View> */}
+
+            <View style={{ marginTop: 20 }}>
+              <Button title="Export Data" onPress={exportData} />
+            </View>
+          </View>
           {/* Opt in to Reasearch Program */}
           {/* <View style={styles.formSection}>
             <View style={styles.formHeader}>

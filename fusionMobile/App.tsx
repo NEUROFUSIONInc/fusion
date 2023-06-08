@@ -228,7 +228,6 @@ export default function App() {
     <View
       style={{
         paddingTop: insets.top,
-        // paddingBottom: insets.bottom,
         flex: 1,
       }}
     >
