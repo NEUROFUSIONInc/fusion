@@ -2,6 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import * as Crypto from "expo-crypto";
 import * as Notifications from "expo-notifications";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { zip } from "react-native-zip-archive";
+
 import {
   NotificationContentInput,
   NotificationTriggerInput,
@@ -721,7 +725,6 @@ export const getPromptResponses = async (prompt: Prompt) => {
                 return {
                   promptUuid: row.promptUuid,
                   value: row.value,
-                  additionalMeta: row.additionalMeta,
                   triggerTimestamp: row.triggerTimestamp,
                   responseTimestamp: row.responseTimestamp,
                 } as PromptResponse;
@@ -1108,5 +1111,100 @@ export async function getNostrAccount() {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+export const processPromptResponses = async (
+  prompts: Prompt[],
+  combinedResponses: PromptResponse[]
+) => {
+  /**
+   * This function takes in an array of prompts and
+   * returns an array of prompt responses
+   */
+  // map array to promises
+  const combiningResponses = prompts.map(async (prompt) => {
+    // your processing code here
+    const responses = await getPromptResponses(prompt);
+    combinedResponses.push(...responses);
+  });
+
+  await Promise.all(combiningResponses);
+
+  // mask the prompt uuids
+  const maskingPromptIds = combinedResponses.map(async (response) => {
+    return (response.promptUuid = await maskPromptId(response.promptUuid));
+  });
+
+  await Promise.all(maskingPromptIds);
+
+  return combinedResponses;
+};
+
+export async function saveFileToDevice(
+  fileName: string,
+  fileContents: string,
+  exportFile: boolean = false
+) {
+  /**
+   * Takes file content and saves it to the local directory of user device.
+   *
+   * If exportFile is true, we also export to external path for user.
+   * @param fileName - name of the file to be saved
+   */
+  try {
+    const fileUri = FileSystem.documentDirectory + fileName;
+
+    await FileSystem.writeAsStringAsync(fileUri, fileContents);
+    if (exportFile) {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("Sharing is not available on this device");
+        return;
+      }
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "text/csv",
+        dialogTitle: "Your fusion data",
+        UTI: "public.comma-separated-values-text",
+      });
+    }
+    return fileUri;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function exportFileDirectoryAsZip(
+  filePaths: string[],
+  zipFilename: string
+) {
+  /**
+   * Takes a set of files and zips them together into a single .zip
+   *
+   * Currently ios doesn't handle the type well in the share menu
+   * but will need to fix this soon
+   */
+  try {
+    const targetPath = `${FileSystem.documentDirectory}${zipFilename}`;
+    const zipPath = await zip(filePaths, targetPath);
+
+    console.log(`${zipPath}`);
+    if (zipPath) {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("Sharing is not available on this device");
+        return;
+      }
+      await Sharing.shareAsync(filePaths[0], {
+        mimeType: "application/zip",
+        dialogTitle: "Your fusion data",
+        UTI: "com.pkware.zip-archive",
+      });
+    } else {
+      console.log("zipPath is null");
+    }
+  } catch (error) {
+    console.log(error);
   }
 }

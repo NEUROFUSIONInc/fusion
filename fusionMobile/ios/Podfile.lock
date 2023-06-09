@@ -15,6 +15,9 @@ PODS:
   - EXJSONUtils (0.5.1)
   - EXManifests (0.5.2):
     - EXJSONUtils
+  - EXMediaLibrary (15.2.3):
+    - ExpoModulesCore
+    - React-Core
   - EXNotifications (0.18.1):
     - ExpoModulesCore
   - EXPermissions (14.1.1):
@@ -105,6 +108,8 @@ PODS:
     - React-Core
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
+  - EXSharing (11.2.2):
+    - ExpoModulesCore
   - EXSplashScreen (0.18.2):
     - ExpoModulesCore
     - React-Core
@@ -500,6 +505,14 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
+  - RNZipArchive (6.0.9):
+    - React-Core
+    - RNZipArchive/Core (= 6.0.9)
+    - SSZipArchive (~> 2.2)
+  - RNZipArchive/Core (6.0.9):
+    - React-Core
+    - SSZipArchive (~> 2.2)
+  - SSZipArchive (2.4.3)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -512,6 +525,7 @@ DEPENDENCIES:
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
   - EXManifests (from `../node_modules/expo-manifests/ios`)
+  - EXMediaLibrary (from `../node_modules/expo-media-library/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
   - Expo (from `../node_modules/expo`)
@@ -524,6 +538,7 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoMailComposer (from `../node_modules/expo-mail-composer/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - EXSharing (from `../node_modules/expo-sharing/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
@@ -575,6 +590,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RNZipArchive (from `../node_modules/react-native-zip-archive`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -582,6 +598,7 @@ SPEC REPOS:
     - ASN1Decoder
     - fmt
     - libevent
+    - SSZipArchive
 
 EXTERNAL SOURCES:
   boost:
@@ -602,6 +619,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-json-utils/ios"
   EXManifests:
     :path: "../node_modules/expo-manifests/ios"
+  EXMediaLibrary:
+    :path: "../node_modules/expo-media-library/ios"
   EXNotifications:
     :path: "../node_modules/expo-notifications/ios"
   EXPermissions:
@@ -626,6 +645,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-mail-composer/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  EXSharing:
+    :path: "../node_modules/expo-sharing/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   EXSQLite:
@@ -724,6 +745,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  RNZipArchive:
+    :path: "../node_modules/react-native-zip-archive"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -738,6 +761,7 @@ SPEC CHECKSUMS:
   EXFont: 6ea3800df746be7233208d80fe379b8ed74f4272
   EXJSONUtils: 48b1e764ac35160e6f54d21ab60d7d9501f3e473
   EXManifests: 500666d48e8dd7ca5a482c9e729e4a7a6c34081b
+  EXMediaLibrary: 587cd8aad27a6fc8d7c38b950bc75bc1845a7480
   EXNotifications: dd628737af60fc8cc62dccebacd326b0fbbc0dcb
   EXPermissions: 2291c6736a823b4c680d5bf8e12d3c1c5d11da35
   Expo: 8448e3a2aa1b295f029c81551e1ab6d986517fdb
@@ -750,6 +774,7 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoMailComposer: 0085b258d00ba40664f7acb40d96042b29a1da7d
   ExpoModulesCore: 653958063a301098b541ae4dfed1ac0b98db607b
+  EXSharing: 09839ace249f61bfa13c50c6a28256c31d260355
   EXSplashScreen: 0e0a9ba0cf7553094e93213099bd7b42e6e237e9
   EXSQLite: 848167441b14cb6cdd6ae46c8d62289161a79550
   EXStructuredHeaders: b1a48d732562e2cc81f11771bcfd29534f5d9254
@@ -801,6 +826,8 @@ SPEC CHECKSUMS:
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
+  RNZipArchive: 68a0c6db4b1c103f846f1559622050df254a3ade
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Yoga: 065f0b74dba4832d6e328238de46eb72c5de9556
 
 PODFILE CHECKSUM: 491a54574e9b2175528cdebb0d4f8a2b59053d0f

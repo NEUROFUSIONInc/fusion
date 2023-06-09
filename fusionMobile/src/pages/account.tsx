@@ -22,15 +22,22 @@ import {
   // relay,
   readSavedPrompts,
   getPromptResponses,
+  saveFileToDevice,
+  maskPromptId,
+  processPromptResponses,
+  exportFileDirectoryAsZip,
 } from "~/utils";
 
-import axios from "axios";
-
 import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
-import { useMemo, useState, useRef } from "react";
+import { useRef } from "react";
 import { Pressable } from "react-native";
+import { Prompt, PromptResponse } from "~/@types";
 
 // import crypto from "isomorphic-webcrypto";
+import axios from "axios";
+
+import PapaParse from "papaparse";
+import dayjs from "dayjs";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -138,20 +145,42 @@ export function AccountScreen() {
     setBrainRecordingEnabled(!brainRecordingEnabled);
   };
 
-  const exportData = async () => {
+  const exportData = async (dataType: string) => {
     // get all the available prompts
     // get all the responses
-    // 2 csv files .. responses.csv and prompts.csv
+    // TODO: have user select what prompts to share
     try {
-      // const prompts = await readSavedPrompts();
-      // if (!prompts || prompts.length < 1 ) {
-      //   Alert.alert("No prompts to export");
-      //   return;
-      // }
-      // prompts.forEach((prompt) => {
-      //   const responses = await getPromptResponses(prompt);
-      //   //
-      // });
+      const prompts = await readSavedPrompts();
+      if (!prompts || prompts.length < 1) {
+        Alert.alert("No prompts to export");
+        return;
+      }
+
+      const exportTimestamp = dayjs().unix().toString();
+      if (dataType == "prompts") {
+        console.log("exporting prompts");
+        const maskingPromptIds = prompts.map(async (prompt) => {
+          return (prompt.uuid = await maskPromptId(prompt.uuid));
+        });
+        await Promise.all(maskingPromptIds);
+        const promptsCsv = PapaParse.unparse(prompts);
+        const promptsLocalPath = await saveFileToDevice(
+          `prompts_${exportTimestamp}.csv`,
+          promptsCsv,
+          true
+        );
+      } else if (dataType == "responses") {
+        console.log("exporting responses");
+        // generare & write response_<timestamp>.csv
+        const combinedResponses: PromptResponse[] = [];
+        await processPromptResponses(prompts, combinedResponses);
+        const promptResponsesCsv = PapaParse.unparse(combinedResponses);
+        const responsesLocalPath = await saveFileToDevice(
+          `responses_${exportTimestamp}.csv`,
+          promptResponsesCsv,
+          true
+        );
+      }
     } catch (error) {
       console.log(error);
     }
@@ -235,19 +264,20 @@ export function AccountScreen() {
 
           {/* Export Data */}
           <View style={styles.formSection}>
-            {/* <View style={styles.formHeader}>
-              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-                Export Data
-              </Text>
-              <Text>
-                Export your data to use on other Nostr clients or to backup.
-              </Text>
-            </View> */}
-
             <View style={{ marginTop: 20 }}>
-              <Button title="Export Data" onPress={exportData} />
+              <Button
+                title="Export Prompts"
+                onPress={async () => await exportData("prompts")}
+              />
+            </View>
+            <View style={{ marginTop: 20 }}>
+              <Button
+                title="Export Responses"
+                onPress={async () => await exportData("responses")}
+              />
             </View>
           </View>
+
           {/* Opt in to Reasearch Program */}
           {/* <View style={styles.formSection}>
             <View style={styles.formHeader}>

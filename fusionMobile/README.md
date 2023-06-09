@@ -254,3 +254,8 @@ Prompt response view
 - filter just like charts
 - change time to local time
 - export prompt responses -- call util function (getPromptResponses) & download json
+
+- Summarize content from text responses
+
+- Share screen should eventually allow users select what prompts
+  & who they want to share the results to in Fusion :)
