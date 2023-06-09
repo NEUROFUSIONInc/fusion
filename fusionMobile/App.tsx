@@ -14,6 +14,7 @@ import {
   maskPromptId,
   appInsights,
 } from "./src/utils";
+import { StatusBar, Appearance } from "react-native";
 
 const registerForPushNotificationsAsync = async () => {
   //TODO: follow the guide again for checking on Android/iOS
@@ -231,6 +232,13 @@ export default function App() {
         flex: 1,
       }}
     >
+      <StatusBar
+        barStyle={
+          Appearance.getColorScheme() === "light"
+            ? "dark-content"
+            : "light-content"
+        }
+      />
       <PromptContextProvider>
         <FusionNavigation />
       </PromptContextProvider>
