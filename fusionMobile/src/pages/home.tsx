@@ -23,9 +23,9 @@ export function HomeScreen() {
     <View style={styles.container}>
       <View>
         <Text style={{ fontSize: 15 }}>
-          Track your behavior & activities by answering prompts that are
-          tailored to you.{"\n\n"}Your prompts & responses are stored only on
-          your device.
+          Uncover shifts in your behavior and activities through personalized
+          prompts, designed just for you.{"\n\n"}Your prompts and responses are
+          stored only on your device.
         </Text>
       </View>
 

@@ -11,7 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Prompt, PromptResponseType } from "~/@types";
@@ -41,7 +41,6 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
     { label: "Custom Options", value: "customOptions" },
   ]);
 
@@ -71,6 +70,12 @@ export function PromptScreen() {
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
+    appInsights.trackPageView({
+      name: "Author Prompt",
+      properties: {
+        intent: route.params?.prompt ? "edit" : "create",
+      },
+    });
     if (route.params?.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
@@ -101,27 +106,16 @@ export function PromptScreen() {
         );
       }
 
-      if (route.params.prompt.additionalMeta) {
+      if (
+        route.params.prompt.additionalMeta &&
+        route.params.prompt.additionalMeta != ""
+      ) {
         // if there is additionalMeta to parse, parse for reentry into fields
         let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta);
         if (additionalMetaObj["customOptionText"] != null) {
           setcustomOptionsInputText(additionalMetaObj["customOptionText"]);
         }
       }
-
-      appInsights.trackPageView({
-        name: "Author Prompt",
-        properties: {
-          intent: "edit",
-        },
-      });
-    } else {
-      appInsights.trackPageView({
-        name: "Author Prompt",
-        properties: {
-          intent: "create",
-        },
-      });
     }
   }, [route.params]);
 
@@ -142,7 +136,7 @@ export function PromptScreen() {
           horizontal={false} // Set horizontal prop to false to disable horizontal scrolling
           contentContainerStyle={{ flexGrow: 1 }} // Set flexGrow to 1 to enable vertical scrolling
         >
-          <View style={[styles.formSection, { zIndex: 10000 }]}>
+          <Pressable style={[styles.formSection, { zIndex: 10000 }]}>
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
@@ -179,7 +173,7 @@ export function PromptScreen() {
                 />
 
                 {customOptions.map((option) => (
-                  <View style={{ marginTop: 5 }}>
+                  <View key={option} style={{ marginTop: 5 }}>
                     <Text style={[styles.customOptionsListItem]}>{option}</Text>
                   </View>
                 ))}
@@ -208,7 +202,7 @@ export function PromptScreen() {
               days={days}
               setDays={setDays}
             />
-          </View>
+          </Pressable>
         </ScrollView>
 
         <View style={{ zIndex: 2000 }}>
@@ -220,11 +214,19 @@ export function PromptScreen() {
                 const promptUuid = promptObject ? promptObject.uuid : null;
 
                 if (start >= end) {
-                  Alert.alert(
-                    "Error",
-                    "The start time must be before the end time"
-                  );
-                  return;
+                  throw new Error("Start time must be before end time");
+                }
+
+                if (promptText == "") {
+                  throw new Error("Prompt text cannot be empty");
+                }
+
+                if (responseType == null) {
+                  throw new Error("Response type cannot be empty");
+                }
+
+                if (countPerDay == "") {
+                  throw new Error("Count per day cannot be empty");
                 }
 
                 let additionalMeta = "";
@@ -244,6 +246,7 @@ export function PromptScreen() {
                   }
                 }
 
+                console.log("calling save prompt");
                 const res = await savePrompt(
                   promptText,
                   responseType!,
