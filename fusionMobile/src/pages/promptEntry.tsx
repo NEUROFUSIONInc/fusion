@@ -12,6 +12,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import { Prompt } from "~/@types/index.js";
@@ -44,13 +45,12 @@ export function PromptEntryScreen() {
 
   React.useEffect(() => {
     if (route.params?.promptUuid) {
-      console.log(route.params.promptUuid);
       (async () => {
         const res = await fetchPromptById(route.params.promptUuid);
         setPromptObject(res);
       })();
     }
-  }, []);
+  }, [route.params]);
 
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   React.useEffect(() => {
@@ -65,6 +65,11 @@ export function PromptEntryScreen() {
     // generate event object & save entry
     // direct user to the prompt responses screen
     if (!promptObject) {
+      return;
+    }
+
+    if (userResponse === "") {
+      Alert.alert("Error", "Please enter a response");
       return;
     }
 
@@ -101,10 +106,7 @@ export function PromptEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           {promptObject && (
@@ -168,6 +170,7 @@ export function PromptEntryScreen() {
                     <View style={styles.customOptionsContainer}>
                       {customOptions.map((option) => (
                         <View
+                          key={option}
                           style={[{ marginTop: 10 }, styles.checkboxContainer]}
                         >
                           <Checkbox

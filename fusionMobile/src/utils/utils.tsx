@@ -2,6 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import * as Crypto from "expo-crypto";
 import * as Notifications from "expo-notifications";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { zip } from "react-native-zip-archive";
+
 import {
   NotificationContentInput,
   NotificationTriggerInput,
@@ -94,6 +98,8 @@ const createBaseTables = () => {
                 [],
                 () => {
                   // finished creating all the tables
+                  // add "additionalMeta TEXT" column to prompts table
+                  // TODO: operations like this should move to sequelize
                   tx.executeSql(
                     "PRAGMA table_info(prompts)",
                     [],
@@ -114,8 +120,9 @@ const createBaseTables = () => {
                             resolve(true);
                           }
                         );
+                      } else {
+                        resolve(true);
                       }
-                      resolve(true);
                     }
                   );
                 },
@@ -132,6 +139,24 @@ const createBaseTables = () => {
               return Boolean(error);
             }
           );
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS user_account (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          npub TEXT NOT NULL UNIQUE,
+          pubkey TEXT NOT NULL UNIQUE,
+          privkey TEXT NOT NULL
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
         },
         (tx, error) => {
           console.log("error", error);
@@ -378,28 +403,35 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     prompt.notificationConfig_countPerDay
   );
 
-  let responseTypeMap = prompt.responseType.toString();
-  if ((prompt.responseType = "customOptions")) {
+  let notificationIdentifier = prompt.responseType.toString();
+  if (prompt.responseType == "customOptions") {
     // if custom option generate bespoke notificationtypes with the custom option selections
-    createCustomOptionNotificationIdentifier(
-      prompt.additionalMeta,
-      prompt.uuid
+    const customOptions = JSON.parse(prompt.additionalMeta)[
+      "customOptionText"
+    ].split(";");
+    const identifier = await createCustomOptionNotificationIdentifier(
+      customOptions
     );
-    responseTypeMap = prompt.uuid + "-customOptions";
+    if (!identifier) {
+      console.log("error generating custom option notification identifier");
+      return false;
+    } else {
+      notificationIdentifier = identifier;
+    }
   }
 
   const triggerObject: NotificationTriggerInput = {};
   const contentObject: NotificationContentInput = {
     title: `Fusion: ${prompt.promptText}`,
-    categoryIdentifier: responseTypeMap,
   };
+
   // if platform is android assign channel
   if (Platform.OS === "android") {
     triggerObject["channelId"] = "default";
   }
   if (Platform.OS === "ios") {
     // apply notification instruction
-    contentObject["body"] = "Press & hold to log";
+    contentObject["body"] = "Press & hold or swipe to log";
   }
 
   const daysObject =
@@ -416,6 +448,18 @@ export const scheduleFusionNotification = async (prompt: Prompt) => {
     friday: 6,
     saturday: 7,
   };
+
+  // one more quirk for Android - https://github.com/expo/expo/issues/20500
+  // responding from the notification menu doesn't work for
+  // text & number responses
+  if (
+    Platform.OS === "android" &&
+    ["text", "number"].includes(prompt.responseType)
+  ) {
+    // make it like just a normal notification by not providing a categoryIdentifier
+  } else {
+    contentObject["categoryIdentifier"] = notificationIdentifier;
+  }
 
   try {
     // cancel existing notifications for prompt
@@ -480,6 +524,7 @@ export const cancelExistingNotificationForPrompt = async (promptId: string) => {
    */
 
   // now read from the db and cancel all the notifications
+  // TODO: Be sure to delete the notification category when noitifcation is being canceled
   try {
     const notificationIds = await getNotificationIdsForPrompt(promptId);
     for (const notificationId of notificationIds) {
@@ -680,7 +725,6 @@ export const getPromptResponses = async (prompt: Prompt) => {
                 return {
                   promptUuid: row.promptUuid,
                   value: row.value,
-                  additionalMeta: row.additionalMeta,
                   triggerTimestamp: row.triggerTimestamp,
                   responseTimestamp: row.responseTimestamp,
                 } as PromptResponse;
@@ -973,12 +1017,9 @@ export async function resyncOldPrompts() {
 }
 //Creates custom NotificationCategory with the name promptId+"-customOptions" containing customOptions selection
 export async function createCustomOptionNotificationIdentifier(
-  customOptions: string,
-  promptId: string
+  customOptions: string[]
 ) {
-  let customOptionList =
-    JSON.parse(customOptions)["customOptionText"].split(";");
-  let notificationOptions = customOptionList.map((option) => ({
+  let notificationOptions = customOptions.map((option: any) => ({
     identifier: option,
     buttonTitle: option,
     options: {
@@ -986,8 +1027,184 @@ export async function createCustomOptionNotificationIdentifier(
     },
   }));
 
-  await Notifications.setNotificationCategoryAsync(
-    promptId + "-customOptions",
-    notificationOptions
-  );
+  const categoryIdentifier = Crypto.randomUUID() + "-customOptions";
+  try {
+    await Notifications.setNotificationCategoryAsync(
+      categoryIdentifier,
+      notificationOptions
+    );
+    return categoryIdentifier;
+  } catch (error) {
+    console.log("Unable to create notification category", error);
+    return null;
+  }
+}
+
+// Create a local account & save details
+export async function createNostrAccount(
+  npub: string,
+  pubkey: string,
+  privkey: string
+) {
+  try {
+    const saveAccountToDb = () => {
+      return new Promise<boolean>((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO user_account (npub, pubkey, privkey) VALUES (?, ?, ?)",
+            [npub, pubkey, privkey],
+            (_, { rows }) => {
+              resolve(true);
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+    };
+
+    const saveAccountStatus = await saveAccountToDb();
+    return saveAccountStatus;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function getNostrAccount() {
+  try {
+    const getAccountFromDb = () => {
+      return new Promise<{
+        npub: string;
+        pubkey: string;
+        privkey: string;
+      } | null>((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM user_account",
+            [],
+            (_, { rows }) => {
+              if (rows._array.length === 0) {
+                resolve(null);
+              } else {
+                const account = rows._array[0];
+                resolve({
+                  npub: account.npub,
+                  pubkey: account.pubkey,
+                  privkey: account.privkey,
+                });
+              }
+            },
+            (_, error) => {
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+    };
+
+    const account = await getAccountFromDb();
+    return account;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export const processPromptResponses = async (
+  prompts: Prompt[],
+  combinedResponses: PromptResponse[]
+) => {
+  /**
+   * This function takes in an array of prompts and
+   * returns an array of prompt responses
+   */
+  // map array to promises
+  const combiningResponses = prompts.map(async (prompt) => {
+    // your processing code here
+    const responses = await getPromptResponses(prompt);
+    combinedResponses.push(...responses);
+  });
+
+  await Promise.all(combiningResponses);
+
+  // mask the prompt uuids
+  const maskingPromptIds = combinedResponses.map(async (response) => {
+    return (response.promptUuid = await maskPromptId(response.promptUuid));
+  });
+
+  await Promise.all(maskingPromptIds);
+
+  return combinedResponses;
+};
+
+export async function saveFileToDevice(
+  fileName: string,
+  fileContents: string,
+  exportFile: boolean = false
+) {
+  /**
+   * Takes file content and saves it to the local directory of user device.
+   *
+   * If exportFile is true, we also export to external path for user.
+   * @param fileName - name of the file to be saved
+   */
+  try {
+    const fileUri = FileSystem.documentDirectory + fileName;
+
+    await FileSystem.writeAsStringAsync(fileUri, fileContents);
+    if (exportFile) {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("Sharing is not available on this device");
+        return;
+      }
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "text/csv",
+        dialogTitle: "Your fusion data",
+        UTI: "public.comma-separated-values-text",
+      });
+    }
+    return fileUri;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function exportFileDirectoryAsZip(
+  filePaths: string[],
+  zipFilename: string
+) {
+  /**
+   * Takes a set of files and zips them together into a single .zip
+   *
+   * Currently ios doesn't handle the type well in the share menu
+   * but will need to fix this soon
+   */
+  try {
+    const targetPath = `${FileSystem.documentDirectory}${zipFilename}`;
+    const zipPath = await zip(filePaths, targetPath);
+
+    console.log(`${zipPath}`);
+    if (zipPath) {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("Sharing is not available on this device");
+        return;
+      }
+      await Sharing.shareAsync(filePaths[0], {
+        mimeType: "application/zip",
+        dialogTitle: "Your fusion data",
+        UTI: "com.pkware.zip-archive",
+      });
+    } else {
+      console.log("zipPath is null");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }

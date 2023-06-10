@@ -1,5 +1,9 @@
 export const navigationLinks = [
   {
+    title: "About",
+    href: "https://usefusion.app/about",
+  },
+  {
     title: "Blog",
     href: "https://neurofusion.substack.com/",
   },
