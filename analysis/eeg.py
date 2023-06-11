@@ -159,7 +159,7 @@ def get_signal_quality_summary(signalQuality):
     return channel_good_percentage
 
 
-def load_session_epochs(files: dict, _on: set, qualityCutoffFilter: int = 0, epochSize: int = -1):
+def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutoffFilter: int = 0, epochSize: int = -1):
     """
     Takes a session of EEG data and the recordings concerned with and outputs filtered epochs
     qualityCutoffFilter: percentage of time electrode data is marked as "good" or "great" required for it to be included in output and analyticsl, 0 capture everything
@@ -172,14 +172,9 @@ def load_session_epochs(files: dict, _on: set, qualityCutoffFilter: int = 0, epo
 
     # NOTE: unixTimestamps are int/seconds but samples more often than 1Hz,
     #       so several rows per timestamp and missing sub-second resolution.
-    df_sigQ = pd.read_json(files["signalQuality"])
-    df_sigQ.set_index("unixTimestamp", inplace=True,drop=False)
-    df_sigQ.index =  pd.to_datetime(df_sigQ.index, unit="s")
 
-    print(df_sigQ.index[df_sigQ.shape[0]-9]-df_sigQ.index[0])
-
-
-    _on.append("powerByBand")
+    _on+=["signalQuality","powerByBand"]
+    
     _on = set(_on)
     on = dict()
     for x in _on:
@@ -189,87 +184,104 @@ def load_session_epochs(files: dict, _on: set, qualityCutoffFilter: int = 0, epo
             on[x] = pd.read_json(files[x])
 
     for x in on:
-        on[x].set_index("unixTimestamp", inplace=True)
+        on[x].rename(columns={"timestamp": "unixTimestamp"},inplace=True)
+        on[x]["epoch"] = on[x]["unixTimestamp"].copy(deep=True)
+        if str(on[x]["epoch"].dtype) == "datetime64[ns]":
+            on[x]["epoch"] = on[x]["epoch"].astype(int) / 10**9
+    
         try:
-            on[x].index =  pd.to_datetime(on[x].index, unit="s")
+            on[x]["unixTimestamp"] =  pd.to_datetime(on[x]["unixTimestamp"], unit="s")
         except:
-            on[x].index =  pd.to_datetime(on[x].index, unit="ms")
-        on[x]["epoch"] = pd.NA
 
-    if epochSize == -1: epochSize = (df_sigQ.index[df_sigQ.shape[0]-1]-df_sigQ.index[0]).seconds
+            on[x]["epoch"] = np.floor(on[x]["epoch"] / 1000)
+            on[x]["unixTimestamp"] =  pd.to_datetime(on[x]["unixTimestamp"], unit="ms")
 
-    channels, bands = zip(*[c.split("_") for c in on["powerByBand"].columns[1:-1]])
+        on[x].set_index("unixTimestamp",drop=False, inplace=True)
+
+    if epochSize == -1: epochSize = (on["signalQuality"].index[on["signalQuality"].shape[0]-1]-on["signalQuality"].index[0]).seconds
+    for x in on: 
+        on[x]["epoch"] = epochSize*np.floor(on[x]["epoch"]/epochSize)
+        on[x] = on[x].set_index(["epoch","unixTimestamp"])
+
+    df_sigQ = on["signalQuality"]
+
+    channels, bands = zip(*[c.split("_") for c in on["powerByBand"].columns[1:-2]])
     channels, bands = list(set(channels)), list(set(bands))
+    
+    onChan = {} # generate dictionary that maps channels to related columns
+    for df in on:
+        onChan[df] = {x: [y for y in on[df].columns if x in y] for x in channels}
 
+    if _channels != []:
+        removed = [x for x in channels if x not in _channels]
+        for x in on:
+            on[x].drop([col for col in on[x].columns if len([r for r in removed if r in col])>0], axis=1)
+        channels = _channels
 
     onChan = {}
     for df in on:
         onChan[df] = {x: [y for y in on[df].columns if x in y] for x in channels}
+        onChan[df] = {x : onChan[df][x] for x in onChan[df] if len(onChan[df][x])>0}
 
-    validEpochs:dict(list()) = {}
-    invalidEpochs:dict(list()) = {}
-
-    removedChannels = []
-    epochSize = datetime.timedelta(seconds=epochSize)
-
-    oldTime = df_sigQ.index[0]
-    newTime = df_sigQ.index[0] + epochSize
-
-    endTime = df_sigQ.index[df_sigQ.shape[0]-1]
-
-    if(newTime>endTime): newTime = endTime
-    finalLoop = False
-    # print(oldTime,newTime, df_pbb.shape[0],df_sigQ.shape[0])
-    qualitySamplesMissing = 0
-    while(endTime>=newTime):
-        sigSamp = df_sigQ[(df_sigQ.index < newTime) & (df_sigQ.index >= oldTime)]
-        if not sigSamp.empty:
-            for channel in channels:
-                col = channel + "_status"
-                channel_states = sigSamp[col].value_counts()
-                no_of_okay_samples = 0
-                if 'good' in channel_states:
-                    no_of_okay_samples += channel_states['good']
-                if 'great' in channel_states:
-                    no_of_okay_samples += channel_states['great']
-
-                percentage_good = no_of_okay_samples / sigSamp.shape[0]
-                timeunix = int(datetime.datetime.timestamp(oldTime)*1000)
-                if percentage_good>=qualityCutoffFilter: 
-                    if timeunix not in validEpochs: validEpochs[timeunix] = (oldTime,[])
-                    validEpochs[timeunix][1].append(channel) 
-                else:
-                    if timeunix not in invalidEpochs: invalidEpochs[timeunix] = (oldTime,[])
-                    invalidEpochs[timeunix][1].append(channel) 
-
-        if((newTime+epochSize)>endTime and not finalLoop): 
-            oldTime = newTime
-            newTime = endTime
-            finalLoop = True
-        else:
-            oldTime = newTime
-            newTime = newTime + epochSize
+    goodEpochStampsPerChan = {x: set() for x in channels}
+    goodEpochStamps = {}
+    # for x in [onChan["signalQuality"][x][1] for x in onChan["signalQuality"]]:
+    #     print(df_sigQ.groupby(level=[0])[x].value_counts())
+    #     break
+    #     # for y in df_sigQ.groupby(level=[0])[x].value_counts():
+            
     
-    # epochesReturn = {}
-    print(invalidEpochs)
-    for epoch in invalidEpochs:
-        oldTime = invalidEpochs[epoch][0]
-        newTime = invalidEpochs[epoch][0] + epochSize
-        for x in on:
-            cols = []
-            for z in [onChan[x][y] for y in invalidEpochs[epoch][1]]:
-                for y in z:
-                    cols.append(y)
-            print(cols)
-            on[x].loc[((on[x].index < newTime) & (on[x].index >= oldTime)),cols] = pd.NA
+        
 
-    epochCount = 0
-    for epoch in validEpochs:
-        oldTime = validEpochs[epoch][0]
-        newTime = validEpochs[epoch][0] + epochSize
-        for x in on:
-           on[x].loc[(on[x].index < newTime) & (on[x].index >= oldTime),"epoch"] = epochCount
-           epochCount+=1
+    for x in set(df_sigQ.index.get_level_values(0)):
+        sigSamp = df_sigQ.loc[x,:]
+        for channel in channels:
+            col = channel + "_status"
+            channel_states = sigSamp[col].value_counts()
+            no_of_okay_samples = 0
+            if 'good' in channel_states:
+                no_of_okay_samples += channel_states['good']
+            if 'great' in channel_states:
+                no_of_okay_samples += channel_states['great']
+
+            percentage_good = no_of_okay_samples / sigSamp.shape[0]
+            if percentage_good>=qualityCutoffFilter:
+                if x not in goodEpochStamps: goodEpochStamps[x] = [channel]
+                else: goodEpochStamps[x].append(channel)
+
+                goodEpochStampsPerChan[channel].add(x)
+
+    goodEpochSerial = {}
+    for i,x in enumerate(goodEpochStamps.keys()):
+        goodEpochSerial[x] = i
+
+    
+    for x in on:
+        on[x]["_epoch"] = on[x].index.get_level_values(0)
+        if x != "signalQuality":
+            for channel in onChan[x]:
+                badStamps = set(on[x]["_epoch"]).difference(goodEpochStampsPerChan[channel])
+                if len(badStamps) != 0:
+                    on[x].loc[list(badStamps),onChan[x][channel]] = pd.NA
+
+
+        badStamps = set(on[x]["_epoch"]).difference(goodEpochSerial.keys())
+        on[x].loc[list(badStamps),"_epoch"] = pd.NA
+        on[x]["_epoch"] = on[x]["_epoch"].replace(goodEpochSerial)
+
+
+        # print(on[x])
+
+   
+
+    for x in on:
+        on[x].reset_index(inplace=True)
+        on[x].drop(columns=["epoch"],inplace=True)
+        on[x].rename(columns={"_epoch":"epoch"},inplace=True)
+        on[x] = on[x].set_index(["epoch","unixTimestamp"])
+
+    # on["signalQuality"].to_csv("EpochValidate.csv")
+        
     return on
 
 def get_rolling_powerByBand(powerByBand, signalQuality, window_size=5):
