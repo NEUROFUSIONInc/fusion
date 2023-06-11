@@ -158,7 +158,6 @@ def get_signal_quality_summary(signalQuality):
     # this helps us know what channels to discard in our analysis
     return channel_good_percentage
 
-
 def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutoffFilter: int = 0, epochSize: int = -1):
     """
     Takes a session of EEG data and the recordings concerned with and outputs filtered epochs
@@ -283,6 +282,7 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
     # on["signalQuality"].to_csv("EpochValidate.csv")
         
     return on
+
 
 def get_rolling_powerByBand(powerByBand, signalQuality, window_size=5):
     # we want to split the recording for a session in to 5sec chunks average
