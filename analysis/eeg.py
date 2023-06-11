@@ -21,6 +21,7 @@ import os
 import numpy as np
 import json
 import copy
+import matplotlib.pyplot as plt
 
 
 data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
@@ -125,6 +126,78 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
         for tag in oldTags: del self.categories[tag]
 
         self.categories[newTag] = newCategory
+
+class analysisEngine():
+    def __init__(self,fileBundles:dict):
+        """
+        Generates basic analytics for recording groups
+        
+        fileBundles: {recordingsTagName:[set of recordingIds], tagName: ....} 
+        
+        """
+        self.fileBundles = fileBundles
+        self.fileBundleSummeries = {x:[] for x in self.fileBundles}
+
+        for x in self.fileBundles:
+            sum = 0
+            for y in self.fileBundles[x]:
+                self.fileBundleSummeries[x].append(eeg.load_session_summery(self.fileBundles[x][y],qualityCutoffFilter=.95,epochSize=15,returnEpoched=True,debug=False))
+                sum += len(self.fileBundleSummeries[x][-1])
+            print(f"{x} {len(self.fileBundles[x])} Recording Sessions Found, {sum} Epochs Extracted")
+
+    def distributionVetting(self):
+        self.accumulatedPowerBands = {x:dict() for x in self.fileBundles}
+        for x in self.fileBundles: # Basic sanity checks of distributions
+            for y in self.fileBundleSummeries[x]:
+                for epoch in y:
+                    for band in y[epoch]["avg_power_by_band"]:
+                        if band not in self.accumulatedPowerBands [x]: self.accumulatedPowerBands [x][band] = []
+                        self.accumulatedPowerBands [x][band].append(y[epoch]["avg_power_by_band"][band])
+
+            count = 0
+            for band in self.accumulatedPowerBands [x]:
+                count+=1
+                plt.subplot(5, 1, count)
+                plt.hist(self.accumulatedPowerBands [x][band],bins=160)
+                plt.title(f'{x}:{band} Epoch Averages')
+
+                plt.xlabel('uV')
+                plt.ylabel('Count')
+                plt.grid(True)
+                plt.show()
+
+    def basicComparisons(self):
+        accumatedPowerBandStats = {x:dict() for x in self.fileBundles}
+        accumatedPowerBandErrors = {x:dict() for x in self.fileBundles}
+
+        for x in self.accumulatedPowerBands: # avgs with error bars
+            for band in self.accumulatedPowerBands[x]:
+                accumatedPowerBandStats[x][band] = np.nanmean(np.array(self.accumulatedPowerBands[x][band]))
+                # print(np.array(accumulatedPowerBands[x][band]))
+                accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) # hilarous error bars on everything scaled to make visable
+            
+            
+            
+        fig, ax = plt.subplots()
+        bar_width = .3
+        currentBarDist = bar_width
+        figs = {x:0 for x in self.fileBundles}
+        index = np.arange(5)
+        for x in accumatedPowerBandStats:
+            print(x,accumatedPowerBandStats[x])
+            ax.bar(index+currentBarDist,list(accumatedPowerBandStats[x].values()), bar_width,
+                        label=x,yerr=list(accumatedPowerBandErrors[x].values()))
+            currentBarDist+=bar_width
+
+        ax.set_xticks(index + bar_width / 2)
+        ax.set_xticklabels(accumatedPowerBandStats[x].keys())
+        ax.set_xlabel('Band')
+        ax.set_ylabel('Average uV')
+        ax.set_title('Average uV by Band')
+        ax.legend()
+
+        plt.show()
+
 
 def load_data():
     filesets = load_fileset()
