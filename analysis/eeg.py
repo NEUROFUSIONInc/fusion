@@ -20,6 +20,7 @@ import pytz
 import os
 import numpy as np
 import json
+import copy
 
 
 data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
@@ -204,9 +205,12 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
 
     df_sigQ = on["signalQuality"]
 
+
     channels, bands = zip(*[c.split("_") for c in on["powerByBand"].columns[1:-2]])
     channels, bands = list(set(channels)), list(set(bands))
     
+
+
     onChan = {} # generate dictionary that maps channels to related columns
     for df in on:
         onChan[df] = {x: [y for y in on[df].columns if x in y] for x in channels}
@@ -221,6 +225,12 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
     for df in on:
         onChan[df] = {x: [y for y in on[df].columns if x in y] for x in channels}
         onChan[df] = {x : onChan[df][x] for x in onChan[df] if len(onChan[df][x])>0}
+
+    for x in onChan["powerByBand"]:
+        maparr = on["powerByBand"][onChan["powerByBand"][x][0]]>20
+        on["powerByBand"].loc[maparr,onChan["powerByBand"][x]] = pd.NA
+        
+
 
     goodEpochStampsPerChan = {x: set() for x in channels}
     goodEpochStamps = {}
@@ -282,6 +292,130 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
     # on["signalQuality"].to_csv("EpochValidate.csv")
         
     return on
+
+def load_session_summery(files: dict, _channels: list = [], qualityCutoffFilter: int = 0, epochSize: int = -1, returnEpoched = False, debug=False) -> dict: # summery or epoch return
+    """
+    Takes a session of EEG data, computes some metrics, and returns them.
+    qualityCutoffFilter: percentage of time electrode data is marked as "good" or "great" required for it to be included in output and analyticsl, 0 capture everything
+    epochSize: the window to sample on (seconds)
+    returnEpoched: if False, returns average over all the valid epoch, if true summary per epoch
+
+    Potential metrics:
+     - average power by band
+     - average power by channel
+     - relative power by band
+     - average focus/calm score
+    """
+    # Best channels are usually: CP3, CP4, PO3, PO4
+
+    # NOTE: unixTimestamps are int/seconds but samples more often than 1Hz,
+    #       so several rows per timestamp and missing sub-second resolution.
+
+    epochs = load_session_epochs(files,_on=["powerByBand","calm","focus","signalQuality"], _channels = _channels ,qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize)
+
+    channels, bands = zip(*[c.split("_") for c in epochs["powerByBand"].columns[1:-1]])
+    channels, bands = list(set(channels)), list(set(bands))
+
+    if _channels!=[]:
+        channels = _channels
+
+    removedChannels = []
+
+    for x in channels: 
+        # print(temporalFilter[x].value_counts())
+        #  just check that there's at least some value in the channel
+        validEpochs = ~epochs["powerByBand"][x+"_delta"].isna()
+        if True not in validEpochs.value_counts():
+            removedChannels.append(x)
+            channels.remove(x)
+        else:
+            percentLost = 1-(validEpochs.value_counts()[True]/validEpochs.shape[0])
+            if percentLost > .4 and debug:
+                print(f"{int(percentLost*100)}% of {x} Pruned for lack of quality")
+            if percentLost>.9:
+                removedChannels.append(x)
+                channels.remove(x)
+
+    epochStruct = {"timestamp": None,
+            "local_date": None,
+            "local_timeofday": None,
+            "duration": None,
+            "avg_power_per_channel_by_band": dict(),
+            "avg_power_by_band": dict(),
+            "avg_power_by_channel": dict(),
+            "avg_calm_score": None,
+            "avg_focus_score": None,
+            "time_spent_calm": None,
+            "time_spent_focused": None,
+            "relative_power": None,
+            "signal_quality": None
+            }
+
+    epochReturnStruct = {}
+
+    if not returnEpoched:
+        for x in epochs:
+            epochs[x]=epochs[x].reset_index()
+            epochs[x]["epoch"]=0
+            epochs[x] = epochs[x].set_index(["epoch","unixTimestamp"]).sort_index()
+
+    for epochInd in set(list(zip(*epochs["powerByBand"].index))[0]):
+        if pd.isna(epochInd): continue
+        pbbEpochDf = epochs["powerByBand"].loc[epochInd,:]
+        epochTemp = copy.deepcopy(epochStruct)
+
+        df = pd.DataFrame(index=pbbEpochDf.index) 
+        for channel in channels:
+            bands_for_channel = [c for c in pbbEpochDf.columns if c.startswith(channel)]
+            df[channel] = pbbEpochDf[bands_for_channel].mean(axis=1)
+        epochTemp["avg_power_by_channel"] = dict(df.mean()[channels])
+        df = pd.DataFrame(index=pbbEpochDf.index)
+
+        for band in bands:
+            channels_with_band = [c for c in pbbEpochDf.columns if c.endswith(band) and c.split("_")[0] not in removedChannels]
+            df[band] = pbbEpochDf[channels_with_band].mean(axis=1)
+
+        epochTemp["avg_power_by_band"] = dict(df.mean()[bands_ordered])
+        epochTemp["avg_power_per_channel_by_band"] = {channel: {band: pbbEpochDf[channel + "_" + band].mean() for band in bands}
+                    for channel in channels}
+        
+        epochTemp["timestamp"] = int(pbbEpochDf.index[0].timestamp())
+        epochTemp["duration"] =  pbbEpochDf.index[-1] - pbbEpochDf.index[0]
+        epochTemp["local_date"] = unix_to_localdate(epochTemp["timestamp"])
+        epochTemp["local_timeofday"] = unix_to_period(epochTemp["timestamp"])
+
+
+        if epochInd in epochs["calm"].index.get_level_values(0):
+            df_calm = epochs["calm"].loc[epochInd,:]
+            epochTemp["avg_calm_score"] = df_calm["probability"].mean()
+            epochTemp["time_spent_calm"] = (df_calm["probability"] > 0.3).sum() / len(df_calm)
+
+        if epochInd in epochs["focus"].index.get_level_values(0):
+            df_focus = epochs["focus"].loc[epochInd,:]
+            epochTemp["avg_focus_score"] = df_focus["probability"].mean()
+            epochTemp["time_spent_focused"] = (df_focus["probability"] > 0.3).sum() / len(df_focus)
+
+
+        relativePower = dict()
+        for channel in channels:
+            totalPower = 0
+            for band in bands:
+                totalPower+=epochTemp["avg_power_per_channel_by_band"][channel][band]
+            for band in bands:
+                if channel not in relativePower: relativePower[channel] = dict()
+                relativePower[channel][band] = epochTemp["avg_power_per_channel_by_band"][channel][band]/totalPower
+
+        epochTemp["relative_power"] = relativePower
+        epochTemp["signal_quality"] = get_signal_quality_summary(epochs["signalQuality"].loc[epochInd,:])
+
+
+
+        epochReturnStruct[epochInd] = epochTemp
+
+    if not returnEpoched: epochReturnStruct = epochReturnStruct[0]
+
+    return epochReturnStruct
+
 
 
 def get_rolling_powerByBand(powerByBand, signalQuality, window_size=5):
