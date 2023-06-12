@@ -1,11 +1,11 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { FC } from "react";
-import { Pressable, Text, TouchableOpacityProps } from "react-native";
+import { Pressable, Text, TouchableOpacityProps, View } from "react-native";
 
 import { ActivityIndicator } from "../activity-indicator";
 
 const buttonStyles = cva(
-  "flex flex-row active:opacity-90 self-start relative disabled:opacity-70 items-center w-auto justify-center min-w-max rounded-md",
+  "inline-flex flex-row active:opacity-90 self-start relative disabled:opacity-70 items-center w-auto justify-center min-w-max rounded-md",
   {
     variants: {
       variant: {
@@ -13,6 +13,7 @@ const buttonStyles = cva(
         secondary: "bg-primary-900",
         outline: "bg-transparent border-2 border-white active:opacity-75",
         "outline-dark": "bg-transparent border-2 border-primary-900",
+        ghost: "bg-transparent",
       },
       disabled: {
         true: "opacity-70",
@@ -45,6 +46,7 @@ const buttonTextStyles = cva("font-sans text-base", {
       secondary: "text-white",
       outline: "text-white",
       "outline-dark": "text-primary-900",
+      ghost: "text-white",
     },
   },
   defaultVariants: {
@@ -54,7 +56,9 @@ const buttonTextStyles = cva("font-sans text-base", {
 
 export type ButtonProps = TouchableOpacityProps &
   VariantProps<typeof buttonStyles> & {
-    title: string;
+    title?: string;
+    leftIcon?: JSX.Element;
+    rightIcon?: JSX.Element;
     loading?: boolean;
   };
 
@@ -66,14 +70,32 @@ export const Button: FC<ButtonProps> = ({
   size,
   fullWidth,
   loading,
+  leftIcon,
+  rightIcon,
+  className,
   ...props
 }) => (
   <Pressable
-    className={buttonStyles({ variant, disabled, size, rounded, fullWidth })}
+    className={buttonStyles({
+      variant,
+      disabled,
+      size,
+      rounded,
+      fullWidth,
+      className,
+    })}
     disabled={disabled}
     {...props}
   >
     {loading && <ActivityIndicator size="small" className="mr-2" />}
-    <Text className={buttonTextStyles({ variant })}>{title}</Text>
+    {!loading && leftIcon && (
+      <View className={buttonTextStyles({ variant })}>{leftIcon}</View>
+    )}
+    {title && <Text className={buttonTextStyles({ variant })}>{title}</Text>}
+    {rightIcon && (
+      <View className={buttonTextStyles({ variant, className: "ml-2" })}>
+        {rightIcon}
+      </View>
+    )}
   </Pressable>
 );
