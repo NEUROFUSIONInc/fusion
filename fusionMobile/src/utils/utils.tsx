@@ -13,6 +13,8 @@ import { Alert, Platform } from "react-native";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
+import { promptFrequencyData } from "../components/timepicker/data";
+
 import { appInsights } from "./appInsights";
 
 import {
@@ -26,6 +28,7 @@ import {
 
 // this is where we create the context
 export const PromptContext = React.createContext<null | {
+  loading: boolean;
   savedPrompts: Prompt[];
   setSavedPrompts: React.Dispatch<React.SetStateAction<Prompt[]>>;
 }>(null);
@@ -125,6 +128,7 @@ export const PromptContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [loading, setLoading] = React.useState(true);
   const [savedPrompts, setSavedPrompts] = React.useState<Prompt[]>([]);
 
   React.useEffect(() => {
@@ -132,6 +136,7 @@ export const PromptContextProvider = ({
       const setupStatus = await createBaseTables();
 
       if (!setupStatus) {
+        setLoading(false);
         Alert.alert("Error", "There was an error setting up the app.");
       }
 
@@ -139,11 +144,12 @@ export const PromptContextProvider = ({
       if (res) {
         setSavedPrompts(res);
       }
+      setLoading(false);
     })();
   }, []);
 
   return (
-    <PromptContext.Provider value={{ savedPrompts, setSavedPrompts }}>
+    <PromptContext.Provider value={{ loading, savedPrompts, setSavedPrompts }}>
       {children}
     </PromptContext.Provider>
   );
@@ -206,7 +212,7 @@ export const savePrompt = async (
   startTime: string,
   endTime: string,
   days: NotificationConfigDays,
-  uuid: string | null
+  uuid?: string | null
 ) => {
   /**
    * Sets or saves a prompt to SQLite
@@ -721,6 +727,52 @@ function getEvenlySpacedTimes(
   return times;
 }
 
+export function calculateContactCount(
+  startTime: dayjs.Dayjs,
+  endTime: dayjs.Dayjs,
+  frequency: string
+): number {
+  const durationMinutes = endTime.diff(startTime, "minute");
+  const frequencyMinutes = parseInt(frequency, 10);
+
+  // Calculate the number of contacts within the specified time range
+  let contactCount = Math.floor(durationMinutes / frequencyMinutes);
+
+  // Adjust the contact count if the last contact exceeds the end time
+  const lastContactTime = startTime.add(
+    contactCount * frequencyMinutes,
+    "minute"
+  );
+  if (lastContactTime.isAfter(endTime) || lastContactTime.isSame(endTime)) {
+    contactCount--;
+  }
+
+  return contactCount >= 0 ? contactCount : 0;
+}
+
+export function getFrequencyLabel(
+  startTime: string,
+  endTime: string,
+  contactCount: number
+): string {
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  const startMinutes = startHour * 60 + startMinute;
+  const endMinutes = endHour * 60 + endMinute;
+  const durationMinutes = endMinutes - startMinutes;
+
+  for (const option of promptFrequencyData) {
+    const frequencyMinutes = parseInt(option.value as string, 10);
+    const calculatedCount = Math.floor(durationMinutes / frequencyMinutes);
+    if (calculatedCount === contactCount) {
+      return option.label as string;
+    }
+  }
+
+  return "";
+}
+
 export function getDayjsFromTimestring(timeString: string) {
   // time is in the format "HH:mm", split up and convert to a dayjs object
   const time = timeString.split(":");
@@ -926,4 +978,77 @@ export async function resyncOldPrompts() {
 
     await Updates.reloadAsync();
   }
+}
+
+export function interpretDaySelection(days: NotificationConfigDays): string {
+  const selectedDays = Object.keys(days).filter((day) => days[day as Days]);
+  const numSelectedDays = selectedDays.length;
+
+  if (numSelectedDays === 0) {
+    return "Please select at least one day";
+  }
+
+  if (numSelectedDays === 7) {
+    return "Everyday";
+  }
+
+  if (numSelectedDays === 1) {
+    const selectedDay = selectedDays[0];
+    return `Only ${selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}`;
+  }
+
+  if (
+    selectedDays.includes("saturday") &&
+    selectedDays.includes("sunday") &&
+    numSelectedDays === 2
+  ) {
+    return "Weekends";
+  }
+
+  if (
+    numSelectedDays === 5 &&
+    !selectedDays.includes("saturday") &&
+    !selectedDays.includes("sunday")
+  ) {
+    return "Weekdays";
+  }
+
+  const consecutiveDays = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+
+  const firstSelectedDayIndex = consecutiveDays.findIndex((day) =>
+    selectedDays.includes(day)
+  );
+
+  const consecutiveSelectedDays = consecutiveDays.slice(
+    firstSelectedDayIndex,
+    firstSelectedDayIndex + numSelectedDays
+  );
+
+  const allConsecutiveSelected = consecutiveSelectedDays.every((day) =>
+    selectedDays.includes(day)
+  );
+
+  if (allConsecutiveSelected) {
+    const startDay = consecutiveSelectedDays[0];
+    const endDay = consecutiveSelectedDays[numSelectedDays - 1];
+    return `${startDay.charAt(0).toUpperCase() + startDay.slice(1, 3)} to ${
+      endDay.charAt(0).toUpperCase() + endDay.slice(1, 3)
+    }`;
+  }
+
+  if (consecutiveSelectedDays.length === numSelectedDays) {
+    return selectedDays
+      .map((day) => day.charAt(0).toUpperCase() + day.charAt(1))
+      .join(", ");
+  }
+
+  return "No specific pattern found";
 }
