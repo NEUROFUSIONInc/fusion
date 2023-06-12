@@ -215,7 +215,7 @@ export function PromptScreen() {
                     Alert.alert("Success", "Prompt saved successfully");
 
                     // navigate back to the home screen
-                    navigation.navigate("Home");
+                    navigation.navigate("Prompts");
                   } else {
                     throw new Error("There was an error reading the prompts");
                   }
