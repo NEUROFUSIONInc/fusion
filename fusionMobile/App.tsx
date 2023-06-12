@@ -1,3 +1,4 @@
+import { PortalProvider } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import { Logs } from "expo";
@@ -5,10 +6,11 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import React from "react";
-import { Alert, Platform } from "react-native";
+import { Alert, Platform, StatusBar } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { FontLoader } from "./FontLoader";
-import { FusionNavigation } from "./src/navigation";
+import { CustomNavigation } from "./src/navigation";
 import {
   PromptContextProvider,
   savePromptResponse,
@@ -83,7 +85,7 @@ Notifications.setNotificationHandler({
 });
 
 SplashScreen.preventAutoHideAsync();
-        
+
 function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
@@ -234,12 +236,18 @@ function App() {
   React.useEffect(() => {
     appInsights.trackEvent({ name: "app_started" });
   }, []);
+
   return (
-    <FontLoader>
-      <PromptContextProvider>
-        <FusionNavigation />
-      </PromptContextProvider>
-    </FontLoader>
+    <GestureHandlerRootView className="flex flex-1 flex-grow-1">
+      <FontLoader>
+        <StatusBar barStyle="light-content" />
+        <PromptContextProvider>
+          <PortalProvider>
+            <CustomNavigation />
+          </PortalProvider>
+        </PromptContextProvider>
+      </FontLoader>
+    </GestureHandlerRootView>
   );
 }
 
