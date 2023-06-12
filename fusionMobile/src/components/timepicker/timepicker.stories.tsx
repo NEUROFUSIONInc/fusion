@@ -1,5 +1,6 @@
 import type { Meta } from "@storybook/react-native";
 import dayjs from "dayjs";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { TimePicker } from "./timepicker";
@@ -14,8 +15,10 @@ const meta: Meta<typeof TimePicker> = {
 export default meta;
 
 export const Primary = () => {
-  const start = dayjs().startOf("day").add(8, "hour");
-  const end = start.endOf("day").subtract(2, "hour").add(1, "minute");
+  const [start, setStart] = useState(dayjs().startOf("day").add(8, "hour"));
+  const [end, setEnd] = useState(
+    start.endOf("day").subtract(2, "hour").add(1, "minute")
+  );
 
   return (
     <View className="flex p-4 h-full bg-dark">
@@ -33,8 +36,8 @@ export const Primary = () => {
         }
         end={end}
         start={start}
-        setEnd={() => {}}
-        setStart={() => {}}
+        setEnd={setEnd}
+        setStart={setStart}
         setDays={() => {}}
       />
     </View>
