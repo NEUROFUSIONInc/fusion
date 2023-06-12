@@ -64,6 +64,7 @@ const getStories = () => {
   return {
     "./src/components/button/button.stories.tsx": require("../src/components/button/button.stories.tsx"),
     "./src/components/day-chip/day-chip.stories.tsx": require("../src/components/day-chip/day-chip.stories.tsx"),
+    "./src/components/input/input.stories.tsx": require("../src/components/input/input.stories.tsx"),
     "./src/components/logo/logo.stories.tsx": require("../src/components/logo/logo.stories.tsx"),
     "./src/components/option/option.stories.tsx": require("../src/components/option/option.stories.tsx"),
     "./src/components/select/select.stories.tsx": require("../src/components/select/select.stories.tsx"),
