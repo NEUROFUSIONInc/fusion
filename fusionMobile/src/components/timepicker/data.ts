@@ -22,3 +22,13 @@ export const promptFrequencyData: ItemType<ValueType>[] = [
     value: "240",
   },
 ];
+
+export const promptSelectionDays = {
+  monday: false,
+  tuesday: false,
+  wednesday: false,
+  thursday: false,
+  friday: false,
+  saturday: false,
+  sunday: false,
+};
