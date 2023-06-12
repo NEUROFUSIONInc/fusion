@@ -16,6 +16,9 @@
     "storybook:android": "sb-rn-get-stories && cross-env STORYBOOK_ENABLED='true' expo start --android"
   },
   "dependencies": {
+    "@expo/config-plugins": "~6.0.0",
+    "@gorhom/bottom-sheet": "^4",
+    "@gorhom/portal": "^1.0.14",
     "@kilohealth/rn-fitness-tracker": "^3.1.0",
     "@microsoft/applicationinsights-react-native": "^3.0.2",
     "@microsoft/applicationinsights-web": "^3.0.0",
@@ -57,6 +60,7 @@
     "react-native-modal-datetime-picker": "^15.0.0",
     "react-native-paper": "^5.7.2",
     "react-native-permissions": "^3.8.0",
+    "react-native-reanimated": "~2.14.4",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
