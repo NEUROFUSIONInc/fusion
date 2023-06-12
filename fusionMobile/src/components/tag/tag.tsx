@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Pressable, PressableProps, Text, View } from "react-native";
 
 const buttonStyles = cva(
@@ -29,26 +29,41 @@ const buttonTextStyles = cva("font-sans text-gray-400 text-base", {
 
 export type TagProps = PressableProps &
   VariantProps<typeof buttonStyles> & {
+    isActive?: boolean;
     title: string;
     icon?: React.ReactNode;
+    handleValueChange?: (value: boolean) => void;
   };
 
 export const Tag: FC<TagProps> = ({
   title,
-  active,
+  isActive,
   disabled,
   fullWidth,
   icon,
+  handleValueChange,
   ...props
-}) => (
-  <View>
+}) => {
+  const [active, setActive] = useState(isActive);
+  const onValueChange = () => {
+    const newActive = !active;
+    setActive(newActive);
+    handleValueChange?.(newActive);
+  };
+
+  useEffect(() => {
+    setActive(isActive);
+  }, [isActive]);
+
+  return (
     <Pressable
       className={buttonStyles({ disabled, active, fullWidth })}
       disabled={disabled}
+      onPress={onValueChange}
       {...props}
     >
       {icon && <View className="mr-2">{icon}</View>}
       <Text className={buttonTextStyles({ active })}>{title}</Text>
     </Pressable>
-  </View>
-);
+  );
+};

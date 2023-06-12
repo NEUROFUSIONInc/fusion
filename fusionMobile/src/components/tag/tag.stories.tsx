@@ -49,7 +49,7 @@ export const Tags: Story = {
       <Tag {...props} title="Education" />
       <Tag {...props} title="Relationships" />
       <Tag {...props} title="Sustainability" />
-      <Tag {...props} active />
+      <Tag {...props} isActive />
       <Tag {...props} title="Mental Health" />
       <Tag {...props} title="Spiritual Practice" />
     </View>
