@@ -1,6 +1,6 @@
 import { Entypo } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -10,15 +10,16 @@ import { Select } from "../select";
 import { promptFrequencyData } from "./data";
 
 import { NotificationConfigDays, Days } from "~/@types";
+import { calculateContactCount, interpretDaySelection } from "~/utils";
 
 export type TimePickerProps = {
   start: dayjs.Dayjs;
   setStart: (time: dayjs.Dayjs) => void;
   end: dayjs.Dayjs;
   setEnd: (time: dayjs.Dayjs) => void;
-  days: NotificationConfigDays;
+  days?: NotificationConfigDays;
   setDays: (days: NotificationConfigDays) => void;
-  transparent?: boolean;
+  setPromptCount?: (count: number) => void;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
@@ -26,8 +27,17 @@ export const TimePicker: FC<TimePickerProps> = ({
   setStart,
   end,
   setEnd,
-  days,
+  days = {
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  },
   setDays,
+  setPromptCount,
 }) => {
   const [isStartTimePickerVisible, setStartTimePickerVisibility] =
     useState(false);
@@ -50,6 +60,7 @@ export const TimePicker: FC<TimePickerProps> = ({
   const handleStartTimeConfirm = (selectedTime: Date) => {
     console.log("startTime has been picked: ", selectedTime);
     const currentTime = dayjs(selectedTime) || start;
+    console.log("currentTime: ", currentTime);
     setStart(currentTime);
     hideStartTimePicker();
   };
@@ -60,10 +71,30 @@ export const TimePicker: FC<TimePickerProps> = ({
     hideEndTimePicker();
   };
 
+  const propmtFrequencyDataWithDisabled = useMemo(() => {
+    return promptFrequencyData.map((item) => {
+      const disabled =
+        calculateContactCount(start, end, item.value as string) < 1;
+      return {
+        ...item,
+        disabled,
+      };
+    });
+  }, [start, end]);
+
+  const totalContactCount = useMemo(() => {
+    return calculateContactCount(start, end, value as unknown as string);
+  }, [start, end, value]);
+
+  const interpretDaySelections = useMemo(
+    () => interpretDaySelection(days),
+    [days]
+  );
+
   return (
     <View>
       <View>
-        <Text className="font-sans text-white text-lg mb-4">
+        <Text className="font-sans text-white text-base mb-4">
           When do you want to be prompted?
         </Text>
         <View className="flex py-5 px-4 rounded-md bg-secondary-900 divide-y divide-white/20 divide-opacity-10 items-start flex-col w-full">
@@ -102,21 +133,34 @@ export const TimePicker: FC<TimePickerProps> = ({
             />
           </Pressable>
         </View>
+        {start > end && (
+          <Text className="font-sans text-gray-400 my-4">
+            End time must be after start time
+          </Text>
+        )}
       </View>
-      <View>
-        <Text className="font-sans text-white text-lg my-4">
-          How often should we prompt you?
-        </Text>
-        <View>
-          <Select
-            items={promptFrequencyData}
-            value={value}
-            setValue={setValue}
-          />
-        </View>
+      <View className="mt-8">
+        <Select
+          label="How often should we prompt you?"
+          items={propmtFrequencyDataWithDisabled}
+          value={value}
+          setValue={setValue}
+          dropDownDirection="BOTTOM"
+          listMode="SCROLLVIEW"
+          scrollViewProps={{
+            nestedScrollEnabled: true,
+            indicatorStyle: "white",
+          }}
+          onChangeValue={() => setPromptCount?.(totalContactCount)}
+        />
+        {value !== null && (
+          <Text className="font-sans text-gray-400 text-sm mt-2">
+            {`You will be prompted ${totalContactCount} times`}
+          </Text>
+        )}
       </View>
-      <View className="-z-10">
-        <Text className="font-sans text-white text-lg my-4 -z-10">
+      <View className="-z-10 mt-4">
+        <Text className="font-sans text-white text-base my-4 -z-10">
           What days should we prompt you?
         </Text>
         <View className="flex justify-evenly w-full px-5 py-4 flex-row bg-secondary-900 rounded-md -z-10">
@@ -125,10 +169,15 @@ export const TimePicker: FC<TimePickerProps> = ({
               key={Math.random()}
               day={day}
               isChecked={days[day as Days]}
-              onValueChange={(value) => setDays({ ...days, [day]: value })}
+              handleValueChange={(value) => {
+                setDays({ ...days, [day]: value });
+              }}
             />
           ))}
         </View>
+        <Text className="font-sans text-gray-400 text-sm my-2">
+          {interpretDaySelections}
+        </Text>
       </View>
     </View>
   );
