@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Appearance } from "react-native";
+import { View, StyleSheet, Appearance, SafeAreaView } from "react-native";
 import { withBackgrounds } from "@storybook/addon-ondevice-backgrounds";
 
 import { FontLoader } from "../FontLoader.tsx";
@@ -7,9 +7,11 @@ import { FontLoader } from "../FontLoader.tsx";
 export const decorators = [
   (StoryFn) => (
     <FontLoader>
-      <View style={styles.container}>
-        <StoryFn />
-      </View>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.container}>
+          <StoryFn />
+        </View>
+      </SafeAreaView>
     </FontLoader>
   ),
   withBackgrounds,
@@ -35,5 +37,6 @@ export const parameters = {
 };
 
 const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: "#0B0816", height: "100%", width: "100%" },
   container: { padding: 8, flex: 1 },
 });
