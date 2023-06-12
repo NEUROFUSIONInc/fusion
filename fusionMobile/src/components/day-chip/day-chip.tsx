@@ -4,7 +4,7 @@ import { useState, forwardRef } from "react";
 import { View, Text, Pressable } from "react-native";
 
 const chipStyles = cva(
-  "flex rounded-full relative active:opacity-75 bg-transparent border border-white items-center w-8 h-8 justify-center checked:border-none checked:bg-white checked:opacity-80 z-50",
+  "flex rounded-full relative active:opacity-75 bg-transparent border border-opacity-10 border-white items-center w-8 h-8 justify-center checked:border-none checked:bg-white checked:opacity-80 z-50",
   {
     variants: {
       checked: {
@@ -33,8 +33,8 @@ export const DayChip = forwardRef<Checkbox, DayChipProps>(
   ({ day, isChecked, handleValueChange, ...props }, ref) => {
     const [checked, setChecked] = useState(isChecked);
     const onValueChange = () => {
-      setChecked(!checked);
       handleValueChange?.(!checked);
+      setChecked(!checked);
     };
 
     return (
@@ -42,7 +42,6 @@ export const DayChip = forwardRef<Checkbox, DayChipProps>(
         <Checkbox
           value={checked}
           className={chipStyles({ checked })}
-          onValueChange={onValueChange}
           color={checked ? "white" : "transparent"}
           ref={ref}
           {...props}
