@@ -1,6 +1,4 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
@@ -19,70 +17,6 @@ import {
   ChartArcs as ChartArcsIcon,
 } from "~/components";
 import { HomeScreen } from "~/pages";
-
-const Tab = createMaterialBottomTabNavigator();
-
-export const FusionNavigation = () => {
-  return (
-    <Tab.Navigator
-      activeColor="#023059"
-      initialRouteName="Prompts"
-      barStyle={{ height: 70, marginBottom: 20 }}
-    >
-      <Tab.Screen
-        name="Prompts"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="head-question"
-              color={color}
-              size={20}
-            />
-          ),
-        }}
-        component={PromptStack}
-      />
-
-      {/* <Tab.Screen
-        name="Health"
-        component={HealthStack}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="heart-pulse"
-              color={color}
-              size={20}
-            />
-          ),
-        }}
-      /> */}
-
-      {/* <Tab.Screen
-        name="Quests"
-        component={HealthStack}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="road-variant"
-              color={color}
-              size={20}
-            />
-          ),
-        }}
-      /> */}
-
-      <Tab.Screen
-        name="Account"
-        component={AccountStack}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={20} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
 
 type TabParamList = {
   Home: undefined;
@@ -167,11 +101,10 @@ export const CustomNavigation = () => {
         },
         tabBarActiveTintColor: "white",
         tabBarStyle: {
-          height: 92,
           backgroundColor: "#0B0816",
           alignItems: "center",
-          marginBottom: -20,
-          paddingHorizontal: 12,
+          marginBottom: 20,
+          paddingHorizontal: 10,
           borderTopWidth: 1,
           borderTopColor: "rgba(255, 255, 255, 0.15)",
         },
