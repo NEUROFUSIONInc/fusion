@@ -7,5 +7,4 @@ export * from "./plus";
 export * from "./chevron-right";
 export * from "./close";
 export * from "./left-arrow";
-export * from "./success";
 export * from "./vertical-menu";
