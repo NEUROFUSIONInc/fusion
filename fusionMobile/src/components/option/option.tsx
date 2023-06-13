@@ -2,6 +2,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FC, useState } from "react";
 import { Pressable, Text } from "react-native";
 
+import colors from "~/theme/colors";
+
 export interface OptionProps {
   isChecked: boolean;
   text: string;
@@ -29,9 +31,9 @@ export const Option: FC<OptionProps> = ({ onChange, text, isChecked }) => {
         color="white"
         style={{
           marginHorizontal: 10,
-          borderColor: checked ? "white" : "rgba(255, 255, 255, 0.50)",
+          borderColor: checked ? "white" : colors.light,
           backgroundColor: "transparent",
-          color: checked ? "white" : "rgba(255, 255, 255, 0.50)",
+          color: checked ? "white" : colors.light,
         }}
       />
       <Text
