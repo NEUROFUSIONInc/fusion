@@ -11,14 +11,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
-import {
-  PromptContextProvider,
-  savePromptResponse,
-  getPromptForNotificationId,
-  getNotificationIdsForPrompt,
-  maskPromptId,
-  appInsights,
-} from "./src/utils";
+import { maskPromptId, appInsights } from "./src/utils";
+
+import { PromptContextProvider } from "~/contexts";
+import { notificationService, promptService } from "~/services";
 
 Logs.enableExpoCliLogging();
 
@@ -50,7 +46,7 @@ const registerForPushNotificationsAsync = async () => {
 Notifications.setNotificationHandler({
   handleNotification: async (notification) => {
     // get the prompt id for this notification
-    const promptUuid = await getPromptForNotificationId(
+    const promptUuid = await notificationService.getPromptForNotificationId(
       notification.request.identifier
     );
 
@@ -60,9 +56,8 @@ Notifications.setNotificationHandler({
       await Notifications.getPresentedNotificationsAsync();
 
     // find the ones that match the prompt
-    const promptNotificationsIds = await getNotificationIdsForPrompt(
-      promptUuid ?? ""
-    );
+    const promptNotificationsIds =
+      await notificationService.getNotificationIdsForPrompt(promptUuid ?? "");
 
     // only want notification ids for the active prompts
     const activeNotificationsForPrompt = activeNotifications.filter((element) =>
@@ -170,9 +165,10 @@ function App() {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
-            const promptUuid = await getPromptForNotificationId(
-              response.notification.request.identifier
-            );
+            const promptUuid =
+              await notificationService.getPromptForNotificationId(
+                response.notification.request.identifier
+              );
 
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
@@ -215,7 +211,7 @@ function App() {
             };
 
             // save the prompt response
-            await savePromptResponse(promptResponse);
+            await promptService.savePromptResponse(promptResponse);
 
             // track event
             appInsights.trackEvent(

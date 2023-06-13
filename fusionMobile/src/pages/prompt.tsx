@@ -18,12 +18,8 @@ import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
 import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
-import {
-  getDayjsFromTimestring,
-  savePrompt,
-  readSavedPrompts,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { getDayjsFromTimestring, appInsights } from "~/utils";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -194,19 +190,22 @@ export function PromptScreen() {
                   return;
                 }
 
-                const res = await savePrompt(
+                const res = await promptService.savePrompt({
+                  uuid: promptUuid,
                   promptText,
-                  responseType!,
-                  parseInt(countPerDay ?? "0", 10),
-                  start.format("HH:mm"),
-                  end.format("HH:mm"),
-                  days,
-                  promptUuid
-                );
+                  responseType: responseType!,
+                  notificationConfig_countPerDay: parseInt(
+                    countPerDay ?? "0",
+                    10
+                  ),
+                  notificationConfig_startTime: start.format("HH:mm"),
+                  notificationConfig_endTime: end.format("HH:mm"),
+                  notificationConfig_days: days,
+                });
 
                 if (res) {
                   // read the saved prompts from the db
-                  const savedPrompts = await readSavedPrompts();
+                  const savedPrompts = await promptService.readSavedPrompts();
 
                   if (savedPrompts) {
                     // update the saved prompts state

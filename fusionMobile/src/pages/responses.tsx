@@ -7,12 +7,8 @@ import { FusionChart } from "../components/chart.js";
 
 import { PromptResponse } from "~/@types/index.js";
 import { RouteProp } from "~/navigation/types.js";
-import {
-  getPromptResponses,
-  updateTimestampToMs,
-  maskPromptId,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { updateTimestampToMs, maskPromptId, appInsights } from "~/utils";
 
 export function ResponsesScreen() {
   const route = useRoute<RouteProp<"ViewResponses">>();
@@ -25,7 +21,7 @@ export function ResponsesScreen() {
   React.useEffect(() => {
     // fetch the responses for this prompt
     (async () => {
-      const res = await getPromptResponses(prompt);
+      const res = await promptService.getPromptResponses(prompt.uuid);
 
       // sort events
       res.sort((a, b) => {
