@@ -10,6 +10,11 @@ export interface Prompt {
   notificationConfig_countPerDay: number;
 }
 
+export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
+  uuid?: string | null;
+  notificationConfig_days: NotificationConfigDays;
+};
+
 export type Days =
   | "sunday"
   | "monday"
@@ -46,3 +51,5 @@ export interface PromptResponseWithEvent {
     value: string;
   };
 }
+
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
