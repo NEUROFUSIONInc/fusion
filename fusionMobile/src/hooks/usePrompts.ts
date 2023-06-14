@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { PromptContext } from "../utils";
+import { PromptContext } from "../contexts";
 
 export const usePrompts = () => {
   const promptContext = useContext(PromptContext);

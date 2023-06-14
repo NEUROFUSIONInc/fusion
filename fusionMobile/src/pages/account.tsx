@@ -15,7 +15,8 @@ import {
   Switch,
 } from "react-native";
 
-import { resyncOldPrompts, appInsights } from "~/utils";
+import { promptService } from "~/services";
+import { appInsights } from "~/utils";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -79,7 +80,7 @@ export function AccountScreen() {
                     {
                       text: "OK",
                       onPress: async () => {
-                        await resyncOldPrompts();
+                        await promptService.resyncOldPrompts();
                       },
                     },
                   ]

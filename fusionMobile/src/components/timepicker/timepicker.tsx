@@ -1,10 +1,10 @@
-import { Entypo } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import { FC, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { DayChip } from "../day-chip";
+import { ChevronRight } from "../icons";
 import { Select } from "../select";
 
 import { promptFrequencyData } from "./data";
@@ -103,10 +103,12 @@ export const TimePicker: FC<TimePickerProps> = ({
             className="flex flex-row w-full pb-4 justify-between"
           >
             <Text className="font-sans text-base text-white">Between</Text>
-            <Text className="flex font-sans text-base text-white">
-              {start.format("h:mma")}
-              <Entypo name="chevron-small-right" size={15} color="white" />
-            </Text>
+            <View className="flex items-center flex-row">
+              <Text className="flex font-sans text-base text-white mr-2">
+                {start.format("h:mma")}
+              </Text>
+              <ChevronRight style={{ marginTop: 1 }} />
+            </View>
             <DateTimePickerModal
               isVisible={isStartTimePickerVisible}
               mode="time"
@@ -120,10 +122,12 @@ export const TimePicker: FC<TimePickerProps> = ({
             className="flex flex-row w-full pt-4 justify-between"
           >
             <Text className="font-sans text-base text-white">And</Text>
-            <Text className="flex font-sans text-base text-white">
-              {end.format("h:mma")}
-              <Entypo name="chevron-small-right" size={15} color="white" />
-            </Text>
+            <View className="flex flex-row items-center">
+              <Text className="flex font-sans text-base text-white mr-2">
+                {end.format("h:mma")}
+              </Text>
+              <ChevronRight style={{ marginTop: 1 }} />
+            </View>
             <DateTimePickerModal
               isVisible={isEndTimePickerVisible}
               mode="time"

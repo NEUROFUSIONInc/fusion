@@ -19,7 +19,7 @@ import { PromptDetailsStep } from "./prompt-details-step";
 
 import { PromptResponseType } from "~/@types";
 import { usePrompts } from "~/hooks";
-import { readSavedPrompts, savePrompt } from "~/utils";
+import { promptService } from "~/services";
 
 interface CreatePromptSheetProps {
   promptSheetRef: RefObject<RNBottomSheet>;
@@ -127,17 +127,17 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   );
 
   const createPrompt = async () => {
-    const res = await savePrompt(
+    const res = await promptService.savePrompt({
       promptText,
-      responseType!,
-      promptCount,
-      start.format("HH:mm"),
-      end.format("HH:mm"),
-      days
-    );
+      responseType: responseType!,
+      notificationConfig_days: days,
+      notificationConfig_countPerDay: promptCount,
+      notificationConfig_startTime: start.format("HH:mm"),
+      notificationConfig_endTime: end.format("HH:mm"),
+    });
 
     if (res) {
-      const savedPrompts = await readSavedPrompts();
+      const savedPrompts = await promptService.readSavedPrompts();
       if (savedPrompts) {
         handleNextStep();
         setSavedPrompts(savedPrompts);
@@ -257,8 +257,6 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
               />
             </View>
           ) : null}
-
-          {/* Add your back and next arrows, and dot icons for step navigation here */}
         </ScrollView>
       </View>
     </BottomSheet>

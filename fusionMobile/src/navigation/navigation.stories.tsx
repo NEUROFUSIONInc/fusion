@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { CustomNavigation } from "./tab-navigator";
 
-import { PromptContextProvider } from "~/utils";
+import { PromptContextProvider } from "~/contexts";
 
 const meta: Meta<typeof CustomNavigation> = {
   title: "ui/Navigation Menu",
