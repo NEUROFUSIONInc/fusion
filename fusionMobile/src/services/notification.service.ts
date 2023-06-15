@@ -3,6 +3,8 @@ import {
   NotificationTriggerInput,
 } from "expo-notifications";
 import * as Notifications from "expo-notifications";
+import "react-native-get-random-values";
+import * as Crypto from "expo-crypto";
 import { Platform } from "react-native";
 
 import { Days, NotificationConfigDays, Prompt } from "~/@types";
@@ -10,6 +12,34 @@ import { db } from "~/lib";
 import { getEvenlySpacedTimes } from "~/utils";
 
 export class NotificationService {
+  public createCustomOptionNotificationIdentifier = async (
+    customOptions: string[]
+  ) => {
+    /**
+     * Creates a custom NotificationCategory with a
+     * randomUuid+"-customOptions" containing customOptions selection
+     */
+    let notificationOptions = customOptions.map((option: any) => ({
+      identifier: option,
+      buttonTitle: option,
+      options: {
+        opensAppToForeground: false,
+      },
+    }));
+
+    const categoryIdentifier = Crypto.randomUUID() + "-customOptions";
+    try {
+      await Notifications.setNotificationCategoryAsync(
+        categoryIdentifier,
+        notificationOptions
+      );
+      return categoryIdentifier;
+    } catch (error) {
+      console.log("Unable to create notification category", error);
+      return null;
+    }
+  };
+
   public scheduleFusionNotification = async (prompt: Prompt) => {
     /**
      * Schedules a notification for a Fusion prompt
@@ -29,11 +59,29 @@ export class NotificationService {
       prompt.notificationConfig_countPerDay
     );
 
+    // get identifier for notification
+    let notificationIdentifier = prompt.responseType.toString();
+    if (prompt.responseType == "customOptions") {
+      // if custom option generate bespoke notificationtypes with the custom option selections
+      const customOptions = JSON.parse(prompt.additionalMeta)[
+        "customOptionText"
+      ].split(";");
+      const identifier = await this.createCustomOptionNotificationIdentifier(
+        customOptions
+      );
+      if (!identifier) {
+        console.log("error generating custom option notification identifier");
+        return false;
+      } else {
+        notificationIdentifier = identifier;
+      }
+    }
+
     const triggerObject: NotificationTriggerInput = {};
     const contentObject: NotificationContentInput = {
       title: `Fusion: ${prompt.promptText}`,
-      categoryIdentifier: prompt.responseType,
     };
+
     // if platform is android assign channel
     if (Platform.OS === "android") {
       triggerObject["channelId"] = "default";
@@ -57,6 +105,18 @@ export class NotificationService {
       friday: 6,
       saturday: 7,
     };
+
+    // one more quirk for Android - https://github.com/expo/expo/issues/20500
+    // responding from the notification menu doesn't work for
+    // text & number responses
+    if (
+      Platform.OS === "android" &&
+      ["text", "number"].includes(prompt.responseType)
+    ) {
+      // make it like just a normal notification by not providing a categoryIdentifier
+    } else {
+      contentObject["categoryIdentifier"] = notificationIdentifier;
+    }
 
     try {
       // cancel existing notifications for prompt
@@ -167,7 +227,7 @@ export class NotificationService {
   };
 
   /**
-   * Create prompt_notications entry in sqlite
+   * Create prompt_notifications entry in sqlite
    */
   public saveNotificationIdForPrompt = async (
     notificationId: string,
@@ -228,6 +288,9 @@ export class NotificationService {
       };
 
       await deleteNotificationIdsFromDb();
+
+      // TODO: if notification is for custom options
+      // delete "...customOption" category identifier
       return true;
     } catch (error) {
       console.log(error);

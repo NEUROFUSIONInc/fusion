@@ -15,3 +15,7 @@ __pycache__/
 
 */.expo/*
 */node_modules/*
+
+*/.eslintcache
+
+nostr.sqlite3

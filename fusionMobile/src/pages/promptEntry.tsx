@@ -12,6 +12,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import { Prompt } from "~/@types/index.js";
@@ -40,18 +41,31 @@ export function PromptEntryScreen() {
 
   React.useEffect(() => {
     if (route.params?.promptUuid) {
-      console.log(route.params.promptUuid);
       (async () => {
         const res = await promptService.getPrompt(route.params.promptUuid);
         setPromptObject(res);
       })();
     }
-  }, []);
+  }, [route.params]);
+
+  const [customOptions, setCustomOptions] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    if (promptObject?.responseType == "customOptions") {
+      setCustomOptions(
+        promptObject.additionalMeta["customOptionText"].split(";")
+      ); //generates customOptions from additionalMeta
+    }
+  }, [promptObject]);
 
   const handleSavePromptResponse = async () => {
     // generate event object & save entry
     // direct user to the prompt responses screen
     if (!promptObject) {
+      return;
+    }
+
+    if (userResponse === "") {
+      Alert.alert("Error", "Please enter a response");
       return;
     }
 
@@ -88,10 +102,7 @@ export function PromptEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           {promptObject && (
@@ -148,6 +159,29 @@ export function PromptEntryScreen() {
                 </View>
               )}
 
+              {
+                /* if the prompt is a custom prompt, show the custom options */
+                promptObject.responseType === "customOptions" &&
+                  customOptions.length > 0 && (
+                    <View style={styles.customOptionsContainer}>
+                      {customOptions.map((option) => (
+                        <View
+                          key={option}
+                          style={[{ marginTop: 10 }, styles.checkboxContainer]}
+                        >
+                          <Checkbox
+                            value={userResponse === option}
+                            onValueChange={() => {
+                              setUserResponse(option);
+                            }}
+                          />
+                          <Text>&nbsp;&nbsp;{option}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )
+              }
+
               <View style={{ marginTop: 20 }}>
                 <Button title="Save Entry" onPress={handleSavePromptResponse} />
               </View>
@@ -180,6 +214,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     marginTop: 20,
+  },
+  customOptionsContainer: {
+    justifyContent: "space-evenly",
+    flexWrap: "wrap",
+    alignContent: "center",
+    flexDirection: "row",
   },
   checkboxContainer: {
     flexDirection: "row",

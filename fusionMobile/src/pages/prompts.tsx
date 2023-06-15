@@ -2,6 +2,7 @@ import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useEffect, useRef } from "react";
 import { Image, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 import {
   Button,
@@ -46,13 +47,13 @@ export const PromptsScreen = () => {
         </View>
       )}
       {!loading && savedPrompts?.length > 0 && (
-        <View className="flex mt-4 flex-col">
+        <ScrollView className="flex mt-4 flex-col">
           {savedPrompts.map((prompt) => (
             <View key={prompt.uuid} className="my-2">
               <PromptDetails prompt={prompt} />
             </View>
           ))}
-        </View>
+        </ScrollView>
       )}
 
       <Portal>

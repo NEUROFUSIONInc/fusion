@@ -62,6 +62,9 @@ class PromptService {
                     notificationConfig_endTime: row.notificationConfig_endTime,
                     notificationConfig_countPerDay:
                       row.notificationConfig_countPerDay,
+                    additionalMeta: row.additionalMeta
+                      ? JSON.parse(row.additionalMeta)
+                      : row.additionalMeta,
                   };
                 });
 
@@ -187,10 +190,11 @@ class PromptService {
                   console.log("updating prompt");
                   // update prompt
                   tx.executeSql(
-                    `UPDATE prompts SET promptText = ?, responseType = ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
+                    `UPDATE prompts SET promptText = ?, responseType = ?, additionalMeta= ?, notificationConfig_days = ?, notificationConfig_startTime = ?, notificationConfig_endTime = ?, notificationConfig_countPerDay = ? WHERE uuid = ?`,
                     [
                       prompt.promptText,
                       prompt.responseType,
+                      prompt.additionalMeta,
                       prompt.notificationConfig_days,
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
@@ -210,11 +214,12 @@ class PromptService {
                 } else {
                   // save prompt to db
                   tx.executeSql(
-                    `INSERT INTO prompts (uuid, promptText, responseType, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    `INSERT INTO prompts (uuid, promptText, responseType, additionalMeta, notificationConfig_days, notificationConfig_startTime, notificationConfig_endTime, notificationConfig_countPerDay) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                       prompt.uuid,
                       prompt.promptText,
                       prompt.responseType,
+                      prompt.additionalMeta,
                       prompt.notificationConfig_days,
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
@@ -465,6 +470,33 @@ class PromptService {
       await Updates.reloadAsync();
     }
   }
+
+  public processPromptResponses = async (
+    prompts: Prompt[],
+    combinedResponses: PromptResponse[]
+  ) => {
+    /**
+     * This function takes in an array of prompts and
+     * returns an array of prompt responses
+     */
+    // map array to promises
+    const combiningResponses = prompts.map(async (prompt) => {
+      // your processing code here
+      const responses = await promptService.getPromptResponses(prompt.uuid);
+      combinedResponses.push(...responses);
+    });
+
+    await Promise.all(combiningResponses);
+
+    // mask the prompt uuids
+    const maskingPromptIds = combinedResponses.map(async (response) => {
+      return (response.promptUuid = await maskPromptId(response.promptUuid));
+    });
+
+    await Promise.all(maskingPromptIds);
+
+    return combinedResponses;
+  };
 }
 
 export const promptService = new PromptService(notificationService);

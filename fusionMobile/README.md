@@ -12,7 +12,8 @@ Data is currently stored using AsyncStorage (SQLite)
 {
   uuid
   promptText
-  responseType - "number", "yesno", "text"
+  responseType - "number", "yesno", "text", "customOptions"
+  additionalMeta - json.stringify of dictionary for customOption maps
   notificationConfig_days - json.stringify of "{"monday": true, "tuesday": false ....., "sunday": true}"
   notificationConfig_startTime
   notificationConfig_endTime
@@ -100,9 +101,12 @@ We will be using [Azure Application Insights] for event tracking.
     - identifier (randomly generated, different from what's in the local db)
 
   - (done) prompt_response (changed in Fusion_ios_1.0.01_14 from `prompt_notification_response`)
+
     - identifier
     - triggerTimestamp
     - responseTimestamp
+
+  - (todo) prompt_notification
 
 TODO: handle when user is offline :p
 
@@ -196,8 +200,6 @@ allow to respond after tapping to notifications
 
 # Android Feedback
 
--
-
 # IOS Feedback
 
 - move request notification when prompt is being created for the first time
@@ -213,3 +215,47 @@ allow to respond after tapping to notifications
 # Notes from integrating with bluetooth
 
 - Following this doc: https://docs.neurosity.co/docs/api/bluetooth-react-native
+
+---
+
+login flow:
+
+- generate code
+- type it in on computer
+
+export data - in responses page.
+
+summary from chat gpt
+
+# Gotchas
+
+When installing "isomorphic-webcrypto", set "--ignore-optional"
+
+- if things aren't making sense, run expo run:ios --no-build-cache
+
+---
+
+todo
+
+- enable local permissions for "research program"
+- display Quests when
+
+- underline the "anonymously" and use it to display user detail
+- set up nostr relay
+
+- Be sure to delete the notification category when noitification with customOptions is being canceled
+
+- Measuring prompt response rate
+
+- Add some templates for people
+
+Prompt response view
+
+- filter just like charts
+- change time to local time
+- export prompt responses -- call util function (getPromptResponses) & download json
+
+- Summarize content from text responses
+
+- Share screen should eventually allow users select what prompts
+  & who they want to share the results to in Fusion :)

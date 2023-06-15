@@ -65,7 +65,33 @@ export const createBaseTables = () => {
                 [],
                 () => {
                   // finished creating all the tables
-                  resolve(true);
+                  // add "additionalMeta TEXT" column to prompts table
+                  // TODO: operations like this should move to sequelize
+                  tx.executeSql(
+                    "PRAGMA table_info(prompts)",
+                    [],
+                    (tx, results) => {
+                      let columnExists = false;
+                      for (let i = 0; i < results.rows.length; i++) {
+                        if (results.rows.item(i).name === "additionalMeta") {
+                          columnExists = true;
+                          break;
+                        }
+                      }
+                      if (!columnExists) {
+                        tx.executeSql(
+                          "ALTER TABLE prompts ADD COLUMN additionalMeta TEXT",
+                          [],
+                          (tx, results) => {
+                            console.log("Column added successfully");
+                            resolve(true);
+                          }
+                        );
+                      } else {
+                        resolve(true);
+                      }
+                    }
+                  );
                 },
                 (tx, error) => {
                   console.log("error", error);
@@ -80,6 +106,24 @@ export const createBaseTables = () => {
               return Boolean(error);
             }
           );
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS user_account (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          npub TEXT NOT NULL UNIQUE,
+          pubkey TEXT NOT NULL UNIQUE,
+          privkey TEXT NOT NULL
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
         },
         (tx, error) => {
           console.log("error", error);

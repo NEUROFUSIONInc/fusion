@@ -38,6 +38,7 @@ app.use(cors());
  * User Routes
  */
 app.post("/api/userlogin", userController.validateLogin);
+app.post("/api/nostrlogin", userController.validateNostrLogin);
 
 // All routes after this require an authorization token
 app.use(userController.tokenValidator);

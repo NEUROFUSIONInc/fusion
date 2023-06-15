@@ -6,7 +6,11 @@ import { promptFrequencyData } from "../components/timepicker/data";
 
 import { Days, NotificationConfigDays } from "~/@types";
 
-// this is where we create the context
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+
+import { appInsights } from "./appInsights";
+
 /**
  * Helper functions
  */
@@ -203,3 +207,74 @@ export function interpretDaySelection(days: NotificationConfigDays): string {
 
   return "No specific pattern found";
 }
+
+export async function saveFileToDevice(
+  fileName: string,
+  fileContents: string,
+  exportFile: boolean = false
+) {
+  /**
+   * Takes file content and saves it to the local directory of user device.
+   *
+   * If exportFile is true, we also export to external path for user.
+   * @param fileName - name of the file to be saved
+   */
+  try {
+    const fileUri = FileSystem.documentDirectory + fileName;
+
+    await FileSystem.writeAsStringAsync(fileUri, fileContents);
+    if (exportFile) {
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (!isAvailable) {
+        alert("Sharing is not available on this device");
+        return;
+      }
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "text/csv",
+        dialogTitle: "Your fusion data",
+        UTI: "public.comma-separated-values-text",
+      });
+    }
+
+    appInsights.trackEvent({ name: "data_export" });
+
+    return fileUri;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+// export async function exportFileDirectoryAsZip(
+//   filePaths: string[],
+//   zipFilename: string
+// ) {
+//   /**
+//    * Takes a set of files and zips them together into a single .zip
+//    *
+//    * Currently ios doesn't handle the type well in the share menu
+//    * but will need to fix this soon
+//    */
+//   try {
+//     const targetPath = `${FileSystem.documentDirectory}${zipFilename}`;
+//     const zipPath = await zip(filePaths, targetPath);
+
+//     console.log(`${zipPath}`);
+//     if (zipPath) {
+//       const isAvailable = await Sharing.isAvailableAsync();
+//       if (!isAvailable) {
+//         alert("Sharing is not available on this device");
+//         return;
+//       }
+//       await Sharing.shareAsync(filePaths[0], {
+//         mimeType: "application/zip",
+//         dialogTitle: "Your fusion data",
+//         UTI: "com.pkware.zip-archive",
+//       });
+//     } else {
+//       console.log("zipPath is null");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }

@@ -27,6 +27,8 @@
     "mysql2": "^3.0.1",
     "node-cron": "^3.0.2",
     "nodemon": "^2.0.20",
+    "nostr-relaypool": "^0.6.28",
+    "nostr-tools": "^1.11.1",
     "pg": "^8.8.0",
     "sequelize": "^6.28.0",
     "sqlite3": "^5.1.4"

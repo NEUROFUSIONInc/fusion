@@ -1,4 +1,4 @@
-export type PromptResponseType = "text" | "yesno" | "number";
+export type PromptResponseType = "text" | "yesno" | "number" | "customOptions";
 
 export interface Prompt {
   uuid: string;
@@ -8,6 +8,7 @@ export interface Prompt {
   notificationConfig_startTime: string;
   notificationConfig_endTime: string;
   notificationConfig_countPerDay: number;
+  additionalMeta: string;
 }
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {

@@ -8,6 +8,8 @@ import type { SvgProps } from "react-native-svg";
 import { AccountStack } from "./account-navigator";
 import { HealthStack } from "./health-navigator";
 import { PromptStack } from "./prompt-navigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { QuestStack } from "./quest-navigator";
 
 import {
   Home as HomeIcon,
@@ -22,7 +24,7 @@ type TabParamList = {
   Home: undefined;
   PromptNavigator: undefined;
   InsightsNavigator: undefined;
-  Actions: undefined;
+  QuestNavigator: undefined;
   Community: undefined;
 };
 
@@ -42,7 +44,7 @@ const tabsIcons: TabIconsType = {
   Home: (props: SvgProps) => <HomeIcon {...props} />,
   PromptNavigator: (props: SvgProps) => <BulbIcon {...props} />,
   InsightsNavigator: (props: SvgProps) => <ChartArcsIcon {...props} />,
-  Actions: (props: SvgProps) => <HeartHandShakeIcon {...props} />,
+  QuestNavigator: (props: SvgProps) => <HeartHandShakeIcon {...props} />,
   Community: (props: SvgProps) => <UsersIcon {...props} />,
 };
 
@@ -68,9 +70,9 @@ const tabs: TabType[] = [
     label: "Insights",
   },
   {
-    name: "Actions",
-    component: View,
-    label: "Actions",
+    name: "QuestNavigator",
+    component: QuestStack,
+    label: "Quests",
   },
   {
     name: "Community",

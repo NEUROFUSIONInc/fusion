@@ -7,6 +7,6 @@
       "~/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "**/*.ts", "**/*.tsx", "src/utils"],
+  "include": ["src/**/*", "**/*.ts", "**/*.tsx", "src/utils", "index.js"],
   "extends": "expo/tsconfig.base"
 }

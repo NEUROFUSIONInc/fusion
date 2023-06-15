@@ -6,61 +6,79 @@ import { MagicFlowModal, NeurosityModal } from "./modals";
 
 import { useGetMagicFlowToken, useNeurosityState } from "~/hooks";
 
-type ModalState = "magicFlow" | "neurosity" | "spotify" | undefined;
-type IntegrationTitle = (typeof integrations)[number]["title"];
+type ModalState = "fusion" | "neurosity" | "magicflow" | "activitywatch" | "spotify" | undefined;
+type IntegrationSlug = (typeof integrations)[number]["slug"];
 
 export const IntegrationsContainer = () => {
   const [modalOpen, setModalOpen] = useState<ModalState>();
   const { data: magicflowData, isLoading: magicflowLoading } = useGetMagicFlowToken();
   const { user, loading: neurosityLoading, connectNeurosityAccount } = useNeurosityState();
 
-  function handleIntegrationClick(integrationTitle: IntegrationTitle) {
-    switch (integrationTitle) {
-      case "Spotify":
-        // call function for Spotify integration
+  function handleIntegrationClick(integrationSlug: IntegrationSlug) {
+    switch (integrationSlug) {
+      case "fusion":
+        // call function for fusion integration
         break;
-      case "Neurosity":
+      case "neurosity":
         if (user) {
           setModalOpen("neurosity");
         } else {
           connectNeurosityAccount();
         }
         break;
-      case "MagicFlow":
-        setModalOpen("magicFlow");
+      case "magicflow":
+        setModalOpen("magicflow");
+        break;
+      case "activitywatch":
+        // call function for activitywatch integration
+        break;
+      case "spotify":
+        // call function for spotify integration
         break;
       default:
       // handle default case (optional)
     }
   }
 
-  const isIntegrationConnected = (integrationTitle: IntegrationTitle) => {
-    switch (integrationTitle) {
-      case "Spotify":
+  const isIntegrationConnected = (integrationSlug: IntegrationSlug) => {
+    switch (integrationSlug) {
+      case "fusion":
+        // check if fusion is connected
+        return false;
+      case "spotify":
         // check if Spotify is connected
         return false;
-      case "Neurosity":
+      case "neurosity":
         // check if Neurosity is connected
         return Boolean(user);
-      case "MagicFlow":
+      case "magicflow":
         // check if MagicFlow is connected
         return Boolean(magicflowData?.magicflowToken);
+      case "activitywatch":
+        // check if activitywatch is connected
+        return false;
       default:
         return false;
     }
   };
 
-  const integrationLoading = (integrationTitle: IntegrationTitle) => {
-    switch (integrationTitle) {
-      case "Spotify":
+  const integrationLoading = (integrationSlug: IntegrationSlug) => {
+    switch (integrationSlug) {
+      case "fusion":
+        // check if fusion is connected
+        return false;
+      case "spotify":
         // check if Spotify is connected
         return false;
-      case "Neurosity":
+      case "neurosity":
         // check if Neurosity is connected
         return neurosityLoading;
-      case "MagicFlow":
+      case "magicflow":
         // check if MagicFlow is connected
         return magicflowLoading;
+      case "activitywatch":
+        // check if activityWatch is connected
+        return false;
       default:
         return false;
     }
@@ -75,16 +93,16 @@ export const IntegrationsContainer = () => {
       <div className="flex flex-wrap gap-8">
         {integrations.map((integration) => (
           <Integration
-            key={integration.title}
+            key={integration.slug}
             integration={integration}
-            onclick={() => handleIntegrationClick(integration.title)}
-            isConnected={isIntegrationConnected(integration.title)}
-            loading={integrationLoading(integration.title)}
+            onclick={() => handleIntegrationClick(integration.slug)}
+            isConnected={isIntegrationConnected(integration.slug)}
+            loading={integrationLoading(integration.slug)}
           />
         ))}
       </div>
-      {modalOpen === "magicFlow" && (
-        <MagicFlowModal isOpen={modalOpen === "magicFlow"} onCloseModal={() => setModalOpen(undefined)} />
+      {modalOpen === "magicflow" && (
+        <MagicFlowModal isOpen={modalOpen === "magicflow"} onCloseModal={() => setModalOpen(undefined)} />
       )}
       {modalOpen === "neurosity" && (
         <NeurosityModal isOpen={modalOpen === "neurosity"} onCloseModal={() => setModalOpen(undefined)} />

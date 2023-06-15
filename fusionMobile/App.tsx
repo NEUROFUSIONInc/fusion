@@ -19,15 +19,6 @@ import { notificationService, promptService } from "~/services";
 Logs.enableExpoCliLogging();
 
 const registerForPushNotificationsAsync = async () => {
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
   //TODO: follow the guide again for checking on Android/iOS
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
@@ -40,37 +31,20 @@ const registerForPushNotificationsAsync = async () => {
     return false;
   }
 
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
   return true;
 };
 
 Notifications.setNotificationHandler({
   handleNotification: async (notification) => {
-    // get the prompt id for this notification
-    const promptUuid = await notificationService.getPromptForNotificationId(
-      notification.request.identifier
-    );
-
-    // remove all active notifications for the prompt from system tray
-    // that aren't the current one
-    const activeNotifications =
-      await Notifications.getPresentedNotificationsAsync();
-
-    // find the ones that match the prompt
-    const promptNotificationsIds =
-      await notificationService.getNotificationIdsForPrompt(promptUuid ?? "");
-
-    // only want notification ids for the active prompts
-    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
-      promptNotificationsIds.includes(element.request.identifier)
-    );
-
-    // dismiss all existing notifications - the new notification gets presented after
-    for (let i = 0; i < activeNotificationsForPrompt.length; i++) {
-      await Notifications.dismissNotificationAsync(
-        activeNotificationsForPrompt[i].request.identifier
-      );
-    }
-
     return {
       shouldShowAlert: true,
       shouldPlaySound: false,
@@ -162,9 +136,16 @@ function App() {
       ]);
 
       // set notification handlers
+      // what happens when a user responds to notification
+      // even in background
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
+            // remove notification from tray
+            Notifications.dismissNotificationAsync(
+              response.notification.request.identifier
+            );
+
             const promptUuid =
               await notificationService.getPromptForNotificationId(
                 response.notification.request.identifier
@@ -173,6 +154,17 @@ function App() {
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
               return;
+            }
+
+            // dismiss all other notifications for this prompt
+            const notificationIds =
+              await notificationService.getNotificationIdsForPrompt(promptUuid);
+            if (notificationIds) {
+              await Promise.all(
+                notificationIds.map((id) =>
+                  Notifications.dismissNotificationAsync(id)
+                )
+              );
             }
 
             if (
@@ -193,7 +185,10 @@ function App() {
               notificationCategory =
                 response.notification.request.content.categoryIdentifier;
             }
-            if (notificationCategory === "yesno") {
+            if (
+              notificationCategory === "yesno" ||
+              notificationCategory?.endsWith("customOptions")
+            ) {
               response_value = response.actionIdentifier;
             } else if (
               notificationCategory === "text" ||
