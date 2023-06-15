@@ -1,5 +1,8 @@
 import { NavigationContainer as RNNavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from "react-native-safe-area-context";
 
 export const NavigationContainer = ({
   children,
@@ -7,7 +10,7 @@ export const NavigationContainer = ({
   children: React.ReactNode;
 }) => {
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <RNNavigationContainer>{children}</RNNavigationContainer>
     </SafeAreaProvider>
   );

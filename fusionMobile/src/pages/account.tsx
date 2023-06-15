@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Linking from "expo-linking";
 import React from "react";
+import Linking from "expo-linking";
 import {
   StyleSheet,
   Text,
@@ -9,35 +9,17 @@ import {
   Alert,
   TextInput,
   KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Switch,
+  Pressable,
 } from "react-native";
-
-import {
-  appInsights,
-  createNostrAccount,
-  getNostrAccount,
-  // relay,
-  readSavedPrompts,
-  getPromptResponses,
-  saveFileToDevice,
-  maskPromptId,
-  processPromptResponses,
-  exportFileDirectoryAsZip,
-} from "~/utils";
-
-import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
-import { useRef } from "react";
-import { Pressable } from "react-native";
-import { Prompt, PromptResponse } from "~/@types";
-
-// import crypto from "isomorphic-webcrypto";
-import axios from "axios";
-
-import PapaParse from "papaparse";
 import dayjs from "dayjs";
+import PapaParse from "papaparse";
+import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
+
+import { Prompt, PromptResponse } from "~/@types";
+import { promptService, nostrService } from "~/services";
+import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -48,18 +30,17 @@ export function AccountScreen() {
     privkey: string;
   } | null>(null);
 
-  const now = useRef(Date.now());
-
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Account",
     });
 
     (async () => {
-      setNostrAccount(await getNostrAccount());
+      setNostrAccount(await nostrService.getNostrAccount());
       setBrainRecordingEnabled(await getResearchProgramStatus());
     })();
   }, []);
+
   React.useEffect(() => {
     (async () => {
       if (!nostrAccount) {
@@ -69,9 +50,13 @@ export function AccountScreen() {
         const pubkey = getPublicKey(privkey);
         const npub = nip19.npubEncode(pubkey);
 
-        const saveStatus = await createNostrAccount(npub, pubkey, privkey);
+        const saveStatus = await nostrService.createNostrAccount(
+          npub,
+          pubkey,
+          privkey
+        );
         if (saveStatus) {
-          setNostrAccount(await getNostrAccount());
+          setNostrAccount(await nostrService.getNostrAccount());
         }
       } else {
         // let's query for an event that exists
@@ -150,7 +135,7 @@ export function AccountScreen() {
     // get all the responses
     // TODO: have user select what prompts to share
     try {
-      const prompts = await readSavedPrompts();
+      const prompts = await promptService.readSavedPrompts();
       if (!prompts || prompts.length < 1) {
         Alert.alert("No prompts to export");
         return;
@@ -165,7 +150,7 @@ export function AccountScreen() {
         await Promise.all(maskingPromptIds);
         const promptsCsv = PapaParse.unparse(prompts);
         const promptsLocalPath = await saveFileToDevice(
-          `prompts_${exportTimestamp}.csv`,
+          `fusionPrompts_${exportTimestamp}.csv`,
           promptsCsv,
           true
         );
@@ -173,10 +158,10 @@ export function AccountScreen() {
         console.log("exporting responses");
         // generare & write response_<timestamp>.csv
         const combinedResponses: PromptResponse[] = [];
-        await processPromptResponses(prompts, combinedResponses);
+        await promptService.processPromptResponses(prompts, combinedResponses);
         const promptResponsesCsv = PapaParse.unparse(combinedResponses);
         const responsesLocalPath = await saveFileToDevice(
-          `responses_${exportTimestamp}.csv`,
+          `fusionResponses_${exportTimestamp}.csv`,
           promptResponsesCsv,
           true
         );
@@ -232,7 +217,7 @@ export function AccountScreen() {
                 title="Send Feedback"
                 onPress={async () => {
                   // send feedback
-                  const recipient = "ore@usefusion.app";
+                  const recipient = "contact@usefusion.app";
                   const subject = "Fusion Feedback";
                   const body = feedbackText;
 

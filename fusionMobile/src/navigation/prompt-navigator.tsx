@@ -2,17 +2,18 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import * as React from "react";
 
 import { Prompt } from "~/@types";
-import { Logo } from "~/components/logo";
-import { HomeScreen } from "~/pages/home";
-import { PromptScreen } from "~/pages/prompt";
-import { PromptEntryScreen } from "~/pages/promptEntry";
-import { ResponsesScreen } from "~/pages/responses";
+import { PromptsHeader } from "~/components";
+import {
+  PromptsScreen,
+  PromptScreen,
+  PromptEntryScreen,
+  ResponsesScreen,
+} from "~/pages";
 
 export type PromptStackParamList = {
-  Home: undefined;
+  Prompts: undefined;
   AuthorPrompt:
     | {
         prompt?: Prompt;
@@ -39,12 +40,12 @@ const Stack = createNativeStackNavigator<PromptStackParamList>();
 
 export const PromptStack = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerTitle: () => <Logo /> }}
-      />
+    <Stack.Navigator
+      screenOptions={{
+        header: () => <PromptsHeader />,
+      }}
+    >
+      <Stack.Screen name="Prompts" component={PromptsScreen} />
       <Stack.Screen
         name="AuthorPrompt"
         component={PromptScreen}

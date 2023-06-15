@@ -18,12 +18,8 @@ import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
 import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
-import {
-  getDayjsFromTimestring,
-  savePrompt,
-  readSavedPrompts,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { getDayjsFromTimestring, appInsights } from "~/utils";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -76,6 +72,7 @@ export function PromptScreen() {
         intent: route.params?.prompt ? "edit" : "create",
       },
     });
+
     if (route.params?.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
@@ -247,20 +244,24 @@ export function PromptScreen() {
                 }
 
                 console.log("calling save prompt");
-                const res = await savePrompt(
+
+                const res = await promptService.savePrompt({
+                  uuid: promptUuid,
                   promptText,
-                  responseType!,
+                  responseType: responseType!,
+                  notificationConfig_countPerDay: parseInt(
+                    countPerDay ?? "0",
+                    10
+                  ),
+                  notificationConfig_startTime: start.format("HH:mm"),
+                  notificationConfig_endTime: end.format("HH:mm"),
+                  notificationConfig_days: days,
                   additionalMeta,
-                  parseInt(countPerDay ?? "0", 10),
-                  start.format("HH:mm"),
-                  end.format("HH:mm"),
-                  days,
-                  promptUuid
-                );
+                });
 
                 if (res) {
                   // read the saved prompts from the db
-                  const savedPrompts = await readSavedPrompts();
+                  const savedPrompts = await promptService.readSavedPrompts();
 
                   if (savedPrompts) {
                     // update the saved prompts state
@@ -269,7 +270,7 @@ export function PromptScreen() {
                     Alert.alert("Success", "Prompt saved successfully");
 
                     // navigate back to the home screen
-                    navigation.navigate("Home");
+                    navigation.navigate("Prompts");
                   } else {
                     throw new Error("There was an error reading the prompts");
                   }

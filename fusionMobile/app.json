@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.neurofusion.fusion",
-      "buildNumber": "18"
+      "buildNumber": "19"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +26,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.neurofusion.fusion",
-      "versionCode": 9
+      "versionCode": 10
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -18,12 +18,8 @@ import {
 import { Prompt } from "~/@types/index.js";
 import { PromptScreenNavigationProp } from "~/navigation/prompt-navigator";
 import { RouteProp } from "~/navigation/types.js";
-import {
-  fetchPromptById,
-  savePromptResponse,
-  maskPromptId,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { maskPromptId, appInsights } from "~/utils";
 
 // this component is to allow a user make a prompt entry.
 export function PromptEntryScreen() {
@@ -46,7 +42,7 @@ export function PromptEntryScreen() {
   React.useEffect(() => {
     if (route.params?.promptUuid) {
       (async () => {
-        const res = await fetchPromptById(route.params.promptUuid);
+        const res = await promptService.getPrompt(route.params.promptUuid);
         setPromptObject(res);
       })();
     }
@@ -83,7 +79,7 @@ export function PromptEntryScreen() {
     console.log(promptResponse);
 
     // save the prompt entry
-    const res = await savePromptResponse(promptResponse);
+    const res = await promptService.savePromptResponse(promptResponse);
 
     if (res) {
       // track event

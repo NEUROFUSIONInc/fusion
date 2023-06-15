@@ -4,7 +4,8 @@ import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 
 import { usePrompts } from "~/hooks";
-import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
+import { promptService } from "~/services";
+import { convertTime, maskPromptId, appInsights } from "~/utils";
 
 export function HomeScreen() {
   const navigation = useNavigation();
@@ -95,7 +96,9 @@ export function HomeScreen() {
                         {
                           text: "OK",
                           onPress: async () => {
-                            const res = await deletePrompt(item.uuid);
+                            const res = await promptService.deletePrompt(
+                              item.uuid
+                            );
                             if (res) {
                               appInsights.trackEvent(
                                 { name: "prompt_deleted" },
