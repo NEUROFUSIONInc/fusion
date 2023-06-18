@@ -54,26 +54,26 @@ export type TabList<T extends keyof TabParamList> = {
 };
 
 const tabs: TabType[] = [
-  {
-    name: "Home",
-    component: HomeScreen,
-    label: "Home",
-  },
+  // {
+  //   name: "Home",
+  //   component: HomeScreen,
+  //   label: "Home",
+  // },
   {
     name: "PromptNavigator",
     component: PromptStack,
     label: "Prompts",
   },
-  {
-    name: "InsightsNavigator",
-    component: HealthStack,
-    label: "Insights",
-  },
-  {
-    name: "QuestNavigator",
-    component: QuestStack,
-    label: "Quests",
-  },
+  // {
+  //   name: "InsightsNavigator",
+  //   component: HealthStack,
+  //   label: "Insights",
+  // },
+  // {
+  //   name: "QuestNavigator",
+  //   component: QuestStack,
+  //   label: "Quests",
+  // },
   {
     name: "Community",
     component: AccountStack,
