@@ -150,8 +150,8 @@ export function PromptEntryScreen() {
               {promptObject.responseType === "number" && (
                 <View>
                   <TextInput
-                    inputMode="numeric"
-                    keyboardType="numeric"
+                    inputMode="decimal"
+                    keyboardType="decimal-pad"
                     onChangeText={setUserResponse}
                     value={userResponse}
                     style={styles.numberInput}
