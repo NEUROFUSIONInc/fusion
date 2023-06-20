@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useRef, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
@@ -78,7 +78,10 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
   }, []);
 
   return (
-    <View className="flex flex-row w-full items-center justify-between rounded-md py-5 px-4 bg-secondary-900">
+    <Pressable
+      className="flex flex-row w-full items-center justify-between rounded-md py-5 px-4 bg-secondary-900"
+      onPress={() => handleExpandSheet(prompt)}
+    >
       <View className="flex-1 flex-col items-start gap-y-3">
         <Text
           numberOfLines={2}
@@ -105,7 +108,6 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
         variant="ghost"
         className="m-0 p-0 self-center"
         leftIcon={<VerticalMenu />}
-        onPress={() => handleExpandSheet(prompt)}
       />
 
       <Portal>
@@ -155,6 +157,6 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
           )}
         </BottomSheet>
       </Portal>
-    </View>
+    </Pressable>
   );
 };
