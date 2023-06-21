@@ -39,9 +39,9 @@ export const Navbar: FC = () => {
               </Link>
             ))}
           </div>
-          <ButtonLink href="/auth/login" rounded rightIcon={<ArrowRight size={16} />}>
+          {/* <ButtonLink href="/auth/login" rounded rightIcon={<ArrowRight size={16} />}>
             Login
-          </ButtonLink>
+          </ButtonLink> */}
         </div>
         <Button
           rightIcon={<Menu strokeWidth={2} />}
