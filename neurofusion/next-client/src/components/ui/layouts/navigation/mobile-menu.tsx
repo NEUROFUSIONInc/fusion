@@ -37,11 +37,11 @@ export const MobileMenu: FC<IMobileMenuProps> = ({ open, onMobileMenuClose }) =>
                   </Link>
                 ))}
               </div>
-              <div className="py-8">
+              {/* <div className="py-8">
                 <ButtonLink href="/auth/login" rounded rightIcon={<ArrowRight size={16} />} fullWidth>
                   Login
                 </ButtonLink>
-              </div>
+              </div> */}
             </div>
           </div>
         </Dialog.Content>
