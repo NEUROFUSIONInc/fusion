@@ -259,3 +259,8 @@ Prompt response view
 
 - Share screen should eventually allow users select what prompts
   & who they want to share the results to in Fusion :)
+
+# Setting environment variables
+
+Expo handles environment variables a little different than regular web app. We set them in the app.config.ts file.
+and then use constants. See appInsights.js for an example. More docs - https://docs.expo.dev/build-reference/variables/

@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "14",
+    buildNumber: "20",
     backgroundColor: "#0B0816",
   },
   android: {
@@ -30,7 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 7,
+    versionCode: 11,
   },
   web: {
     favicon: "./assets/favicon.png",
@@ -41,6 +41,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       projectId: "f79cfe2d-2f56-413a-89f8-b9fde538ac75",
     },
     storybookEnabled: process.env.STORYBOOK_ENABLED,
+    appInsightsConnectionString:
+      process.env.APP_INSIGHTS_CONNECTION_STRING ??
+      "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
   },
   plugins: ["expo-notifications"],
   owner: "oreogundipe",
