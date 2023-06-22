@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-// import { ArrowRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -19,7 +19,7 @@ export const MobileMenu: FC<IMobileMenuProps> = ({ open, onMobileMenuClose }) =>
     <Dialog.Root open={open}>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-blackA9 data-[state=open]:animate-overlayShow fixed inset-0" />
-        <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-0 left-0 right-0 z-30 h-full w-full bg-white p-4 focus:outline-none dark:bg-dark-gradient md:hidden">
+        <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-0 right-0 top-0 z-30 h-full w-full bg-white p-4 focus:outline-none dark:bg-dark-gradient md:hidden">
           <div className="flex items-center justify-between">
             <Logo withText />
             <Button rightIcon={<X />} size="icon" intent="ghost" onClick={onMobileMenuClose} />
@@ -31,7 +31,7 @@ export const MobileMenu: FC<IMobileMenuProps> = ({ open, onMobileMenuClose }) =>
                   <Link
                     key={link.title}
                     href={`${link.href}`}
-                    className="block rounded-lg py-2 px-3 text-base font-semibold leading-7"
+                    className="block rounded-lg px-3 py-2 text-base font-semibold leading-7"
                   >
                     {link.title}
                   </Link>
