@@ -170,6 +170,11 @@ class PromptService {
   };
 
   public savePrompt = async (promptEntry: CreatePrompt) => {
+    /**
+     * Takes save prompt to sqlite db
+     * If isNotification is false, don't schedule the notification
+     *  - by default it doens't matter, the value could be undefined
+     */
     const prompt = {
       ...promptEntry,
       uuid: promptEntry.uuid ?? uuidv4(),
@@ -242,7 +247,20 @@ class PromptService {
 
       const saveStatus = await saveToDb();
       if (saveStatus) {
-        await this.notificationService.scheduleFusionNotification(prompt);
+        let isNotificationActive = true;
+        if (prompt.additionalMeta) {
+          const additionalMeta = JSON.parse(prompt.additionalMeta);
+          if (additionalMeta["isNotificationActive"] === false) {
+            isNotificationActive = false;
+            await this.notificationService.cancelExistingNotificationForPrompt(
+              prompt.uuid
+            );
+          }
+        }
+
+        if (isNotificationActive) {
+          await this.notificationService.scheduleFusionNotification(prompt);
+        }
 
         // app insights tracking
         appInsights.trackEvent(
@@ -256,6 +274,9 @@ class PromptService {
               start_time: prompt.notificationConfig_startTime,
               end_time: prompt.notificationConfig_endTime,
               count_per_day: prompt.notificationConfig_countPerDay,
+            }),
+            extras: JSON.stringify({
+              isNotificationActive: isNotificationActive,
             }),
           }
         );
@@ -496,6 +517,41 @@ class PromptService {
     await Promise.all(maskingPromptIds);
 
     return combinedResponses;
+  };
+
+  public updatePromptNotificationState = async (
+    promptUuid: string,
+    isNotificationActive: boolean
+  ) => {
+    const prompt = await this.getPrompt(promptUuid);
+
+    if (!prompt) {
+      return;
+    }
+
+    let additionalMeta;
+
+    // update the additionalMeta column
+    if (prompt.additionalMeta) {
+      additionalMeta = JSON.parse(JSON.stringify(prompt.additionalMeta));
+    } else {
+      additionalMeta = {};
+    }
+
+    additionalMeta["isNotificationActive"] = isNotificationActive;
+    prompt.additionalMeta = JSON.stringify(additionalMeta);
+
+    //  create new object
+    const newPrompt: CreatePrompt = {
+      ...prompt,
+      notificationConfig_days: JSON.parse(
+        JSON.stringify(prompt.notificationConfig_days)
+      ),
+    };
+
+    // save prompt, add option to disable notifications
+    const res = await this.savePrompt(newPrompt);
+    return res;
   };
 }
 

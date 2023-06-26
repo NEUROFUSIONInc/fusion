@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
@@ -75,7 +75,64 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
         ]
       );
     }
-  }, []);
+  }, [activePrompt]);
+
+  const [promptUpdateLabel, setPromptUpdateLabel] = useState("");
+  const [activePromptNotificationState, setActivePromptNotificationState] =
+    useState(false);
+
+  const handlePromptNotificationStateUpdate = useCallback(async () => {
+    if (activePrompt) {
+      Alert.alert(promptUpdateLabel, "Are you sure?", [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            // check if promptNotification is active
+            const res = await promptService.updatePromptNotificationState(
+              activePrompt.uuid,
+              !activePromptNotificationState
+            );
+
+            if (res) {
+              const savedPrompts = await promptService.readSavedPrompts();
+              if (savedPrompts) {
+                setSavedPrompts(savedPrompts);
+              }
+              handleBottomSheetClose();
+            }
+          },
+        },
+      ]);
+    }
+  }, [activePrompt, activePromptNotificationState]);
+
+  useEffect(() => {
+    // check if promptNotification is active
+    if (activePrompt) {
+      let label = "";
+      let notificationState = true;
+      if (prompt.additionalMeta) {
+        const additionalMeta = JSON.parse(prompt.additionalMeta);
+        if (additionalMeta["isNotificationActive"]) {
+          label = "Pause Prompt";
+          notificationState = true;
+        } else {
+          label = "Resume Prompt";
+          notificationState = false;
+        }
+      } else {
+        // this means it hasn't been set so we assume it's active
+        label = "Pause Prompt";
+      }
+
+      setPromptUpdateLabel(label);
+      setActivePromptNotificationState(notificationState);
+    }
+  }, [activePrompt]);
 
   return (
     <Pressable
@@ -111,12 +168,12 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
       />
 
       <Portal>
-        <BottomSheet ref={bottomSheetRef} snapPoints={["55%"]}>
+        <BottomSheet ref={bottomSheetRef} snapPoints={["62%"]}>
           {activePrompt && (
             <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
               <View className="flex flex-col gap-y-2.5 items-center">
                 <PromptOption
-                  text="Log"
+                  text="Log Prompt"
                   onPress={() => {
                     handleBottomSheetClose();
 
@@ -127,7 +184,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
                   }}
                 />
                 <PromptOption
-                  text="History"
+                  text="View History"
                   onPress={() => {
                     handleBottomSheetClose();
 
@@ -137,7 +194,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
                   }}
                 />
                 <PromptOption
-                  text="Edit"
+                  text="Edit Prompt"
                   onPress={() => {
                     handleBottomSheetClose();
 
@@ -146,7 +203,15 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
                     });
                   }}
                 />
-                <PromptOption text="Delete" onPress={handlePromptDelete} />
+                {/* conditional display based on state */}
+                <PromptOption
+                  text={promptUpdateLabel}
+                  onPress={handlePromptNotificationStateUpdate}
+                />
+                <PromptOption
+                  text="Delete Prompt"
+                  onPress={handlePromptDelete}
+                />
               </View>
               <Button
                 title="Close"
