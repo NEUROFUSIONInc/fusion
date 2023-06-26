@@ -34,7 +34,7 @@ export const PromptsHeader = () => {
         variant="ghost"
         size="icon"
         leftIcon={<Plus />}
-        onPress={handleExpandSheet}
+        onPress={handleCreatePromptSheetOpen}
       />
       <Portal>
         <BottomSheet ref={bottomSheetRef} snapPoints={["42.5%"]}>
