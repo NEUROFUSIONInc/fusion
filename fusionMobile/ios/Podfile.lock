@@ -105,6 +105,8 @@ PODS:
     - React-Core
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
+  - ExpoSystemUI (2.2.1):
+    - ExpoModulesCore
   - EXSharing (11.2.2):
     - ExpoModulesCore
   - EXSplashScreen (0.18.2):
@@ -390,7 +392,7 @@ PODS:
   - React-jsinspector (0.71.8)
   - React-logger (0.71.8):
     - glog
-  - react-native-ble-manager (10.1.1):
+  - react-native-ble-manager (10.1.2):
     - React-Core
   - react-native-get-random-values (1.8.0):
     - React-Core
@@ -498,7 +500,7 @@ PODS:
     - React
   - RNGestureHandler (2.9.0):
     - React-Core
-  - RNPermissions (3.8.0):
+  - RNPermissions (3.8.1):
     - React-Core
   - RNReanimated (2.14.4):
     - DoubleConversion
@@ -567,6 +569,7 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoMailComposer (from `../node_modules/expo-mail-composer/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - EXSharing (from `../node_modules/expo-sharing/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
@@ -676,6 +679,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-mail-composer/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoSystemUI:
+    :path: "../node_modules/expo-system-ui/ios"
   EXSharing:
     :path: "../node_modules/expo-sharing/ios"
   EXSplashScreen:
@@ -812,6 +817,7 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoMailComposer: 0085b258d00ba40664f7acb40d96042b29a1da7d
   ExpoModulesCore: 653958063a301098b541ae4dfed1ac0b98db607b
+  ExpoSystemUI: 0be5173ee2a7c01e9abc44f56d879a1eaaa16527
   EXSharing: 09839ace249f61bfa13c50c6a28256c31d260355
   EXSplashScreen: 0e0a9ba0cf7553094e93213099bd7b42e6e237e9
   EXSQLite: 848167441b14cb6cdd6ae46c8d62289161a79550
@@ -839,7 +845,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 747911ab5921641b4ed7e4900065896597142125
   React-jsinspector: c712f9e3bb9ba4122d6b82b4f906448b8a281580
   React-logger: 342f358b8decfbf8f272367f4eacf4b6154061be
-  react-native-ble-manager: 1af4ea584c053f7f981acd3382688c844a849c0f
+  react-native-ble-manager: 211ea1bb959a9abae994b5a2740338cd01380d0f
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
@@ -862,7 +868,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
   RNFitnessTracker: 3d80a66cbb25525ec0f92e8bdb1bf506837577d4
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
-  RNPermissions: 03f5493af1f64398626fbbcda964960536b26ad9
+  RNPermissions: 8614afba1abbd56ae5c02e2af8ab6e8e11f8e236
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2

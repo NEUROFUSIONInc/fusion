@@ -7,7 +7,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
-  userInterfaceStyle: "light",
   backgroundColor: "#0B0816",
   splash: {
     image: "./assets/splash.png",
@@ -21,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "21",
+    buildNumber: "22",
     backgroundColor: "#0B0816",
   },
   android: {
