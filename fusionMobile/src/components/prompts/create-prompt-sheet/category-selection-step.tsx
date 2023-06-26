@@ -4,14 +4,13 @@ import { Text, View } from "react-native";
 import { Tag } from "../../tag";
 
 const categories = [
-  "Health and Fitness",
-  "Productivity",
-  "Finance",
-  "Education",
-  "Relationships",
-  "Sustainability",
   "Mental Health",
+  "Productivity",
+  "Relationships",
+  "Health and Fitness",
   "Spiritual Practice",
+  "Personal Interest",
+  "Other",
 ];
 
 interface CategorySelectionStepProps {
