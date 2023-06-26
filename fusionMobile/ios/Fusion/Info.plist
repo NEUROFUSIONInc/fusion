@@ -60,6 +60,11 @@
     <string>Share recorded data on Fusion with Apple.</string>
     <key>NSMotionUsageDescription</key>
     <string>For fetching data on your steps</string>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
+      <string>fetch</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

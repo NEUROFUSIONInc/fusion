@@ -74,7 +74,8 @@
     "react-native-zip-archive": "^6.0.9",
     "text-encoding": "^0.7.0",
     "uuid": "^9.0.0",
-    "wrn-echarts": "^0.1.5"
+    "wrn-echarts": "^0.1.5",
+    "expo-task-manager": "~11.1.1"
   },
   "reactNativePermissionsIOS": [
     "Notifications",

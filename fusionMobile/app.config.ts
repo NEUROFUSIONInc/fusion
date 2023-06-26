@@ -30,7 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 11,
+    versionCode: 13,
   },
   web: {
     favicon: "./assets/favicon.png",
