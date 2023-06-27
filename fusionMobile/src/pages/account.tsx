@@ -1,6 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
+import dayjs from "dayjs";
 import Linking from "expo-linking";
+import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
+import PapaParse from "papaparse";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -13,11 +16,8 @@ import {
   Keyboard,
   Pressable,
 } from "react-native";
-import dayjs from "dayjs";
-import PapaParse from "papaparse";
-import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
 
-import { Prompt, PromptResponse } from "~/@types";
+import { PromptResponse } from "~/@types";
 import { promptService, nostrService } from "~/services";
 import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
@@ -109,7 +109,7 @@ export function AccountScreen() {
       "researchProgramMember"
     );
 
-    if (researchProgramMember == "true") {
+    if (researchProgramMember === "true") {
       return true;
     } else {
       return false;
@@ -122,7 +122,7 @@ export function AccountScreen() {
       "about to toggle brain recording value from",
       brainRecordingEnabled
     );
-    if (brainRecordingEnabled == true) {
+    if (brainRecordingEnabled === true) {
       await AsyncStorage.setItem("researchProgramMember", "false");
     } else {
       await AsyncStorage.setItem("researchProgramMember", "true");
@@ -142,7 +142,7 @@ export function AccountScreen() {
       }
 
       const exportTimestamp = dayjs().unix().toString();
-      if (dataType == "prompts") {
+      if (dataType === "prompts") {
         console.log("exporting prompts");
         const maskingPromptIds = prompts.map(async (prompt) => {
           return (prompt.uuid = await maskPromptId(prompt.uuid));
@@ -154,7 +154,7 @@ export function AccountScreen() {
           promptsCsv,
           true
         );
-      } else if (dataType == "responses") {
+      } else if (dataType === "responses") {
         console.log("exporting responses");
         // generare & write response_<timestamp>.csv
         const combinedResponses: PromptResponse[] = [];
@@ -172,7 +172,7 @@ export function AccountScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           <View style={{ alignItems: "center" }}>

@@ -1,9 +1,9 @@
-import React from "react";
-import { StyleSheet, Button, Text, View, Platform } from "react-native";
-import { neurosity } from "~/utils";
 import { Peripheral } from "@neurosity/sdk/dist/esm/api/bluetooth/react-native/types/BleManagerTypes";
+import React from "react";
+import { StyleSheet, Button, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
+
+import { neurosity } from "~/utils";
 
 export interface ScannedDevice {
   label: string;
@@ -12,8 +12,6 @@ export interface ScannedDevice {
 
 export function QuestsScreen() {
   const { bluetooth } = neurosity;
-
-  const [isConnected, setIsConnected] = React.useState(false);
 
   // for device picker
   const [devicePickerOpen, setDevicePickerOpen] = React.useState(false);

@@ -5,7 +5,7 @@ import BleManager from "react-native-ble-manager";
 
 (async () => {
   // TODO: only do this when we're not on emulator
-  let state = await BleManager.checkState();
+  const state = await BleManager.checkState();
   console.log("BLE state:", state);
 })();
 

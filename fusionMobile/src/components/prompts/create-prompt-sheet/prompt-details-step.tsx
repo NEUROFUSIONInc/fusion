@@ -24,15 +24,15 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   customOptions,
   setCustomOptions,
 }) => {
-  const [customOptionsInputText, setcustomOptionsInputText] = useState("");
+  const [customOptionsInputText, setCustomOptionsInputText] = useState("");
   useEffect(() => {
-    let arr = customOptionsInputText
+    const arr = customOptionsInputText
       .split(" ")
       .join("")
       .split(";")
       .filter((str) => str !== "");
 
-    setCustomOptions(arr); // semicolon seperated parsing into CustomOptions List
+    setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
   }, [customOptionsInputText]);
 
   return (
@@ -68,14 +68,14 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
           }}
         />
 
-        {responseType == "customOptions" ? (
+        {responseType === "customOptions" ? (
           <>
             <Input
               label="Enter your options"
               className="mb-5"
-              placeholder="Seperate your values with ';'"
+              placeholder="Separate your values with ';'"
               value={customOptionsInputText}
-              onChangeText={setcustomOptionsInputText}
+              onChangeText={setCustomOptionsInputText}
             />
 
             {/* display the options as tags below */}
@@ -83,7 +83,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
               <View className="flex flex-row gap-x-2 gap-y-3 flex-wrap">
                 {customOptions.map((option) => (
                   <View key={option}>
-                    <Tag key={option} title={option} disabled={true} />
+                    <Tag key={option} title={option} disabled />
                   </View>
                 ))}
               </View>

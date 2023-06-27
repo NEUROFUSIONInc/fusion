@@ -60,7 +60,7 @@ export const TimePicker: FC<TimePickerProps> = ({
   // TODO: make it better, set time
   const [isSingleTime, setIsSingleTime] = useState(false);
   useEffect(() => {
-    if (value == 1) {
+    if (value === 1) {
       setIsSingleTime(true);
       setEnd(start.add(2, "minute"));
     }

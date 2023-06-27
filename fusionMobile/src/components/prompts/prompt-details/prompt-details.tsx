@@ -9,7 +9,7 @@ import { VerticalMenu } from "../../icons";
 import { PromptOptionsSheet } from "./sheets";
 
 import { Prompt } from "~/@types";
-import { getFrequencyLabel, interpretDaySelection } from "~/utils";
+import { interpretDaySelection } from "~/utils";
 
 interface PromptDetailsProps {
   prompt: Prompt;

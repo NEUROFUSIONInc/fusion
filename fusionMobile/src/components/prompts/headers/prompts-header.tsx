@@ -13,11 +13,6 @@ export const PromptsHeader = () => {
   const bottomSheetRef = useRef<RNBottomSheet>(null);
   const createPromptSheetRef = useRef<RNBottomSheet>(null);
 
-  const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
-    []
-  );
-
   const handleBottomSheetClose = useCallback(() => {
     bottomSheetRef.current?.close();
   }, []);

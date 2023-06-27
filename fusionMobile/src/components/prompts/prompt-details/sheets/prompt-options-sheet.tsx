@@ -80,8 +80,6 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
             const res = await promptService.updatePromptNotificationState(
               activePrompt.uuid,
               activePrompt.additionalMeta?.isNotificationActive === false
-                ? true
-                : false
             );
 
             if (res) {
