@@ -88,6 +88,9 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
                     meta[x] = row[x]
                 self.tagIdMap[i]["Meta"] = dict(row)
 
+    def getCategories(self):
+        return self.categories
+
     def prune(self): # removes all events without all eeg files from dataset
         for x in list(self.categories.keys()):
             for y in self.categories[x]:
