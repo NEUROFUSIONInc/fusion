@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { Text, View } from "react-native";
 
 import { Input } from "../../input";
@@ -25,15 +25,6 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   setCustomOptions,
 }) => {
   const [customOptionsInputText, setCustomOptionsInputText] = useState("");
-  useEffect(() => {
-    const arr = customOptionsInputText
-      .split(" ")
-      .join("")
-      .split(";")
-      .filter((str) => str !== "");
-
-    setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
-  }, [customOptionsInputText]);
 
   return (
     <View className="flex-1 flex-col gap-y-5">
@@ -75,7 +66,15 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
               className="mb-5"
               placeholder="Separate your values with ';'"
               value={customOptionsInputText}
-              onChangeText={setCustomOptionsInputText}
+              onChangeText={(text) => {
+                setCustomOptionsInputText(text);
+                const arr = text
+                  .split(" ")
+                  .join("")
+                  .split(";")
+                  .filter((str) => str !== "");
+                setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
+              }}
             />
 
             {/* display the options as tags below */}

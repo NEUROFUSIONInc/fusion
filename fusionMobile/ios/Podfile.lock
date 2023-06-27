@@ -105,8 +105,6 @@ PODS:
     - React-Core
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
-  - ExpoSystemUI (2.2.1):
-    - ExpoModulesCore
   - EXSharing (11.2.2):
     - ExpoModulesCore
   - EXSplashScreen (0.18.2):
@@ -115,9 +113,6 @@ PODS:
   - EXSQLite (11.1.1):
     - ExpoModulesCore
   - EXStructuredHeaders (3.1.1)
-  - EXTaskManager (11.1.1):
-    - ExpoModulesCore
-    - UMAppLoader
   - EXUpdates (0.16.4):
     - ASN1Decoder (~> 1.8)
     - EASClient
@@ -544,7 +539,6 @@ PODS:
     - React-Core
     - SSZipArchive (~> 2.2)
   - SSZipArchive (2.4.3)
-  - UMAppLoader (4.1.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -569,12 +563,10 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoMailComposer (from `../node_modules/expo-mail-composer/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
-  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - EXSharing (from `../node_modules/expo-sharing/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
-  - EXTaskManager (from `../node_modules/expo-task-manager/ios`)
   - EXUpdates (from `../node_modules/expo-updates/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -626,7 +618,6 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - RNZipArchive (from `../node_modules/react-native-zip-archive`)
-  - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -679,8 +670,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-mail-composer/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
-  ExpoSystemUI:
-    :path: "../node_modules/expo-system-ui/ios"
   EXSharing:
     :path: "../node_modules/expo-sharing/ios"
   EXSplashScreen:
@@ -689,8 +678,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-sqlite/ios"
   EXStructuredHeaders:
     :path: "../node_modules/expo-structured-headers/ios"
-  EXTaskManager:
-    :path: "../node_modules/expo-task-manager/ios"
   EXUpdates:
     :path: "../node_modules/expo-updates/ios"
   EXUpdatesInterface:
@@ -789,8 +776,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   RNZipArchive:
     :path: "../node_modules/react-native-zip-archive"
-  UMAppLoader:
-    :path: "../node_modules/unimodules-app-loader/ios"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -817,21 +802,19 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: 69f5f627670d62318410392d03e0b5db0f85759a
   ExpoMailComposer: 0085b258d00ba40664f7acb40d96042b29a1da7d
   ExpoModulesCore: 653958063a301098b541ae4dfed1ac0b98db607b
-  ExpoSystemUI: 0be5173ee2a7c01e9abc44f56d879a1eaaa16527
   EXSharing: 09839ace249f61bfa13c50c6a28256c31d260355
   EXSplashScreen: 0e0a9ba0cf7553094e93213099bd7b42e6e237e9
   EXSQLite: 848167441b14cb6cdd6ae46c8d62289161a79550
   EXStructuredHeaders: b1a48d732562e2cc81f11771bcfd29534f5d9254
-  EXTaskManager: f8257faa4c20acfc3f31e21ab82a62544d70db85
   EXUpdates: 603c4dfec2ed9ef323dfbd9c59c946593d4d9a5c
   EXUpdatesInterface: dd699d1930e28639dcbd70a402caea98e86364ca
   FBLazyVector: f637f31eacba90d4fdeff3fa41608b8f361c173b
   FBReactNativeSpec: 0d9a4f4de7ab614c49e98c00aedfd3bfbda33d59
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
+  glog: 791fe035093b84822da7f0870421a25839ca7870
   hermes-engine: 47986d26692ae75ee7a17ab049caee8864f855de
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
+  RCT-Folly: 85766c3226c7ec638f05ad7cb3cf6a268d6c4241
   RCTRequired: 8af6a32dfc2b65ec82193c2dee6e1011ff22ac2a
   RCTTypeSafety: bee9dd161c175896c680d47ef1d9eaacf2b587f4
   React: d850475db9ba8006a8b875d79e1e0d6ac8a0f8b6
@@ -875,7 +858,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   RNZipArchive: 68a0c6db4b1c103f846f1559622050df254a3ade
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
-  UMAppLoader: 71aae6c6782cf2aef2356bb97f84321600b4b25c
   Yoga: 065f0b74dba4832d6e328238de46eb72c5de9556
 
 PODFILE CHECKSUM: 491a54574e9b2175528cdebb0d4f8a2b59053d0f
