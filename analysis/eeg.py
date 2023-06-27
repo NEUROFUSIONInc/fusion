@@ -426,7 +426,6 @@ def load_session_summery(files: dict, _channels: list = [], qualityCutoffFilter:
 
     return epochReturnStruct
 
-
 class analysisEngine():
     def __init__(self,fileBundles:dict,epochSize=5):
         """
