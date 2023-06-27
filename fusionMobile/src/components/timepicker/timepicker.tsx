@@ -60,7 +60,7 @@ export const TimePicker: FC<TimePickerProps> = ({
   // TODO: make it better, set time
   const [isSingleTime, setIsSingleTime] = useState(false);
   useEffect(() => {
-    if (value == 1) {
+    if (value === 1) {
       setIsSingleTime(true);
       setEnd(start.add(2, "minute"));
     }
@@ -119,7 +119,9 @@ export const TimePicker: FC<TimePickerProps> = ({
           />
           {value !== null && (
             <Text className="font-sans text-gray-400 text-sm mt-2">
-              {`You will be prompted ${totalContactCount} times`}
+              {`You will be prompted ${
+                totalContactCount === 1 ? "once" : `${totalContactCount} times`
+              }`}
             </Text>
           )}
         </View>

@@ -294,7 +294,7 @@ class PromptService {
               count_per_day: prompt.notificationConfig_countPerDay,
             }),
             extras: JSON.stringify({
-              isNotificationActive: isNotificationActive,
+              isNotificationActive,
             }),
           }
         );

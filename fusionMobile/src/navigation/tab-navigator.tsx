@@ -2,14 +2,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
-import { View } from "react-native";
 import type { SvgProps } from "react-native-svg";
 
 import { AccountStack } from "./account-navigator";
-import { HealthStack } from "./health-navigator";
 import { PromptStack } from "./prompt-navigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { QuestStack } from "./quest-navigator";
 
 import {
   Home as HomeIcon,
@@ -18,7 +14,6 @@ import {
   Users as UsersIcon,
   ChartArcs as ChartArcsIcon,
 } from "~/components";
-import { HomeScreen } from "~/pages";
 
 type TabParamList = {
   Home: undefined;

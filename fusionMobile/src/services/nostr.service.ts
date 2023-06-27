@@ -14,7 +14,7 @@ export class NostrService {
             tx.executeSql(
               "INSERT INTO user_account (npub, pubkey, privkey) VALUES (?, ?, ?)",
               [npub, pubkey, privkey],
-              (_, { rows }) => {
+              () => {
                 resolve(true);
               },
               (_, error) => {

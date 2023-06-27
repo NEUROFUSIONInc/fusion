@@ -14,6 +14,7 @@ import {
   Pressable,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+
 import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
@@ -153,7 +154,7 @@ export function PromptScreen() {
               />
             </View>
 
-            {responseType == "customOptions" ? (
+            {responseType === "customOptions" ? (
               <View style={styles.formComponent}>
                 <Text>Add options below and seperate them with ';'</Text>
 
@@ -209,7 +210,7 @@ export function PromptScreen() {
                   throw new Error("Start time must be before end time");
                 }
 
-                if (promptText == "") {
+                if (promptText === "") {
                   throw new Error("Prompt text cannot be empty");
                 }
 
@@ -217,17 +218,17 @@ export function PromptScreen() {
                   throw new Error("Response type cannot be empty");
                 }
 
-                if (countPerDay == "") {
+                if (countPerDay === "") {
                   throw new Error("Count per day cannot be empty");
                 }
 
                 let additionalMeta = {};
-                if (responseType == "customOptions") {
+                if (responseType === "customOptions") {
                   additionalMeta = {
                     customOptionText: customOptionsInputText,
                   };
 
-                  if (new Set(customOptions).size != customOptions.length) {
+                  if (new Set(customOptions).size !== customOptions.length) {
                     throw new Error("Duplicates in custom prompt");
                   }
                   if (customOptions.includes("")) {

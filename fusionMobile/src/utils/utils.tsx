@@ -72,6 +72,10 @@ export function calculateContactCount(
   endTime: dayjs.Dayjs,
   frequency: string
 ): number {
+  if (frequency === "1") {
+    return 1;
+  }
+
   const durationMinutes = endTime.diff(startTime, "minute");
   const frequencyMinutes = parseInt(frequency, 10);
 
