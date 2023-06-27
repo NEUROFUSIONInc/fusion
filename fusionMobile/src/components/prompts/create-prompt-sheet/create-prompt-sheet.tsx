@@ -40,6 +40,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   const [responseType, setResponseType] = useState<PromptResponseType | null>(
     null
   );
+  const [customOptions, setCustomOptions] = useState<string[]>([]);
+
   const [start, setStart] = useState(startDate);
   const [end, setEnd] = useState(endDate);
   const [days, setDays] = useState(promptSelectionDays);
@@ -63,6 +65,7 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
     setCategory("");
     setPromptText("");
     setResponseType(null);
+    setCustomOptions([]);
     setStart(startDate);
     setEnd(endDate);
     setDays(promptSelectionDays);
@@ -134,6 +137,11 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
       notificationConfig_countPerDay: promptCount,
       notificationConfig_startTime: start.format("HH:mm"),
       notificationConfig_endTime: end.format("HH:mm"),
+      additionalMeta: {
+        category,
+        isNotificationActive: true,
+        customOptionText: customOptions.join(";"),
+      },
     });
 
     if (res) {
@@ -240,6 +248,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
               setPromptText={setPromptText}
               responseType={responseType}
               setResponseType={setResponseType}
+              customOptions={customOptions}
+              setCustomOptions={setCustomOptions}
             />
           ) : activeStep === 2 ? (
             <View className="flex flex-col">

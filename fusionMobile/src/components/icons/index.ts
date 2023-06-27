@@ -8,3 +8,8 @@ export * from "./chevron-right";
 export * from "./close";
 export * from "./left-arrow";
 export * from "./vertical-menu";
+export * from "./pause";
+export * from "./pencil";
+export * from "./trash";
+export * from "./location";
+export * from "./notebook";

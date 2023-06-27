@@ -53,7 +53,7 @@ Notifications.setNotificationHandler({
   },
 });
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync(); - temp remove since asking for notifcation permission on first load causes hiding splash screen to fail
 
 function App() {
   const responseListener = React.useRef<

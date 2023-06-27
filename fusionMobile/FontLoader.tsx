@@ -8,8 +8,6 @@ interface Props extends PropsWithChildren {
   onFontsLoaded?: () => void; // callback for displaying the splash screen once background view has loaded
 }
 
-SplashScreen.preventAutoHideAsync();
-
 export const FontLoader = ({ onFontsLoaded, children }: Props) => {
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
@@ -23,9 +21,9 @@ export const FontLoader = ({ onFontsLoaded, children }: Props) => {
   });
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync(); //hide the splashscreen
-    }
+    // if (fontsLoaded) {
+    //   await SplashScreen.hideAsync(); //hide the splashscreen
+    // }
   }, [fontsLoaded, onFontsLoaded]);
 
   if (!fontsLoaded) {

@@ -36,7 +36,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>20</string>
+    <string>24</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -60,6 +60,13 @@
     <string>Share recorded data on Fusion with Apple.</string>
     <key>NSMotionUsageDescription</key>
     <string>For fetching data on your steps</string>
+    <key>RCTRootViewBackgroundColor</key>
+    <integer>4278913046</integer>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
+      <string>fetch</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

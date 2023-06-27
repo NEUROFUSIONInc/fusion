@@ -103,15 +103,10 @@ export function PromptScreen() {
         );
       }
 
-      if (
-        route.params.prompt.additionalMeta &&
-        route.params.prompt.additionalMeta != ""
-      ) {
-        // if there is additionalMeta to parse, parse for reentry into fields
-        let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta);
-        if (additionalMetaObj["customOptionText"] != null) {
-          setcustomOptionsInputText(additionalMetaObj["customOptionText"]);
-        }
+      if (route.params.prompt.additionalMeta?.customOptionText) {
+        setcustomOptionsInputText(
+          route.params.prompt.additionalMeta?.customOptionText
+        );
       }
     }
   }, [route.params]);
@@ -226,11 +221,11 @@ export function PromptScreen() {
                   throw new Error("Count per day cannot be empty");
                 }
 
-                let additionalMeta = "";
+                let additionalMeta = {};
                 if (responseType == "customOptions") {
-                  additionalMeta = JSON.stringify({
+                  additionalMeta = {
                     customOptionText: customOptionsInputText,
-                  });
+                  };
 
                   if (new Set(customOptions).size != customOptions.length) {
                     throw new Error("Duplicates in custom prompt");
