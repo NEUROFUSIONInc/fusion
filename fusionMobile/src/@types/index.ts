@@ -8,7 +8,7 @@ export interface Prompt {
   notificationConfig_startTime: string;
   notificationConfig_endTime: string;
   notificationConfig_countPerDay: number;
-  additionalMeta: string;
+  additionalMeta: Record<string, any>;
 }
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
