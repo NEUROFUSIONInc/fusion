@@ -272,12 +272,13 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
         goodEpochSerial[x] = i
 
     # Apply filtering to recordings
-    for x in [x for x in on if x!="signalQuality"]:
+    for x in on:
         on[x]["_epoch"] = on[x].index.get_level_values(0)
-        for channel in onChan[x]:
-            badStamps = set(on[x]["_epoch"]).difference(goodEpochStampsPerChan[channel])
-            if len(badStamps) != 0:
-                on[x].loc[list(badStamps),onChan[x][channel]] = pd.NA
+        if on != "signalQuality":
+            for channel in onChan[x]:
+                badStamps = set(on[x]["_epoch"]).difference(goodEpochStampsPerChan[channel])
+                if len(badStamps) != 0:
+                    on[x].loc[list(badStamps),onChan[x][channel]] = pd.NA
 
 
         badStamps = set(on[x]["_epoch"]).difference(goodEpochSerial.keys())
@@ -430,7 +431,7 @@ def load_session_summery(files: dict, _channels: list = [], qualityCutoffFilter:
     return epochReturnStruct
 
 class analysisEngine():
-    def __init__(self,fileBundles:dict,epochSize=5):
+    def __init__(self,fileBundles:dict,epochSize=5,debug = False):
         """
         Generates basic analytics for recording groups
         
@@ -445,7 +446,7 @@ class analysisEngine():
         for x in self.fileBundles:
             sum = 0
             for y in self.fileBundles[x]:
-                self.fileBundleSummeries[x].append(load_session_summery(self.fileBundles[x][y],qualityCutoffFilter=.95,epochSize=epochSize,returnEpoched=True,debug=False))
+                self.fileBundleSummeries[x].append(load_session_summery(self.fileBundles[x][y],qualityCutoffFilter=.95,epochSize=epochSize,returnEpoched=True,debug=debug))
                 sum += len(self.fileBundleSummeries[x][-1])
             print(f"{x} {len(self.fileBundles[x])} Recording Sessions Found, {sum} Epochs Extracted")
 
@@ -486,7 +487,7 @@ class analysisEngine():
             for band in self.accumulatedPowerBands[x]:
                 accumatedPowerBandStats[x][band] = np.nanmean(np.array(self.accumulatedPowerBands[x][band]))
                 # print(np.array(accumulatedPowerBands[x][band]))
-                accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band]))
+                accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) * 2
             
             
             
