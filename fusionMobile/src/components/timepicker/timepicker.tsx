@@ -66,7 +66,7 @@ export const TimePicker: FC<TimePickerProps> = ({
     } else {
       setIsSingleTime(false);
     }
-  }, [value]);
+  }, [value, start]);
 
   const handleStartTimeConfirm = (selectedTime: Date) => {
     console.log("startTime has been picked: ", selectedTime);
