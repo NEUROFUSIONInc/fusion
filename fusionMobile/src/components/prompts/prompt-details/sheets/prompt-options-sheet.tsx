@@ -6,7 +6,7 @@ import React, { FC, RefObject, useCallback } from "react";
 import { Alert, View } from "react-native";
 
 import { BottomSheet } from "../../../bottom-sheet";
-import { Notebook, Pencil, Trash } from "../../../icons";
+import { Notebook, Pause, Pencil, Trash } from "../../../icons";
 import { PromptOption } from "../../prompt-option";
 
 import { Prompt } from "~/@types";
@@ -62,9 +62,44 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     }
   }, [activePrompt]);
 
+  const handlePromptNotificationStateUpdate = useCallback(async () => {
+    if (activePrompt) {
+      const promptUpdateLabel =
+        activePrompt.additionalMeta?.isNotificationActive === false
+          ? "Resume Prompt"
+          : "Pause Prompt";
+      Alert.alert(promptUpdateLabel, "Are you sure?", [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            // check if promptNotification is active
+            const res = await promptService.updatePromptNotificationState(
+              activePrompt.uuid,
+              activePrompt.additionalMeta?.isNotificationActive === false
+                ? true
+                : false
+            );
+
+            if (res) {
+              const savedPrompts = await promptService.readSavedPrompts();
+              if (savedPrompts) {
+                setSavedPrompts(savedPrompts);
+              }
+              onBottomSheetClose();
+            }
+          },
+        },
+      ]);
+    }
+  }, [activePrompt]);
+
   const promptOptions = [
     {
-      option: "Log prompt",
+      option: "Log Prompt",
       icon: <Notebook />,
       onPress: () => {
         onBottomSheetClose?.();
@@ -76,7 +111,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
-      option: "Edit prompt",
+      option: "Edit Prompt",
       icon: <Pencil />,
       onPress: () => {
         onBottomSheetClose?.();
@@ -96,12 +131,21 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
           });
       },
     },
-    // {
-    //   option: "Pause prompt",
-    //   icon: <Pause />,
-    // },
     {
-      option: "Delete prompt",
+      option:
+        activePrompt?.additionalMeta?.isNotificationActive === false
+          ? "Resume Prompt"
+          : "Pause Prompt",
+      icon:
+        activePrompt?.additionalMeta?.isNotificationActive === false ? (
+          <FontAwesome5 name="play" size={18} color="white" />
+        ) : (
+          <Pause />
+        ),
+      onPress: handlePromptNotificationStateUpdate,
+    },
+    {
+      option: "Delete Prompt",
       icon: <Trash />,
       onPress: handlePromptDelete,
     },
