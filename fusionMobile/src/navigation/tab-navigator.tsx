@@ -77,7 +77,7 @@ const tabs: TabType[] = [
   {
     name: "Community",
     component: AccountStack,
-    label: "Community",
+    label: "Account",
   },
 ];
 
