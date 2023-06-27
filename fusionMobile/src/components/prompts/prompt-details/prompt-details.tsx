@@ -51,7 +51,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
             {interpretDaySelection(days)}
           </Text>
 
-          {prompt.additionalMeta.isNotificationActive === false && (
+          {prompt.additionalMeta?.isNotificationActive === false && (
             <View className="flex flex-row items-center">
               <View className="w-1 h-1 bg-white opacity-60" />
               <Text className="font-sans text-sm text-white opacity-60 pl-2">
