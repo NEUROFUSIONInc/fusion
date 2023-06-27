@@ -10,7 +10,9 @@ import {
 
 import {
   CreatePrompt,
+  NotificationConfigDays,
   Prompt,
+  PromptAdditionalMeta,
   PromptResponse,
   PromptResponseWithEvent,
 } from "~/@types";
@@ -27,7 +29,27 @@ class PromptService {
         new Promise<Prompt[]>((resolve) => {
           db.transaction((tx) => {
             tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
-              resolve(rows._array);
+              // format all elements in the array to prompt object type before retruning
+              resolve(
+                rows._array.map((row) => {
+                  return {
+                    uuid: row.uuid,
+                    promptText: row.promptText,
+                    responseType: row.responseType,
+                    notificationConfig_days: JSON.parse(
+                      row.notificationConfig_days
+                    ) as NotificationConfigDays,
+                    notificationConfig_startTime:
+                      row.notificationConfig_startTime,
+                    notificationConfig_endTime: row.notificationConfig_endTime,
+                    notificationConfig_countPerDay:
+                      row.notificationConfig_countPerDay,
+                    additionalMeta: row.additionalMeta
+                      ? (JSON.parse(row.additionalMeta) as PromptAdditionalMeta)
+                      : row.additionalMeta,
+                  };
+                })
+              );
             });
           });
         });
@@ -56,14 +78,14 @@ class PromptService {
                     responseType: row.responseType,
                     notificationConfig_days: JSON.parse(
                       row.notificationConfig_days
-                    ),
+                    ) as NotificationConfigDays,
                     notificationConfig_startTime:
                       row.notificationConfig_startTime,
                     notificationConfig_endTime: row.notificationConfig_endTime,
                     notificationConfig_countPerDay:
                       row.notificationConfig_countPerDay,
                     additionalMeta: row.additionalMeta
-                      ? JSON.parse(row.additionalMeta)
+                      ? (JSON.parse(row.additionalMeta) as PromptAdditionalMeta)
                       : row.additionalMeta,
                   };
                 });
@@ -178,9 +200,6 @@ class PromptService {
     const prompt = {
       ...promptEntry,
       uuid: promptEntry.uuid ?? uuidv4(),
-      notificationConfig_days: JSON.stringify(
-        promptEntry.notificationConfig_days
-      ),
     };
 
     try {
@@ -199,8 +218,8 @@ class PromptService {
                     [
                       prompt.promptText,
                       prompt.responseType,
-                      prompt.additionalMeta,
-                      prompt.notificationConfig_days,
+                      JSON.stringify(prompt.additionalMeta),
+                      JSON.stringify(prompt.notificationConfig_days),
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
                       prompt.notificationConfig_countPerDay,
@@ -224,8 +243,8 @@ class PromptService {
                       prompt.uuid,
                       prompt.promptText,
                       prompt.responseType,
-                      prompt.additionalMeta,
-                      prompt.notificationConfig_days,
+                      JSON.stringify(prompt.additionalMeta),
+                      JSON.stringify(prompt.notificationConfig_days),
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
                       prompt.notificationConfig_countPerDay,
@@ -249,8 +268,7 @@ class PromptService {
       if (saveStatus) {
         let isNotificationActive = true;
         if (prompt.additionalMeta) {
-          const additionalMeta = JSON.parse(prompt.additionalMeta);
-          if (additionalMeta["isNotificationActive"] === false) {
+          if (prompt.additionalMeta["isNotificationActive"] === false) {
             isNotificationActive = false;
             await this.notificationService.cancelExistingNotificationForPrompt(
               prompt.uuid
@@ -529,28 +547,13 @@ class PromptService {
       return;
     }
 
-    let additionalMeta;
-
-    // update the additionalMeta column
-    if (prompt.additionalMeta) {
-      additionalMeta = JSON.parse(JSON.stringify(prompt.additionalMeta));
-    } else {
-      additionalMeta = {};
+    if (!prompt.additionalMeta) {
+      prompt.additionalMeta = {};
     }
-
-    additionalMeta["isNotificationActive"] = isNotificationActive;
-    prompt.additionalMeta = JSON.stringify(additionalMeta);
-
-    //  create new object
-    const newPrompt: CreatePrompt = {
-      ...prompt,
-      notificationConfig_days: JSON.parse(
-        JSON.stringify(prompt.notificationConfig_days)
-      ),
-    };
+    prompt.additionalMeta["isNotificationActive"] = isNotificationActive;
 
     // save prompt, add option to disable notifications
-    const res = await this.savePrompt(newPrompt);
+    const res = await this.savePrompt(prompt);
     return res;
   };
 }

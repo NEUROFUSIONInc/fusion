@@ -25,10 +25,7 @@ interface PromptDetailsProps {
 }
 
 export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
-  const days = JSON.parse(
-    prompt.notificationConfig_days
-  ) as NotificationConfigDays;
-
+  const days = prompt.notificationConfig_days;
   const bottomSheetRef = useRef<RNBottomSheet>(null);
 
   const navigation = useNavigation();
@@ -116,7 +113,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
       let label = "";
       let notificationState = true;
       if (prompt.additionalMeta) {
-        const additionalMeta = JSON.parse(prompt.additionalMeta);
+        const additionalMeta = prompt.additionalMeta;
         if (additionalMeta["isNotificationActive"]) {
           label = "Pause Prompt";
           notificationState = true;
@@ -151,14 +148,23 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
           <Text className="font-sans text-sm text-white opacity-60">
             {interpretDaySelection(days)}
           </Text>
-          <View className="w-1 h-1 bg-white opacity-60" />
-          <Text className="font-sans text-sm text-white opacity-60">
+
+          {prompt.additionalMeta.isNotificationActive === false && (
+            <View className="flex flex-row items-center">
+              <View className="w-1 h-1 bg-white opacity-60" />
+              <Text className="font-sans text-sm text-white opacity-60 pl-2">
+                Paused
+              </Text>
+            </View>
+          )}
+          {/* <Text className="font-sans text-sm text-white opacity-60">
+            // results from this function are not consistent
             {getFrequencyLabel(
               prompt.notificationConfig_startTime,
               prompt.notificationConfig_endTime,
               prompt.notificationConfig_countPerDay
             )}
-          </Text>
+          </Text> */}
         </View>
       </View>
       <Button

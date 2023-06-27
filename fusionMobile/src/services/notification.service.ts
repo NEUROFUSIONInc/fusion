@@ -63,17 +63,17 @@ export class NotificationService {
     let notificationIdentifier = prompt.responseType.toString();
     if (prompt.responseType == "customOptions") {
       // if custom option generate bespoke notificationtypes with the custom option selections
-      const customOptions = JSON.parse(prompt.additionalMeta)[
-        "customOptionText"
-      ].split(";");
-      const identifier = await this.createCustomOptionNotificationIdentifier(
-        customOptions
-      );
-      if (!identifier) {
-        console.log("error generating custom option notification identifier");
-        return false;
-      } else {
-        notificationIdentifier = identifier;
+      const customOptions = prompt.additionalMeta.customOptionText?.split(";");
+      if (customOptions) {
+        const identifier = await this.createCustomOptionNotificationIdentifier(
+          customOptions
+        );
+        if (!identifier) {
+          console.log("error generating custom option notification identifier");
+          return false;
+        } else {
+          notificationIdentifier = identifier;
+        }
       }
     }
 

@@ -48,7 +48,9 @@ export const Input = forwardRef<TextInput, InputProps>(function input(
   return (
     <View>
       {label && (
-        <Text className="font-sans text-base text-white mb-3">{label}</Text>
+        <Text className="font-sans text-base text-white mb-3 mt-3">
+          {label}
+        </Text>
       )}
       <TextInput
         ref={ref}
