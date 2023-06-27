@@ -2,14 +2,14 @@ import dayjs from "dayjs";
 import * as Crypto from "expo-crypto";
 import "react-native-get-random-values";
 
-import { promptFrequencyData } from "../components/timepicker/data";
-
-import { Days, NotificationConfigDays } from "~/@types";
-
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
+import { promptFrequencyData } from "../components/timepicker/data";
+
 import { appInsights } from "./appInsights";
+
+import { Days, NotificationConfigDays } from "~/@types";
 
 /**
  * Helper functions

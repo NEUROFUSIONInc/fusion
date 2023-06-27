@@ -9,7 +9,6 @@ import {
   Button,
   TextInput,
   KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
@@ -50,7 +49,7 @@ export function PromptEntryScreen() {
 
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   React.useEffect(() => {
-    if (promptObject?.responseType == "customOptions") {
+    if (promptObject?.responseType === "customOptions") {
       setCustomOptions(
         promptObject.additionalMeta["customOptionText"].split(";")
       ); //generates customOptions from additionalMeta
@@ -102,7 +101,7 @@ export function PromptEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           {promptObject && (
@@ -119,7 +118,7 @@ export function PromptEntryScreen() {
                 <View style={styles.optionsContainer}>
                   {yesnoOptions.map(({ label, value }) => {
                     return (
-                      <View style={styles.checkboxContainer}>
+                      <View key={label} style={styles.checkboxContainer}>
                         <Checkbox
                           value={userResponse === value}
                           onValueChange={() => {
