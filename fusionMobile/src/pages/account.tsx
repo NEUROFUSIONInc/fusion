@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
-import Linking from "expo-linking";
 import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
 import PapaParse from "papaparse";
 import React from "react";
@@ -15,6 +14,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Pressable,
+  Linking,
+  ScrollView,
 } from "react-native";
 
 import { PromptResponse } from "~/@types";
@@ -174,13 +175,21 @@ export function AccountScreen() {
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ width: "100%" }}>
+        <ScrollView style={{ width: "100%" }}>
           <View style={{ alignItems: "center" }}>
             <Text>Hey there, you're using Fusion anonymously!</Text>
           </View>
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text>
+              We value your privacy and data security. Your prompts and
+              responses are stored solely on your device, not our servers.{" "}
+              {"\n\n"}Rest assured, your entries remain private and inaccessible
+              to anyone else unless you decide to share them.
+            </Text>
+          </View>
 
           {/* Display npub information */}
-          {nostrAccount && (
+          {/* {nostrAccount && (
             <Pressable
               onPress={() =>
                 Alert.alert(
@@ -193,7 +202,7 @@ export function AccountScreen() {
                 <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
               </View>
             </Pressable>
-          )}
+          )} */}
 
           {/* Feedback component */}
           <View style={styles.formSection}>
@@ -290,7 +299,7 @@ export function AccountScreen() {
               />
             </View>
           </View> */}
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
