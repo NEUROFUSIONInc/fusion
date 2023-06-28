@@ -1,30 +1,24 @@
+import { PortalProvider } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
+import { Logs } from "expo";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import * as SplashScreen from "expo-splash-screen";
 import React from "react";
-import { Alert, Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Alert, Platform, StatusBar } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { FusionNavigation } from "./src/navigation";
-import {
-  PromptContextProvider,
-  savePromptResponse,
-  getPromptForNotificationId,
-  getNotificationIdsForPrompt,
-  maskPromptId,
-  appInsights,
-} from "./src/utils";
+import { FontLoader } from "./FontLoader";
+import { CustomNavigation } from "./src/navigation";
+import { maskPromptId, appInsights } from "./src/utils";
+
+import { PromptContextProvider } from "~/contexts";
+import { notificationService, promptService } from "~/services";
+
+Logs.enableExpoCliLogging();
 
 const registerForPushNotificationsAsync = async () => {
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
   //TODO: follow the guide again for checking on Android/iOS
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
@@ -37,38 +31,20 @@ const registerForPushNotificationsAsync = async () => {
     return false;
   }
 
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
   return true;
 };
 
 Notifications.setNotificationHandler({
   handleNotification: async (notification) => {
-    // get the prompt id for this notification
-    const promptUuid = await getPromptForNotificationId(
-      notification.request.identifier
-    );
-
-    // remove all active notifications for the prompt from system tray
-    // that aren't the current one
-    const activeNotifications =
-      await Notifications.getPresentedNotificationsAsync();
-
-    // find the ones that match the prompt
-    const promptNotificationsIds = await getNotificationIdsForPrompt(
-      promptUuid ?? ""
-    );
-
-    // only want notification ids for the active prompts
-    const activeNotificationsForPrompt = activeNotifications.filter((element) =>
-      promptNotificationsIds.includes(element.request.identifier)
-    );
-
-    // dismiss all existing notifications - the new notification gets presented after
-    for (let i = 0; i < activeNotificationsForPrompt.length; i++) {
-      await Notifications.dismissNotificationAsync(
-        activeNotificationsForPrompt[i].request.identifier
-      );
-    }
-
     return {
       shouldShowAlert: true,
       shouldPlaySound: false,
@@ -77,12 +53,13 @@ Notifications.setNotificationHandler({
   },
 });
 
-export default function App() {
+SplashScreen.preventAutoHideAsync();
+
+function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
   >();
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
 
   React.useEffect(() => {
     // validate permission status for user
@@ -159,16 +136,35 @@ export default function App() {
       ]);
 
       // set notification handlers
+      // what happens when a user responds to notification
+      // even in background
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
-            const promptUuid = await getPromptForNotificationId(
+            // remove notification from tray
+            Notifications.dismissNotificationAsync(
               response.notification.request.identifier
             );
+
+            const promptUuid =
+              await notificationService.getPromptForNotificationId(
+                response.notification.request.identifier
+              );
 
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
               return;
+            }
+
+            // dismiss all other notifications for this prompt
+            const notificationIds =
+              await notificationService.getNotificationIdsForPrompt(promptUuid);
+            if (notificationIds) {
+              await Promise.all(
+                notificationIds.map((id) =>
+                  Notifications.dismissNotificationAsync(id)
+                )
+              );
             }
 
             if (
@@ -189,7 +185,10 @@ export default function App() {
               notificationCategory =
                 response.notification.request.content.categoryIdentifier;
             }
-            if (notificationCategory === "yesno"|| notificationCategory?.endsWith("customOptions")) {
+            if (
+              notificationCategory === "yesno" ||
+              notificationCategory?.endsWith("customOptions")
+            ) {
               response_value = response.actionIdentifier;
             } else if (
               notificationCategory === "text" ||
@@ -207,7 +206,7 @@ export default function App() {
             };
 
             // save the prompt response
-            await savePromptResponse(promptResponse);
+            await promptService.savePromptResponse(promptResponse);
 
             // track event
             appInsights.trackEvent(
@@ -230,16 +229,23 @@ export default function App() {
   }, []);
 
   return (
-    <View
-      style={{
-        paddingTop: insets.top,
-        // paddingBottom: insets.bottom,
-        flex: 1,
-      }}
-    >
-      <PromptContextProvider>
-        <FusionNavigation />
-      </PromptContextProvider>
-    </View>
+    <GestureHandlerRootView className="flex flex-1 flex-grow-1">
+      <FontLoader>
+        <StatusBar barStyle="light-content" />
+        <PromptContextProvider>
+          <PortalProvider>
+            <CustomNavigation />
+          </PortalProvider>
+        </PromptContextProvider>
+      </FontLoader>
+    </GestureHandlerRootView>
   );
 }
+
+let AppEntryPoint = App;
+
+if (Constants.expoConfig?.extra?.storybookEnabled === "true") {
+  AppEntryPoint = require("./.storybook").default;
+}
+
+export default AppEntryPoint;

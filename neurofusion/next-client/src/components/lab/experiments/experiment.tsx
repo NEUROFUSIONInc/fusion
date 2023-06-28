@@ -56,6 +56,8 @@ export const Experiment: FC = () => {
         <p>Device Status: {deviceStatus}</p>
       </>
 
+      {/* add live signal quality */}
+
       <h1 style={{ marginTop: 10 }}>Flappy Birds</h1>
 
       <p>Press 'Spacebar' to start the game. We will be recording brain activity</p>

@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 // Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
+
+const { getDefaultConfig } = require("expo/metro-config");
 
 module.exports = (async () => {
   const {
@@ -22,6 +24,7 @@ module.exports = (async () => {
       },
       sourceExts,
       assetExts: [...assetExts, "db"],
+      resolverMainFields: ["sbmodern", "react-native", "browser", "main"],
     },
     watchFolders: [path.resolve(__dirname, "../")],
     transformer: {

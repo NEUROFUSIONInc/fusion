@@ -36,7 +36,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>15</string>
+    <string>19</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -52,15 +52,14 @@
         </dict>
       </dict>
     </dict>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>For connecting to bluetooth devices</string>
     <key>NSHealthShareUsageDescription</key>
     <string>Read and understand health data.</string>
     <key>NSHealthUpdateUsageDescription</key>
     <string>Share recorded data on Fusion with Apple.</string>
     <key>NSMotionUsageDescription</key>
     <string>For fetching data on your steps</string>
-    <!-- Access to bluetooth -->
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>For connecting to bluetooth devices</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

@@ -381,6 +381,33 @@
     protobufjs "^7.0.0"
     yargs "^16.2.0"
 
+"@jest/source-map@^29.4.3":
+  version "29.4.3"
+  resolved "https://registry.yarnpkg.com/@jest/source-map/-/source-map-29.4.3.tgz#ff8d05cbfff875d4a791ab679b4333df47951d20"
+  integrity sha512-qyt/mb6rLyd9j1jUts4EQncvS6Yy3PM9HghnNv86QBlV+zdL2inCdK1tuVlL+J+lpiw2BI67qXOrX3UurBqQ1w==
+  dependencies:
+    "@jridgewell/trace-mapping" "^0.3.15"
+    callsites "^3.0.0"
+    graceful-fs "^4.2.9"
+
+"@jridgewell/resolve-uri@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.1.0.tgz#2203b118c157721addfe69d47b70465463066d78"
+  integrity sha512-F2msla3tad+Mfht5cJq7LSXcdudKTWCVYUgw6pLFOOHSTtZlj6SWNYAp+AhuqLmWdBO2X5hPrLcu8cVP8fy28w==
+
+"@jridgewell/sourcemap-codec@1.4.14":
+  version "1.4.14"
+  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.14.tgz#add4c98d341472a289190b424efbdb096991bb24"
+  integrity sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==
+
+"@jridgewell/trace-mapping@^0.3.15":
+  version "0.3.18"
+  resolved "https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.18.tgz#25783b2086daf6ff1dcb53c9249ae480e4dd4cd6"
+  integrity sha512-w+niJYzMHdd7USdiH2U6869nqhD2nbfZXND5Yp93qIbEmnDNk7PD48o+YchRVpzMU7M6jVCbenTR7PA1FLQ9pA==
+  dependencies:
+    "@jridgewell/resolve-uri" "3.1.0"
+    "@jridgewell/sourcemap-codec" "1.4.14"
+
 "@magic-sdk/admin@^1.8.0":
   version "1.8.0"
   resolved "https://registry.npmjs.org/@magic-sdk/admin/-/admin-1.8.0.tgz"
@@ -437,12 +464,24 @@
     rxjs "^7.5.6"
     semver "^7.3.8"
 
-"@noble/hashes@~1.1.1", "@noble/hashes@1.1.2":
+"@noble/curves@1.0.0", "@noble/curves@~1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.0.0.tgz#e40be8c7daf088aaf291887cbc73f43464a92932"
+  integrity sha512-2upgEu0iLiDVDZkNLeFV2+ht0BAVgQnEmCk6JsOch9Rp8xfkMCbvbAZlA2pBHQc73dbl+vFOXfqkf4uemdn0bw==
+  dependencies:
+    "@noble/hashes" "1.3.0"
+
+"@noble/hashes@1.1.2", "@noble/hashes@~1.1.1":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@noble/hashes/-/hashes-1.1.2.tgz"
   integrity sha512-KYRCASVTv6aeUi1tsF8/vpyR7zpfs3FUzy2Jqm+MU+LmUKhQ0y2FpfwqkCcxSg2ua4GALJd8k2R76WxwZGbQpA==
 
-"@noble/secp256k1@~1.6.0", "@noble/secp256k1@1.6.3":
+"@noble/hashes@1.3.0", "@noble/hashes@~1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.0.tgz#085fd70f6d7d9d109671090ccae1d3bec62554a1"
+  integrity sha512-ilHEACi9DwqJB0pw7kv+Apvh50jiiSyR/cQ3y4W7lOR5mhvn/50FLUfsnfJz0BDZtl/RR16kXvptiv6q1msYZg==
+
+"@noble/secp256k1@1.6.3", "@noble/secp256k1@~1.6.0":
   version "1.6.3"
   resolved "https://registry.npmjs.org/@noble/secp256k1/-/secp256k1-1.6.3.tgz"
   integrity sha512-T04e4iTurVy7I8Sw4+c5OSN9/RkPlo1uKxAomtxQNLq8j1uPAqnsqG1bqvY3Jv7c13gyr6dui0zmh/I3+f/JaQ==
@@ -521,7 +560,7 @@
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@scure/base@~1.1.0":
+"@scure/base@1.1.1", "@scure/base@~1.1.0":
   version "1.1.1"
   resolved "https://registry.npmjs.org/@scure/base/-/base-1.1.1.tgz"
   integrity sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==
@@ -535,12 +574,29 @@
     "@noble/secp256k1" "~1.6.0"
     "@scure/base" "~1.1.0"
 
+"@scure/bip32@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.3.0.tgz#6c8d980ef3f290987736acd0ee2e0f0d50068d87"
+  integrity sha512-bcKpo1oj54hGholplGLpqPHRbIsnbixFtc06nwuNM5/dwSXOq/AAYoIBRsBmnZJSdfeNW5rnff7NTAz3ZCqR9Q==
+  dependencies:
+    "@noble/curves" "~1.0.0"
+    "@noble/hashes" "~1.3.0"
+    "@scure/base" "~1.1.0"
+
 "@scure/bip39@1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@scure/bip39/-/bip39-1.1.0.tgz"
   integrity sha512-pwrPOS16VeTKg98dYXQyIjJEcWfz7/1YJIwxUEPFfQPtc86Ym/1sVgQ2RLoD43AazMk2l/unK4ITySSpW2+82w==
   dependencies:
     "@noble/hashes" "~1.1.1"
+    "@scure/base" "~1.1.0"
+
+"@scure/bip39@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@scure/bip39/-/bip39-1.2.0.tgz#a207e2ef96de354de7d0002292ba1503538fc77b"
+  integrity sha512-SX/uKq52cuxm4YFXWFaVByaSHJh2w3BnokVSeUJVCv6K7WulT9u2BuNRBhuFl8vAuYnzx9bEu9WgpcNYTrYieg==
+  dependencies:
+    "@noble/hashes" "~1.3.0"
     "@scure/base" "~1.1.0"
 
 "@stablelib/base64@^1.0.0":
@@ -862,6 +918,11 @@ call-bind@^1.0.0:
   dependencies:
     function-bind "^1.1.1"
     get-intrinsic "^1.0.2"
+
+callsites@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
+  integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
 chokidar@^3.5.2:
   version "3.5.3"
@@ -1550,6 +1611,11 @@ graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.6:
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.10.tgz"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
+graceful-fs@^4.2.9:
+  version "4.2.11"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
+  integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
+
 has-binary2@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npmjs.org/has-binary2/-/has-binary2-1.0.3.tgz"
@@ -1791,6 +1857,11 @@ isomorphic-fetch@^3.0.0:
   dependencies:
     node-fetch "^2.6.1"
     whatwg-fetch "^3.4.1"
+
+isomorphic-ws@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-5.0.0.tgz#e5529148912ecb9b451b46ed44d53dae1ce04bbf"
+  integrity sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==
 
 js-beautify@^1.14.5:
   version "1.14.7"
@@ -2062,7 +2133,7 @@ moment@^2.29.1, "moment@>= 2.9.0":
   resolved "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
-ms@^2.0.0, ms@2.0.0:
+ms@2.0.0, ms@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
   integrity sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==
@@ -2077,7 +2148,7 @@ ms@2.1.2:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-ms@2.1.3:
+ms@2.1.3, ms@^2.1.1:
   version "2.1.3"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
@@ -2125,7 +2196,7 @@ node-cron@^3.0.2:
   dependencies:
     uuid "8.3.2"
 
-node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.7, node-fetch@2.6.7:
+node-fetch@2.6.7, node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -2189,6 +2260,27 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
+
+nostr-relaypool@^0.6.28:
+  version "0.6.28"
+  resolved "https://registry.yarnpkg.com/nostr-relaypool/-/nostr-relaypool-0.6.28.tgz#50f1dc21c11bda1fca2a6d785d78fd6f6ead9a57"
+  integrity sha512-kyLChBunf6IB2O3MSPHBe9iSokBGyqZHvAJXZ5+eh9C4znAu7iY8L/yh0V4Ta/P9TtzDna3QTEgFWVan4m0vBA==
+  dependencies:
+    "@jest/source-map" "^29.4.3"
+    isomorphic-ws "^5.0.0"
+    nostr-tools "^1.10.0"
+    safe-stable-stringify "^2.4.2"
+
+nostr-tools@^1.10.0, nostr-tools@^1.11.1:
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/nostr-tools/-/nostr-tools-1.11.1.tgz#7f479f86dc25ef4625747a33f8430f464aa225e5"
+  integrity sha512-b8BpCiD3wxjBZwrn0wc+CkVj6/7s4sQxp+Az7UkCG80mJu7xTspZsOoUP/geBNwZVYETzEwj+CPBvW8WIP8mBQ==
+  dependencies:
+    "@noble/curves" "1.0.0"
+    "@noble/hashes" "1.3.0"
+    "@scure/base" "1.1.1"
+    "@scure/bip32" "1.3.0"
+    "@scure/bip39" "1.2.0"
 
 npmlog@^5.0.1:
   version "5.0.1"
@@ -2559,6 +2651,11 @@ safe-buffer@^5.0.1, safe-buffer@>=5.1.0, safe-buffer@~5.2.0, safe-buffer@5.2.1:
   version "5.2.1"
   resolved "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz"
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
+
+safe-stable-stringify@^2.4.2:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.4.3.tgz#138c84b6f6edb3db5f8ef3ef7115b8f55ccbf886"
+  integrity sha512-e2bDA2WJT0wxseVd4lsDP4+3ONX6HpMXQa1ZhFQ7SU+GjvORCmShbCMltrtIDfkYhVHrOcPtj+KhmDBdPdZD1g==
 
 "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"

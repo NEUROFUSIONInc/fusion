@@ -4,7 +4,8 @@ import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 
 import { usePrompts } from "~/hooks";
-import { convertTime, deletePrompt, maskPromptId, appInsights } from "~/utils";
+import { promptService } from "~/services";
+import { convertTime, maskPromptId, appInsights } from "~/utils";
 
 export function HomeScreen() {
   const navigation = useNavigation();
@@ -23,9 +24,9 @@ export function HomeScreen() {
     <View style={styles.container}>
       <View>
         <Text style={{ fontSize: 15 }}>
-          Track your behavior & activities by answering prompts that are
-          tailored to you.{"\n\n"}Your prompts & responses are stored only on
-          your device.
+          Uncover shifts in your behavior and activities through personalized
+          prompts, designed just for you.{"\n\n"}Your prompts and responses are
+          stored only on your device.
         </Text>
       </View>
 
@@ -95,7 +96,9 @@ export function HomeScreen() {
                         {
                           text: "OK",
                           onPress: async () => {
-                            const res = await deletePrompt(item.uuid);
+                            const res = await promptService.deletePrompt(
+                              item.uuid
+                            );
                             if (res) {
                               appInsights.trackEvent(
                                 { name: "prompt_deleted" },

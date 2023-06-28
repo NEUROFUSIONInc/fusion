@@ -12,17 +12,14 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import { Prompt } from "~/@types/index.js";
 import { PromptScreenNavigationProp } from "~/navigation/prompt-navigator";
 import { RouteProp } from "~/navigation/types.js";
-import {
-  fetchPromptById,
-  savePromptResponse,
-  maskPromptId,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { maskPromptId, appInsights } from "~/utils";
 
 // this component is to allow a user make a prompt entry.
 export function PromptEntryScreen() {
@@ -44,13 +41,12 @@ export function PromptEntryScreen() {
 
   React.useEffect(() => {
     if (route.params?.promptUuid) {
-      console.log(route.params.promptUuid);
       (async () => {
-        const res = await fetchPromptById(route.params.promptUuid);
+        const res = await promptService.getPrompt(route.params.promptUuid);
         setPromptObject(res);
       })();
     }
-  }, []);
+  }, [route.params]);
 
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   React.useEffect(() => {
@@ -68,6 +64,11 @@ export function PromptEntryScreen() {
       return;
     }
 
+    if (userResponse === "") {
+      Alert.alert("Error", "Please enter a response");
+      return;
+    }
+
     const promptResponse = {
       promptUuid: route.params.promptUuid,
       triggerTimestamp: notificationTriggerTimestamp,
@@ -78,7 +79,7 @@ export function PromptEntryScreen() {
     console.log(promptResponse);
 
     // save the prompt entry
-    const res = await savePromptResponse(promptResponse);
+    const res = await promptService.savePromptResponse(promptResponse);
 
     if (res) {
       // track event
@@ -101,10 +102,7 @@ export function PromptEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ width: "100%" }}>
           {promptObject && (
@@ -168,6 +166,7 @@ export function PromptEntryScreen() {
                     <View style={styles.customOptionsContainer}>
                       {customOptions.map((option) => (
                         <View
+                          key={option}
                           style={[{ marginTop: 10 }, styles.checkboxContainer]}
                         >
                           <Checkbox

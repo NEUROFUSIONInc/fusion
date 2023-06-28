@@ -11,19 +11,15 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Prompt, PromptResponseType } from "~/@types";
 import { TimePicker } from "~/components/timepicker";
 import { usePrompts } from "~/hooks";
 import { RouteProp, PromptScreenNavigationProp } from "~/navigation";
-import {
-  getDayjsFromTimestring,
-  savePrompt,
-  readSavedPrompts,
-  appInsights,
-} from "~/utils";
+import { promptService } from "~/services";
+import { getDayjsFromTimestring, appInsights } from "~/utils";
 
 export function PromptScreen() {
   const route = useRoute<RouteProp<"AuthorPrompt">>();
@@ -41,7 +37,6 @@ export function PromptScreen() {
     { label: "Text", value: "text" },
     { label: "Number", value: "number" },
     { label: "Yes/No", value: "yesno" },
-    //Pipeline - options stored in additionalMeta(stored as json.stringify in sql) field "customOptionText"
     { label: "Custom Options", value: "customOptions" },
   ]);
 
@@ -71,6 +66,13 @@ export function PromptScreen() {
 
   // set the prompt object if it was passed in (this is for editing)
   React.useEffect(() => {
+    appInsights.trackPageView({
+      name: "Author Prompt",
+      properties: {
+        intent: route.params?.prompt ? "edit" : "create",
+      },
+    });
+
     if (route.params?.prompt) {
       setPromptObject(route.params.prompt);
       setPromptText(route.params.prompt.promptText);
@@ -101,27 +103,16 @@ export function PromptScreen() {
         );
       }
 
-      if (route.params.prompt.additionalMeta) {
+      if (
+        route.params.prompt.additionalMeta &&
+        route.params.prompt.additionalMeta != ""
+      ) {
         // if there is additionalMeta to parse, parse for reentry into fields
         let additionalMetaObj = JSON.parse(route.params.prompt.additionalMeta);
         if (additionalMetaObj["customOptionText"] != null) {
           setcustomOptionsInputText(additionalMetaObj["customOptionText"]);
         }
       }
-
-      appInsights.trackPageView({
-        name: "Author Prompt",
-        properties: {
-          intent: "edit",
-        },
-      });
-    } else {
-      appInsights.trackPageView({
-        name: "Author Prompt",
-        properties: {
-          intent: "create",
-        },
-      });
     }
   }, [route.params]);
 
@@ -142,7 +133,7 @@ export function PromptScreen() {
           horizontal={false} // Set horizontal prop to false to disable horizontal scrolling
           contentContainerStyle={{ flexGrow: 1 }} // Set flexGrow to 1 to enable vertical scrolling
         >
-          <View style={[styles.formSection, { zIndex: 10000 }]}>
+          <Pressable style={[styles.formSection, { zIndex: 10000 }]}>
             <View style={styles.formComponent}>
               <Text>Prompt Text</Text>
               <TextInput
@@ -179,7 +170,7 @@ export function PromptScreen() {
                 />
 
                 {customOptions.map((option) => (
-                  <View style={{ marginTop: 5 }}>
+                  <View key={option} style={{ marginTop: 5 }}>
                     <Text style={[styles.customOptionsListItem]}>{option}</Text>
                   </View>
                 ))}
@@ -208,7 +199,7 @@ export function PromptScreen() {
               days={days}
               setDays={setDays}
             />
-          </View>
+          </Pressable>
         </ScrollView>
 
         <View style={{ zIndex: 2000 }}>
@@ -220,11 +211,19 @@ export function PromptScreen() {
                 const promptUuid = promptObject ? promptObject.uuid : null;
 
                 if (start >= end) {
-                  Alert.alert(
-                    "Error",
-                    "The start time must be before the end time"
-                  );
-                  return;
+                  throw new Error("Start time must be before end time");
+                }
+
+                if (promptText == "") {
+                  throw new Error("Prompt text cannot be empty");
+                }
+
+                if (responseType == null) {
+                  throw new Error("Response type cannot be empty");
+                }
+
+                if (countPerDay == "") {
+                  throw new Error("Count per day cannot be empty");
                 }
 
                 let additionalMeta = "";
@@ -244,20 +243,25 @@ export function PromptScreen() {
                   }
                 }
 
-                const res = await savePrompt(
+                console.log("calling save prompt");
+
+                const res = await promptService.savePrompt({
+                  uuid: promptUuid,
                   promptText,
-                  responseType!,
+                  responseType: responseType!,
+                  notificationConfig_countPerDay: parseInt(
+                    countPerDay ?? "0",
+                    10
+                  ),
+                  notificationConfig_startTime: start.format("HH:mm"),
+                  notificationConfig_endTime: end.format("HH:mm"),
+                  notificationConfig_days: days,
                   additionalMeta,
-                  parseInt(countPerDay ?? "0", 10),
-                  start.format("HH:mm"),
-                  end.format("HH:mm"),
-                  days,
-                  promptUuid
-                );
+                });
 
                 if (res) {
                   // read the saved prompts from the db
-                  const savedPrompts = await readSavedPrompts();
+                  const savedPrompts = await promptService.readSavedPrompts();
 
                   if (savedPrompts) {
                     // update the saved prompts state
@@ -266,7 +270,7 @@ export function PromptScreen() {
                     Alert.alert("Success", "Prompt saved successfully");
 
                     // navigate back to the home screen
-                    navigation.navigate("Home");
+                    navigation.navigate("Prompts");
                   } else {
                     throw new Error("There was an error reading the prompts");
                   }

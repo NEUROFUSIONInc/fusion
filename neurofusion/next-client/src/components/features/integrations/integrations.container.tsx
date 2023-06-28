@@ -55,7 +55,7 @@ export const IntegrationsContainer = () => {
         // check if MagicFlow is connected
         return Boolean(magicflowData?.magicflowToken);
       case "activitywatch":
-        // check if Vital is connected
+        // check if activitywatch is connected
         return false;
       default:
         return false;
@@ -77,7 +77,7 @@ export const IntegrationsContainer = () => {
         // check if MagicFlow is connected
         return magicflowLoading;
       case "activitywatch":
-        // check if Vital is connected
+        // check if activityWatch is connected
         return false;
       default:
         return false;
