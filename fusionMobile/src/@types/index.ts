@@ -47,6 +47,7 @@ export interface PromptResponse {
   value: string;
   triggerTimestamp: number;
   responseTimestamp: number;
+  additionalMeta?: PromptResponseAdditionalMeta;
 }
 
 export interface PromptResponseAdditionalMeta {

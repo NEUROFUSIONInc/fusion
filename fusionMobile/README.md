@@ -13,7 +13,7 @@ Data is currently stored using AsyncStorage (SQLite)
   uuid
   promptText
   responseType - "number", "yesno", "text", "customOptions"
-  additionalMeta - json.stringify of dictionary for customOption maps
+  additionalMeta - {category, isNotificationActive, customOptionsText}
   notificationConfig_days - json.stringify of "{"monday": true, "tuesday": false ....., "sunday": true}"
   notificationConfig_startTime
   notificationConfig_endTime
@@ -28,9 +28,12 @@ Response to prompts are saved in format
 ```json
 {
   triggerTimestamp
-  endTimestamp
+  responseTimestamp
   value
   promptUuid
+  additionalMeta {
+    note: string
+  }
 }
 ```
 
