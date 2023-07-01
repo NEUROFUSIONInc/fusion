@@ -13,25 +13,30 @@ import { PromptOption } from "../../prompt-option";
 
 import { Prompt } from "~/@types";
 import { Button } from "~/components/button";
-import { useDeletePrompt, useUpdatePromptNotificationState } from "~/hooks";
+import {
+  useDeletePrompt,
+  usePrompt,
+  useUpdatePromptNotificationState,
+} from "~/hooks";
 import { PromptScreenNavigationProp } from "~/navigation";
 import { appInsights, maskPromptId } from "~/utils";
 
 interface PromptOptionsSheetProps {
   promptOptionsSheetRef: RefObject<RNBottomSheet>;
   onBottomSheetClose: () => void;
-  // promptId: string;
-  activePrompt?: Prompt;
+  promptId: string;
+  defaultPrompt?: Prompt;
   showLimitedOptions?: boolean;
 }
 
 export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
-  activePrompt,
+  promptId,
+  defaultPrompt,
   promptOptionsSheetRef,
   onBottomSheetClose,
   showLimitedOptions = false,
 }) => {
-  // const { data: activePrompt } = usePrompt(promptId);
+  const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
   console.log("active prompt loaded for component", activePrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);

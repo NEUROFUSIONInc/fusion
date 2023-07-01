@@ -1,8 +1,9 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { Prompt } from "~/@types";
 
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   PromptDetails,
   Screen,
 } from "~/components";
+import { PromptOptionsSheet } from "~/components/prompts/prompt-details/sheets";
 import { usePromptsQuery } from "~/hooks";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
@@ -27,6 +29,29 @@ export const PromptsScreen = () => {
       },
     });
   }, [savedPrompts]);
+
+  const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
+  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
+
+  const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
+    setActivePrompt(prompt);
+  }, []);
+
+  const handlePromptBottomSheetClose = useCallback(() => {
+    setActivePrompt(undefined);
+    promptOptionsSheetRef.current?.close();
+  }, []);
+
+  useEffect(() => {
+    if (activePrompt) {
+      const timeout = setTimeout(() => {
+        promptOptionsSheetRef.current?.expand();
+      }, 300);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [activePrompt]);
 
   return (
     <Screen>
@@ -50,7 +75,10 @@ export const PromptsScreen = () => {
         <ScrollView className="flex mt-4 flex-col">
           {savedPrompts.map((prompt) => (
             <View key={prompt.uuid} className="my-2">
-              <PromptDetails prompt={prompt} />
+              <PromptDetails
+                prompt={prompt}
+                onClick={() => handlePromptExpandSheet(prompt)}
+              />
             </View>
           ))}
         </ScrollView>
@@ -58,6 +86,15 @@ export const PromptsScreen = () => {
 
       <Portal>
         <CreatePromptSheet promptSheetRef={promptSheetRef} />
+
+        {activePrompt && (
+          <PromptOptionsSheet
+            promptOptionsSheetRef={promptOptionsSheetRef}
+            promptId={activePrompt?.uuid!}
+            onBottomSheetClose={handlePromptBottomSheetClose}
+            defaultPrompt={activePrompt}
+          />
+        )}
       </Portal>
     </Screen>
   );

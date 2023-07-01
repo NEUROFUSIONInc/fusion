@@ -1,41 +1,26 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { VerticalMenu } from "../../icons";
-
-import { PromptOptionsSheet } from "./sheets";
 
 import { Prompt } from "~/@types";
 import { interpretDaySelection } from "~/utils";
 
 interface PromptDetailsProps {
   prompt: Prompt;
+  onClick?: () => void;
 }
 
-export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
-  const [activePrompt, setActivePrompt] = useState<Prompt | undefined>(
-    undefined
-  );
-  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
+export const PromptDetails: FC<PromptDetailsProps> = ({ prompt, onClick }) => {
   const days = prompt.notificationConfig_days;
-
-  const handleExpandSheet = useCallback((prompt: Prompt) => {
-    setActivePrompt(prompt);
-    promptOptionsSheetRef.current?.expand();
-  }, []);
-
-  const handleBottomSheetClose = useCallback(() => {
-    setActivePrompt(undefined);
-    promptOptionsSheetRef.current?.close();
-  }, []);
 
   return (
     <Pressable
       className="flex flex-row w-full items-center justify-between rounded-md py-5 px-4 bg-secondary-900 active:opacity-90"
-      onPress={() => handleExpandSheet(prompt)}
+      onPress={onClick}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
       <View className="flex-1 flex-col items-start gap-y-3">
@@ -74,14 +59,6 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt }) => {
         className="m-0 p-0 self-center"
         leftIcon={<VerticalMenu />}
       />
-
-      <Portal>
-        <PromptOptionsSheet
-          promptOptionsSheetRef={promptOptionsSheetRef}
-          activePrompt={activePrompt}
-          onBottomSheetClose={handleBottomSheetClose}
-        />
-      </Portal>
     </Pressable>
   );
 };
