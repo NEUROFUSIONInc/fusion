@@ -3,16 +3,16 @@ import { Portal } from "@gorhom/portal";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Prompt } from "~/@types";
 
+import { Prompt } from "~/@types";
 import {
   Button,
   CreatePromptSheet,
   Plus,
   PromptDetails,
+  PromptOptionsSheet,
   Screen,
 } from "~/components";
-import { PromptOptionsSheet } from "~/components/prompts/prompt-details/sheets";
 import { usePromptsQuery } from "~/hooks";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";

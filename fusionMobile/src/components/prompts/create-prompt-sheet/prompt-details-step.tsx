@@ -82,9 +82,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
             {customOptions.length > 0 && (
               <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap">
                 {customOptions.map((option) => (
-                  <View key={option}>
-                    <Tag key={option} title={option} disabled />
-                  </View>
+                  <Tag key={option} title={option} disabled />
                 ))}
               </View>
             )}

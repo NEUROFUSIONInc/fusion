@@ -1,5 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RouteProp } from "@react-navigation/native";
+import {
+  RouteProp,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
 import type { SvgProps } from "react-native-svg";
@@ -89,26 +92,30 @@ const BarIcon = ({ color, name, ...reset }: BarIconType) => {
 export const CustomNavigation = () => {
   return (
     <CustomTab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarLabel: tabs.find((tab) => tab.name === route.name)?.label,
-        tabBarLabelStyle: {
-          fontFamily: "wsh-reg",
-          fontSize: 12,
-          marginTop: -8,
-        },
-        tabBarActiveTintColor: "white",
-        tabBarStyle: {
-          backgroundColor: "#0B0816",
-          alignItems: "center",
-          marginBottom: 20,
-          paddingHorizontal: 10,
-          borderTopWidth: 1,
-          borderTopColor: "rgba(255, 255, 255, 0.15)",
-        },
-        tabBarIcon: ({ color }) => (
-          <BarIcon name={route.name as keyof TabParamList} color={color} />
-        ),
-      })}
+      screenOptions={({ route }) => {
+        const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+        return {
+          tabBarLabel: tabs.find((tab) => tab.name === route.name)?.label,
+          tabBarLabelStyle: {
+            fontFamily: "wsh-reg",
+            fontSize: 12,
+            marginTop: -8,
+          },
+          tabBarActiveTintColor: "white",
+          tabBarStyle: {
+            backgroundColor: "#0B0816",
+            alignItems: "center",
+            marginBottom: 20,
+            paddingHorizontal: 10,
+            borderTopWidth: 1,
+            borderTopColor: "rgba(255, 255, 255, 0.15)",
+            display: routeName === "PromptEntry" ? "none" : "flex",
+          },
+          tabBarIcon: ({ color }) => (
+            <BarIcon name={route.name as keyof TabParamList} color={color} />
+          ),
+        };
+      }}
     >
       <CustomTab.Group
         screenOptions={{

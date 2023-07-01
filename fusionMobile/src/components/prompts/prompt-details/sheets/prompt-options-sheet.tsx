@@ -170,7 +170,9 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     //   icon: <Location />,
     // },
   ];
-  const limitedOptions = promptOptions.slice(3, 5); // Limited options: Pause/Resume Prompt, Delete Prompt,  Share Prompt
+
+  // Limited options: Delete Prompt,  Share Prompt
+  const limitedOptions = promptOptions.slice(4, 5);
   const optionsToShow = useMemo(
     () => (showLimitedOptions ? limitedOptions : promptOptions),
     [showLimitedOptions]

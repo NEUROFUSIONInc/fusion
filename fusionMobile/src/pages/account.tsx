@@ -13,7 +13,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Pressable,
   Linking,
   ScrollView,
 } from "react-native";

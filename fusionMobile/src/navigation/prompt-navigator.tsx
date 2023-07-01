@@ -52,7 +52,7 @@ export const PromptStack = () => {
       <Stack.Screen
         name="PromptEntry"
         component={PromptEntryScreen}
-        options={{ title: "Prompt Entry" }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
