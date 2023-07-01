@@ -21,6 +21,8 @@ Data is currently stored using AsyncStorage (SQLite)
 }
 ```
 
+customOptionText will look like - 'optionA;optionB;optionC'
+
 After a prompt is created, a notification is generated.
 
 Response to prompts are saved in format
@@ -36,6 +38,9 @@ Response to prompts are saved in format
   }
 }
 ```
+
+when responseType == customOption,
+value can contain "valA;valB"
 
 They can eventually exported in fusion Event schema [doc](../README.md)
 
