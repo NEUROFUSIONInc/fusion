@@ -49,6 +49,10 @@ export interface PromptResponse {
   responseTimestamp: number;
 }
 
+export interface PromptResponseAdditionalMeta {
+  note?: string;
+}
+
 export interface PromptResponseWithEvent {
   startTimestamp: number;
   endTimestamp: number;

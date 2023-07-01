@@ -180,6 +180,11 @@ export function PromptEntryScreen() {
                   )
               }
 
+              {/* {promptObject.responseType !== "text" && (
+                // display an option for more notes
+                <Text>Additional Notes?</Text>
+              )} */}
+
               <View style={{ marginTop: 20 }}>
                 <Button title="Save Entry" onPress={handleSavePromptResponse} />
               </View>
