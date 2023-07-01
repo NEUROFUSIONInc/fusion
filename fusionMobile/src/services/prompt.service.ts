@@ -320,10 +320,10 @@ class PromptService {
     // write to sqlite
     try {
       const storeDetailsInDb = () => {
-        return new Promise<PromptResponse>((resolve, reject) => {
+        return new Promise<Boolean>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
-              "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?) RETURNING *",
+              "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?);",
               [
                 responseObj["promptUuid"],
                 responseObj["value"],
@@ -331,16 +331,9 @@ class PromptService {
                 responseObj["responseTimestamp"],
                 JSON.stringify(responseObj.additionalMeta ?? {}),
               ],
-              (_, { rows }) => {
-                const row = rows._array[0];
-
-                resolve({
-                  promptUuid: row.promptUuid,
-                  value: row.value,
-                  triggerTimestamp: row.triggerTimestamp,
-                  responseTimestamp: row.responseTimestamp,
-                  additionalMeta: JSON.parse(row.additionalMeta ?? "{}"),
-                } as PromptResponse);
+              () => {
+                //
+                resolve(true);
               },
               (_, error) => {
                 console.log("error saving in db");
