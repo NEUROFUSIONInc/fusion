@@ -47,6 +47,11 @@ export interface PromptResponse {
   value: string;
   triggerTimestamp: number;
   responseTimestamp: number;
+  additionalMeta?: PromptResponseAdditionalMeta;
+}
+
+export interface PromptResponseAdditionalMeta {
+  note?: string;
 }
 
 export interface PromptResponseWithEvent {
