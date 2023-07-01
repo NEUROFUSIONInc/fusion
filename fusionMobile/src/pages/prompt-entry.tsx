@@ -219,7 +219,7 @@ export function PromptEntryScreen() {
           )}
         </TouchableWithoutFeedback>
       </View>
-      <View className="w-full flex flex-col gap-y-6 mb-4">
+      <View className="w-full flex flex-col gap-y-6 mb-10">
         <Button
           title="Log prompt response"
           fullWidth
