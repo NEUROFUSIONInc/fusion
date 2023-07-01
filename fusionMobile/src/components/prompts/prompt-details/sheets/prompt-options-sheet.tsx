@@ -1,8 +1,10 @@
 import { FontAwesome5 } from "@expo/vector-icons";
-import RNBottomSheet from "@gorhom/bottom-sheet";
+import RNBottomSheet, {
+  useBottomSheetDynamicSnapPoints,
+} from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { FC, RefObject, useCallback } from "react";
+import React, { FC, RefObject, useCallback, useMemo } from "react";
 import { Alert, View } from "react-native";
 
 import { BottomSheet } from "../../../bottom-sheet";
@@ -11,24 +13,37 @@ import { PromptOption } from "../../prompt-option";
 
 import { Prompt } from "~/@types";
 import { Button } from "~/components/button";
-import { usePrompts } from "~/hooks";
+import { useDeletePrompt, useUpdatePromptNotificationState } from "~/hooks";
 import { PromptScreenNavigationProp } from "~/navigation";
-import { promptService } from "~/services";
 import { appInsights, maskPromptId } from "~/utils";
 
 interface PromptOptionsSheetProps {
   promptOptionsSheetRef: RefObject<RNBottomSheet>;
   onBottomSheetClose: () => void;
+  // promptId: string;
   activePrompt?: Prompt;
+  showLimitedOptions?: boolean;
 }
 
 export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   activePrompt,
   promptOptionsSheetRef,
   onBottomSheetClose,
+  showLimitedOptions = false,
 }) => {
-  const { setSavedPrompts } = usePrompts();
+  // const { data: activePrompt } = usePrompt(promptId);
+  console.log("active prompt loaded for component", activePrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
+  const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
+  const {
+    animatedHandleHeight,
+    animatedSnapPoints,
+    animatedContentHeight,
+    handleContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
+  const { mutateAsync: deletePrompt } = useDeletePrompt();
+  const { mutateAsync: updatePromptNotificationState } =
+    useUpdatePromptNotificationState(activePrompt?.uuid!);
 
   const handlePromptDelete = useCallback(async () => {
     if (activePrompt) {
@@ -43,7 +58,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
           {
             text: "OK",
             onPress: async () => {
-              const res = await promptService.deletePrompt(activePrompt.uuid);
+              const res = await deletePrompt(activePrompt.uuid);
               if (res) {
                 appInsights.trackEvent(
                   { name: "prompt_deleted" },
@@ -51,9 +66,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
                     identifier: await maskPromptId(activePrompt.uuid),
                   }
                 );
-
-                setSavedPrompts(res);
-                onBottomSheetClose?.();
+                onBottomSheetClose();
+                navigation.navigate("Prompts");
               }
             },
           },
@@ -62,10 +76,11 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     }
   }, [activePrompt]);
 
-  const handlePromptNotificationStateUpdate = useCallback(async () => {
+  const handlePromptNotificationStateUpdate = async () => {
+    console.log("activePrompt here", activePrompt);
     if (activePrompt) {
       const promptUpdateLabel =
-        activePrompt.additionalMeta?.isNotificationActive === false
+        activePrompt?.additionalMeta?.isNotificationActive === false
           ? "Resume Prompt"
           : "Pause Prompt";
       Alert.alert(promptUpdateLabel, "Are you sure?", [
@@ -77,30 +92,27 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
           text: "OK",
           onPress: async () => {
             // check if promptNotification is active
-            const res = await promptService.updatePromptNotificationState(
-              activePrompt.uuid,
-              activePrompt.additionalMeta?.isNotificationActive === false
-            );
+            const res = await updatePromptNotificationState({
+              promptUuid: activePrompt.uuid,
+              isNotificationActive:
+                activePrompt?.additionalMeta?.isNotificationActive === false,
+            });
 
             if (res) {
-              const savedPrompts = await promptService.readSavedPrompts();
-              if (savedPrompts) {
-                setSavedPrompts(savedPrompts);
-              }
               onBottomSheetClose();
             }
           },
         },
       ]);
     }
-  }, [activePrompt]);
+  };
 
   const promptOptions = [
     {
       option: "Log Prompt",
       icon: <Notebook />,
       onPress: () => {
-        onBottomSheetClose?.();
+        onBottomSheetClose();
         activePrompt &&
           navigation.navigate("PromptEntry", {
             promptUuid: activePrompt?.uuid,
@@ -112,10 +124,11 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       option: "Edit Prompt",
       icon: <Pencil />,
       onPress: () => {
-        onBottomSheetClose?.();
-        navigation.navigate("AuthorPrompt", {
-          prompt: activePrompt,
-        });
+        onBottomSheetClose();
+        activePrompt &&
+          navigation.navigate("EditPrompt", {
+            promptId: activePrompt?.uuid,
+          });
       },
     },
     {
@@ -152,16 +165,26 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     //   icon: <Location />,
     // },
   ];
+  const limitedOptions = promptOptions.slice(3, 5); // Limited options: Pause/Resume Prompt, Delete Prompt,  Share Prompt
+  const optionsToShow = useMemo(
+    () => (showLimitedOptions ? limitedOptions : promptOptions),
+    [showLimitedOptions]
+  );
 
   return (
     <BottomSheet
       ref={promptOptionsSheetRef}
-      snapPoints={["65%"]}
+      snapPoints={animatedSnapPoints}
+      handleHeight={animatedHandleHeight}
+      contentHeight={animatedContentHeight}
       onClose={onBottomSheetClose}
     >
-      <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
+      <View
+        className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5"
+        onLayout={handleContentLayout}
+      >
         <View className="flex flex-col gap-y-2.5 items-center">
-          {promptOptions.map((option, index) => (
+          {optionsToShow.map((option, index) => (
             <PromptOption
               key={index}
               icon={option.icon}

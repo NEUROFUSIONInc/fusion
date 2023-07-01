@@ -18,8 +18,7 @@ import { CategorySelectionStep } from "./category-selection-step";
 import { PromptDetailsStep } from "./prompt-details-step";
 
 import { PromptResponseType } from "~/@types";
-import { usePrompts } from "~/hooks";
-import { promptService } from "~/services";
+import { useCreatePrompt } from "~/hooks";
 
 interface CreatePromptSheetProps {
   promptSheetRef: RefObject<RNBottomSheet>;
@@ -28,7 +27,7 @@ interface CreatePromptSheetProps {
 export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   promptSheetRef,
 }) => {
-  const { setSavedPrompts } = usePrompts();
+  const { mutateAsync, isLoading: isCreatingPrompt } = useCreatePrompt();
   const startDate = useMemo(() => dayjs().startOf("day").add(8, "hour"), []);
   const endDate = useMemo(
     () => startDate.endOf("day").subtract(2, "hour").add(1, "minute"),
@@ -130,7 +129,7 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   );
 
   const createPrompt = async () => {
-    const res = await promptService.savePrompt({
+    const res = await mutateAsync({
       promptText,
       responseType: responseType!,
       notificationConfig_days: days,
@@ -145,12 +144,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
     });
 
     if (res) {
-      const savedPrompts = await promptService.readSavedPrompts();
-      if (savedPrompts) {
-        handleNextStep();
-        setSavedPrompts(savedPrompts);
-        setSuccess(true);
-      }
+      handleNextStep();
+      setSuccess(true);
     }
   };
 
@@ -212,7 +207,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
         success ? "Close" : activeStep < 3 ? "Continue" : "Close"
       }
       primaryButtonProps={{
-        disabled: buttonDisabled,
+        disabled: buttonDisabled || isCreatingPrompt,
+        loading: isCreatingPrompt,
       }}
       onHandlePrimaryButtonPress={
         success

@@ -20,6 +20,7 @@ export type TimePickerProps = {
   days?: NotificationConfigDays;
   setDays: (days: NotificationConfigDays) => void;
   setPromptCount?: (count: number) => void;
+  defaultPromptValue?: string | null;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
@@ -38,11 +39,12 @@ export const TimePicker: FC<TimePickerProps> = ({
   },
   setDays,
   setPromptCount,
+  defaultPromptValue = null,
 }) => {
   const [isStartTimePickerVisible, setStartTimePickerVisibility] =
     useState(false);
   const [isEndTimePickerVisible, setEndTimePickerVisibility] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(defaultPromptValue);
 
   const showStartTimePicker = () => {
     setStartTimePickerVisibility(true);
@@ -82,10 +84,12 @@ export const TimePicker: FC<TimePickerProps> = ({
     hideEndTimePicker();
   };
 
-  const propmtFrequencyDataWithDisabled = useMemo(() => {
+  const promptFrequencyDataWithDisabled = useMemo(() => {
     return promptFrequencyData.map((item) => {
       const disabled =
-        calculateContactCount(start, end, item.value as string) < 1;
+        //! TODO: fix this logic
+        // calculateContactCount(start, end, item.value as string) < 1;
+        false;
       return {
         ...item,
         disabled,
@@ -102,13 +106,18 @@ export const TimePicker: FC<TimePickerProps> = ({
     [days]
   );
 
+  useEffect(
+    () => setPromptCount?.(totalContactCount),
+    [totalContactCount, setPromptCount]
+  );
+
   return (
     <View>
       <View>
-        <View className="mt-8">
+        <View className="mt-4">
           <Select
             label="How often should we prompt you?"
-            items={propmtFrequencyDataWithDisabled}
+            items={promptFrequencyDataWithDisabled}
             value={value}
             setValue={setValue}
             dropDownDirection="BOTTOM"
@@ -131,10 +140,12 @@ export const TimePicker: FC<TimePickerProps> = ({
         <Text className="-z-10 font-sans text-white text-base mb-4 mt-4">
           When do you want to be prompted?
         </Text>
-        <View className="-z-10 flex py-5 px-4 rounded-md bg-secondary-900 divide-y divide-white/20 divide-opacity-10 items-start flex-col w-full">
+        <View className="-z-10 flex py-5 px-4 rounded-md bg-secondary-900 divide-y divide-white/20 divide-opacity-10 items-start flex-col w-full ">
           <Pressable
             onPress={showStartTimePicker}
-            className="flex flex-row w-full pb-4 justify-between"
+            className={`flex flex-row w-full ${
+              isSingleTime ? "pb-0" : "pb-4"
+            } justify-between`}
           >
             {isSingleTime ? (
               <Text className="font-sans text-base text-white">At</Text>

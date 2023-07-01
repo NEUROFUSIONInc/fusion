@@ -2,9 +2,10 @@ module.exports = {
   extends: [
     "universe/native",
     "universe/shared/typescript-analysis",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     "prettier",
   ],
-  plugins: ["@typescript-eslint", "unused-imports"],
+  plugins: ["@typescript-eslint", "unused-imports", "@tanstack/query"],
   ignorePatterns: ["ios", "android"],
   overrides: [
     {
@@ -15,6 +16,8 @@ module.exports = {
       rules: {
         "prettier/prettier": "off",
         "unused-imports/no-unused-imports": "error",
+        "@tanstack/query/exhaustive-deps": "error",
+        "@tanstack/query/prefer-query-object-syntax": "error",
         "import/order": [
           1,
           {

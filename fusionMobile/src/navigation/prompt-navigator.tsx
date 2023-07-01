@@ -4,7 +4,7 @@ import {
 } from "@react-navigation/native-stack";
 
 import { Prompt } from "~/@types";
-import { PromptsHeader } from "~/components";
+import { EditPromptHeader, PromptsHeader } from "~/components";
 import {
   PromptsScreen,
   PromptScreen,
@@ -14,16 +14,9 @@ import {
 
 export type PromptStackParamList = {
   Prompts: undefined;
-  AuthorPrompt:
-    | {
-        prompt?: Prompt;
-        promptText?: string;
-        responseType?: string;
-        notificationConfig_countPerDay?: number;
-        notificationConfig_startTime?: string;
-        notificationConfig_endTime?: string;
-      }
-    | undefined;
+  EditPrompt: {
+    promptId: string;
+  };
   ViewResponses: {
     prompt: Prompt;
   };
@@ -47,9 +40,9 @@ export const PromptStack = () => {
     >
       <Stack.Screen name="Prompts" component={PromptsScreen} />
       <Stack.Screen
-        name="AuthorPrompt"
+        name="EditPrompt"
         component={PromptScreen}
-        options={{ title: "Author Prompt" }}
+        options={{ header: () => <EditPromptHeader /> }}
       />
       <Stack.Screen
         name="ViewResponses"

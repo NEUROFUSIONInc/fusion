@@ -11,12 +11,12 @@ import {
   PromptDetails,
   Screen,
 } from "~/components";
-import { usePrompts } from "~/hooks";
+import { usePromptsQuery } from "~/hooks";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
 
 export const PromptsScreen = () => {
-  const { savedPrompts, loading } = usePrompts();
+  const { data: savedPrompts, isLoading } = usePromptsQuery();
   const promptSheetRef = useRef<RNBottomSheet>(null);
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export const PromptsScreen = () => {
 
   return (
     <Screen>
-      {loading && <Text>Loading...</Text>}
-      {!loading && savedPrompts?.length === 0 && (
+      {isLoading && <Text>Loading...</Text>}
+      {!isLoading && savedPrompts?.length === 0 && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
@@ -46,7 +46,7 @@ export const PromptsScreen = () => {
           />
         </View>
       )}
-      {!loading && savedPrompts?.length > 0 && (
+      {!isLoading && savedPrompts && savedPrompts?.length > 0 && (
         <ScrollView className="flex mt-4 flex-col">
           {savedPrompts.map((prompt) => (
             <View key={prompt.uuid} className="my-2">

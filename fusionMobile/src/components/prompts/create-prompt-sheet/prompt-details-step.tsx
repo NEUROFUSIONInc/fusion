@@ -14,6 +14,7 @@ interface PromptDetailsStepProps {
   setResponseType: Dispatch<SetStateAction<PromptResponseType | null>>;
   customOptions: string[];
   setCustomOptions: Dispatch<SetStateAction<string[]>>;
+  isCreating?: boolean;
 }
 
 export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
@@ -23,14 +24,17 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   setResponseType,
   customOptions,
   setCustomOptions,
+  isCreating = true,
 }) => {
   const [customOptionsInputText, setCustomOptionsInputText] = useState("");
 
   return (
-    <View className="flex-1 flex-col gap-y-5">
-      <Text className="text-xl font-sans-bold text-white">
-        Enter Prompt Details
-      </Text>
+    <View className="flex-1 flex-col space-y-5">
+      {isCreating && (
+        <Text className="text-xl font-sans-bold text-white">
+          Enter Prompt Details
+        </Text>
+      )}
 
       <View>
         <Input
@@ -63,7 +67,6 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
           <>
             <Input
               label="Enter your options"
-              className="mb-5"
               placeholder="Separate your values with ';'"
               value={customOptionsInputText}
               onChangeText={(text) => {
@@ -76,17 +79,15 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
                 setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
               }}
             />
-
-            {/* display the options as tags below */}
-            {customOptions.length > 0 ? (
-              <View className="flex flex-row gap-x-2 gap-y-3 flex-wrap">
+            {customOptions.length > 0 && (
+              <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap">
                 {customOptions.map((option) => (
                   <View key={option}>
                     <Tag key={option} title={option} disabled />
                   </View>
                 ))}
               </View>
-            ) : null}
+            )}
           </>
         ) : null}
       </View>

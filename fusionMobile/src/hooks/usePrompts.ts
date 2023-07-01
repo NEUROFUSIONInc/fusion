@@ -1,6 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 
 import { PromptContext } from "../contexts";
+
+import { promptService } from "~/services";
 
 export const usePrompts = () => {
   const promptContext = useContext(PromptContext);
@@ -12,4 +15,13 @@ export const usePrompts = () => {
   }
 
   return promptContext;
+};
+
+export const usePromptsQuery = () => {
+  const queryInfo = useQuery({
+    queryKey: ["prompts"],
+    queryFn: promptService.readSavedPrompts,
+  });
+
+  return queryInfo;
 };

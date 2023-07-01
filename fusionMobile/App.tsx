@@ -1,10 +1,10 @@
 import { PortalProvider } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import * as SplashScreen from "expo-splash-screen";
 import React from "react";
 import { Alert, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,6 +13,7 @@ import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
 import { maskPromptId, appInsights } from "./src/utils";
 
+import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import { PromptContextProvider } from "~/contexts";
 import { notificationService, promptService } from "~/services";
 
@@ -53,7 +54,12 @@ Notifications.setNotificationHandler({
   },
 });
 
-// SplashScreen.preventAutoHideAsync(); - temp remove since asking for notifcation permission on first load causes hiding splash screen to fail
+// SplashScreen.preventAutoHideAsync(); - temp remove since asking for notification permission on first load causes hiding splash screen to fail
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: QUERY_OPTIONS_DEFAULT,
+});
 
 function App() {
   const responseListener = React.useRef<
@@ -232,11 +238,13 @@ function App() {
     <GestureHandlerRootView className="flex flex-1 flex-grow-1">
       <FontLoader>
         <StatusBar barStyle="light-content" />
-        <PromptContextProvider>
-          <PortalProvider>
-            <CustomNavigation />
-          </PortalProvider>
-        </PromptContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <PromptContextProvider>
+            <PortalProvider>
+              <CustomNavigation />
+            </PortalProvider>
+          </PromptContextProvider>
+        </QueryClientProvider>
       </FontLoader>
     </GestureHandlerRootView>
   );

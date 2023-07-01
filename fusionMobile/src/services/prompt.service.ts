@@ -55,7 +55,7 @@ class PromptService {
         });
 
       const prompts = await fetchPrompts();
-      if (prompts) return prompts;
+      return prompts;
     } catch (e) {
       console.log("error reading prompts", e);
       throw new Error("error reading prompts");
@@ -299,12 +299,12 @@ class PromptService {
           }
         );
 
-        return true;
+        return prompt;
       }
     } catch (e) {
       // error reading value
       console.log("error saving prompt", e);
-      throw new Error("error saving prompt");
+      // throw new Error("error saving prompt");
     }
   };
 
@@ -537,10 +537,13 @@ class PromptService {
     return combinedResponses;
   };
 
-  public updatePromptNotificationState = async (
-    promptUuid: string,
-    isNotificationActive: boolean
-  ) => {
+  public updatePromptNotificationState = async ({
+    promptUuid,
+    isNotificationActive,
+  }: {
+    promptUuid: string;
+    isNotificationActive: boolean;
+  }) => {
     const prompt = await this.getPrompt(promptUuid);
 
     if (!prompt) {

@@ -46,8 +46,8 @@ export function getEvenlySpacedTimes(
   /**
    * Returns an array of (count) notifications based on available times
    */
-  const start = getDayjsFromTimestring(startTime);
-  const end = getDayjsFromTimestring(endTime);
+  const start = getDayjsFromTimeString(startTime);
+  const end = getDayjsFromTimeString(endTime);
   const max = count + 1;
 
   // Calculate the total duration between the two times in milliseconds
@@ -117,7 +117,7 @@ export function getFrequencyLabel(
   return "";
 }
 
-export function getDayjsFromTimestring(timeString: string) {
+export function getDayjsFromTimeString(timeString: string) {
   // time is in the format "HH:mm", split up and convert to a dayjs object
   const time = timeString.split(":");
   const hour = parseInt(time[0], 10);
@@ -247,6 +247,31 @@ export async function saveFileToDevice(
     console.log(error);
     return null;
   }
+}
+
+export function getFrequencyFromCount(
+  startTime: dayjs.Dayjs,
+  endTime: dayjs.Dayjs,
+  totalCount: number
+) {
+  const durationMinutes = endTime.diff(startTime, "minute");
+
+  let closestFrequency = promptFrequencyData[0].value as string;
+  let closestDifference = Infinity;
+
+  // Iterate through the frequency options and find the closest one based on the total count
+  for (const option of promptFrequencyData) {
+    const frequencyMinutes = parseInt(option.value as string, 10);
+    const contactCount = Math.floor(durationMinutes / frequencyMinutes);
+    const difference = Math.abs(contactCount - totalCount);
+
+    if (difference < closestDifference) {
+      closestFrequency = option.value as string;
+      closestDifference = difference;
+    }
+  }
+
+  return closestFrequency;
 }
 
 // export async function exportFileDirectoryAsZip(

@@ -3,22 +3,22 @@ import dayjs from "dayjs";
 import React from "react";
 import { StyleSheet, Text, View, Button, Alert, FlatList } from "react-native";
 
-import { usePrompts } from "~/hooks";
+import { usePromptsQuery } from "~/hooks";
 import { promptService } from "~/services";
 import { convertTime, maskPromptId, appInsights } from "~/utils";
 
 export function HomeScreen() {
   const navigation = useNavigation();
-  const { savedPrompts, setSavedPrompts } = usePrompts();
+  const { data: prompts } = usePromptsQuery();
 
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Home",
       properties: {
-        prompt_count: savedPrompts?.length,
+        prompt_count: prompts?.length,
       },
     });
-  }, [savedPrompts]);
+  }, [prompts]);
 
   return (
     <View style={styles.container}>
@@ -35,9 +35,9 @@ export function HomeScreen() {
         Prompts
       </Text>
       {/* if there were events list them */}
-      {savedPrompts && savedPrompts?.length > 0 ? (
+      {prompts && prompts?.length > 0 ? (
         <FlatList
-          data={savedPrompts}
+          data={prompts}
           renderItem={({ item }) => (
             <View style={styles.item}>
               <View>
@@ -76,8 +76,8 @@ export function HomeScreen() {
                 <Button
                   title="Edit"
                   onPress={() =>
-                    navigation.navigate("AuthorPrompt", {
-                      prompt: item,
+                    navigation.navigate("EditPrompt", {
+                      promptId: item.uuid,
                     })
                   }
                 />
@@ -107,7 +107,7 @@ export function HomeScreen() {
                                 }
                               );
 
-                              setSavedPrompts(res);
+                              // setSavedPrompts(res);
                             }
                           },
                         },
@@ -127,7 +127,7 @@ export function HomeScreen() {
       <View>
         <Button
           title="Add new prompt"
-          onPress={() => navigation.navigate("AuthorPrompt")}
+          onPress={() => navigation.navigate("Prompts")}
         />
       </View>
     </View>
