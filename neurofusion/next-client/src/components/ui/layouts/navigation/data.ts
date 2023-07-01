@@ -11,8 +11,8 @@ export const navigationLinks = [
     title: "Contact",
     href: "mailto:ore@usefusion.app",
   },
-  {
-    title: "Research",
-    href: "https://usefusion.app/research",
-  },
+  // {
+  //   title: "Research",
+  //   href: "https://usefusion.app/research",
+  // },
 ];
