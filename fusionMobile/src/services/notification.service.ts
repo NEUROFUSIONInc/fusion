@@ -63,7 +63,7 @@ export class NotificationService {
     let notificationIdentifier = prompt.responseType.toString();
     if (prompt.responseType === "customOptions") {
       // if custom option generate bespoke notificationtypes with the custom option selections
-      const customOptions = prompt.additionalMeta.customOptionText?.split(";");
+      const customOptions = prompt.additionalMeta?.customOptionText?.split(";");
       if (customOptions) {
         const identifier = await this.createCustomOptionNotificationIdentifier(
           customOptions

@@ -30,6 +30,7 @@ export function PromptScreen() {
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   const [responseType, setResponseType] =
     React.useState<PromptResponseType | null>(null);
+  const [category, setCategory] = React.useState<string | null>(null);
   const [countPerDay, setCountPerDay] = React.useState<number | undefined>();
   const [days, setDays] = React.useState(promptSelectionDays);
   const [start, setStart] = React.useState(getDayjsFromTimeString("08:00"));
@@ -47,8 +48,18 @@ export function PromptScreen() {
       countPerDay === 0 ||
       promptText === "" ||
       responseType === null ||
+      category === null ||
       isUpdating,
-    [start, end, days, countPerDay, promptText, responseType, isUpdating]
+    [
+      start,
+      end,
+      days,
+      countPerDay,
+      promptText,
+      responseType,
+      isUpdating,
+      category,
+    ]
   );
 
   // set the prompt object if it was passed in (this is for editing)
@@ -63,13 +74,14 @@ export function PromptScreen() {
     if (prompt) {
       setPromptText(prompt.promptText);
       setCustomOptions(
-        prompt.additionalMeta.customOptionText?.split(";") ?? []
+        prompt.additionalMeta?.customOptionText?.split(";") ?? []
       );
       setResponseType(prompt.responseType);
       setCountPerDay(prompt.notificationConfig_countPerDay);
       setDays(prompt.notificationConfig_days);
       setStart(getDayjsFromTimeString(prompt.notificationConfig_startTime));
       setEnd(getDayjsFromTimeString(prompt.notificationConfig_endTime));
+      setCategory(prompt.additionalMeta?.category ?? null);
     }
   }, [prompt]);
 
@@ -84,7 +96,7 @@ export function PromptScreen() {
         notificationConfig_startTime: start.format("HH:mm"),
         notificationConfig_endTime: end.format("HH:mm"),
         additionalMeta: {
-          category: prompt?.additionalMeta.category,
+          category: category!,
           isNotificationActive: prompt?.additionalMeta.isNotificationActive,
           customOptionText: customOptions.join(";"),
         },
@@ -114,6 +126,8 @@ export function PromptScreen() {
             setResponseType={setResponseType}
             customOptions={customOptions}
             setCustomOptions={setCustomOptions}
+            category={category}
+            setCategory={setCategory}
             isCreating={false}
           />
           <View className="flex -z-10">

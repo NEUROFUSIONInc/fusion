@@ -129,7 +129,7 @@ export const TimePicker: FC<TimePickerProps> = ({
             onChangeValue={() => setPromptCount?.(totalContactCount)}
           />
           {value !== null && (
-            <Text className="font-sans text-gray-400 text-sm mt-2">
+            <Text className="font-sans text-gray-400 text-sm mt-2 -z-10">
               {`You will be prompted ${
                 totalContactCount === 1 ? "once" : `${totalContactCount} times`
               }`}

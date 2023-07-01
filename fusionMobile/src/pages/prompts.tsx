@@ -46,7 +46,7 @@ export const PromptsScreen = () => {
     if (activePrompt) {
       const timeout = setTimeout(() => {
         promptOptionsSheetRef.current?.expand();
-      }, 300);
+      }, 500);
       return () => {
         clearTimeout(timeout);
       };
