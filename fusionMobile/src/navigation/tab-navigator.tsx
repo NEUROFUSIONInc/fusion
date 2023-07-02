@@ -105,11 +105,12 @@ export const CustomNavigation = () => {
           tabBarStyle: {
             backgroundColor: "#0B0816",
             alignItems: "center",
-            marginBottom: 20,
+            marginBottom: 5,
             paddingHorizontal: 10,
             borderTopWidth: 1,
             borderTopColor: "rgba(255, 255, 255, 0.15)",
-            display: routeName === "PromptEntry" ? "none" : "flex",
+            // display: routeName === "PromptEntry" ? "none" : "flex",
+            display: "flex",
           },
           tabBarIcon: ({ color }) => (
             <BarIcon name={route.name as keyof TabParamList} color={color} />

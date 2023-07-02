@@ -1,7 +1,7 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
@@ -43,10 +43,14 @@ export const PromptsScreen = () => {
   }, []);
 
   useEffect(() => {
+    let delayMs = 300;
+    if (Platform.OS === "android") {
+      delayMs = 500;
+    }
     if (activePrompt) {
       const timeout = setTimeout(() => {
         promptOptionsSheetRef.current?.expand();
-      }, 500);
+      }, delayMs);
       return () => {
         clearTimeout(timeout);
       };

@@ -119,7 +119,7 @@ export function PromptEntryScreen() {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      className="flex flex-col h-full w-full items-stretch justify-center bg-dark"
+      className="flex flex-grow flex-col h-full w-full items-stretch justify-center bg-dark px-5"
     >
       <View className="flex flex-1 justify-center">
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -219,7 +219,7 @@ export function PromptEntryScreen() {
           )}
         </TouchableWithoutFeedback>
       </View>
-      <View className="w-full flex flex-col gap-y-6 mb-10">
+      <View className="w-full flex flex-col gap-y-6 mb-10 ">
         <Button
           title="Log prompt response"
           fullWidth

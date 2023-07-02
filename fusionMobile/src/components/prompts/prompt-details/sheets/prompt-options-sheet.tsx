@@ -37,7 +37,6 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   showLimitedOptions = false,
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
-  console.log("active prompt loaded for component", activePrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
   const {
