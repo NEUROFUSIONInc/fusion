@@ -30,6 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     package: "com.neurofusion.fusion",
     versionCode: 22,
+    softwareKeyboardLayoutMode: "pan",
   },
   web: {
     favicon: "./assets/favicon.png",
