@@ -1,18 +1,20 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
 import {
   Button,
+  CategoryTag,
   CreatePromptSheet,
   Plus,
   PromptDetails,
   PromptOptionsSheet,
   Screen,
 } from "~/components";
+import { categories } from "~/config";
 import { usePromptsQuery } from "~/hooks";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
@@ -20,6 +22,18 @@ import { appInsights } from "~/utils";
 export const PromptsScreen = () => {
   const { data: savedPrompts, isLoading } = usePromptsQuery();
   const promptSheetRef = useRef<RNBottomSheet>(null);
+  const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
+  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    undefined
+  );
+  const filteredPrompts = useMemo(() => {
+    return selectedCategory
+      ? savedPrompts?.filter(
+          (prompt) => prompt.additionalMeta?.category === selectedCategory
+        )
+      : savedPrompts;
+  }, [savedPrompts, selectedCategory]);
 
   useEffect(() => {
     appInsights.trackPageView({
@@ -29,18 +43,6 @@ export const PromptsScreen = () => {
       },
     });
   }, [savedPrompts]);
-
-  const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
-  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
-
-  const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
-    setActivePrompt(prompt);
-  }, []);
-
-  const handlePromptBottomSheetClose = useCallback(() => {
-    setActivePrompt(undefined);
-    promptOptionsSheetRef.current?.close();
-  }, []);
 
   useEffect(() => {
     let delayMs = 300;
@@ -56,6 +58,19 @@ export const PromptsScreen = () => {
       };
     }
   }, [activePrompt]);
+
+  const handleCategorySelection = useCallback((category: string) => {
+    setSelectedCategory(category);
+  }, []);
+
+  const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
+    setActivePrompt(prompt);
+  }, []);
+
+  const handlePromptBottomSheetClose = useCallback(() => {
+    setActivePrompt(undefined);
+    promptOptionsSheetRef.current?.close();
+  }, []);
 
   return (
     <Screen>
@@ -77,7 +92,23 @@ export const PromptsScreen = () => {
       )}
       {!isLoading && savedPrompts && savedPrompts?.length > 0 && (
         <ScrollView className="flex mt-4 flex-col">
-          {savedPrompts.map((prompt) => (
+          <ScrollView horizontal className="flex gap-x-3 mb-8">
+            {categories.map((category) => {
+              const name = category.name;
+              return (
+                <CategoryTag
+                  key={name}
+                  title={name}
+                  isActive={selectedCategory === name}
+                  icon={category.icon}
+                  handleValueChange={(checked) =>
+                    handleCategorySelection(checked ? name : "")
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+          {filteredPrompts?.map((prompt) => (
             <View key={prompt.uuid} className="my-2">
               <PromptDetails
                 prompt={prompt}
