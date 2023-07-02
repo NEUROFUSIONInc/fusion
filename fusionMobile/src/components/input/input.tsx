@@ -6,7 +6,7 @@ import { Text, TextInput, TextInputProps, View } from "react-native";
 import colors from "~/theme/colors";
 
 const inputStyles = cva(
-  "rounded-md w-auto text-white font-sans bg-transparent border h-[52] border-light focus:border-white disabled:bg-gray-100 disabled:opacity-50 ",
+  "rounded-md w-auto text-white font-sans bg-transparent border h-[52] border-light focus:border-white disabled:bg-gray-100 disabled:opacity-50",
   {
     variants: {
       size: {
