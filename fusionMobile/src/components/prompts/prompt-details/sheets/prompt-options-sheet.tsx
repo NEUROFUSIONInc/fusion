@@ -81,7 +81,6 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   }, [activePrompt]);
 
   const handlePromptNotificationStateUpdate = async () => {
-    console.log("activePrompt here", activePrompt);
     if (activePrompt) {
       const promptUpdateLabel =
         activePrompt?.additionalMeta?.isNotificationActive === false
@@ -132,6 +131,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
         activePrompt &&
           navigation.navigate("EditPrompt", {
             promptId: activePrompt?.uuid,
+            type: "edit",
           });
       },
     },
