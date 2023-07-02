@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "31",
+    buildNumber: "32",
     backgroundColor: "#0B0816",
   },
   android: {
@@ -29,7 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 22,
+    versionCode: 23,
     softwareKeyboardLayoutMode: "pan",
   },
   web: {
