@@ -5,3 +5,4 @@ export * from "./health";
 export * from "./prompt-entry";
 export * from "./responses";
 export * from "./prompts";
+export * from "./quick-add-prompts";
