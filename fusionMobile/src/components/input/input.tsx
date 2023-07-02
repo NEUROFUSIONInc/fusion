@@ -45,6 +45,8 @@ export const Input = forwardRef<TextInput, InputProps>(function input(
   },
   ref
 ) {
+  const value = props.value;
+
   return (
     <View>
       {label && (
@@ -60,7 +62,10 @@ export const Input = forwardRef<TextInput, InputProps>(function input(
         aria-describedby="errMsg"
         placeholderTextColor={colors.light}
         selectionColor={colors.blue[400]}
-        className={inputStyles({ size, fullWidth, className })}
+        value={value}
+        className={`${inputStyles({ size, fullWidth, className })} ${
+          value && value?.length > 30 ? "h-[64] pb-4" : ""
+        }`}
         {...props}
       />
       {error && (
