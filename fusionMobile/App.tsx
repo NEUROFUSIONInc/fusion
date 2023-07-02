@@ -45,7 +45,7 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 Notifications.setNotificationHandler({
-  handleNotification: async (notification) => {
+  handleNotification: async () => {
     return {
       shouldShowAlert: true,
       shouldPlaySound: false,
