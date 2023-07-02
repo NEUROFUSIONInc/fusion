@@ -2,14 +2,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 
-import { PromptResponseType } from "~/@types";
+import { Prompt, PromptResponseType } from "~/@types";
 import {
   Button,
   PromptDetailsStep,
   TimePicker,
   promptSelectionDays,
 } from "~/components";
-import { usePrompt, useUpdatePrompt } from "~/hooks";
+import { useCreatePrompt, usePrompt, useUpdatePrompt } from "~/hooks";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
 import {
   getDayjsFromTimeString,
@@ -17,15 +17,19 @@ import {
   getFrequencyLabel,
 } from "~/utils";
 
-export function PromptScreen() {
+export function EditPromptScreen() {
   const route = useRoute<RouteProp<"EditPrompt">>();
+  const params = route.params;
   const navigation = useNavigation<PromptScreenNavigationProp>();
-  const { data: prompt, isLoading: isPromptLoading } = usePrompt(
-    route.params.promptId
-  );
-  const { mutateAsync: updatePrompt, isLoading: isUpdating } = useUpdatePrompt(
-    route.params.promptId
-  );
+  const isEditPage = params.type === "edit";
+  const promptId = isEditPage ? params.promptId : "";
+  const { data: promptToEdit, isLoading: isPromptLoading } =
+    usePrompt(promptId);
+  const { mutateAsync: updatePrompt, isLoading: isUpdating } =
+    useUpdatePrompt(promptId);
+  const { mutateAsync: createPrompt, isLoading: isCreating } =
+    useCreatePrompt();
+  const [prompt, setPrompt] = React.useState<Prompt | null>(null);
   const [promptText, setPromptText] = React.useState("");
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
   const [responseType, setResponseType] =
@@ -45,6 +49,7 @@ export function PromptScreen() {
       promptText === "" ||
       responseType === null ||
       category === null ||
+      isCreating ||
       isUpdating,
     [
       start,
@@ -55,6 +60,7 @@ export function PromptScreen() {
       responseType,
       isUpdating,
       category,
+      isCreating,
     ]
   );
 
@@ -66,8 +72,10 @@ export function PromptScreen() {
         intent: "edit",
       },
     });
+    const prompt = isEditPage ? promptToEdit : params.prompt;
 
     if (prompt) {
+      setPrompt(prompt);
       setPromptText(prompt.promptText);
       setCustomOptions(
         prompt.additionalMeta?.customOptionText?.split(";") ?? []
@@ -79,24 +87,28 @@ export function PromptScreen() {
       setEnd(getDayjsFromTimeString(prompt.notificationConfig_endTime));
       setCategory(prompt.additionalMeta?.category ?? null);
     }
-  }, [prompt]);
+  }, [promptToEdit, params]);
 
-  const saveEditedPrompt = async () => {
+  const savePrompt = async () => {
+    const uuid = isEditPage ? promptId : undefined;
+    const promptEntry = {
+      uuid,
+      promptText,
+      responseType: responseType!,
+      notificationConfig_days: days,
+      notificationConfig_countPerDay: countPerDay ?? 0,
+      notificationConfig_startTime: start.format("HH:mm"),
+      notificationConfig_endTime: end.format("HH:mm"),
+      additionalMeta: {
+        category: category!,
+        isNotificationActive: prompt?.additionalMeta.isNotificationActive,
+        customOptionText: customOptions.join(";"),
+      },
+    };
+
     try {
-      await updatePrompt({
-        uuid: prompt?.uuid,
-        promptText,
-        responseType: responseType!,
-        notificationConfig_days: days,
-        notificationConfig_countPerDay: countPerDay ?? 0,
-        notificationConfig_startTime: start.format("HH:mm"),
-        notificationConfig_endTime: end.format("HH:mm"),
-        additionalMeta: {
-          category: category!,
-          isNotificationActive: prompt?.additionalMeta?.isNotificationActive,
-          customOptionText: customOptions.join(";"),
-        },
-      });
+      const updateOrCreatePrompt = isEditPage ? updatePrompt : createPrompt;
+      await updateOrCreatePrompt({ ...promptEntry });
       navigation.navigate("Prompts");
     } catch (err) {
       console.log("Error saving prompt", err);
@@ -110,10 +122,10 @@ export function PromptScreen() {
       horizontal={false}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      {isPromptLoading && (
+      {isPromptLoading && isEditPage && (
         <Text className="font-sans text-base text-white">Loading...</Text>
       )}
-      {!isPromptLoading && prompt && (
+      {prompt && (
         <>
           <PromptDetailsStep
             promptText={promptText}
@@ -143,12 +155,20 @@ export function PromptScreen() {
             />
           </View>
           <Button
-            title={isUpdating ? "Saving edits..." : "Save edits"}
+            title={
+              isEditPage
+                ? "Save edits"
+                : isCreating
+                ? "Adding prompt..."
+                : isUpdating
+                ? "Updating..."
+                : "Add Prompt"
+            }
             loading={isUpdating}
             fullWidth
             className="mt-4 mb-8"
             disabled={buttonDisabled}
-            onPress={saveEditedPrompt}
+            onPress={savePrompt}
           />
         </>
       )}
