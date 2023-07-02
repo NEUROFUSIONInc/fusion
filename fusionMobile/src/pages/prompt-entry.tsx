@@ -160,7 +160,8 @@ export function PromptEntryScreen() {
                     numberOfLines={4}
                     onChangeText={setUserResponse}
                     value={userResponse}
-                    className="h-36 leading-1.5 mx-4"
+                    className="leading-1.5 mx-4"
+                    style={{ height: 144 }}
                   />
                 </View>
               )}
@@ -211,7 +212,8 @@ export function PromptEntryScreen() {
                     placeholder="Additional notes (optional)"
                     onChangeText={setAdditionalNotes}
                     value={additonalNotes}
-                    className="h-28 pt-3 leading-1.5 mx-4 mb-8"
+                    className="pt-3 leading-1.5 mx-4 mb-8"
+                    style={{ height: 112 }}
                   />
                 )}
               </View>
