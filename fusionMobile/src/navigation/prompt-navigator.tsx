@@ -4,19 +4,31 @@ import {
 } from "@react-navigation/native-stack";
 
 import { Prompt } from "~/@types";
-import { EditPromptHeader, PromptsHeader } from "~/components";
+import {
+  EditPromptHeader,
+  PromptsHeader,
+  QuickAddPromptsHeader,
+} from "~/components";
 import {
   PromptsScreen,
-  PromptScreen,
+  EditPromptScreen,
   PromptEntryScreen,
   ResponsesScreen,
+  QuickAddPromptsScreen,
 } from "~/pages";
 
 export type PromptStackParamList = {
   Prompts: undefined;
-  EditPrompt: {
-    promptId: string;
-  };
+  EditPrompt:
+    | {
+        type: "edit";
+        promptId: string;
+      }
+    | {
+        type: "add";
+        prompt: Prompt;
+      };
+  QuickAddPrompts: undefined;
   ViewResponses: {
     prompt: Prompt;
   };
@@ -41,7 +53,7 @@ export const PromptStack = () => {
       <Stack.Screen name="Prompts" component={PromptsScreen} />
       <Stack.Screen
         name="EditPrompt"
-        component={PromptScreen}
+        component={EditPromptScreen}
         options={{ header: () => <EditPromptHeader /> }}
       />
       <Stack.Screen
@@ -53,6 +65,11 @@ export const PromptStack = () => {
         name="PromptEntry"
         component={PromptEntryScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="QuickAddPrompts"
+        component={QuickAddPromptsScreen}
+        options={{ header: () => <QuickAddPromptsHeader /> }}
       />
     </Stack.Navigator>
   );

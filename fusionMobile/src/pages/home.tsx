@@ -77,6 +77,7 @@ export function HomeScreen() {
                   title="Edit"
                   onPress={() =>
                     navigation.navigate("EditPrompt", {
+                      type: "edit",
                       promptId: item.uuid,
                     })
                   }

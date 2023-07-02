@@ -14,6 +14,7 @@ export const EditPromptHeader = () => {
   const route = useRoute<RouteProp<"EditPrompt">>();
   const promptOptionsSheet = useRef<RNBottomSheet>(null);
   const navigation = useNavigation();
+  const isEdit = route.params.type === "edit";
 
   const handleBottomSheetClose = useCallback(() => {
     promptOptionsSheet.current?.close();
@@ -33,7 +34,7 @@ export const EditPromptHeader = () => {
       <Portal>
         <PromptOptionsSheet
           promptOptionsSheetRef={promptOptionsSheet}
-          promptId={route.params.promptId}
+          promptId={isEdit ? route.params.promptId : ""}
           onBottomSheetClose={handleBottomSheetClose}
           showLimitedOptions
         />
@@ -50,16 +51,20 @@ export const EditPromptHeader = () => {
         onPress={handleGoBack}
       />
       <Text className="font-sans text-base text-white">
-        Edit prompt details
+        {isEdit ? "Edit prompt" : "Quick add prompts"}
       </Text>
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<VerticalMenu />}
-        onPress={handlePromptOptionsSheetOpen}
-      />
+      {isEdit ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={<VerticalMenu />}
+          onPress={handlePromptOptionsSheetOpen}
+        />
+      ) : (
+        <View />
+      )}
 
-      {renderPortal()}
+      {isEdit && renderPortal()}
     </View>
   );
 };
