@@ -20,7 +20,7 @@ export type TimePickerProps = {
   days?: NotificationConfigDays;
   setDays: (days: NotificationConfigDays) => void;
   setPromptCount?: (count: number) => void;
-  defaultPromptValue?: string | null;
+  defaultPromptFrequencyLabel?: string | null;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
@@ -39,12 +39,26 @@ export const TimePicker: FC<TimePickerProps> = ({
   },
   setDays,
   setPromptCount,
-  defaultPromptValue = null,
+  defaultPromptFrequencyLabel,
 }) => {
   const [isStartTimePickerVisible, setStartTimePickerVisibility] =
     useState(false);
   const [isEndTimePickerVisible, setEndTimePickerVisibility] = useState(false);
-  const [value, setValue] = useState(defaultPromptValue);
+  const [selectedPromptFrequencyLabel, setSelectedPromptFrequencyLabel] =
+    useState(defaultPromptFrequencyLabel);
+
+  const [selectedPromptFrequencyValue, setSelectedPromptFrequencyValue] =
+    useState<string | null>();
+
+  useEffect(() => {
+    if (selectedPromptFrequencyLabel) {
+      setSelectedPromptFrequencyValue(
+        (promptFrequencyData.find(
+          (item) => item.label === selectedPromptFrequencyLabel
+        )?.value ?? promptFrequencyData[0].value) as string
+      );
+    }
+  }, [selectedPromptFrequencyLabel]);
 
   const showStartTimePicker = () => {
     setStartTimePickerVisibility(true);
@@ -62,13 +76,13 @@ export const TimePicker: FC<TimePickerProps> = ({
   // TODO: make it better, set time
   const [isSingleTime, setIsSingleTime] = useState(false);
   useEffect(() => {
-    if (value === "1") {
+    if (selectedPromptFrequencyValue === "1") {
       setIsSingleTime(true);
       setEnd(start.add(2, "minute"));
     } else {
       setIsSingleTime(false);
     }
-  }, [value, start]);
+  }, [selectedPromptFrequencyValue, start]);
 
   const handleStartTimeConfirm = (selectedTime: Date) => {
     console.log("startTime has been picked: ", selectedTime);
@@ -85,7 +99,7 @@ export const TimePicker: FC<TimePickerProps> = ({
   };
 
   const promptFrequencyDataWithDisabled = useMemo(() => {
-    return promptFrequencyData.map((item) => {
+    const d = promptFrequencyData.map((item) => {
       const disabled =
         //! TODO: fix this logic
         // calculateContactCount(start, end, item.value as string) < 1;
@@ -95,11 +109,16 @@ export const TimePicker: FC<TimePickerProps> = ({
         disabled,
       };
     });
+    return d;
   }, [start, end]);
 
   const totalContactCount = useMemo(() => {
-    return calculateContactCount(start, end, value as unknown as string);
-  }, [start, end, value]);
+    return calculateContactCount(
+      start,
+      end,
+      selectedPromptFrequencyValue as unknown as string
+    );
+  }, [start, end, selectedPromptFrequencyValue]);
 
   const interpretDaySelections = useMemo(
     () => interpretDaySelection(days),
@@ -118,8 +137,8 @@ export const TimePicker: FC<TimePickerProps> = ({
           <Select
             label="How often should we prompt you?"
             items={promptFrequencyDataWithDisabled}
-            value={value}
-            setValue={setValue}
+            value={selectedPromptFrequencyValue as unknown as string}
+            setValue={setSelectedPromptFrequencyValue}
             dropDownDirection="BOTTOM"
             listMode="SCROLLVIEW"
             scrollViewProps={{
@@ -128,7 +147,7 @@ export const TimePicker: FC<TimePickerProps> = ({
             }}
             onChangeValue={() => setPromptCount?.(totalContactCount)}
           />
-          {value !== null && (
+          {selectedPromptFrequencyValue !== null && (
             <Text className="font-sans text-gray-400 text-sm mt-2 -z-10">
               {`You will be prompted ${
                 totalContactCount === 1 ? "once" : `${totalContactCount} times`

@@ -94,6 +94,15 @@ export function calculateContactCount(
   return contactCount >= 0 ? contactCount : 0;
 }
 
+export function getDayjsFromTimeString(timeString: string) {
+  // time is in the format "HH:mm", split up and convert to a dayjs object
+  const time = timeString.split(":");
+  const hour = parseInt(time[0], 10);
+  const minute = parseInt(time[1], 10);
+
+  return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
+}
+
 export function getFrequencyLabel(
   startTime: string,
   endTime: string,
@@ -106,37 +115,28 @@ export function getFrequencyLabel(
   const endMinutes = endHour * 60 + endMinute;
   const durationMinutes = endMinutes - startMinutes;
 
+  if (getEvenlySpacedTimes(startTime, endTime, contactCount).length === 1) {
+    return "Once";
+  }
+
+  // not length but total minutes
+  let frequencyValue: string = "";
   for (const option of promptFrequencyData) {
     const frequencyMinutes = parseInt(option.value as string, 10);
-    const calculatedCount = Math.floor(durationMinutes / frequencyMinutes);
-    if (calculatedCount === contactCount) {
-      return option.label as string;
+    const calculatedMinutesStep = Math.floor(
+      durationMinutes / (contactCount + 1) // +1 because we excluded the start time earlier
+    );
+    if (frequencyMinutes >= calculatedMinutesStep) {
+      frequencyValue = option.label as string;
+      break;
     }
   }
 
+  if (frequencyValue) {
+    return frequencyValue;
+  }
+
   return "";
-}
-
-export function getDayjsFromTimeString(timeString: string) {
-  // time is in the format "HH:mm", split up and convert to a dayjs object
-  const time = timeString.split(":");
-  const hour = parseInt(time[0], 10);
-  const minute = parseInt(time[1], 10);
-
-  return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
-}
-
-export async function maskPromptId(promptId: string) {
-  /**
-   * Basically takes a prompt ID and generates a hashed version to be stored for analytics.
-   *
-   */
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    promptId
-  );
-
-  return hash;
 }
 
 export function interpretDaySelection(days: NotificationConfigDays): string {
@@ -212,6 +212,49 @@ export function interpretDaySelection(days: NotificationConfigDays): string {
   return "No specific pattern found";
 }
 
+// not sure we need this anymore... we will derive the value from getFrequencyLabel
+export function getFrequencyFromCount(
+  startTime: dayjs.Dayjs,
+  endTime: dayjs.Dayjs,
+  totalCount: number
+) {
+  const durationMinutes = endTime.diff(startTime, "minute");
+
+  let closestFrequency = promptFrequencyData[0].value as string;
+  let closestDifference = Infinity;
+
+  // Iterate through the frequency options and find the closest one based on the total count
+  for (const option of promptFrequencyData) {
+    const frequencyMinutes = parseInt(option.value as string, 10);
+    const contactCount = Math.floor(durationMinutes / frequencyMinutes);
+    const difference = Math.abs(contactCount - totalCount);
+
+    if (difference < closestDifference) {
+      closestFrequency = option.value as string;
+      closestDifference = difference;
+    }
+  }
+
+  return closestFrequency;
+}
+
+/**
+ * End of time related functions
+ */
+
+export async function maskPromptId(promptId: string) {
+  /**
+   * Basically takes a prompt ID and generates a hashed version to be stored for analytics.
+   *
+   */
+  const hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    promptId
+  );
+
+  return hash;
+}
+
 export async function saveFileToDevice(
   fileName: string,
   fileContents: string,
@@ -247,31 +290,6 @@ export async function saveFileToDevice(
     console.log(error);
     return null;
   }
-}
-
-export function getFrequencyFromCount(
-  startTime: dayjs.Dayjs,
-  endTime: dayjs.Dayjs,
-  totalCount: number
-) {
-  const durationMinutes = endTime.diff(startTime, "minute");
-
-  let closestFrequency = promptFrequencyData[0].value as string;
-  let closestDifference = Infinity;
-
-  // Iterate through the frequency options and find the closest one based on the total count
-  for (const option of promptFrequencyData) {
-    const frequencyMinutes = parseInt(option.value as string, 10);
-    const contactCount = Math.floor(durationMinutes / frequencyMinutes);
-    const difference = Math.abs(contactCount - totalCount);
-
-    if (difference < closestDifference) {
-      closestFrequency = option.value as string;
-      closestDifference = difference;
-    }
-  }
-
-  return closestFrequency;
 }
 
 // export async function exportFileDirectoryAsZip(

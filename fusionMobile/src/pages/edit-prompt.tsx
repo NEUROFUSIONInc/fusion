@@ -14,7 +14,7 @@ import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
 import {
   getDayjsFromTimeString,
   appInsights,
-  getFrequencyFromCount,
+  getFrequencyLabel,
 } from "~/utils";
 
 export function PromptScreen() {
@@ -35,10 +35,6 @@ export function PromptScreen() {
   const [days, setDays] = React.useState(promptSelectionDays);
   const [start, setStart] = React.useState(getDayjsFromTimeString("08:00"));
   const [end, setEnd] = React.useState(getDayjsFromTimeString("22:00"));
-  const defaultPromptValue = React.useMemo(
-    () => getFrequencyFromCount(start, end, countPerDay ?? 0),
-    [start, end, countPerDay]
-  );
 
   const buttonDisabled = React.useMemo(
     () =>
@@ -139,7 +135,11 @@ export function PromptScreen() {
               days={days}
               setDays={setDays}
               setPromptCount={setCountPerDay}
-              defaultPromptValue={defaultPromptValue}
+              defaultPromptFrequencyLabel={getFrequencyLabel(
+                prompt.notificationConfig_startTime,
+                prompt.notificationConfig_endTime,
+                prompt.notificationConfig_countPerDay
+              )}
             />
           </View>
           <Button

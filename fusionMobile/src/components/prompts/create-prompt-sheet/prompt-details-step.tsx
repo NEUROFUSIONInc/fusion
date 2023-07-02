@@ -30,8 +30,6 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   setCategory,
   isCreating = true,
 }) => {
-  const [customOptionsInputText, setCustomOptionsInputText] = useState("");
-
   return (
     <View className="flex-1 flex-col space-y-5">
       {isCreating && (
@@ -97,9 +95,8 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
               <Input
                 label="Enter your options"
                 placeholder="Separate your values with ';'"
-                value={customOptionsInputText}
+                value={customOptions.join(";")}
                 onChangeText={(text) => {
-                  setCustomOptionsInputText(text);
                   const arr = text
                     .split(" ")
                     .join("")

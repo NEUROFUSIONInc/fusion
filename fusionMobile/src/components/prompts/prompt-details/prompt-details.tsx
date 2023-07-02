@@ -7,7 +7,7 @@ import { Button } from "../../button";
 import { VerticalMenu } from "../../icons";
 
 import { Prompt } from "~/@types";
-import { interpretDaySelection } from "~/utils";
+import { convertTime, getFrequencyLabel, interpretDaySelection } from "~/utils";
 
 interface PromptDetailsProps {
   prompt: Prompt;
@@ -16,6 +16,12 @@ interface PromptDetailsProps {
 
 export const PromptDetails: FC<PromptDetailsProps> = ({ prompt, onClick }) => {
   const days = prompt.notificationConfig_days;
+
+  const frequencyLabel = getFrequencyLabel(
+    prompt.notificationConfig_startTime,
+    prompt.notificationConfig_endTime,
+    prompt.notificationConfig_countPerDay
+  );
 
   return (
     <Pressable
@@ -36,22 +42,31 @@ export const PromptDetails: FC<PromptDetailsProps> = ({ prompt, onClick }) => {
             {interpretDaySelection(days)}
           </Text>
 
-          {prompt.additionalMeta?.isNotificationActive === false && (
+          {prompt.additionalMeta?.isNotificationActive === false ? (
             <View className="flex flex-row items-center">
               <View className="w-1 h-1 bg-white opacity-60" />
               <Text className="font-sans text-sm text-white opacity-60 pl-2">
                 Paused
               </Text>
             </View>
+          ) : (
+            <View className="flex flex-row items-center">
+              <View className="w-1 h-1 bg-white opacity-60" />
+              {frequencyLabel === "Once" ? (
+                <Text className="font-sans text-sm text-white opacity-60 pl-2">
+                  {frequencyLabel +
+                    " at " +
+                    convertTime(prompt.notificationConfig_startTime)}
+                </Text>
+              ) : (
+                <Text className="font-sans text-sm text-white opacity-60 pl-2 over">
+                  {frequencyLabel +
+                    " from " +
+                    convertTime(prompt.notificationConfig_startTime)}
+                </Text>
+              )}
+            </View>
           )}
-          {/* <Text className="font-sans text-sm text-white opacity-60">
-            // results from this function are not consistent
-            {getFrequencyLabel(
-              prompt.notificationConfig_startTime,
-              prompt.notificationConfig_endTime,
-              prompt.notificationConfig_countPerDay
-            )}
-          </Text> */}
         </View>
       </View>
       <Button
