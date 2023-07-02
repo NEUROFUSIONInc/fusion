@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { Text, View } from "react-native";
 
 import { Input } from "../../input";
@@ -6,6 +6,7 @@ import { Select } from "../../select";
 import { Tag } from "../../tag";
 
 import { PromptResponseType } from "~/@types";
+import { categories } from "~/config";
 
 interface PromptDetailsStepProps {
   promptText: string;
@@ -42,15 +43,10 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
         {!isCreating && (
           <Select
             label="Category"
-            items={[
-              { label: "Mental Health", value: "Mental Health" },
-              { label: "Productivity", value: "Productivity" },
-              { label: "Relationships", value: "Relationships" },
-              { label: "Health and Fitness", value: "Health and Fitness" },
-              { label: "Spiritual Practice", value: "Spiritual Practice" },
-              { label: "Personal Interest", value: "Personal Interest" },
-              { label: "Other", value: "Other" },
-            ]}
+            items={categories.map((category) => ({
+              label: category.name,
+              value: category.name,
+            }))}
             value={category}
             placeholder="Select category"
             setValue={setCategory}

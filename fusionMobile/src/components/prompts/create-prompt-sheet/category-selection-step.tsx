@@ -3,15 +3,7 @@ import { Text, View } from "react-native";
 
 import { Tag } from "../../tag";
 
-const categories = [
-  "Mental Health",
-  "Productivity",
-  "Relationships",
-  "Health and Fitness",
-  "Spiritual Practice",
-  "Personal Interest",
-  "Other",
-];
+import { categories } from "~/config";
 
 interface CategorySelectionStepProps {
   selectedCategory: string;
@@ -35,14 +27,15 @@ export const CategorySelectionStep: FC<CategorySelectionStepProps> = ({
 
       <View className="flex flex-row gap-2.5 space-y-2.5 flex-wrap py-5">
         {categories.map((category) => {
-          const isActive = category === selectedCategory;
+          const name = category.name;
+          const isActive = name === selectedCategory;
 
           return (
             <Tag
-              key={category}
-              title={category}
+              key={name}
+              title={name}
               isActive={isActive}
-              onPress={() => setSelectedCategory(category)}
+              onPress={() => setSelectedCategory(name)}
             />
           );
         })}
