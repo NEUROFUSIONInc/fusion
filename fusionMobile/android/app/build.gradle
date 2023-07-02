@@ -118,7 +118,7 @@ android {
         applicationId 'com.neurofusion.fusion'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
+        versionCode 25
         versionName "1.0.0"
     }
 

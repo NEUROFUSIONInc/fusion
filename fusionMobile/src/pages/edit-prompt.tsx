@@ -101,7 +101,7 @@ export function EditPromptScreen() {
       notificationConfig_endTime: end.format("HH:mm"),
       additionalMeta: {
         category: category!,
-        isNotificationActive: prompt?.additionalMeta.isNotificationActive,
+        isNotificationActive: prompt?.additionalMeta?.isNotificationActive,
         customOptionText: customOptions.join(";"),
       },
     };
