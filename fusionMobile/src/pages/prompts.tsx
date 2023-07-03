@@ -91,8 +91,12 @@ export const PromptsScreen = () => {
         </View>
       )}
       {!isLoading && savedPrompts && savedPrompts?.length > 0 && (
-        <View>
-          <ScrollView horizontal className="flex gap-x-3 gap-y-3 pl-2">
+        <View className="mb-10">
+          <ScrollView
+            horizontal
+            className="flex gap-x-3 gap-y-3 pl-2"
+            showsHorizontalScrollIndicator={false}
+          >
             {categories.map((category) => {
               const name = category.name;
               return (

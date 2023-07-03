@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  ScrollView,
 } from "react-native";
 
 import { PromptResponse } from "~/@types";
@@ -27,7 +28,6 @@ const yesNoOptions = [
 export function PromptEntryScreen() {
   const route = useRoute<RouteProp<"PromptEntry">>();
   const navigation = useNavigation<PromptScreenNavigationProp>();
-  navigation.setOptions({});
   const { data: prompt } = usePrompt(route.params.promptUuid);
   const [userResponse, setUserResponse] = React.useState("");
   const [additonalNotes, setAdditionalNotes] = React.useState("");
@@ -35,6 +35,10 @@ export function PromptEntryScreen() {
   const notificationTriggerTimestamp = route.params.triggerTimestamp
     ? route.params.triggerTimestamp
     : Math.floor(dayjs().unix());
+
+  React.useEffect(() => {
+    navigation.setOptions({});
+  }, []);
 
   React.useEffect(() => {
     const customOptions = prompt?.additionalMeta?.customOptionText;
@@ -121,124 +125,127 @@ export function PromptEntryScreen() {
       behavior="padding"
       className="flex flex-grow flex-col h-full w-full items-stretch justify-center bg-dark px-5"
     >
-      <View className="flex flex-1 justify-center">
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          {prompt && (
-            <View>
-              <View className="mb-5">
-                <Text className="font-sans-bold text-center text-lg text-white">
-                  {prompt.promptText}
-                </Text>
-                <Text className="font-sans text-center text-base text-white/50">
-                  Log this prompt to record a response
-                </Text>
-              </View>
-
-              {/* if the prompt is a yes/no prompt, show the yes/no buttons */}
-              {prompt.responseType === "yesno" && (
-                <View className="flex flex-row justify-evenly mt-5">
-                  {yesNoOptions.map(({ label, value }) => {
-                    return (
-                      <Tag
-                        key={label}
-                        title={label}
-                        isActive={userResponse === value}
-                        handleValueChange={(checked) => {
-                          setUserResponse(checked ? value : "");
-                        }}
-                      />
-                    );
-                  })}
+      <ScrollView>
+        <View className="flex flex-1 justify-center">
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {prompt && (
+              <View>
+                <View className="mb-5">
+                  <Text className="font-sans-bold text-center text-lg text-white">
+                    {prompt.promptText}
+                  </Text>
+                  <Text className="font-sans text-center text-base text-white/50">
+                    Log this prompt to record a response
+                  </Text>
                 </View>
-              )}
 
-              {/* if the prompt is a text prompt, show the text input */}
-              {prompt.responseType === "text" && (
-                <View>
-                  <Input
-                    multiline
-                    numberOfLines={4}
-                    onChangeText={setUserResponse}
-                    value={userResponse}
-                    className="leading-1.5 mx-4"
-                    style={{ height: 144 }}
-                  />
-                </View>
-              )}
-
-              {/* if the prompt is a multiple choice prompt, show the options */}
-              {prompt.responseType === "number" && (
-                <View>
-                  <Input
-                    inputMode="decimal"
-                    keyboardType="decimal-pad"
-                    onChangeText={setUserResponse}
-                    value={userResponse}
-                    className="h-[50] leading-1.5 mx-4"
-                  />
-                </View>
-              )}
-
-              {
-                /* if the prompt is a custom prompt, show the custom options */
-                prompt.responseType === "customOptions" &&
-                  customOptions.length > 0 && (
-                    <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap mx-4 justify-center">
-                      {customOptions.map((option) => (
+                {/* if the prompt is a yes/no prompt, show the yes/no buttons */}
+                {prompt.responseType === "yesno" && (
+                  <View className="flex flex-row justify-evenly mt-5">
+                    {yesNoOptions.map(({ label, value }) => {
+                      return (
                         <Tag
-                          key={option}
-                          title={option}
-                          isActive={
-                            Array.isArray(userResponse) &&
-                            userResponse.includes(option)
-                          }
-                          handleValueChange={() =>
-                            handleCustomOptionChange(option)
-                          }
+                          key={label}
+                          title={label}
+                          isActive={userResponse === value}
+                          handleValueChange={(checked) => {
+                            setUserResponse(checked ? value : "");
+                          }}
                         />
-                      ))}
-                    </View>
-                  )
-              }
-              <View
-                className={`${
-                  prompt?.responseType !== "text" ? "mt-10" : "mt-0"
-                }`}
-              >
-                {prompt?.responseType !== "text" && (
-                  <Input
-                    multiline
-                    numberOfLines={4}
-                    placeholder="Additional notes (optional)"
-                    onChangeText={setAdditionalNotes}
-                    value={additonalNotes}
-                    className="pt-3 leading-1.5 mx-4 mb-8"
-                    style={{ height: 112 }}
-                  />
+                      );
+                    })}
+                  </View>
                 )}
+
+                {/* if the prompt is a text prompt, show the text input */}
+                {prompt.responseType === "text" && (
+                  <View>
+                    <Input
+                      multiline
+                      numberOfLines={4}
+                      onChangeText={setUserResponse}
+                      value={userResponse}
+                      className="leading-1.5 mx-4"
+                      style={{ height: 144 }}
+                    />
+                  </View>
+                )}
+
+                {/* if the prompt is a multiple choice prompt, show the options */}
+                {prompt.responseType === "number" && (
+                  <View>
+                    <Input
+                      inputMode="decimal"
+                      keyboardType="decimal-pad"
+                      onChangeText={setUserResponse}
+                      placeholder="Additional notes (optional)"
+                      value={userResponse}
+                      className="h-[50] leading-1.5 mx-4"
+                    />
+                  </View>
+                )}
+
+                {
+                  /* if the prompt is a custom prompt, show the custom options */
+                  prompt.responseType === "customOptions" &&
+                    customOptions.length > 0 && (
+                      <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap mx-4 justify-center">
+                        {customOptions.map((option) => (
+                          <Tag
+                            key={option}
+                            title={option}
+                            isActive={
+                              Array.isArray(userResponse) &&
+                              userResponse.includes(option)
+                            }
+                            handleValueChange={() =>
+                              handleCustomOptionChange(option)
+                            }
+                          />
+                        ))}
+                      </View>
+                    )
+                }
+                <View
+                  className={`${
+                    prompt?.responseType !== "text" ? "mt-10" : "mt-0"
+                  }`}
+                >
+                  {prompt?.responseType !== "text" && (
+                    <Input
+                      multiline
+                      numberOfLines={4}
+                      placeholder="Additional notes (optional)"
+                      onChangeText={setAdditionalNotes}
+                      value={additonalNotes}
+                      className="pt-3 leading-1.5 mx-4 mb-8"
+                      style={{ height: 112 }}
+                    />
+                  )}
+                </View>
               </View>
-            </View>
-          )}
-        </TouchableWithoutFeedback>
-      </View>
-      <View className="w-full flex flex-col gap-y-6 mb-10 ">
-        <Button
-          title="Log prompt response"
-          fullWidth
-          onPress={handleSavePromptResponse}
-          disabled={
-            userResponse === "" ||
-            (prompt?.responseType === "customOptions" &&
-              JSON.parse(userResponse).length === 0)
-          }
-        />
-        <Button
-          title="Cancel"
-          variant="ghost"
-          fullWidth
-          onPress={() => navigation.navigate("Prompts")}
-        />
-      </View>
+            )}
+          </TouchableWithoutFeedback>
+        </View>
+        <View className="w-full flex flex-col gap-y-6 mb-10 ">
+          <Button
+            title="Log prompt response"
+            fullWidth
+            onPress={handleSavePromptResponse}
+            disabled={
+              userResponse === "" ||
+              (prompt?.responseType === "customOptions" &&
+                JSON.parse(userResponse).length === 0)
+            }
+          />
+          <Button
+            title="Cancel"
+            variant="ghost"
+            fullWidth
+            onPress={() => navigation.navigate("Prompts")}
+          />
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
