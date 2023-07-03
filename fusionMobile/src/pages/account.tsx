@@ -243,11 +243,13 @@ export function AccountScreen() {
             <View className="mt-10 mb-10 gap-y-5 pt-10">
               <Button
                 title="Export Prompts"
+                variant="ghost"
                 fullWidth
                 onPress={async () => await exportData("prompts")}
               />
               <Button
                 title="Export Responses"
+                variant="ghost"
                 fullWidth
                 onPress={async () => await exportData("responses")}
               />
