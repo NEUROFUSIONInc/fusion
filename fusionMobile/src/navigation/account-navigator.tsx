@@ -3,7 +3,6 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 
-import { Logo } from "~/components/logo";
 import { AccountScreen } from "~/pages/account";
 
 export type AccountStackParamList = {
@@ -21,7 +20,7 @@ export const AccountStack = () => {
       <Stack.Screen
         name="Profile"
         component={AccountScreen}
-        options={{ headerTitle: () => <Logo /> }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

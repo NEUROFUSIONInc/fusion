@@ -7,9 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   Alert,
-  TextInput,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
@@ -18,6 +16,7 @@ import {
 } from "react-native";
 
 import { PromptResponse } from "~/@types";
+import { Button, Input, Screen } from "~/components";
 import { promptService, nostrService } from "~/services";
 import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
@@ -172,55 +171,40 @@ export function AccountScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView style={{ width: "100%" }}>
-          <View style={{ alignItems: "center" }}>
-            <Text>Hey there, you're using Fusion anonymously!</Text>
-          </View>
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <Text>
-              We value your privacy and data security. Your prompts and
-              responses are stored solely on your device, not our servers.{" "}
-              {"\n\n"}Rest assured, your entries remain private and inaccessible
-              to anyone else unless you decide to share them.
-            </Text>
-          </View>
-
-          {/* Display npub information */}
-          {/* {nostrAccount && (
-            <Pressable
-              onPress={() =>
-                Alert.alert(
-                  "Your keys",
-                  `privateKey: ${nostrAccount.privkey}\n\n\nYou can use this on other Nostr Clients.`
-                )
-              }
-            >
-              <View style={styles.formSection}>
-                <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
-              </View>
-            </Pressable>
-          )} */}
-
-          {/* Feedback component */}
-          <View style={styles.formSection}>
-            <View style={styles.formHeader}>
-              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-                Feedback
+    <Screen>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={{ width: "100%" }}
+            className="mt-10"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ alignItems: "center" }}>
+              <Text className="font-sans text-center text-base text-white">
+                Hey there, you're using Fusion anonymously!
               </Text>
-              <Text>Help shape how we build!</Text>
+            </View>
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text className="font-sans text-center text-base text-white">
+                We value your privacy and data security.{"\n"}Your prompts and
+                responses are stored solely on your device, not our servers.
+                {"\n\n"}Rest assured, your entries remain private and
+                inaccessible to anyone else unless you decide to share them.
+              </Text>
             </View>
 
-            <TextInput
-              multiline
-              placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
-              style={styles.input}
-              value={feedbackText}
-              onChangeText={setFeedbackText}
-            />
+            {/* Feedback component */}
+            <View className="mt-8">
+              <Input
+                multiline
+                numberOfLines={4}
+                onChangeText={setFeedbackText}
+                placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
+                value={feedbackText}
+                className="pt-3 leading-1.5 mb-8"
+                style={{ height: 112 }}
+              />
 
-            <View style={{ marginTop: 20 }}>
               <Button
                 title="Send Feedback"
                 onPress={async () => {
@@ -251,78 +235,35 @@ export function AccountScreen() {
                     ]
                   );
                 }}
+                fullWidth
               />
             </View>
-          </View>
 
-          {/* Export Data */}
-          <View style={styles.formSection}>
-            <View style={{ marginTop: 20 }}>
+            {/* Export Data */}
+            <View className="mt-10 mb-10 gap-y-5 pt-10">
               <Button
                 title="Export Prompts"
+                fullWidth
                 onPress={async () => await exportData("prompts")}
               />
-            </View>
-            <View style={{ marginTop: 20 }}>
               <Button
                 title="Export Responses"
+                fullWidth
                 onPress={async () => await exportData("responses")}
               />
             </View>
-          </View>
-
-          {/* Opt in to Reasearch Program */}
-          {/* <View style={styles.formSection}>
-            <View style={styles.formHeader}>
-              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-                Research Program
-              </Text>
-            </View>
-
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-            >
-              <Text
-                style={{
-                  lineHeight: 30,
-                }}
-              >
-                Enable brain recordings
-              </Text>
-              <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={brainRecordingEnabled ? "#f5dd4b" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={handleBrainRecordingToggle}
-                value={brainRecordingEnabled}
-              />
-            </View>
-          </View> */}
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     alignItems: "center",
-    padding: 10,
-  },
-  input: {
-    height: 150,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    lineHeight: 25,
-  },
-  formHeader: {
-    alignItems: "center",
-  },
-  formSection: {
-    width: "100%",
     padding: 10,
   },
 });
