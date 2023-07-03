@@ -91,8 +91,8 @@ export const PromptsScreen = () => {
         </View>
       )}
       {!isLoading && savedPrompts && savedPrompts?.length > 0 && (
-        <ScrollView className="flex mt-4 flex-col">
-          <ScrollView horizontal className="flex gap-x-3 mb-8">
+        <View>
+          <ScrollView horizontal className="flex gap-x-3 gap-y-3 pl-2">
             {categories.map((category) => {
               const name = category.name;
               return (
@@ -108,15 +108,17 @@ export const PromptsScreen = () => {
               );
             })}
           </ScrollView>
-          {filteredPrompts?.map((prompt) => (
-            <View key={prompt.uuid} className="my-2">
-              <PromptDetails
-                prompt={prompt}
-                onClick={() => handlePromptExpandSheet(prompt)}
-              />
-            </View>
-          ))}
-        </ScrollView>
+          <ScrollView className="flex mt-4 flex-col">
+            {filteredPrompts?.map((prompt) => (
+              <View key={prompt.uuid} className="my-2">
+                <PromptDetails
+                  prompt={prompt}
+                  onClick={() => handlePromptExpandSheet(prompt)}
+                />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
       )}
 
       <Portal>
