@@ -6,7 +6,7 @@ import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { Alert, Platform, StatusBar } from "react-native";
+import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { FontLoader } from "./FontLoader";
@@ -24,11 +24,21 @@ const registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
   if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
+    Alert.alert(
+      "Notification Permission",
+      "We need your permission to send you notifications based on your prompt settings.",
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          },
+        },
+      ]
+    );
   }
   if (finalStatus !== "granted") {
-    Alert.alert("Error", "Failed to get push token for push notification!");
     return false;
   }
 
@@ -73,8 +83,16 @@ function App() {
       const permissionStatus = await registerForPushNotificationsAsync();
       if (!permissionStatus) {
         Alert.alert(
-          "Error",
-          "Failed to register for push notifications, please quit, turn on notifications for fusion & restart the app"
+          "Enable notifications",
+          "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
+          [
+            {
+              text: "OK",
+              onPress: async () => {
+                Linking.openURL("app-settings:Fusion");
+              },
+            },
+          ]
         );
         return;
       }
