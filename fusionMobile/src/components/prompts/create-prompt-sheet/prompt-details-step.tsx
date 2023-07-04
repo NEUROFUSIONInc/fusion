@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { Text, View } from "react-native";
 
 import { Input } from "../../input";
@@ -31,6 +31,24 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   setCategory,
   isCreating = true,
 }) => {
+  const [customOptionsText, setCustomOptionsText] = useState(
+    customOptions.join(";")
+  );
+
+  useCallback(() => {
+    setCustomOptionsText(customOptions.join(";"));
+  }, [customOptions]);
+
+  const handleCustomOptionChange = (text: string) => {
+    setCustomOptionsText(text);
+    const arr = text
+      .split(" ")
+      .join("")
+      .split(";")
+      .filter((str) => str !== "");
+    setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
+  };
+
   return (
     <View className="flex-1 flex-col space-y-5">
       {isCreating && (
@@ -91,15 +109,8 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
               <Input
                 label="Enter your options"
                 placeholder="Separate your values with ';'"
-                value={customOptions.join(";")}
-                onChangeText={(text) => {
-                  const arr = text
-                    .split(" ")
-                    .join("")
-                    .split(";")
-                    .filter((str) => str !== "");
-                  setCustomOptions(arr); // semicolon separated parsing into CustomOptions List
-                }}
+                value={customOptionsText}
+                onChangeText={(text) => handleCustomOptionChange(text)}
               />
               {customOptions.length > 0 && (
                 <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap">
