@@ -294,7 +294,8 @@ class PromptService {
               count_per_day: prompt.notificationConfig_countPerDay,
             }),
             extras: JSON.stringify({
-              isNotificationActive,
+              isNotificationActive: prompt.additionalMeta?.isNotificationActive,
+              category: prompt.additionalMeta?.category,
             }),
           }
         );
@@ -320,7 +321,7 @@ class PromptService {
     // write to sqlite
     try {
       const storeDetailsInDb = () => {
-        return new Promise<Boolean>((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
               "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?);",
