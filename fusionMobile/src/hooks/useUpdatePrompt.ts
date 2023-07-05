@@ -9,11 +9,11 @@ export const useUpdatePrompt = (id: string) => {
   const mutation = useMutation({
     mutationFn: promptService.savePrompt,
     onSuccess: async (data) => {
-      await queryClient.cancelQueries({ queryKey: ["prompts", id] });
+      await queryClient.cancelQueries({ queryKey: ["prompt", id] });
 
-      const previousPrompt = queryClient.getQueryData<Prompt>(["prompts", id]);
+      const previousPrompt = queryClient.getQueryData<Prompt>(["prompt", id]);
       if (previousPrompt && data) {
-        queryClient.setQueryData<Prompt>(["prompts", id], data);
+        queryClient.setQueryData<Prompt>(["prompt", id], data);
       }
 
       const previousPrompts = queryClient.getQueryData<Prompt[]>(["prompts"]);
@@ -34,7 +34,7 @@ export const useUpdatePrompt = (id: string) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["prompts", id],
+        queryKey: ["prompt", id],
       });
     },
   });

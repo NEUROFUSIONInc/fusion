@@ -9,10 +9,10 @@ export const useUpdatePromptNotificationState = (id: string) => {
   const mutation = useMutation({
     mutationFn: promptService.updatePromptNotificationState,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ["prompts", id] });
+      await queryClient.cancelQueries({ queryKey: ["prompt", id] });
 
       // Snapshot the previous value
-      const previousPrompt = queryClient.getQueryData<Prompt>(["prompts", id]);
+      const previousPrompt = queryClient.getQueryData<Prompt>(["prompt", id]);
       // Optimistically update to the new value
       if (previousPrompt) {
         const data: Prompt = {
@@ -23,7 +23,7 @@ export const useUpdatePromptNotificationState = (id: string) => {
             isNotificationActive: variables.isNotificationActive,
           },
         };
-        queryClient.setQueryData<Prompt>(["prompts", id], data);
+        queryClient.setQueryData<Prompt>(["prompt", id], data);
       }
 
       const previousPrompts = queryClient.getQueryData<Prompt[]>(["prompts"]);
