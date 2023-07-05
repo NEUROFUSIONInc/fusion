@@ -73,6 +73,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
     "react-native-switch-selector": "^2.3.0",
+    "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^9.2.0",
     "react-native-zip-archive": "^6.0.9",
     "text-encoding": "^0.7.0",
