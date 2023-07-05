@@ -1,19 +1,11 @@
-import React from "react";
-
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import React, { useState } from "react";
+import React from "react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 
+import { Experiment } from "~/components/features/lab";
 import { DashboardLayout } from "~/components/layouts";
-import { Experiment } from "~/components/lab";
-
-interface Channel {
-  name: string;
-  x: number;
-  y: number;
-}
 
 const PlaygroundPage: NextPage = () => {
   return (

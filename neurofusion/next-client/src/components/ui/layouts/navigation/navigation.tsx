@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ArrowRight, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { FC, useState } from "react";
 import { useWindowScrollPosition } from "rooks";
@@ -9,7 +9,6 @@ import { Logo } from "../../logo/logo";
 
 import { navigationLinks } from "./data";
 import { MobileMenu } from "./mobile-menu";
-import { ButtonLink } from "../../link/button-link";
 
 export const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

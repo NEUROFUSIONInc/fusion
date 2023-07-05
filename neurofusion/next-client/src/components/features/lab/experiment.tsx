@@ -1,11 +1,10 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/self-closing-comp */
 import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
 import { FC, useState, useEffect } from "react";
+
 import { Button } from "../../ui/button/button";
 
-import { neurosityService, neurosity } from "~/services";
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
+import { neurosityService, neurosity } from "~/services";
 
 export const Experiment: FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -33,8 +32,8 @@ export const Experiment: FC = () => {
         setConnectedDevice(connectedDevice);
       })();
 
-      (async () => {
-        await neurosity.status().subscribe((status) => {
+      (() => {
+        neurosity.status().subscribe((status) => {
           if (status.state !== deviceStatus) {
             let deviceState: any = status.state;
             if (status.sleepMode) {
@@ -51,16 +50,14 @@ export const Experiment: FC = () => {
 
   return (
     <div>
-      <>
-        <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
-        <p>Device Status: {deviceStatus}</p>
-      </>
+      <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
+      <p>Device Status: {deviceStatus}</p>
 
       {/* add live signal quality */}
 
       <h1 style={{ marginTop: 10 }}>Flappy Birds</h1>
 
-      <p>Press 'Spacebar' to start the game. We will be recording brain activity</p>
+      <p>Press &apos;Spacebar&apos; to start the game. We will be recording brain activity</p>
       <>
         <iframe
           src="https://codesandbox.io/embed/flappy-bird-forked-h2h00z?fontsize=14&hidenavigation=1&theme=dark"
@@ -68,7 +65,7 @@ export const Experiment: FC = () => {
           title="flappy-bird"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
           sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe>
+        />
       </>
       <>
         {/* TODO: we need a section that throws an error if the eeg device isn't active */}
@@ -79,7 +76,6 @@ export const Experiment: FC = () => {
                 onClick={() => {
                   // stop recording & save eeg data
                   setIsRecording(false);
-
                   // stop neurosity recording
                   stopNeurosityRecording();
                 }}
@@ -91,7 +87,6 @@ export const Experiment: FC = () => {
                 onClick={async () => {
                   // record eeg data
                   setIsRecording(true);
-
                   // start neurosity recording
                   await startNeurosityRecording();
                 }}
