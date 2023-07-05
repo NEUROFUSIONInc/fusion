@@ -8,6 +8,7 @@ import * as Notifications from "expo-notifications";
 import React from "react";
 import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
@@ -16,6 +17,7 @@ import { maskPromptId, appInsights } from "./src/utils";
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import { PromptContextProvider } from "~/contexts";
 import { notificationService, promptService } from "~/services";
+import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
 
@@ -264,6 +266,7 @@ function App() {
           </PromptContextProvider>
         </QueryClientProvider>
       </FontLoader>
+      <Toast config={toastConfig} position="bottom" />
     </GestureHandlerRootView>
   );
 }
