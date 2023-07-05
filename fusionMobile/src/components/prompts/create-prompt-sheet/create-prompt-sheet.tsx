@@ -245,6 +245,7 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
               responseType={responseType}
               setResponseType={setResponseType}
               customOptions={customOptions}
+              category={category}
               setCustomOptions={setCustomOptions}
             />
           ) : activeStep === 2 ? (

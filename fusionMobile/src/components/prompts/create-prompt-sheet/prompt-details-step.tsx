@@ -16,7 +16,7 @@ interface PromptDetailsStepProps {
   customOptions: string[];
   setCustomOptions: Dispatch<SetStateAction<string[]>>;
   category: string | null;
-  setCategory: Dispatch<SetStateAction<string | null>>;
+  setCategory?: Dispatch<SetStateAction<string | null>>;
   isCreating?: boolean;
 }
 
@@ -58,7 +58,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
       )}
 
       <View>
-        {!isCreating && (
+        {!isCreating && setCategory && (
           <Select
             label="Category"
             items={categories.map((category) => ({
