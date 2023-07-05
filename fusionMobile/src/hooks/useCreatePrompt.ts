@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 import { Prompt } from "~/@types";
 import { promptService } from "~/services";
@@ -20,6 +21,12 @@ export const useCreatePrompt = () => {
           [...previousPrompts, data]
         );
       }
+
+      Toast.show({
+        type: "success",
+        text1: "Prompt created",
+        text2: "Your prompt has been created successfully",
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({

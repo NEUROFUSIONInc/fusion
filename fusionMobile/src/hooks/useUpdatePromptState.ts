@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import { Prompt } from "~/@types";
 import { promptService } from "~/services";
@@ -42,12 +43,22 @@ export const useUpdatePromptNotificationState = (id: string) => {
         queryClient.setQueryData<Prompt[]>(["prompts"], data);
       }
     },
+    onSuccess: (data) => {
+      const isNotificationActive = data?.additionalMeta?.isNotificationActive;
+      Toast.show({
+        type: "notification-active-info",
+        text1: "Prompt updated",
+        text2: `Your prompt has been successfully ${
+          isNotificationActive ? "enabled" : "paused"
+        }`,
+        props: {
+          isNotificationActive,
+        },
+      });
+    },
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["prompts"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["prompts", id],
       });
     },
   });

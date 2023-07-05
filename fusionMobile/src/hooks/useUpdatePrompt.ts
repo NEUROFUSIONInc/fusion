@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 import { Prompt } from "~/@types";
 import { promptService } from "~/services";
@@ -24,6 +25,12 @@ export const useUpdatePrompt = (id: string) => {
           )
         );
       }
+
+      Toast.show({
+        type: "success",
+        text1: "Prompt updated",
+        text2: "Your prompt has been updated successfully",
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({
