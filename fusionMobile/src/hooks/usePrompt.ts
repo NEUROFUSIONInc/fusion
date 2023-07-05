@@ -5,7 +5,7 @@ import { promptService } from "~/services";
 
 export const usePrompt = (id: string, defaultPrompt?: Prompt) => {
   const queryInfo = useQuery({
-    queryKey: ["prompts", id],
+    queryKey: ["prompt", id],
     queryFn: () => promptService.getPrompt(id),
     enabled: Boolean(id),
     initialData: defaultPrompt,

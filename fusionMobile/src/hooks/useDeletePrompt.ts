@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import { Prompt } from "~/@types";
 import { promptService } from "~/services";
@@ -19,6 +20,12 @@ export const useDeletePrompt = () => {
           [...previousPrompts.filter((prompt) => prompt.uuid !== id)]
         );
       }
+
+      Toast.show({
+        type: "success",
+        text1: "Prompt deleted",
+        text2: "Your prompt has been deleted successfully",
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({
