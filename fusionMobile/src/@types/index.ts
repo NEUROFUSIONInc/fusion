@@ -65,3 +65,9 @@ export interface PromptResponseWithEvent {
 }
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
+export interface UserAccount {
+  npub: string;
+  pubkey: string;
+  privkey: string;
+}

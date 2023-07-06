@@ -13,3 +13,5 @@ export * from "./pencil";
 export * from "./trash";
 export * from "./location";
 export * from "./notebook";
+export * from "./settings";
+export * from "./person";
