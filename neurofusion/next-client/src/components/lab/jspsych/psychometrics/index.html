@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script> 
+      function loadjscssfile(filename){
+      if (filename.endsWith(".js")){ //if filename is a external JavaScript file
+        var fileref=document.createElement('script')
+        fileref.setAttribute("type","text/javascript")
+        fileref.setAttribute("src", filename)
+      }
+      else if (filename.endsWith(".css")){ //if filename is an external CSS file
+        var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename)
+      }
+      if (typeof fileref!="undefined")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+      }
+
+      
+      var localFiles = ["Stroop.js"]
+
+      if(window.location.href.includes("api")){
+        param = new URLSearchParams(window.location.href.substring(window.location.href.lastIndexOf("?")));
+        localFiles = localFiles.map(element => 
+           `/api/CDN?id=${param.get("id")}&file=${element}`
+        );
+      }
+        localFiles.forEach(element => { 
+          console.log(element)
+          loadjscssfile(element)
+        }
+          );
+      
+    
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css"
+    />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+          background-color: #fafafa;
+        }
+        .jspsych-display-element {
+           font-size: xx-large;
+           font-family: sans;
+           font-weight: bold
+        }
+    </style>
+  </head>
+  <body></body>
+</html>
