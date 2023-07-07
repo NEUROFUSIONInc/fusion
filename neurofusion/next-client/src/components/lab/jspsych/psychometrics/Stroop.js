@@ -21,7 +21,7 @@ var jsPsych = initJsPsych({on_finish: function() {
 
 var colours = ['red', 'green', 'blue', 'yellow'];
 
-var n_trials = 2;
+var n_trials = 5;
 
 // returns a JavaScript object with { text: ...., colour: .... }
 // using a random colour (text is the same as colour)
@@ -70,6 +70,7 @@ var iti = {
 }
 
 var keymap = {'r':0,'g':1,'b':2,'y':3}
+// keymap.map((x,y) => {y:x})
 document.addEventListener('keypress', function(event) { // Allows dual inputs
     if(document.getElementsByClassName("keyboardToBtn").length==0) return
     if (event.key in keymap) {
@@ -119,7 +120,17 @@ for (var i=0; i<n_trials; i++) {
 }
 
 
-
+// window.addEventListener('message', (event) => {
+//     // IMPORTANT: Check the origin of the data! 
+//     // You should probably not use '*', but restrict it to certain domains:
+//     if (event.origin.startsWith('https://localhost')) { 
+//       // The data sent from the iframe
+//       let data = event.data;
+  
+//       // Do something with the data
+//       console.log(data);
+//     }
+//   });
 
 jsPsych.run(trials)
 // js
