@@ -13,6 +13,71 @@ function mapElapsedToUnix(data){
 
 }
 
+fixation = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: '+',
+    trial_duration: 500,
+    response_ends_trial: false
+};
+
+// blank (ITI stands for "inter trial interval")
+iti = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: '',
+  trial_duration: 250,
+  response_ends_trial: false
+}
+init = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: '',
+    trial_duration: 0,
+    response_ends_trial: false,
+    on_finish: function(data){
+        data.unixTimestamp = Date.now();
+    }
+}
+
+class experimentGenerator{
+    constructor(jsPsych,trialGenerator,instructions = null,feedBack = false, timeLimit=0,trialCountLimit=20){
+        this.jsPsych = jsPsych;
+        this.trials = []
+        instructions = null
+        if(instructions!=null) this.trials.push(instructions);
+        console.log(this.trials)
+        this.trials.push(init)
+
+        let fixation_ = fixation
+
+        if(timeLimit!=0){
+            init.on_finish = function(data){
+                data.unixTimestamp = Date.now();
+                setTimeout(jsPsych.endExperiment,timeLimit*1000)
+            }
+
+        }
+
+        if(feedBack){ 
+            fixation_.trial_duration = 750;
+            fixation_.stimulus = function () {
+                return jsPsych.data.get().last(1).trials[0].correct ? "Correct" : "Incorrect"
+            };
+        
+        }
+
+        for(let i = 0; i < trialCountLimit; ++i){
+            this.trials.push(...trialGenerator.next().value)
+            if(!feedBack) this.trials.push(iti)
+            this.trials.push(fixation_)
+        }
+    }
+
+    run(){
+        jsPsych.run(this.trials)
+    }
+
+}
+
+
 
 var jsPsych = initJsPsych({on_finish: function() {
     window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), '*');
@@ -54,22 +119,14 @@ var instructions = {
     show_clickable_nav: true
 }
 
-var fixation = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: '+',
-    trial_duration: 500,
-    response_ends_trial: false
-};
 
-// blank (ITI stands for "inter trial interval")
-var iti = {
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: '',
-  trial_duration: 250,
-  response_ends_trial: false
-}
 
 var keymap = {'r':0,'g':1,'b':2,'y':3}
+let keymapInv = Object.entries(keymap).reduce((obj, [key, value]) => {
+    obj[value] = key;
+    return obj;
+  }, {});
+  
 // keymap.map((x,y) => {y:x})
 document.addEventListener('keypress', function(event) { // Allows dual inputs
     if(document.getElementsByClassName("keyboardToBtn").length==0) return
@@ -79,44 +136,37 @@ document.addEventListener('keypress', function(event) { // Allows dual inputs
     }
 });
 
-var init = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: '',
-    trial_duration: 0,
-    response_ends_trial: false,
-    on_finish: function(data){
-        data.unixTimestamp = Date.now();
-    }
-  }
+
 
 
 var trials = [instructions,init];//instructions
 // repeat this code n_trials times
-for (var i=0; i<n_trials; i++) {
-    var values;
-    // Math.random returns a random number between 0 and 1. Use this to decide
-    // whether the current trial is congruent or incongruent.
-    if (Math.random() < 0.5) {
-        values = congruent();
-    } else {
-        values = incongruent();
-    }
-    var trial = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: 
-            
-             '<p class="keyboardToBtn" style="color: '+values.colour+'">'+values.text+'</p>',
-        // 'choices' restricts the available responses for the participant
-        choices: ['r','g','b','y'],
-        data: values,
-        on_finish: function(data){
-            console.log(data)
-            // data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+ function* stroopGen() {
+    while(true){
+        var values;
+        // Math.random returns a random number between 0 and 1. Use this to decide
+        // whether the current trial is congruent or incongruent.
+        if (Math.random() < 0.5) {
+            values = congruent();
+        } else {
+            values = incongruent();
         }
-    };
-    trials.push(iti);
-    trials.push(fixation);
-    trials.push(trial);
+        var trial = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 
+                
+                '<p class="keyboardToBtn" style="color: '+values.colour+'">'+values.text+'</p>',
+            // 'choices' restricts the available responses for the participant
+            choices: ['r','g','b','y'],
+            data: values,
+            on_finish: function(data){
+                console.log(data)
+                data.response = keymapInv[data.response]
+                data.correct = data.colour[0] == data.response
+            }
+        };
+        yield [trial]
+    }
 }
 
 
@@ -132,6 +182,7 @@ for (var i=0; i<n_trials; i++) {
 //     }
 //   });
 
-jsPsych.run(trials)
+let stroopTest = new experimentGenerator(jsPsych,stroopGen(),instructions = instructions,feedBack = true, timeLimit=10,trialCountLimit=20)
+stroopTest.run()
 // js
 // jsPsych.data.displayData('csv')
