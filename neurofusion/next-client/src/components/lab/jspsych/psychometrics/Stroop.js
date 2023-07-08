@@ -37,6 +37,16 @@ init = {
     }
 }
 
+function countDownGen(seconds){
+    document.getElementById("countDown").getElementsByTagName("p")[0].innerHTML = seconds + "s"
+    if(seconds==0){
+        document.getElementById("countDown").getElementsByTagName("p")[0].style.visibility = false;
+        return
+    }   
+    setTimeout(countDownGen,1000,seconds-1)
+
+}
+
 class experimentGenerator{
     constructor(jsPsych,trialGenerator,instructions = null,feedBack = false, timeLimit=0,trialCountLimit=20){
         this.jsPsych = jsPsych;
@@ -52,7 +62,9 @@ class experimentGenerator{
             init.on_finish = function(data){
                 data.unixTimestamp = Date.now();
                 setTimeout(jsPsych.endExperiment,timeLimit*1000)
+                countDownGen(timeLimit);
             }
+            
 
         }
 
@@ -82,7 +94,7 @@ class experimentGenerator{
 var jsPsych = initJsPsych({on_finish: function() {
     window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), '*');
     console.log(mapElapsedToUnix(jsPsych.data.get()));
-  }});
+  },display_element:"jspsych-container"});
 
 var colours = ['red', 'green', 'blue', 'yellow'];
 
@@ -168,6 +180,33 @@ var trials = [instructions,init];//instructions
         yield [trial]
     }
 }
+function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function* mathGen() {
+    while(true){
+        var values;
+        // Math.random returns a random number between 0 and 1. Use this to decide
+        // whether the current trial is congruent or incongruent.
+        values = {"num1":randomIntFromInterval(10,100),"num2":randomIntFromInterval(10,100)};
+        values["answer"] = values.num1 + values.num2;
+        var trial = {
+            type: jsPsychSurveyText,
+            questions: [
+                {prompt: values.num1+" + "+values.num2+" =", required: true, name:"response"}
+            ],
+            data:values,
+            // 'choices' restricts the available responses for the participant
+            on_finish: function(data){
+                console.log(data)
+                if("response" in data)
+                    data.correct = data.response.response == data.answer
+            }
+        };
+        yield [trial]
+    }
+}
 
 
 // window.addEventListener('message', (event) => {
@@ -182,7 +221,7 @@ var trials = [instructions,init];//instructions
 //     }
 //   });
 
-let stroopTest = new experimentGenerator(jsPsych,stroopGen(),instructions = instructions,feedBack = true, timeLimit=10,trialCountLimit=20)
+let stroopTest = new experimentGenerator(jsPsych,mathGen(),instructions = instructions,feedBack = true, timeLimit=30,trialCountLimit=20)
 stroopTest.run()
 // js
 // jsPsych.data.displayData('csv')
