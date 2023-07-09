@@ -15,3 +15,5 @@ export * from "./location";
 export * from "./notebook";
 export * from "./settings";
 export * from "./person";
+export * from "./help";
+export * from "./chevron-down";

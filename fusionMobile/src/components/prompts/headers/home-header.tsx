@@ -28,15 +28,17 @@ export const HomeHeader = () => {
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<Person />}
-        onPress={() => console.log("nothing yet")}
-      />
-      <Text className="font-sans text-[25px] text-white">
-        {nostrAccount?.npub.slice(0, 5) + ":" + nostrAccount?.npub.slice(-5)}
-      </Text>
+      <View className="flex flex-row">
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={<Person />}
+          onPress={() => console.log("nothing yet")}
+        />
+        <Text className="font-sans text-base text-white text-[20px] ml-2">
+          {nostrAccount?.npub.slice(0, 5) + ":" + nostrAccount?.npub.slice(-5)}
+        </Text>
+      </View>
       <Button
         variant="ghost"
         size="icon"

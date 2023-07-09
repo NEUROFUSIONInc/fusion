@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 import { Screen } from "../components";
 
@@ -18,7 +18,12 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <View />
+      <View className="flex flex-row w-full justify-between p-5">
+        <Text className="text-base font-sans-bold text-white">This week</Text>
+        <Text className="text-base font-sans text-[#A7ED58]">
+          View all stats
+        </Text>
+      </View>
     </Screen>
   );
 }
