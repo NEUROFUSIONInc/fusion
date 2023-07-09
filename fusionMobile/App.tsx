@@ -1,20 +1,23 @@
 import { PortalProvider } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import * as SplashScreen from "expo-splash-screen";
 import React from "react";
-import { Alert, Platform, StatusBar } from "react-native";
+import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
 import { maskPromptId, appInsights } from "./src/utils";
 
+import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import { PromptContextProvider } from "~/contexts";
 import { notificationService, promptService } from "~/services";
+import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
 
@@ -23,11 +26,21 @@ const registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
   if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
+    Alert.alert(
+      "Notification Permission",
+      "We need your permission to send you notifications based on your prompt settings.",
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          },
+        },
+      ]
+    );
   }
   if (finalStatus !== "granted") {
-    Alert.alert("Error", "Failed to get push token for push notification!");
     return false;
   }
 
@@ -44,7 +57,7 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 Notifications.setNotificationHandler({
-  handleNotification: async (notification) => {
+  handleNotification: async () => {
     return {
       shouldShowAlert: true,
       shouldPlaySound: false,
@@ -53,7 +66,12 @@ Notifications.setNotificationHandler({
   },
 });
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync(); - temp remove since asking for notification permission on first load causes hiding splash screen to fail
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: QUERY_OPTIONS_DEFAULT,
+});
 
 function App() {
   const responseListener = React.useRef<
@@ -67,8 +85,16 @@ function App() {
       const permissionStatus = await registerForPushNotificationsAsync();
       if (!permissionStatus) {
         Alert.alert(
-          "Error",
-          "Failed to register for push notifications, please quit, turn on notifications for fusion & restart the app"
+          "Enable notifications",
+          "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
+          [
+            {
+              text: "OK",
+              onPress: async () => {
+                Linking.openURL("app-settings:Fusion");
+              },
+            },
+          ]
         );
         return;
       }
@@ -232,12 +258,15 @@ function App() {
     <GestureHandlerRootView className="flex flex-1 flex-grow-1">
       <FontLoader>
         <StatusBar barStyle="light-content" />
-        <PromptContextProvider>
-          <PortalProvider>
-            <CustomNavigation />
-          </PortalProvider>
-        </PromptContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <PromptContextProvider>
+            <PortalProvider>
+              <CustomNavigation />
+            </PortalProvider>
+          </PromptContextProvider>
+        </QueryClientProvider>
       </FontLoader>
+      <Toast config={toastConfig} position="bottom" />
     </GestureHandlerRootView>
   );
 }

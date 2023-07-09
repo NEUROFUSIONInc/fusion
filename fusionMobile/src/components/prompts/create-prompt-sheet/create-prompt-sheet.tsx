@@ -18,8 +18,7 @@ import { CategorySelectionStep } from "./category-selection-step";
 import { PromptDetailsStep } from "./prompt-details-step";
 
 import { PromptResponseType } from "~/@types";
-import { usePrompts } from "~/hooks";
-import { promptService } from "~/services";
+import { useCreatePrompt } from "~/hooks";
 
 interface CreatePromptSheetProps {
   promptSheetRef: RefObject<RNBottomSheet>;
@@ -28,7 +27,7 @@ interface CreatePromptSheetProps {
 export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   promptSheetRef,
 }) => {
-  const { setSavedPrompts } = usePrompts();
+  const { mutateAsync, isLoading: isCreatingPrompt } = useCreatePrompt();
   const startDate = useMemo(() => dayjs().startOf("day").add(8, "hour"), []);
   const endDate = useMemo(
     () => startDate.endOf("day").subtract(2, "hour").add(1, "minute"),
@@ -40,6 +39,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   const [responseType, setResponseType] = useState<PromptResponseType | null>(
     null
   );
+  const [customOptions, setCustomOptions] = useState<string[]>([]);
+
   const [start, setStart] = useState(startDate);
   const [end, setEnd] = useState(endDate);
   const [days, setDays] = useState(promptSelectionDays);
@@ -63,6 +64,7 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
     setCategory("");
     setPromptText("");
     setResponseType(null);
+    setCustomOptions([]);
     setStart(startDate);
     setEnd(endDate);
     setDays(promptSelectionDays);
@@ -127,22 +129,23 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
   );
 
   const createPrompt = async () => {
-    const res = await promptService.savePrompt({
+    const res = await mutateAsync({
       promptText,
       responseType: responseType!,
       notificationConfig_days: days,
       notificationConfig_countPerDay: promptCount,
       notificationConfig_startTime: start.format("HH:mm"),
       notificationConfig_endTime: end.format("HH:mm"),
+      additionalMeta: {
+        category,
+        isNotificationActive: true,
+        customOptionText: customOptions.join(";"),
+      },
     });
 
     if (res) {
-      const savedPrompts = await promptService.readSavedPrompts();
-      if (savedPrompts) {
-        handleNextStep();
-        setSavedPrompts(savedPrompts);
-        setSuccess(true);
-      }
+      handleNextStep();
+      setSuccess(true);
     }
   };
 
@@ -204,7 +207,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
         success ? "Close" : activeStep < 3 ? "Continue" : "Close"
       }
       primaryButtonProps={{
-        disabled: buttonDisabled,
+        disabled: buttonDisabled || isCreatingPrompt,
+        loading: isCreatingPrompt,
       }}
       onHandlePrimaryButtonPress={
         success
@@ -240,6 +244,9 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
               setPromptText={setPromptText}
               responseType={responseType}
               setResponseType={setResponseType}
+              customOptions={customOptions}
+              category={category}
+              setCustomOptions={setCustomOptions}
             />
           ) : activeStep === 2 ? (
             <View className="flex flex-col">

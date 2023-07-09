@@ -37,15 +37,15 @@ export function FusionChart({ data, prompt }) {
     // set the start date based on the time period
     switch (timePeriod) {
       case "day":
-        setStartDate(startDate.startOf("day"));
+        setStartDate(dayjs().startOf("day"));
         break;
 
       case "week":
-        setStartDate(startDate.startOf("week"));
+        setStartDate(dayjs().startOf("week"));
         break;
 
       case "month":
-        setStartDate(startDate.startOf("month"));
+        setStartDate(dayjs().startOf("month"));
         break;
     }
   }, [timePeriod]);

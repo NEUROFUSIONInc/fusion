@@ -1,15 +1,16 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RouteProp } from "@react-navigation/native";
+import {
+  RouteProp,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
-import { View } from "react-native";
 import type { SvgProps } from "react-native-svg";
 
 import { AccountStack } from "./account-navigator";
-import { HealthStack } from "./health-navigator";
+import { HomeStack } from "./home-navigator";
+import { InsightsStack } from "./insights-navigator";
 import { PromptStack } from "./prompt-navigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { QuestStack } from "./quest-navigator";
 
 import {
   Home as HomeIcon,
@@ -18,7 +19,6 @@ import {
   Users as UsersIcon,
   ChartArcs as ChartArcsIcon,
 } from "~/components";
-import { HomeScreen } from "~/pages";
 
 type TabParamList = {
   Home: undefined;
@@ -56,7 +56,7 @@ export type TabList<T extends keyof TabParamList> = {
 const tabs: TabType[] = [
   {
     name: "Home",
-    component: HomeScreen,
+    component: HomeStack,
     label: "Home",
   },
   {
@@ -66,18 +66,18 @@ const tabs: TabType[] = [
   },
   {
     name: "InsightsNavigator",
-    component: HealthStack,
+    component: InsightsStack,
     label: "Insights",
   },
-  {
-    name: "QuestNavigator",
-    component: QuestStack,
-    label: "Quests",
-  },
+  // {
+  //   name: "QuestNavigator",
+  //   component: QuestStack,
+  //   label: "Quests",
+  // },
   {
     name: "Community",
     component: AccountStack,
-    label: "Community",
+    label: "Account",
   },
 ];
 
@@ -94,26 +94,31 @@ const BarIcon = ({ color, name, ...reset }: BarIconType) => {
 export const CustomNavigation = () => {
   return (
     <CustomTab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarLabel: tabs.find((tab) => tab.name === route.name)?.label,
-        tabBarLabelStyle: {
-          fontFamily: "wsh-reg",
-          fontSize: 12,
-          marginTop: -8,
-        },
-        tabBarActiveTintColor: "white",
-        tabBarStyle: {
-          backgroundColor: "#0B0816",
-          alignItems: "center",
-          marginBottom: 20,
-          paddingHorizontal: 10,
-          borderTopWidth: 1,
-          borderTopColor: "rgba(255, 255, 255, 0.15)",
-        },
-        tabBarIcon: ({ color }) => (
-          <BarIcon name={route.name as keyof TabParamList} color={color} />
-        ),
-      })}
+      screenOptions={({ route }) => {
+        const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+        return {
+          tabBarLabel: tabs.find((tab) => tab.name === route.name)?.label,
+          tabBarLabelStyle: {
+            fontFamily: "wsh-reg",
+            fontSize: 12,
+            marginTop: -8,
+          },
+          tabBarActiveTintColor: "white",
+          tabBarStyle: {
+            backgroundColor: "#0B0816",
+            alignItems: "center",
+            marginBottom: 5,
+            paddingHorizontal: 10,
+            borderTopWidth: 1,
+            borderTopColor: "rgba(255, 255, 255, 0.15)",
+            // display: routeName === "PromptEntry" ? "none" : "flex",
+            display: "flex",
+          },
+          tabBarIcon: ({ color }) => (
+            <BarIcon name={route.name as keyof TabParamList} color={color} />
+          ),
+        };
+      }}
     >
       <CustomTab.Group
         screenOptions={{

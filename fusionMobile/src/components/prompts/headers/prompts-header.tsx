@@ -1,5 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
+import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useRef } from "react";
 import { Text, View } from "react-native";
 
@@ -9,9 +10,12 @@ import { Plus } from "../../icons";
 import { CreatePromptSheet } from "../create-prompt-sheet";
 import { PromptOption } from "../prompt-option";
 
+import { PromptScreenNavigationProp } from "~/navigation";
+
 export const PromptsHeader = () => {
   const bottomSheetRef = useRef<RNBottomSheet>(null);
   const createPromptSheetRef = useRef<RNBottomSheet>(null);
+  const navigation = useNavigation<PromptScreenNavigationProp>();
 
   const handleExpandSheet = useCallback(
     () => bottomSheetRef.current?.expand(),
@@ -27,6 +31,11 @@ export const PromptsHeader = () => {
     createPromptSheetRef.current?.expand();
   }, []);
 
+  const handleQuickAddPrompt = useCallback(() => {
+    bottomSheetRef.current?.close();
+    navigation.navigate("QuickAddPrompts");
+  }, []);
+
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
       <Text className="font-sans-bold text-[26px] text-white">Prompts</Text>
@@ -40,7 +49,10 @@ export const PromptsHeader = () => {
         <BottomSheet ref={bottomSheetRef} snapPoints={["42.5%"]}>
           <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
             <View className="flex flex-col gap-y-2.5 items-center">
-              <PromptOption text="Quick add prompt" onPress={() => {}} />
+              <PromptOption
+                text="Quick add prompt"
+                onPress={handleQuickAddPrompt}
+              />
               <PromptOption
                 text="Create new prompt"
                 onPress={handleCreatePromptSheetOpen}

@@ -1,134 +1,31 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs from "dayjs";
+import PapaParse from "papaparse";
 import React from "react";
-import Linking from "expo-linking";
 import {
   StyleSheet,
   Text,
   View,
-  Button,
   Alert,
-  TextInput,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Pressable,
+  Linking,
+  ScrollView,
 } from "react-native";
-import dayjs from "dayjs";
-import PapaParse from "papaparse";
-import { generatePrivateKey, getPublicKey, nip19, nip04 } from "nostr-tools";
 
-import { Prompt, PromptResponse } from "~/@types";
-import { promptService, nostrService } from "~/services";
+import { PromptResponse } from "~/@types";
+import { Button, Input, Screen } from "~/components";
+import { promptService } from "~/services";
 import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
 
-  const [nostrAccount, setNostrAccount] = React.useState<{
-    npub: string;
-    pubkey: string;
-    privkey: string;
-  } | null>(null);
-
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Account",
     });
-
-    (async () => {
-      setNostrAccount(await nostrService.getNostrAccount());
-      setBrainRecordingEnabled(await getResearchProgramStatus());
-    })();
   }, []);
-
-  React.useEffect(() => {
-    (async () => {
-      if (!nostrAccount) {
-        // generate a new account for user
-        const privkey = generatePrivateKey();
-
-        const pubkey = getPublicKey(privkey);
-        const npub = nip19.npubEncode(pubkey);
-
-        const saveStatus = await nostrService.createNostrAccount(
-          npub,
-          pubkey,
-          privkey
-        );
-        if (saveStatus) {
-          setNostrAccount(await nostrService.getNostrAccount());
-        }
-      } else {
-        // let's query for an event that exists
-        // try {
-        //   // await crypto.ensureSecure();
-        //   await relay.connect();
-        //   let sub = relay.sub(
-        //     [
-        //       {
-        //         kinds: [4],
-        //         "#p": [nostrAccount.pubkey],
-        //         since: Math.floor(now.current / 1000),
-        //       },
-        //     ],
-        //     {}
-        //   );
-        //   sub.on("event", async (event) => {
-        //     console.log("we got the event we wanted:", event);
-        //     console.log("decoding...");
-        //     const decoded = await nip04.decrypt(
-        //       nostrAccount.privkey,
-        //       "fdf7a56cb4113a3a520cad232959838ccc907b593c9f8871e5cce86b18cd6edd",
-        //       event.content
-        //     );
-        //     console.log("access token", decoded);
-        //   });
-        // } catch (error) {
-        //   console.log(error);
-        // }
-        // try {
-        //   // make api call to backend server to get a token for account
-        //   const res = await axios.post("http://localhost:4000/api/nostrlogin", {
-        //     pubkey: nostrAccount.pubkey,
-        //   });
-        //   console.log(res.status);
-        //   console.log(res.data);
-        // } catch (error) {
-        //   console.log(error);
-        // }
-        // store the authToken in secure store
-      }
-    })();
-  }, [nostrAccount]);
-
-  const [brainRecordingEnabled, setBrainRecordingEnabled] =
-    React.useState(false);
-
-  const getResearchProgramStatus = async () => {
-    const researchProgramMember = await AsyncStorage.getItem(
-      "researchProgramMember"
-    );
-
-    if (researchProgramMember == "true") {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const handleBrainRecordingToggle = async () => {
-    // toggle brain recording value
-    console.log(
-      "about to toggle brain recording value from",
-      brainRecordingEnabled
-    );
-    if (brainRecordingEnabled == true) {
-      await AsyncStorage.setItem("researchProgramMember", "false");
-    } else {
-      await AsyncStorage.setItem("researchProgramMember", "true");
-    }
-    setBrainRecordingEnabled(!brainRecordingEnabled);
-  };
 
   const exportData = async (dataType: string) => {
     // get all the available prompts
@@ -142,7 +39,7 @@ export function AccountScreen() {
       }
 
       const exportTimestamp = dayjs().unix().toString();
-      if (dataType == "prompts") {
+      if (dataType === "prompts") {
         console.log("exporting prompts");
         const maskingPromptIds = prompts.map(async (prompt) => {
           return (prompt.uuid = await maskPromptId(prompt.uuid));
@@ -154,7 +51,7 @@ export function AccountScreen() {
           promptsCsv,
           true
         );
-      } else if (dataType == "responses") {
+      } else if (dataType === "responses") {
         console.log("exporting responses");
         // generare & write response_<timestamp>.csv
         const combinedResponses: PromptResponse[] = [];
@@ -172,47 +69,40 @@ export function AccountScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ width: "100%" }}>
-          <View style={{ alignItems: "center" }}>
-            <Text>Hey there, you're using Fusion anonymously!</Text>
-          </View>
-
-          {/* Display npub information */}
-          {nostrAccount && (
-            <Pressable
-              onPress={() =>
-                Alert.alert(
-                  "Your keys",
-                  `privateKey: ${nostrAccount.privkey}\n\n\nYou can use this on other Nostr Clients.`
-                )
-              }
-            >
-              <View style={styles.formSection}>
-                <Text style={{ lineHeight: 30 }}>{nostrAccount.npub}</Text>
-              </View>
-            </Pressable>
-          )}
-
-          {/* Feedback component */}
-          <View style={styles.formSection}>
-            <View style={styles.formHeader}>
-              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-                Feedback
+    <Screen>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={{ width: "100%" }}
+            className="mt-10"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ alignItems: "center" }}>
+              <Text className="font-sans text-center text-base text-white">
+                Hey there, you're using Fusion anonymously!
               </Text>
-              <Text>Help shape how we build!</Text>
+            </View>
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text className="font-sans text-center text-base text-white">
+                We value your privacy and data security.{"\n"}Your prompts and
+                responses are stored solely on your device, not our servers.
+                {"\n\n"}Rest assured, your entries remain private and
+                inaccessible to anyone else unless you decide to share them.
+              </Text>
             </View>
 
-            <TextInput
-              multiline
-              placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
-              style={styles.input}
-              value={feedbackText}
-              onChangeText={setFeedbackText}
-            />
+            {/* Feedback component */}
+            <View className="mt-8">
+              <Input
+                multiline
+                numberOfLines={4}
+                onChangeText={setFeedbackText}
+                placeholder="Have an idea for something you'd like to see? Or question? Type in here!"
+                value={feedbackText}
+                className="pt-3 leading-1.5 mb-8"
+                style={{ height: 112 }}
+              />
 
-            <View style={{ marginTop: 20 }}>
               <Button
                 title="Send Feedback"
                 onPress={async () => {
@@ -243,78 +133,37 @@ export function AccountScreen() {
                     ]
                   );
                 }}
+                fullWidth
               />
             </View>
-          </View>
 
-          {/* Export Data */}
-          <View style={styles.formSection}>
-            <View style={{ marginTop: 20 }}>
+            {/* Export Data */}
+            <View className="mt-10 mb-10 gap-y-5 pt-10">
               <Button
                 title="Export Prompts"
+                variant="ghost"
+                fullWidth
                 onPress={async () => await exportData("prompts")}
               />
-            </View>
-            <View style={{ marginTop: 20 }}>
               <Button
                 title="Export Responses"
+                variant="ghost"
+                fullWidth
                 onPress={async () => await exportData("responses")}
               />
             </View>
-          </View>
-
-          {/* Opt in to Reasearch Program */}
-          {/* <View style={styles.formSection}>
-            <View style={styles.formHeader}>
-              <Text style={{ fontWeight: "bold", fontSize: 30, marginTop: 10 }}>
-                Research Program
-              </Text>
-            </View>
-
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-            >
-              <Text
-                style={{
-                  lineHeight: 30,
-                }}
-              >
-                Enable brain recordings
-              </Text>
-              <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={brainRecordingEnabled ? "#f5dd4b" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={handleBrainRecordingToggle}
-                value={brainRecordingEnabled}
-              />
-            </View>
-          </View> */}
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     alignItems: "center",
-    padding: 10,
-  },
-  input: {
-    height: 150,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    lineHeight: 25,
-  },
-  formHeader: {
-    alignItems: "center",
-  },
-  formSection: {
-    width: "100%",
     padding: 10,
   },
 });

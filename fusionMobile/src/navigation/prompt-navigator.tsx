@@ -4,26 +4,31 @@ import {
 } from "@react-navigation/native-stack";
 
 import { Prompt } from "~/@types";
-import { PromptsHeader } from "~/components";
+import {
+  EditPromptHeader,
+  PromptsHeader,
+  QuickAddPromptsHeader,
+} from "~/components";
 import {
   PromptsScreen,
-  PromptScreen,
+  EditPromptScreen,
   PromptEntryScreen,
   ResponsesScreen,
+  QuickAddPromptsScreen,
 } from "~/pages";
 
 export type PromptStackParamList = {
   Prompts: undefined;
-  AuthorPrompt:
+  EditPrompt:
     | {
-        prompt?: Prompt;
-        promptText?: string;
-        responseType?: string;
-        notificationConfig_countPerDay?: number;
-        notificationConfig_startTime?: string;
-        notificationConfig_endTime?: string;
+        type: "edit";
+        promptId: string;
       }
-    | undefined;
+    | {
+        type: "add";
+        prompt: Prompt;
+      };
+  QuickAddPrompts: undefined;
   ViewResponses: {
     prompt: Prompt;
   };
@@ -47,9 +52,9 @@ export const PromptStack = () => {
     >
       <Stack.Screen name="Prompts" component={PromptsScreen} />
       <Stack.Screen
-        name="AuthorPrompt"
-        component={PromptScreen}
-        options={{ title: "Author Prompt" }}
+        name="EditPrompt"
+        component={EditPromptScreen}
+        options={{ header: () => <EditPromptHeader /> }}
       />
       <Stack.Screen
         name="ViewResponses"
@@ -59,7 +64,12 @@ export const PromptStack = () => {
       <Stack.Screen
         name="PromptEntry"
         component={PromptEntryScreen}
-        options={{ title: "Prompt Entry" }}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="QuickAddPrompts"
+        component={QuickAddPromptsScreen}
+        options={{ header: () => <QuickAddPromptsHeader /> }}
       />
     </Stack.Navigator>
   );

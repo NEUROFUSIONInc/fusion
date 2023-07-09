@@ -1,11 +1,11 @@
 import { ReactNativePlugin } from "@microsoft/applicationinsights-react-native";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
+import Constants from "expo-constants";
 
 const RNPlugin = new ReactNativePlugin();
 export const appInsights = new ApplicationInsights({
   config: {
-    connectionString:
-      "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+    connectionString: Constants.expoConfig.extra.appInsightsConnectionString,
     extensions: [RNPlugin],
     disableDeviceCollection: true,
   },

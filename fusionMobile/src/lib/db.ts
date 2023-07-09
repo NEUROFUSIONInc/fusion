@@ -80,10 +80,41 @@ export const createBaseTables = () => {
                       }
                       if (!columnExists) {
                         tx.executeSql(
-                          "ALTER TABLE prompts ADD COLUMN additionalMeta TEXT",
+                          "ALTER TABLE prompts ADD COLUMN additionalMeta TEXT;",
                           [],
                           (tx, results) => {
-                            console.log("Column added successfully");
+                            console.log(
+                              "additionalMeta column added successfully to prompts table"
+                            );
+                            resolve(true);
+                          }
+                        );
+                      } else {
+                        resolve(true);
+                      }
+                    }
+                  );
+
+                  // add "additionalMeta TEXT" column to prompt_responses table
+                  tx.executeSql(
+                    "PRAGMA table_info(prompt_responses)",
+                    [],
+                    (tx, results) => {
+                      let columnExists = false;
+                      for (let i = 0; i < results.rows.length; i++) {
+                        if (results.rows.item(i).name === "additionalMeta") {
+                          columnExists = true;
+                          break;
+                        }
+                      }
+                      if (!columnExists) {
+                        tx.executeSql(
+                          "ALTER TABLE prompt_responses ADD COLUMN additionalMeta TEXT",
+                          [],
+                          (tx, results) => {
+                            console.log(
+                              "additionalMeta column added successfully to prompt_responses table"
+                            );
                             resolve(true);
                           }
                         );

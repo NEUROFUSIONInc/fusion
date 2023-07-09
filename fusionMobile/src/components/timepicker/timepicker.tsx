@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -20,6 +20,7 @@ export type TimePickerProps = {
   days?: NotificationConfigDays;
   setDays: (days: NotificationConfigDays) => void;
   setPromptCount?: (count: number) => void;
+  defaultPromptFrequencyLabel?: string | null;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
@@ -38,11 +39,26 @@ export const TimePicker: FC<TimePickerProps> = ({
   },
   setDays,
   setPromptCount,
+  defaultPromptFrequencyLabel,
 }) => {
   const [isStartTimePickerVisible, setStartTimePickerVisibility] =
     useState(false);
   const [isEndTimePickerVisible, setEndTimePickerVisibility] = useState(false);
-  const [value, setValue] = useState(null);
+  const [selectedPromptFrequencyLabel, setSelectedPromptFrequencyLabel] =
+    useState(defaultPromptFrequencyLabel);
+
+  const [selectedPromptFrequencyValue, setSelectedPromptFrequencyValue] =
+    useState<string | null>();
+
+  useEffect(() => {
+    if (selectedPromptFrequencyLabel) {
+      setSelectedPromptFrequencyValue(
+        (promptFrequencyData.find(
+          (item) => item.label === selectedPromptFrequencyLabel
+        )?.value ?? promptFrequencyData[0].value) as string
+      );
+    }
+  }, [selectedPromptFrequencyLabel]);
 
   const showStartTimePicker = () => {
     setStartTimePickerVisibility(true);
@@ -56,6 +72,17 @@ export const TimePicker: FC<TimePickerProps> = ({
   const hideEndTimePicker = () => {
     setEndTimePickerVisibility(false);
   };
+
+  // TODO: make it better, set time
+  const [isSingleTime, setIsSingleTime] = useState(false);
+  useEffect(() => {
+    if (selectedPromptFrequencyValue === "1") {
+      setIsSingleTime(true);
+      setEnd(start.add(2, "minute"));
+    } else {
+      setIsSingleTime(false);
+    }
+  }, [selectedPromptFrequencyValue, start]);
 
   const handleStartTimeConfirm = (selectedTime: Date) => {
     console.log("startTime has been picked: ", selectedTime);
@@ -71,38 +98,80 @@ export const TimePicker: FC<TimePickerProps> = ({
     hideEndTimePicker();
   };
 
-  const propmtFrequencyDataWithDisabled = useMemo(() => {
-    return promptFrequencyData.map((item) => {
+  const promptFrequencyDataWithDisabled = useMemo(() => {
+    const d = promptFrequencyData.map((item) => {
       const disabled =
-        calculateContactCount(start, end, item.value as string) < 1;
+        //! TODO: fix this logic
+        // calculateContactCount(start, end, item.value as string) < 1;
+        false;
       return {
         ...item,
         disabled,
       };
     });
+    return d;
   }, [start, end]);
 
   const totalContactCount = useMemo(() => {
-    return calculateContactCount(start, end, value as unknown as string);
-  }, [start, end, value]);
+    return calculateContactCount(
+      start,
+      end,
+      selectedPromptFrequencyValue as unknown as string
+    );
+  }, [start, end, selectedPromptFrequencyValue]);
 
   const interpretDaySelections = useMemo(
     () => interpretDaySelection(days),
     [days]
   );
 
+  useEffect(
+    () => setPromptCount?.(totalContactCount),
+    [totalContactCount, setPromptCount]
+  );
+
   return (
     <View>
       <View>
-        <Text className="font-sans text-white text-base mb-4">
+        <View className="mt-4">
+          <Select
+            label="How often should we prompt you?"
+            items={promptFrequencyDataWithDisabled}
+            value={selectedPromptFrequencyValue as unknown as string}
+            setValue={setSelectedPromptFrequencyValue}
+            dropDownDirection="BOTTOM"
+            listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+              indicatorStyle: "white",
+            }}
+            onChangeValue={() => setPromptCount?.(totalContactCount)}
+          />
+          {selectedPromptFrequencyValue !== null && (
+            <Text className="font-sans text-gray-400 text-sm mt-2 -z-10">
+              {`You will be prompted ${
+                totalContactCount === 1 ? "once" : `${totalContactCount} times`
+              }`}
+            </Text>
+          )}
+        </View>
+
+        <Text className="-z-10 font-sans text-white text-base mb-4 mt-4">
           When do you want to be prompted?
         </Text>
-        <View className="flex py-5 px-4 rounded-md bg-secondary-900 divide-y divide-white/20 divide-opacity-10 items-start flex-col w-full">
+        <View className="-z-10 flex py-5 px-4 rounded-md bg-secondary-900 divide-y divide-white/20 divide-opacity-10 items-start flex-col w-full ">
           <Pressable
             onPress={showStartTimePicker}
-            className="flex flex-row w-full pb-4 justify-between"
+            className={`flex flex-row w-full ${
+              isSingleTime ? "pb-0" : "pb-4"
+            } justify-between`}
           >
-            <Text className="font-sans text-base text-white">Between</Text>
+            {isSingleTime ? (
+              <Text className="font-sans text-base text-white">At</Text>
+            ) : (
+              <Text className="font-sans text-base text-white">Between</Text>
+            )}
+
             <View className="flex items-center flex-row">
               <Text className="flex font-sans text-base text-white mr-2">
                 {start.format("h:mma")}
@@ -117,25 +186,28 @@ export const TimePicker: FC<TimePickerProps> = ({
               onCancel={hideStartTimePicker}
             />
           </Pressable>
-          <Pressable
-            onPress={showEndTimePicker}
-            className="flex flex-row w-full pt-4 justify-between"
-          >
-            <Text className="font-sans text-base text-white">And</Text>
-            <View className="flex flex-row items-center">
-              <Text className="flex font-sans text-base text-white mr-2">
-                {end.format("h:mma")}
-              </Text>
-              <ChevronRight style={{ marginTop: 1 }} />
-            </View>
-            <DateTimePickerModal
-              isVisible={isEndTimePickerVisible}
-              mode="time"
-              date={end.toDate()}
-              onConfirm={handleEndTimeConfirm}
-              onCancel={hideEndTimePicker}
-            />
-          </Pressable>
+
+          {isSingleTime ? null : (
+            <Pressable
+              onPress={showEndTimePicker}
+              className="flex flex-row w-full pt-4 justify-between"
+            >
+              <Text className="font-sans text-base text-white">And</Text>
+              <View className="flex flex-row items-center">
+                <Text className="flex font-sans text-base text-white mr-2">
+                  {end.format("h:mma")}
+                </Text>
+                <ChevronRight style={{ marginTop: 1 }} />
+              </View>
+              <DateTimePickerModal
+                isVisible={isEndTimePickerVisible}
+                mode="time"
+                date={end.toDate()}
+                onConfirm={handleEndTimeConfirm}
+                onCancel={hideEndTimePicker}
+              />
+            </Pressable>
+          )}
         </View>
         {start > end && (
           <Text className="font-sans text-gray-400 my-4">
@@ -143,26 +215,7 @@ export const TimePicker: FC<TimePickerProps> = ({
           </Text>
         )}
       </View>
-      <View className="mt-8">
-        <Select
-          label="How often should we prompt you?"
-          items={propmtFrequencyDataWithDisabled}
-          value={value}
-          setValue={setValue}
-          dropDownDirection="BOTTOM"
-          listMode="SCROLLVIEW"
-          scrollViewProps={{
-            nestedScrollEnabled: true,
-            indicatorStyle: "white",
-          }}
-          onChangeValue={() => setPromptCount?.(totalContactCount)}
-        />
-        {value !== null && (
-          <Text className="font-sans text-gray-400 text-sm mt-2">
-            {`You will be prompted ${totalContactCount} times`}
-          </Text>
-        )}
-      </View>
+
       <View className="-z-10 mt-4">
         <Text className="font-sans text-white text-base my-4 -z-10">
           What days should we prompt you?

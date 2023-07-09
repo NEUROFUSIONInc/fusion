@@ -6,7 +6,7 @@ import { Text, TextInput, TextInputProps, View } from "react-native";
 import colors from "~/theme/colors";
 
 const inputStyles = cva(
-  "rounded-md w-auto text-white font-sans bg-transparent border h-[52] border-light focus:border-white disabled:bg-gray-100 disabled:opacity-50 ",
+  "rounded-md w-auto text-white font-sans bg-transparent border h-[52] border-light focus:border-white disabled:bg-gray-100 disabled:opacity-50",
   {
     variants: {
       size: {
@@ -45,10 +45,14 @@ export const Input = forwardRef<TextInput, InputProps>(function input(
   },
   ref
 ) {
+  const value = props.value;
+
   return (
     <View>
       {label && (
-        <Text className="font-sans text-base text-white mb-3">{label}</Text>
+        <Text className="font-sans text-base text-white mb-3 mt-3">
+          {label}
+        </Text>
       )}
       <TextInput
         ref={ref}
@@ -58,7 +62,10 @@ export const Input = forwardRef<TextInput, InputProps>(function input(
         aria-describedby="errMsg"
         placeholderTextColor={colors.light}
         selectionColor={colors.blue[400]}
-        className={inputStyles({ size, fullWidth, className })}
+        value={value}
+        className={`${inputStyles({ size, fullWidth, className })} ${
+          value && value?.length > 30 ? "h-[64] pb-4" : ""
+        }`}
         {...props}
       />
       {error && (

@@ -1,20 +1,30 @@
+import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
+
+import { UserAccount } from "~/@types";
 import { db } from "~/lib";
 
 export class NostrService {
   // Create a local account & save details
-  public createNostrAccount = async (
-    npub: string,
-    pubkey: string,
-    privkey: string
-  ) => {
+  public createNostrAccount = async () => {
     try {
+      // generate a new account for user
+      const privkey = generatePrivateKey();
+
+      const pubkey = getPublicKey(privkey);
+      const npub = nip19.npubEncode(pubkey);
+
+      const nostrAccount = {
+        npub,
+        pubkey,
+        privkey,
+      } as UserAccount;
       const saveAccountToDb = () => {
         return new Promise<boolean>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
               "INSERT INTO user_account (npub, pubkey, privkey) VALUES (?, ?, ?)",
               [npub, pubkey, privkey],
-              (_, { rows }) => {
+              () => {
                 resolve(true);
               },
               (_, error) => {
@@ -27,7 +37,10 @@ export class NostrService {
       };
 
       const saveAccountStatus = await saveAccountToDb();
-      return saveAccountStatus;
+      if (!saveAccountStatus) {
+        return false;
+      }
+      return nostrAccount;
     } catch (error) {
       console.log(error);
       return false;

@@ -2,6 +2,10 @@ import { ItemType, ValueType } from "react-native-dropdown-picker";
 
 export const promptFrequencyData: ItemType<ValueType>[] = [
   {
+    label: "Once",
+    value: "1",
+  },
+  {
     label: "Every 30 minutes",
     value: "30",
   },

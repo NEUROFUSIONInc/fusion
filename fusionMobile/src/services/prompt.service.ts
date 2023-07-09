@@ -10,7 +10,9 @@ import {
 
 import {
   CreatePrompt,
+  NotificationConfigDays,
   Prompt,
+  PromptAdditionalMeta,
   PromptResponse,
   PromptResponseWithEvent,
 } from "~/@types";
@@ -27,13 +29,33 @@ class PromptService {
         new Promise<Prompt[]>((resolve) => {
           db.transaction((tx) => {
             tx.executeSql("SELECT * FROM prompts", [], (_, { rows }) => {
-              resolve(rows._array);
+              // format all elements in the array to prompt object type before retruning
+              resolve(
+                rows._array.map((row) => {
+                  return {
+                    uuid: row.uuid,
+                    promptText: row.promptText,
+                    responseType: row.responseType,
+                    notificationConfig_days: JSON.parse(
+                      row.notificationConfig_days
+                    ) as NotificationConfigDays,
+                    notificationConfig_startTime:
+                      row.notificationConfig_startTime,
+                    notificationConfig_endTime: row.notificationConfig_endTime,
+                    notificationConfig_countPerDay:
+                      row.notificationConfig_countPerDay,
+                    additionalMeta: row.additionalMeta
+                      ? (JSON.parse(row.additionalMeta) as PromptAdditionalMeta)
+                      : row.additionalMeta,
+                  };
+                })
+              );
             });
           });
         });
 
       const prompts = await fetchPrompts();
-      if (prompts) return prompts;
+      return prompts;
     } catch (e) {
       console.log("error reading prompts", e);
       throw new Error("error reading prompts");
@@ -56,14 +78,14 @@ class PromptService {
                     responseType: row.responseType,
                     notificationConfig_days: JSON.parse(
                       row.notificationConfig_days
-                    ),
+                    ) as NotificationConfigDays,
                     notificationConfig_startTime:
                       row.notificationConfig_startTime,
                     notificationConfig_endTime: row.notificationConfig_endTime,
                     notificationConfig_countPerDay:
                       row.notificationConfig_countPerDay,
                     additionalMeta: row.additionalMeta
-                      ? JSON.parse(row.additionalMeta)
+                      ? (JSON.parse(row.additionalMeta) as PromptAdditionalMeta)
                       : row.additionalMeta,
                   };
                 });
@@ -170,12 +192,14 @@ class PromptService {
   };
 
   public savePrompt = async (promptEntry: CreatePrompt) => {
+    /**
+     * Takes save prompt to sqlite db
+     * If isNotification is false, don't schedule the notification
+     *  - by default it doens't matter, the value could be undefined
+     */
     const prompt = {
       ...promptEntry,
       uuid: promptEntry.uuid ?? uuidv4(),
-      notificationConfig_days: JSON.stringify(
-        promptEntry.notificationConfig_days
-      ),
     };
 
     try {
@@ -194,8 +218,8 @@ class PromptService {
                     [
                       prompt.promptText,
                       prompt.responseType,
-                      prompt.additionalMeta,
-                      prompt.notificationConfig_days,
+                      JSON.stringify(prompt.additionalMeta),
+                      JSON.stringify(prompt.notificationConfig_days),
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
                       prompt.notificationConfig_countPerDay,
@@ -219,8 +243,8 @@ class PromptService {
                       prompt.uuid,
                       prompt.promptText,
                       prompt.responseType,
-                      prompt.additionalMeta,
-                      prompt.notificationConfig_days,
+                      JSON.stringify(prompt.additionalMeta),
+                      JSON.stringify(prompt.notificationConfig_days),
                       prompt.notificationConfig_startTime,
                       prompt.notificationConfig_endTime,
                       prompt.notificationConfig_countPerDay,
@@ -242,7 +266,19 @@ class PromptService {
 
       const saveStatus = await saveToDb();
       if (saveStatus) {
-        await this.notificationService.scheduleFusionNotification(prompt);
+        let isNotificationActive = true;
+        if (prompt.additionalMeta) {
+          if (prompt.additionalMeta["isNotificationActive"] === false) {
+            isNotificationActive = false;
+            await this.notificationService.cancelExistingNotificationForPrompt(
+              prompt.uuid
+            );
+          }
+        }
+
+        if (isNotificationActive) {
+          await this.notificationService.scheduleFusionNotification(prompt);
+        }
 
         // app insights tracking
         appInsights.trackEvent(
@@ -257,15 +293,19 @@ class PromptService {
               end_time: prompt.notificationConfig_endTime,
               count_per_day: prompt.notificationConfig_countPerDay,
             }),
+            extras: JSON.stringify({
+              isNotificationActive: prompt.additionalMeta?.isNotificationActive,
+              category: prompt.additionalMeta?.category,
+            }),
           }
         );
 
-        return true;
+        return prompt;
       }
     } catch (e) {
       // error reading value
       console.log("error saving prompt", e);
-      throw new Error("error saving prompt");
+      // throw new Error("error saving prompt");
     }
   };
 
@@ -284,15 +324,16 @@ class PromptService {
         return new Promise<boolean>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
-              "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp) VALUES (?, ?, ?, ?)",
+              "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?);",
               [
                 responseObj["promptUuid"],
                 responseObj["value"],
                 responseObj["triggerTimestamp"],
                 responseObj["responseTimestamp"],
+                JSON.stringify(responseObj.additionalMeta ?? {}),
               ],
               () => {
-                console.log("response saved");
+                //
                 resolve(true);
               },
               (_, error) => {
@@ -328,6 +369,7 @@ class PromptService {
                     value: row.value,
                     triggerTimestamp: row.triggerTimestamp,
                     responseTimestamp: row.responseTimestamp,
+                    additionalMeta: JSON.parse(row.additionalMeta ?? "{}"),
                   } as PromptResponse;
                 });
                 resolve(responses);
@@ -496,6 +538,29 @@ class PromptService {
     await Promise.all(maskingPromptIds);
 
     return combinedResponses;
+  };
+
+  public updatePromptNotificationState = async ({
+    promptUuid,
+    isNotificationActive,
+  }: {
+    promptUuid: string;
+    isNotificationActive: boolean;
+  }) => {
+    const prompt = await this.getPrompt(promptUuid);
+
+    if (!prompt) {
+      return;
+    }
+
+    if (!prompt.additionalMeta) {
+      prompt.additionalMeta = {};
+    }
+    prompt.additionalMeta["isNotificationActive"] = isNotificationActive;
+
+    // save prompt, add option to disable notifications
+    const res = await this.savePrompt(prompt);
+    return res;
   };
 }
 

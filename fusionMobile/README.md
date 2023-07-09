@@ -13,13 +13,15 @@ Data is currently stored using AsyncStorage (SQLite)
   uuid
   promptText
   responseType - "number", "yesno", "text", "customOptions"
-  additionalMeta - json.stringify of dictionary for customOption maps
+  additionalMeta - {category, isNotificationActive, customOptionsText}
   notificationConfig_days - json.stringify of "{"monday": true, "tuesday": false ....., "sunday": true}"
   notificationConfig_startTime
   notificationConfig_endTime
   notificationConfig_countPerDay
 }
 ```
+
+customOptionText will look like - 'optionA;optionB;optionC'
 
 After a prompt is created, a notification is generated.
 
@@ -28,11 +30,17 @@ Response to prompts are saved in format
 ```json
 {
   triggerTimestamp
-  endTimestamp
+  responseTimestamp
   value
   promptUuid
+  additionalMeta {
+    note: string
+  }
 }
 ```
+
+when responseType == customOption,
+value can contain "valA;valB"
 
 They can eventually exported in fusion Event schema [doc](../README.md)
 
@@ -259,3 +267,8 @@ Prompt response view
 
 - Share screen should eventually allow users select what prompts
   & who they want to share the results to in Fusion :)
+
+# Setting environment variables
+
+Expo handles environment variables a little different than regular web app. We set them in the app.config.ts file.
+and then use constants. See appInsights.js for an example. More docs - https://docs.expo.dev/build-reference/variables/
