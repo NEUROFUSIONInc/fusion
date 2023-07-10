@@ -221,7 +221,7 @@ function* mathGen() {
 //     }
 //   });
 
-let stroopTest = new experimentGenerator(jsPsych,mathGen(),instructions = instructions,feedBack = true, timeLimit=30,trialCountLimit=20)
+let stroopTest = new experimentGenerator(jsPsych,stroopGen(),instructions = instructions,feedBack = true, timeLimit=30,trialCountLimit=20)
 stroopTest.run()
 // js
 // jsPsych.data.displayData('csv')
