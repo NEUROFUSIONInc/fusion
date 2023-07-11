@@ -1,9 +1,9 @@
 // the colours are also the words ....
 
 function mapElapsedToUnix(data){
-    startStamp = -1;
+    let startStamp = -1;
     data.trials.forEach(element => {
-        if(startStamp==-1){
+        if(startStamp===-1){
             if("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
         }else{
             element.unixTimestamp = startStamp + element.time_elapsed;
@@ -13,7 +13,7 @@ function mapElapsedToUnix(data){
 
 }
 
-fixation = {
+const fixation = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: '+',
     trial_duration: 500,
@@ -21,25 +21,25 @@ fixation = {
 };
 
 // blank (ITI stands for "inter trial interval")
-iti = {
+const iti = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: '',
   trial_duration: 250,
   response_ends_trial: false
 }
-init = {
+const init = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: '',
     trial_duration: 0,
     response_ends_trial: false,
-    on_finish: function(data){
+    on_finish: (data) =>{
         data.unixTimestamp = Date.now();
     }
 }
 
 function countDownGen(seconds){
     document.getElementById("countDown").getElementsByTagName("p")[0].innerHTML = seconds + "s"
-    if(seconds==0){
+    if(seconds===0){
         document.getElementById("countDown").getElementsByTagName("p")[0].style.visibility = false;
         return
     }   
@@ -51,14 +51,13 @@ class experimentGenerator{
     constructor(jsPsych,trialGenerator,instructions = null,feedBack = false, timeLimit=0,trialCountLimit=20){
         this.jsPsych = jsPsych;
         this.trials = []
-        instructions = null
         if(instructions!=null) this.trials.push(instructions);
         console.log(this.trials)
         this.trials.push(init)
 
-        let fixation_ = fixation
+        let _fixation = fixation
 
-        if(timeLimit!=0){
+        if(timeLimit!==0){
             init.on_finish = function(data){
                 data.unixTimestamp = Date.now();
                 setTimeout(jsPsych.endExperiment,timeLimit*1000)
@@ -69,8 +68,8 @@ class experimentGenerator{
         }
 
         if(feedBack){ 
-            fixation_.trial_duration = 750;
-            fixation_.stimulus = function () {
+            _fixation.trial_duration = 750;
+            _fixation.stimulus = function () {
                 return jsPsych.data.get().last(1).trials[0].correct ? "Correct" : "Incorrect"
             };
         
@@ -79,7 +78,7 @@ class experimentGenerator{
         for(let i = 0; i < trialCountLimit; ++i){
             this.trials.push(...trialGenerator.next().value)
             if(!feedBack) this.trials.push(iti)
-            this.trials.push(fixation_)
+            this.trials.push(_fixation)
         }
     }
 
@@ -91,23 +90,21 @@ class experimentGenerator{
 
 
 
-var jsPsych = initJsPsych({on_finish: function() {
+const jsPsych = initJsPsych({on_finish: function() {
     window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), '*');
     console.log(mapElapsedToUnix(jsPsych.data.get()));
   },display_element:"jspsych-container"});
 
-var colours = ['red', 'green', 'blue', 'yellow'];
-
-var n_trials = 5;
+const colours = ['red', 'green', 'blue', 'yellow'];
 
 // returns a JavaScript object with { text: ...., colour: .... }
 // using a random colour (text is the same as colour)
 function congruent() {
     // pick a colour ....
     // (when we're only picking one, with/without replacement doesn't matter)
-    var colour_list = jsPsych.randomization.sampleWithReplacement(colours,1);
+    const colourList = jsPsych.randomization.sampleWithReplacement(colours,1);
     // this returns a list with one item, so we select the first (only) item
-    return { text: colour_list[0], colour: colour_list[0], condition: 'congruent' };
+    return { text: colourList[0], colour: colourList[0], condition: 'congruent' };
 }
 
 // returns a JavaScript object with { text: ...., colour: .... }
@@ -149,13 +146,10 @@ document.addEventListener('keypress', function(event) { // Allows dual inputs
 });
 
 
-
-
-var trials = [instructions,init];//instructions
 // repeat this code n_trials times
- function* stroopGen() {
+function* stroopGen() {
     while(true){
-        var values;
+        let values;
         // Math.random returns a random number between 0 and 1. Use this to decide
         // whether the current trial is congruent or incongruent.
         if (Math.random() < 0.5) {
@@ -163,7 +157,7 @@ var trials = [instructions,init];//instructions
         } else {
             values = incongruent();
         }
-        var trial = {
+        const trial = {
             type: jsPsychHtmlButtonResponse,
             stimulus: 
                 
@@ -171,7 +165,7 @@ var trials = [instructions,init];//instructions
             // 'choices' restricts the available responses for the participant
             choices: ['r','g','b','y'],
             data: values,
-            on_finish: function(data){
+            on_finish: (data) =>{
                 console.log(data)
                 data.response = keymapInv[data.response]
                 data.correct = data.colour[0] == data.response
@@ -186,19 +180,18 @@ function randomIntFromInterval(min, max) { // min and max included
 
 function* mathGen() {
     while(true){
-        var values;
         // Math.random returns a random number between 0 and 1. Use this to decide
         // whether the current trial is congruent or incongruent.
-        values = {"num1":randomIntFromInterval(10,100),"num2":randomIntFromInterval(10,100)};
-        values["answer"] = values.num1 + values.num2;
-        var trial = {
+        const values = {"num1":randomIntFromInterval(10,100),"num2":randomIntFromInterval(10,100)};
+        values.answer = values.num1 + values.num2;
+        const trial = {
             type: jsPsychSurveyText,
             questions: [
                 {prompt: values.num1+" + "+values.num2+" =", required: true, name:"response"}
             ],
             data:values,
             // 'choices' restricts the available responses for the participant
-            on_finish: function(data){
+            on_finish: (data)=>{
                 console.log(data)
                 if("response" in data)
                     data.correct = data.response.response == data.answer
