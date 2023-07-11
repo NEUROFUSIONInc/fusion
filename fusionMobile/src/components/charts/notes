@@ -1,0 +1,6 @@
+chart.container.tsx -- passes the chart type and then renders the data - type: string - data: json
+
+bar-graph.tsx
+pie-chart.tsx
+
+prompt-summary.tsx -- different
