@@ -18,7 +18,12 @@ import pandas as pd
 import datetime
 import pytz
 import os
+import numpy as np
 import json
+import copy
+import matplotlib.pyplot as plt
+
+timezone = 'America/Vancouver'
 
 
 data_dir = Path("/Users/oreogundipe/lab/eeg-restingstate-days")
@@ -83,6 +88,9 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
                     meta[x] = row[x]
                 self.tagIdMap[i]["Meta"] = dict(row)
 
+    def getCategories(self):
+        return self.categories
+
     def prune(self): # removes all events without all eeg files from dataset
         for x in list(self.categories.keys()):
             for y in self.categories[x]:
@@ -124,6 +132,7 @@ class extractBundledEEG: # Extracts all json eeg data wihtin a folder in conveni
 
         self.categories[newTag] = newCategory
 
+
 def load_data():
     filesets = load_fileset()
     df = pd.DataFrame()
@@ -157,28 +166,22 @@ def get_signal_quality_summary(signalQuality):
     # this helps us know what channels to discard in our analysis
     return channel_good_percentage
 
-
-def load_session_epochs(files: dict, _on: set, qualityCutoffFilter: int = 0, epochSize: int = -1):
+def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutoffFilter: int = 0, epochSize: int = -1):
     """
     Takes a session of EEG data and the recordings concerned with and outputs filtered epochs
-    qualityCutoffFilter: percentage of time electrode data is marked as "good" or "great" required for it to be included in output and analyticsl, 0 capture everything
-    epochSize: epochlength in seconds
-    _on: recordings to perform on, ex powerByBand or rawBrainwave
 
-    returns dictionary of dataframes with the recordings specified in _on with epoched and filtered data
+        _on: recordings to perform on, ex powerByBand or rawBrainwave
+        qualityCutoffFilter: percentage of time electrode data is marked as "good" or "great" required for it to be included in output and analyticsl, 0 capture everything
+        _channels: white list of channels to include in epochs returned
+        epochSize: epochlength in seconds
+    
+
+    returns dictionary of dataframes with the recordings specified in _on, with a column representing the epoch segments of data belong to and NA marking filtered out data
     """
-    # Best channels are usually: CP3, CP4, PO3, PO4
-
-    # NOTE: unixTimestamps are int/seconds but samples more often than 1Hz,
-    #       so several rows per timestamp and missing sub-second resolution.
-    df_sigQ = pd.read_json(files["signalQuality"])
-    df_sigQ.set_index("unixTimestamp", inplace=True,drop=False)
-    df_sigQ.index =  pd.to_datetime(df_sigQ.index, unit="s")
-
-    print(df_sigQ.index[df_sigQ.shape[0]-9]-df_sigQ.index[0])
 
 
-    _on.append("powerByBand")
+    # ingest all selected recordings into dfs
+    _on+=["signalQuality","powerByBand"]
     _on = set(_on)
     on = dict()
     for x in _on:
@@ -187,89 +190,326 @@ def load_session_epochs(files: dict, _on: set, qualityCutoffFilter: int = 0, epo
         else:
             on[x] = pd.read_json(files[x])
 
+
+    # Standerdize and process recordings
     for x in on:
-        on[x].set_index("unixTimestamp", inplace=True)
+        on[x].rename(columns={"timestamp": "unixTimestamp"},inplace=True)
+        on[x]["epoch"] = on[x]["unixTimestamp"].copy(deep=True)
+        if str(on[x]["epoch"].dtype) == "datetime64[ns]":
+            on[x]["epoch"] = on[x]["epoch"].astype(int) / 10**9
+    
         try:
-            on[x].index =  pd.to_datetime(on[x].index, unit="s")
+            on[x]["unixTimestamp"] =  pd.to_datetime(on[x]["unixTimestamp"], unit="s")
         except:
-            on[x].index =  pd.to_datetime(on[x].index, unit="ms")
-        on[x]["epoch"] = pd.NA
 
-    if epochSize == -1: epochSize = (df_sigQ.index[df_sigQ.shape[0]-1]-df_sigQ.index[0]).seconds
+            on[x]["epoch"] = np.floor(on[x]["epoch"] / 1000)
+            on[x]["unixTimestamp"] =  pd.to_datetime(on[x]["unixTimestamp"], unit="ms")
 
-    channels, bands = zip(*[c.split("_") for c in on["powerByBand"].columns[1:-1]])
+        on[x].set_index("unixTimestamp",drop=False, inplace=True)
+
+
+    # Super dope and awesome efficent vectorized epoching algorithm
+    if epochSize == -1: epochSize = (on["signalQuality"].index[on["signalQuality"].shape[0]-1]-on["signalQuality"].index[0]).seconds
+    for x in on: 
+        on[x]["epoch"] = epochSize*np.floor(on[x]["epoch"]/epochSize)
+        on[x] = on[x].set_index(["epoch","unixTimestamp"])
+
+    df_sigQ = on["signalQuality"]
+
+    channels, bands = zip(*[c.split("_") for c in on["powerByBand"].columns[1:-2]])
     channels, bands = list(set(channels)), list(set(bands))
 
+    # removes channels from dfs if not in whitelist
+    if _channels != []:
+        removed = [x for x in channels if x not in _channels]
+        for x in on:
+            on[x].drop([col for col in on[x].columns if len([r for r in removed if r in col])>0], axis=1)
+        channels = _channels
 
+
+    # generate dictionary that maps channels to related columns
     onChan = {}
     for df in on:
         onChan[df] = {x: [y for y in on[df].columns if x in y] for x in channels}
+        onChan[df] = {x : onChan[df][x] for x in onChan[df] if len(onChan[df][x])>0}
 
-    validEpochs:dict(list()) = {}
-    invalidEpochs:dict(list()) = {}
+    for x in onChan["powerByBand"]:
+        maparr = on["powerByBand"][onChan["powerByBand"][x][2]]>20
+        on["powerByBand"].loc[maparr,onChan["powerByBand"][x]] = pd.NA
+        
+
+
+    goodEpochStampsPerChan = {x: set() for x in channels}
+    goodEpochStamps = {}
+    # for x in [onChan["signalQuality"][x][1] for x in onChan["signalQuality"]]:
+    #     print(df_sigQ.groupby(level=[0])[x].value_counts())
+    #     break
+    #     # for y in df_sigQ.groupby(level=[0])[x].value_counts():
+            
+    
+    # Generate Epoch Quality Filter
+    for x in set(df_sigQ.index.get_level_values(0)):
+        sigSamp = df_sigQ.loc[x,:]
+        for channel in channels:
+            col = channel + "_status"
+            channel_states = sigSamp[col].value_counts()
+            no_of_okay_samples = 0
+            if 'good' in channel_states:
+                no_of_okay_samples += channel_states['good']
+            if 'great' in channel_states:
+                no_of_okay_samples += channel_states['great']
+
+            percentage_good = no_of_okay_samples / sigSamp.shape[0]
+            if percentage_good>=qualityCutoffFilter:
+                if x not in goodEpochStamps: goodEpochStamps[x] = [channel]
+                else: goodEpochStamps[x].append(channel)
+
+                goodEpochStampsPerChan[channel].add(x)
+
+
+    goodEpochSerial = {}
+    for i,x in enumerate(goodEpochStamps.keys()): # number remaining good epochs
+        goodEpochSerial[x] = i
+
+    # Apply filtering to recordings
+    for x in on:
+        on[x]["_epoch"] = on[x].index.get_level_values(0)
+        if on != "signalQuality":
+            for channel in onChan[x]:
+                badStamps = set(on[x]["_epoch"]).difference(goodEpochStampsPerChan[channel])
+                if len(badStamps) != 0:
+                    on[x].loc[list(badStamps),onChan[x][channel]] = pd.NA
+
+
+        badStamps = set(on[x]["_epoch"]).difference(goodEpochSerial.keys())
+        on[x].loc[list(badStamps),"_epoch"] = pd.NA
+        on[x]["_epoch"] = on[x]["_epoch"].replace(goodEpochSerial)
+   
+
+
+    # Format dfs before return
+    for x in on:
+        on[x].reset_index(inplace=True)
+        on[x].drop(columns=["epoch"],inplace=True)
+        on[x].rename(columns={"_epoch":"epoch"},inplace=True)
+        on[x] = on[x].set_index(["epoch","unixTimestamp"])
+
+    # on["signalQuality"].to_csv("EpochValidate.csv")
+        
+    return on
+
+def load_session_summery(files: dict, _channels: list = [], qualityCutoffFilter: int = 0, epochSize: int = -1, returnEpoched = False, debug=False) -> dict:
+    """
+    Takes a session of EEG data, computes some metrics, and returns them.
+    
+        _channels: whitelist of channels included in summery
+        qualityCutoffFilter: percentage of time electrode data is marked as "good" or "great" required for it to be included in output and analytics, default: capture everything
+        epochSize: the window to sample on (seconds) default: epoch the entire dataset
+        returnEpoched: if false, returns average over all the epochs that achieved quality threshold, if true generates a summary per epoch
+        debug: print debugging messages
+
+    Metrics returned in dict:
+        - timestamp of epoch begining
+        - local_date
+        - local_timeofday
+        - epoch duration
+        - avg_power_per_channel_by_band
+        - avg_power_by_band
+        - avg_power_by_channel
+        - avg_calm_score
+        - avg_focus_score
+        - time_spent_calm
+        - time_spent_focused
+        - relative_power
+        - signal_quality
+
+    """
+
+    epochs = load_session_epochs(files,_on=["powerByBand","calm","focus","signalQuality"], _channels = _channels ,qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize)
+
+    channels, bands = zip(*[c.split("_") for c in epochs["powerByBand"].columns[1:-1]])
+    channels, bands = list(set(channels)), list(set(bands))
+
+    if _channels!=[]:
+        channels = _channels
 
     removedChannels = []
-    epochSize = datetime.timedelta(seconds=epochSize)
 
-    oldTime = df_sigQ.index[0]
-    newTime = df_sigQ.index[0] + epochSize
-
-    endTime = df_sigQ.index[df_sigQ.shape[0]-1]
-
-    if(newTime>endTime): newTime = endTime
-    finalLoop = False
-    # print(oldTime,newTime, df_pbb.shape[0],df_sigQ.shape[0])
-    qualitySamplesMissing = 0
-    while(endTime>=newTime):
-        sigSamp = df_sigQ[(df_sigQ.index < newTime) & (df_sigQ.index >= oldTime)]
-        if not sigSamp.empty:
-            for channel in channels:
-                col = channel + "_status"
-                channel_states = sigSamp[col].value_counts()
-                no_of_okay_samples = 0
-                if 'good' in channel_states:
-                    no_of_okay_samples += channel_states['good']
-                if 'great' in channel_states:
-                    no_of_okay_samples += channel_states['great']
-
-                percentage_good = no_of_okay_samples / sigSamp.shape[0]
-                timeunix = int(datetime.datetime.timestamp(oldTime)*1000)
-                if percentage_good>=qualityCutoffFilter: 
-                    if timeunix not in validEpochs: validEpochs[timeunix] = (oldTime,[])
-                    validEpochs[timeunix][1].append(channel) 
-                else:
-                    if timeunix not in invalidEpochs: invalidEpochs[timeunix] = (oldTime,[])
-                    invalidEpochs[timeunix][1].append(channel) 
-
-        if((newTime+epochSize)>endTime and not finalLoop): 
-            oldTime = newTime
-            newTime = endTime
-            finalLoop = True
+    for x in channels: 
+        # print(temporalFilter[x].value_counts())
+        #  just check that there's at least some value in the channel
+        validEpochs = ~epochs["powerByBand"][x+"_delta"].isna()
+        if True not in validEpochs.value_counts():
+            removedChannels.append(x)
+            channels.remove(x)
         else:
-            oldTime = newTime
-            newTime = newTime + epochSize
-    
-    # epochesReturn = {}
-    print(invalidEpochs)
-    for epoch in invalidEpochs:
-        oldTime = invalidEpochs[epoch][0]
-        newTime = invalidEpochs[epoch][0] + epochSize
-        for x in on:
-            cols = []
-            for z in [onChan[x][y] for y in invalidEpochs[epoch][1]]:
-                for y in z:
-                    cols.append(y)
-            print(cols)
-            on[x].loc[((on[x].index < newTime) & (on[x].index >= oldTime)),cols] = pd.NA
+            percentLost = 1-(validEpochs.value_counts()[True]/validEpochs.shape[0])
+            if percentLost > .4 and debug:
+                print(f"{int(percentLost*100)}% of {x} Pruned for lack of quality")
+            if percentLost>.9:
+                removedChannels.append(x)
+                channels.remove(x)
 
-    epochCount = 0
-    for epoch in validEpochs:
-        oldTime = validEpochs[epoch][0]
-        newTime = validEpochs[epoch][0] + epochSize
-        for x in on:
-           on[x].loc[(on[x].index < newTime) & (on[x].index >= oldTime),"epoch"] = epochCount
-           epochCount+=1
-    return on
+    epochStruct = {"timestamp": None,
+            "local_date": None,
+            "local_timeofday": None,
+            "duration": None,
+            "avg_power_per_channel_by_band": dict(),
+            "avg_power_by_band": dict(),
+            "avg_power_by_channel": dict(),
+            "avg_calm_score": None,
+            "avg_focus_score": None,
+            "time_spent_calm": None,
+            "time_spent_focused": None,
+            "relative_power": None,
+            "signal_quality": None
+            }
+
+    epochReturnStruct = {}
+
+    if not returnEpoched:
+        for x in epochs:
+            epochs[x]=epochs[x].reset_index()
+            epochs[x]["epoch"]=0
+            epochs[x] = epochs[x].set_index(["epoch","unixTimestamp"]).sort_index()
+
+    for epochInd in set(list(zip(*epochs["powerByBand"].index))[0]):
+        if pd.isna(epochInd): continue
+        pbbEpochDf = epochs["powerByBand"].loc[epochInd,:]
+        epochTemp = copy.deepcopy(epochStruct)
+
+        df = pd.DataFrame(index=pbbEpochDf.index) 
+        for channel in channels:
+            bands_for_channel = [c for c in pbbEpochDf.columns if c.startswith(channel)]
+            df[channel] = pbbEpochDf[bands_for_channel].mean(axis=1)
+        epochTemp["avg_power_by_channel"] = dict(df.mean()[channels])
+        df = pd.DataFrame(index=pbbEpochDf.index)
+
+        for band in bands:
+            channels_with_band = [c for c in pbbEpochDf.columns if c.endswith(band) and c.split("_")[0] not in removedChannels]
+            df[band] = pbbEpochDf[channels_with_band].mean(axis=1)
+
+        epochTemp["avg_power_by_band"] = dict(df.mean()[bands_ordered])
+        epochTemp["avg_power_per_channel_by_band"] = {channel: {band: pbbEpochDf[channel + "_" + band].mean() for band in bands}
+                    for channel in channels}
+        
+        epochTemp["timestamp"] = int(pbbEpochDf.index[0].timestamp())
+        epochTemp["duration"] =  pbbEpochDf.index[-1] - pbbEpochDf.index[0]
+        epochTemp["local_date"] = unix_to_localdate(epochTemp["timestamp"])
+        epochTemp["local_timeofday"] = unix_to_period(epochTemp["timestamp"])
+
+
+        if epochInd in epochs["calm"].index.get_level_values(0):
+            df_calm = epochs["calm"].loc[epochInd,:]
+            epochTemp["avg_calm_score"] = df_calm["probability"].mean()
+            epochTemp["time_spent_calm"] = (df_calm["probability"] > 0.3).sum() / len(df_calm)
+
+        if epochInd in epochs["focus"].index.get_level_values(0):
+            df_focus = epochs["focus"].loc[epochInd,:]
+            epochTemp["avg_focus_score"] = df_focus["probability"].mean()
+            epochTemp["time_spent_focused"] = (df_focus["probability"] > 0.3).sum() / len(df_focus)
+
+
+        relativePower = dict()
+        for channel in channels:
+            totalPower = 0
+            for band in bands:
+                totalPower+=epochTemp["avg_power_per_channel_by_band"][channel][band]
+            for band in bands:
+                if channel not in relativePower: relativePower[channel] = dict()
+                relativePower[channel][band] = epochTemp["avg_power_per_channel_by_band"][channel][band]/totalPower
+
+        epochTemp["relative_power"] = relativePower
+        epochTemp["signal_quality"] = get_signal_quality_summary(epochs["signalQuality"].loc[epochInd,:])
+
+
+
+        epochReturnStruct[epochInd] = epochTemp
+
+    if not returnEpoched: epochReturnStruct = epochReturnStruct[0]
+
+    return epochReturnStruct
+
+class analysisEngine():
+    def __init__(self,fileBundles:dict,epochSize=5,debug = False):
+        """
+        Generates basic analytics for recording groups
+        
+        fileBundles: {recordingsTagName:[set of recordingIds], tagName: ....}  : dictionary of labeled filebundles as generated from extractBundledEEG
+
+        epochSize: epoch size to use in seconds
+        
+        """
+        self.fileBundles = fileBundles
+        self.fileBundleSummeries = {x:[] for x in self.fileBundles}
+
+        for x in self.fileBundles:
+            sum = 0
+            for y in self.fileBundles[x]:
+                self.fileBundleSummeries[x].append(load_session_summery(self.fileBundles[x][y],qualityCutoffFilter=.95,epochSize=epochSize,returnEpoched=True,debug=debug))
+                sum += len(self.fileBundleSummeries[x][-1])
+            print(f"{x} {len(self.fileBundles[x])} Recording Sessions Found, {sum} Epochs Extracted")
+
+
+    # Generates histogram on epochs average powerband values for inspection of distrobutions
+    def distributionVetting(self):
+        self.accumulatedPowerBands = {x:dict() for x in self.fileBundles}
+        for x in self.fileBundles: # Basic sanity checks of distributions
+            for y in self.fileBundleSummeries[x]:
+                for epoch in y:
+                    for band in y[epoch]["avg_power_by_band"]:
+                        if band not in self.accumulatedPowerBands [x]: self.accumulatedPowerBands [x][band] = []
+                        self.accumulatedPowerBands [x][band].append(y[epoch]["avg_power_by_band"][band])
+
+        
+        count = 0
+        for band in bands_ordered:
+            count+=1
+            for x in self.fileBundles:
+                plt.subplot(5, 1, count)
+                plt.hist(self.accumulatedPowerBands [x][band],alpha=0.5,bins=160,label=x)
+                
+            plt.title(f'{band} Epoch Averages')
+
+            plt.legend()
+            plt.xlabel('uV')
+            plt.ylabel('Count')
+            plt.grid(True)
+            plt.show()
+
+
+    # basic bar chart of powerbybands comparing between catergories with error bars encompassing 95% confidence interval assuming normal distrobutions
+    def basicComparisons(self):
+        accumatedPowerBandStats = {x:dict() for x in self.fileBundles}
+        accumatedPowerBandErrors = {x:dict() for x in self.fileBundles}
+
+        for x in self.accumulatedPowerBands: # avgs with error bars
+            for band in self.accumulatedPowerBands[x]:
+                accumatedPowerBandStats[x][band] = np.nanmean(np.array(self.accumulatedPowerBands[x][band]))
+                # print(np.array(accumulatedPowerBands[x][band]))
+                accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) * 2
+            
+            
+            
+        fig, ax = plt.subplots()
+        bar_width = .3
+        currentBarDist = bar_width
+        figs = {x:0 for x in self.fileBundles}
+        index = np.arange(5)
+        for x in accumatedPowerBandStats:
+            print(x,accumatedPowerBandStats[x])
+            ax.bar(index+currentBarDist,list(accumatedPowerBandStats[x].values()), bar_width,
+                        label=x,yerr=list(accumatedPowerBandErrors[x].values()))
+            currentBarDist+=bar_width
+
+        ax.set_xticks(index + bar_width / 2)
+        ax.set_xticklabels(accumatedPowerBandStats[x].keys())
+        ax.set_xlabel('Band')
+        ax.set_ylabel('Average uV')
+        ax.set_title('Average uV by Band')
+        ax.legend()
+
+        plt.show()
 
 def get_rolling_powerByBand(powerByBand, signalQuality, window_size=5):
     # we want to split the recording for a session in to 5sec chunks average
@@ -367,7 +607,7 @@ def load_session(files: dict, QualityCutoffFilter=0) -> dict:
 
 def unix_to_period(unix_timestamp):
     # convert the Unix timestamp to a datetime object
-    dt_object = datetime.datetime.fromtimestamp(unix_timestamp, pytz.timezone('America/Vancouver'))
+    dt_object = datetime.datetime.fromtimestamp(unix_timestamp, pytz.timezone(timezone))
     
     # extract the hour from the datetime object
     hour = dt_object.hour
@@ -382,7 +622,7 @@ def unix_to_period(unix_timestamp):
 
 def unix_to_localdate(unix_timestamp):
     # convert the Unix timestamp to a datetime object
-    dt_object = datetime.datetime.fromtimestamp(unix_timestamp, pytz.timezone('America/Vancouver'))
+    dt_object = datetime.datetime.fromtimestamp(unix_timestamp, pytz.timezone(timezone))
     
     # extract the hour from the datetime object
     date = dt_object.strftime("%Y-%m-%d %H:%M")
