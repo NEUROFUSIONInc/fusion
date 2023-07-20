@@ -34,7 +34,7 @@ export const integrations = [
     active: true,
   },
   {
-    slug: "activitywatch",
+    slug: "activityWatch",
     title: "ActivityWatch (Screen Time)",
     href: "https://activitywatch.net",
     imageUrl: "/images/integrations/activitywatch_icon.png",
