@@ -6,6 +6,7 @@ import React from "react";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import "../styles/globals.css";
+import { gtw } from "~/utils";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient({ defaultOptions: QUERY_OPTIONS_DEFAULT }));
@@ -15,7 +16,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
-            <Component {...pageProps} />
+            <main className={`${gtw.variable} font-body`}>
+              <Component {...pageProps} />
+            </main>
           </ThemeProvider>
         </Hydrate>
       </QueryClientProvider>
