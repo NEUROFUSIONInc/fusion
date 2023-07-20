@@ -1,10 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { Neurosity } from "@neurosity/sdk";
 import { Epoch, PSD } from "@neurosity/sdk/dist/esm/types/brainwaves";
-
-import dayjs from "dayjs";
 import axios from "axios";
-
+import dayjs from "dayjs";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { takeWhile } from "rxjs";
 
 export const neurosity = new Neurosity({
