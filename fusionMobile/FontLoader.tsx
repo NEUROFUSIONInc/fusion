@@ -1,6 +1,5 @@
 import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import React, { PropsWithChildren, useCallback } from "react";
+import { PropsWithChildren, useCallback } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
