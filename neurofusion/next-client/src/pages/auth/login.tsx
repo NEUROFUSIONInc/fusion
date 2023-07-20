@@ -51,3 +51,5 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     props: { session },
   };
 };
+
+(LoginPage as any).theme = "light";
