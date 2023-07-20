@@ -9,7 +9,7 @@ import { Newsletter } from "./newsletter/newsletter";
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-t-gray-200 bg-gray-100/90 dark:border-t-gray-800">
+    <footer className="border-t border-t-gray-200 bg-gray-100/90 dark:border-t-gray-800 dark:bg-dark/10">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>

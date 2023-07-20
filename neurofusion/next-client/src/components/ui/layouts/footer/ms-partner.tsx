@@ -12,7 +12,7 @@ export const MsPartner = () => {
         className="h-16 w-48 md:h-24 md:w-56"
       />
       <p className="ml-0 text-sm font-normal text-gray-500 dark:text-gray-400 md:-ml-10 md:text-base">
-        Proud to partner with <span className="font-medium text-dark">Microsoft for Startups</span>
+        Proud to partner with <span className="font-medium text-dark dark:text-white">Microsoft for Startups</span>
       </p>
     </div>
   );
