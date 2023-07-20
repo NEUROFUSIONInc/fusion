@@ -1,6 +1,14 @@
 import type { NextPage } from "next";
 
-import { FeatureSection, HeroSection, IntegrationsSection, Newsletter } from "~/components/features/landing";
+import {
+  FaqSection,
+  FeatureSection,
+  HeroSection,
+  IntegrationsSection,
+  OfferingSection,
+  TeamSection,
+  TestimonialSection,
+} from "~/components/features/landing";
 import { MainLayout } from "~/components/layouts";
 
 const Home: NextPage = () => {
@@ -9,11 +17,14 @@ const Home: NextPage = () => {
       <HeroSection />
       <FeatureSection />
       <IntegrationsSection />
-      <Newsletter />
+      <TeamSection />
+      <TestimonialSection />
+      <FaqSection />
+      <OfferingSection />
     </MainLayout>
   );
 };
 
-(Home as any).theme = "dark";
+(Home as any).theme = "light";
 
 export default Home;
