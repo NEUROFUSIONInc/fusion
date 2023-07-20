@@ -2,10 +2,11 @@
 /* eslint-disable react/self-closing-comp */
 import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
 import { FC, useState, useEffect } from "react";
-import { Button } from "../../ui/button/button";
 
-import { neurosityService, neurosity } from "~/services";
+import { Button } from "../ui/button/button";
+
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
+import { neurosityService, neurosity } from "~/services";
 
 export const Experiment: FC = () => {
   const [isRecording, setIsRecording] = useState(false);
