@@ -1,6 +1,7 @@
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import classNames from "classnames";
 import { forwardRef } from "react";
+
+import { cn } from "~/utils";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -10,7 +11,7 @@ const TabsList = forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={classNames(
+    className={cn(
       "inline-flex items-center justify-center rounded-md bg-slate-200/70 p-1 dark:bg-slate-800",
       className
     )}
@@ -24,7 +25,7 @@ const TabsTrigger = forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
-    className={classNames(
+    className={cn(
       "inline-flex min-w-[100px] items-center justify-center rounded-[0.185rem] px-3 py-1.5  text-sm font-medium text-slate-700 transition-all  disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-primary-900 data-[state=active]:shadow-sm dark:text-slate-200 dark:data-[state=active]:bg-primary-900 dark:data-[state=active]:text-slate-100",
       className
     )}
@@ -39,7 +40,7 @@ const TabsContent = forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
-    className={classNames("mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700", className)}
+    className={cn("mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700", className)}
     {...props}
     ref={ref}
   />
