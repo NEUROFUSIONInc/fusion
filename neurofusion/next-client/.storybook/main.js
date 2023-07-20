@@ -14,7 +14,16 @@ module.exports = {
       nextConfigPath: path.resolve(__dirname, "../next.config.js"),
     },
   },
-  staticDirs: ["../public"],
+  staticDirs: [
+    {
+      from: "../public",
+      to: "public",
+    },
+    {
+      from: "../public/images",
+      to: "images",
+    },
+  ],
   docs: {
     autodocs: true,
   },
