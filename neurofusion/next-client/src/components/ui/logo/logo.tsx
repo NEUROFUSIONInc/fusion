@@ -36,9 +36,7 @@ export const Logo: FC<LinkProps> = ({ withText, size, className }) => {
         className={logoStyles({ size, className })}
       />
       {withText && (
-        <h2 className="ml-2 font-heading text-2xl font-extrabold leading-10 text-primary-900 dark:text-white">
-          FUSION
-        </h2>
+        <h2 className="ml-2 font-heading text-2xl font-medium leading-10 text-primary-900 dark:text-white">FUSION</h2>
       )}
     </Link>
   );
