@@ -5,7 +5,8 @@ export const navigationLinks = [
   },
   {
     title: "About",
-    href: "/about",
+    href: "https://neurofusionresearchinc.notion.site/NEUROFUSION-Team-39887d6b988c4c83ae2a16ae8db44a45",
+    external: true,
   },
   {
     title: "Blog",
