@@ -16,7 +16,7 @@ export const fusionFeatures: IFusionFeature[] = [
   },
   {
     id: 2,
-    title: "explorers & researchers",
+    title: "coaches & health professionals",
     description: "Record experiments & design quests (a set of tasks other users can run) and share results",
     featuresList: [
       "Automated scheduling for medication adherence",
@@ -27,7 +27,7 @@ export const fusionFeatures: IFusionFeature[] = [
   },
   {
     id: 3,
-    title: "coaches & health professionals",
+    title: "explorers & researchers",
     description: "See, with consent how clients respond to recommendations & plans outside of consults",
     featuresList: [
       "A playground of exercises for recording brain & behavior data",
