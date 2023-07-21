@@ -12,11 +12,11 @@ export const PromptExample: FC<PromptExampleProps> = ({ title, leftSubtitle, rig
   return (
     <div
       className={cn(
-        "w-64 px-6 py-6 bg-white rounded-bl-lg rounded-br-lg shadow border-t-2 border-indigo-700 flex-col justify-start items-start gap-4 flex",
+        "w-[260px] px-6 py-6 bg-white rounded-bl-lg rounded-br-lg shadow border-t-2 border-indigo-700 flex-col justify-start items-start gap-4 flex",
         className
       )}
     >
-      <div className="w-36 text-base font-normal leading-normal">{title}</div>
+      <div className="text-base font-normal leading-normal">{title}</div>
       <div className="justify-start text-gray-500 items-center gap-[9px] inline-flex">
         <p className=" text-sm font-normal leading-normal">{leftSubtitle}</p>
         <div className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
