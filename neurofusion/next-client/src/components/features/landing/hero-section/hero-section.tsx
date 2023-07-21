@@ -38,14 +38,13 @@ export const HeroSection = () => {
           <MobileStoreLink store="google" className="w-full md:w-auto" />
         </div>
       </div>
-      <Image
-        loading="eager"
-        src="/images/placeholder.jpg"
-        width={1200}
-        height={700}
-        alt="Fusion App Screenshot"
-        className="mx-auto h-80 w-full max-w-7xl overflow-hidden rounded-3xl object-cover md:h-auto md:w-11/12"
-      />
+      <div className="relative pb-[56.25%] h-0 w-full">
+        <iframe
+          src="https://www.loom.com/embed/7740a180fca446429a8bd6e69b2dc31c?sid=e16cd68d-bf3c-4145-8e3c-97f14a74b3f2?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
+          allowFullScreen
+          className="absolute top-0 left-0 w-full h-full rounded-3xl"
+        />
+      </div>
     </section>
   );
 };
