@@ -5,7 +5,10 @@ import { MobileStoreLink } from "~/components/ui";
 
 export const HeroSection = () => {
   return (
-    <section className="container mx-auto my-8 flex flex-col items-center justify-stretch space-y-16 p-8 md:my-16">
+    <section
+      title="hero-section"
+      className="container mx-auto my-8 flex flex-col items-center justify-stretch space-y-16 p-8 md:my-16"
+    >
       <div className=" flex w-full max-w-2xl flex-col space-y-10 text-center md:min-w-[300px]">
         <h1 className="font-body text-3xl font-semibold sm:text-6xl">
           Unleash the power of integrated{" "}

@@ -4,6 +4,7 @@ export const IntegrationsSection = () => {
   const integrations = ["Fusion", "Neurosity", "Spotify", "ActivityWatch", "Magicflow"];
   return (
     <section
+      title="Integrations"
       aria-labelledby="integrations"
       className="relative mb-32 mt-28 flex flex-col items-center space-y-4 text-center md:mb-48"
     >

@@ -6,6 +6,7 @@ import { TestimonialComponent } from "./testimonial/testimonial";
 export const TestimonialSection = () => {
   return (
     <section
+      title="Testimonials"
       aria-labelledby="testimonials"
       className="relative mb-20 mt-28 flex w-full flex-col items-start space-y-4 md:mb-36"
     >

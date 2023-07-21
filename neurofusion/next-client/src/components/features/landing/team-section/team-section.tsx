@@ -21,9 +21,12 @@ export const TeamSection = () => {
     }
   };
   return (
-    <section className="relative mx-4 my-32 flex max-w-full flex-col items-center md:mx-auto md:my-52">
+    <section
+      title="team-members"
+      className="relative mx-4 my-32 flex max-w-full flex-col items-center md:mx-auto md:my-52"
+    >
       <div className="mb-14 flex flex-col items-center justify-center space-y-4">
-        <h2 className="max-w-2xl text-4xl font-semibold md:text-5xl lg:text-6xl">
+        <h2 className="max-w-2xl text-4xl font-semibold md:text-5xl lg:text-6xl text-center">
           Who is building <span className="text-primary-gradient">Fusion</span>
         </h2>
         <p className="max-w-sm text-center text-lg text-gray-600 dark:text-gray-400 md:text-xl">

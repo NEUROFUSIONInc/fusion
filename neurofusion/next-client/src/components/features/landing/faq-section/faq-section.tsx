@@ -6,6 +6,7 @@ import { frequentlyAskedQuestions } from "./data";
 export const FaqSection = () => {
   return (
     <section
+      title="Frequently Asked Questions"
       className="my-8 flex max-w-7xl flex-col items-center px-8 sm:px-16 md:mx-auto md:my-16 md:flex-row md:items-start md:justify-between"
       aria-labelledby="frequently asked questions"
     >
