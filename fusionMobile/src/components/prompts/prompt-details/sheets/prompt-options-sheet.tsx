@@ -84,8 +84,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     if (activePrompt) {
       const promptUpdateLabel =
         activePrompt?.additionalMeta?.isNotificationActive === false
-          ? "Resume Prompt"
-          : "Pause Prompt";
+          ? "Enable Notifications"
+          : "Pause Notifications";
       Alert.alert(promptUpdateLabel, "Are you sure?", [
         {
           text: "Cancel",
@@ -112,7 +112,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
 
   const promptOptions = [
     {
-      option: "Log Prompt",
+      option: "Record Response",
       icon: <Notebook />,
       onPress: () => {
         onBottomSheetClose();
@@ -120,6 +120,17 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
           navigation.navigate("PromptEntry", {
             promptUuid: activePrompt?.uuid,
             triggerTimestamp: Math.floor(dayjs().unix()),
+          });
+      },
+    },
+    {
+      option: "View Responses",
+      icon: <FontAwesome5 name="history" size={18} color="white" />,
+      onPress: () => {
+        onBottomSheetClose?.();
+        activePrompt &&
+          navigation.navigate("ViewResponses", {
+            prompt: activePrompt,
           });
       },
     },
@@ -136,21 +147,10 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
-      option: "View History",
-      icon: <FontAwesome5 name="history" size={18} color="white" />,
-      onPress: () => {
-        onBottomSheetClose?.();
-        activePrompt &&
-          navigation.navigate("ViewResponses", {
-            prompt: activePrompt,
-          });
-      },
-    },
-    {
       option:
         activePrompt?.additionalMeta?.isNotificationActive === false
-          ? "Resume Prompt"
-          : "Pause Prompt",
+          ? "Enable Notifications"
+          : "Pause Notifications",
       icon:
         activePrompt?.additionalMeta?.isNotificationActive === false ? (
           <FontAwesome5 name="play" size={18} color="white" />
