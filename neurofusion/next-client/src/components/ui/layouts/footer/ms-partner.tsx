@@ -8,7 +8,6 @@ export const MsPartner = () => {
         alt="Microsoft Partner Celebration Badge"
         width={786}
         height={336}
-        loading="eager"
         className="w-28 md:w-40"
       />
       <p className="ml-0 text-sm font-normal text-gray-500 dark:text-gray-400 md:ml-4 md:text-base">
