@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import { DayChip } from "../day-chip";
-import { ChevronRight } from "../icons";
+import { ChevronRightSmall } from "../icons";
 import { Select } from "../select";
 
 import { promptFrequencyData } from "./data";
@@ -176,7 +176,7 @@ export const TimePicker: FC<TimePickerProps> = ({
               <Text className="flex font-sans text-base text-white mr-2">
                 {start.format("h:mma")}
               </Text>
-              <ChevronRight style={{ marginTop: 1 }} />
+              <ChevronRightSmall style={{ marginTop: 1 }} />
             </View>
             <DateTimePickerModal
               isVisible={isStartTimePickerVisible}
@@ -197,7 +197,7 @@ export const TimePicker: FC<TimePickerProps> = ({
                 <Text className="flex font-sans text-base text-white mr-2">
                   {end.format("h:mma")}
                 </Text>
-                <ChevronRight style={{ marginTop: 1 }} />
+                <ChevronRightSmall style={{ marginTop: 1 }} />
               </View>
               <DateTimePickerModal
                 isVisible={isEndTimePickerVisible}

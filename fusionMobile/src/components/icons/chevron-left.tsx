@@ -2,7 +2,7 @@ import * as React from "react";
 import type { SvgProps } from "react-native-svg";
 import Svg, { Path } from "react-native-svg";
 
-export const ChevronRight = ({
+export const ChevronLeft = ({
   color = "white",
   width = 24,
   height = 24,
@@ -17,7 +17,7 @@ export const ChevronRight = ({
       {...props}
     >
       <Path
-        d="M9 6.22144L15 11.4966L9 16.7718"
+        d="M15 6.22144L9 11.4966L15 16.7718"
         stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
