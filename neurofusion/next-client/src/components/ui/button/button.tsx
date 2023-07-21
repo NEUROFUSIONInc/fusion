@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
 
 export const buttonStyles = cva(
-  "inline-flex items-center justify-center text-sm gap-1 hover:opacity-95 dark:hover:opacity-90 font-semibold relative rounded-md transition-colors focus:outline-none disabled:opacity-60 focus:ring-2  disabled:cursor-not-allowed min-w-max",
+  "inline-flex items-center justify-center text-sm gap-1 hover:opacity-95 dark:hover:opacity-90 font-normal relative rounded-md transition-colors focus:outline-none disabled:opacity-60 focus:ring-2  disabled:cursor-not-allowed min-w-max",
   {
     variants: {
       intent: {
@@ -14,6 +14,9 @@ export const buttonStyles = cva(
         integration:
           "bg-white shadow-sm border dark:border-slate-800 text-dark dark:bg-gray-700 dark:text-white focus:ring-dark focus:ring-offset-0 dark:focus:ring-secondary-100",
         dark: "bg-slate-900 text-white focus-visible:ring-dark focus:ring-0  focus-visible:ring-offset-2 dark:focus-visible:ring-secondary-100 dark:bg-gray-50 dark:text-primary-800",
+        filled: "bg-indigo text-white focus:ring-indigo focus:ring-offset-2",
+        outlined:
+          "bg-transparent text-indigo focus:outline-0 border-2 border-indigo focus:ring-0 focus-visible:ring-indigo focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:bg-indigo hover:text-white",
       },
       fullWidth: {
         true: "w-full",
@@ -26,6 +29,7 @@ export const buttonStyles = cva(
         sm: "px-3 py-1.5 leading-4 text-sm" /** For backwards compatibility */,
         md: "h-9 px-5 py-2",
         lg: "h-10 px-5 py-2.5",
+        xl: "px-5 py-4 text-lg",
         icon: "flex justify-center min-h-[30px] min-w-[30px]",
       },
       isLoading: {
