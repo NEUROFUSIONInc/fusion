@@ -5,6 +5,7 @@ import { fusionFeatures } from "./data";
 import { FusionFeature } from "./fusion-feature/fusion-feature";
 import { PromptExample } from "./prompt-example/prompt-example";
 import { ButtonLink, MobileStoreLink } from "~/components/ui";
+import { CalendarCheck } from "lucide-react";
 
 export const FeatureSection: FC = () => {
   return (
@@ -55,6 +56,7 @@ export const FeatureSection: FC = () => {
             <ButtonLink
               intent="filled"
               target="_blank"
+              leftIcon={<CalendarCheck className="w-5 h-5 mr-2" />}
               href="https://calendly.com/oreogundipe/chat-about-fusion"
               size="xl"
               className="mt-4"
