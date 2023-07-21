@@ -16,7 +16,7 @@ export const PromptExample: FC<PromptExampleProps> = ({ title, leftSubtitle, rig
         className
       )}
     >
-      <div className="text-base font-normal leading-normal">{title}</div>
+      <p className="text-base font-normal leading-normal">{title}</p>
       <div className="justify-start text-gray-500 items-center gap-[9px] inline-flex">
         <p className=" text-sm font-normal leading-normal">{leftSubtitle}</p>
         <div className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
