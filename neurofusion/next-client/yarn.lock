@@ -1966,11 +1966,6 @@
   dependencies:
     glob "7.1.7"
 
-"@next/font@^13.4.10":
-  version "13.4.10"
-  resolved "https://registry.npmjs.org/@next/font/-/font-13.4.10.tgz"
-  integrity sha512-BqV71ikHIFh+PZLpCR0nMZnlg/3Hcuw9qIUN42I4iCpneDHHiViUtanUeE113gy0Wm9oePTGX5OeKnPbSNnnHA==
-
 "@next/swc-darwin-arm64@13.4.10":
   version "13.4.10"
   resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.4.10.tgz"
@@ -5421,6 +5416,8 @@ damerau-levenshtein@^1.0.8:
 
 dayjs@^1.11.9:
   version "1.11.9"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.9.tgz"
+  integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
 
 debug@^2.2.0:
   version "2.6.9"
@@ -10640,6 +10637,8 @@ synckit@^0.8.5:
 
 tailwind-merge@^1.14.0:
   version "1.14.0"
+  resolved "https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-1.14.0.tgz"
+  integrity sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==
 
 tailwindcss@^3.3.3:
   version "3.3.3"
