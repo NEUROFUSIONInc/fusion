@@ -26,7 +26,14 @@ export const MobileMenu: FC<IMobileMenuProps> = ({ open, onMobileMenuClose }) =>
         <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-0 right-0 top-0 z-30 h-full w-full bg-white p-4 focus:outline-none dark:bg-dark-gradient md:hidden">
           <div className="flex items-center justify-between">
             <Logo withText />
-            <Button rightIcon={<X />} size="icon" intent="ghost" onClick={onMobileMenuClose} />
+            <Button
+              title="Close mobile menu"
+              aria-labelledby="mobile-menu-button"
+              rightIcon={<X />}
+              size="icon"
+              intent="ghost"
+              onClick={onMobileMenuClose}
+            />
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/50">
