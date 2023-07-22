@@ -7,22 +7,26 @@ import React from "react";
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import "../styles/globals.css";
 import { gtw } from "~/utils";
+import { Meta } from "~/components/layouts";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient({ defaultOptions: QUERY_OPTIONS_DEFAULT }));
 
   return (
-    <SessionProvider session={session}>
-      <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps.dehydratedState}>
-          <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
-            <main className={`${gtw.variable} font-body`}>
-              <Component {...pageProps} />
-            </main>
-          </ThemeProvider>
-        </Hydrate>
-      </QueryClientProvider>
-    </SessionProvider>
+    <>
+      <Meta />
+      <SessionProvider session={session}>
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={pageProps.dehydratedState}>
+            <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
+              <main className={`${gtw.variable} font-body`}>
+                <Component {...pageProps} />
+              </main>
+            </ThemeProvider>
+          </Hydrate>
+        </QueryClientProvider>
+      </SessionProvider>
+    </>
   );
 }
 
