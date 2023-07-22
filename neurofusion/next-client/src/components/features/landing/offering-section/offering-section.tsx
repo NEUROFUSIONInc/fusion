@@ -21,7 +21,7 @@ export const OfferingSection = () => {
           </h2>
           <div className="flex flex-col space-y-4">
             {fusionOfferingFeatures.map((feature) => (
-              <div className="flex max-w-xs flex-col items-center md:flex-row md:items-start" key={feature.title}>
+              <dl className="flex max-w-xs flex-col items-center md:flex-row md:items-start" key={feature.title}>
                 <div className="mb-4 rounded-md bg-indigo-200 p-3 md:mb-0">
                   <feature.icon className="h-6 w-6 stroke-secondary-600" aria-hidden="true" />
                 </div>
@@ -29,7 +29,7 @@ export const OfferingSection = () => {
                   <dt className="font-semibold">{feature.title}</dt>
                   <dd className="mt-2 max-w-xl leading-7 text-gray-600 dark:text-gray-400">{feature.description}</dd>
                 </div>
-              </div>
+              </dl>
             ))}
           </div>
           <div className="flex w-full flex-col items-center justify-center gap-x-6 gap-y-2 pt-6 md:flex-row md:pt-0">
