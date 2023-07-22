@@ -16,7 +16,7 @@ export const IntegrationsCarousel: FC<PropType> = (props) => {
           {integrations.map((integration) => {
             return (
               <span key={integration} className={cn("mx-8 inline-flex items-center space-x-16")}>
-                <p className="block text-2xl text-lime-700 md:text-5xl">{integration}</p>
+                <p className="block text-2xl text-lime-700 font-medium md:text-5xl">{integration}</p>
                 <StarIcon />
               </span>
             );
@@ -26,7 +26,7 @@ export const IntegrationsCarousel: FC<PropType> = (props) => {
           {integrations.map((integration) => {
             return (
               <span key={integration} className={cn("mx-8 inline-flex items-center space-x-16")}>
-                <p className="block text-2xl text-lime-700 md:text-5xl">{integration}</p>
+                <p className="block text-2xl text-lime-700 md:text-5xl font-medium">{integration}</p>
                 <StarIcon />
               </span>
             );

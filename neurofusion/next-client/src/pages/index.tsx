@@ -1,15 +1,17 @@
 import type { NextPage } from "next";
 
 import {
-  FaqSection,
   FeatureSection,
-  HeroSection,
   IntegrationsSection,
-  OfferingSection,
   TeamSection,
   TestimonialSection,
+  FaqSection,
+  OfferingSection,
 } from "~/components/features/landing";
 import { MainLayout } from "~/components/layouts";
+
+import dynamic from "next/dynamic";
+const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
 
 const Home: NextPage = () => {
   return (

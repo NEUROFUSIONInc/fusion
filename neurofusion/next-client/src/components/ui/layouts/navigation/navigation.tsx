@@ -43,6 +43,8 @@ export const Navbar: FC = () => {
           </div>
         </div>
         <Button
+          aria-labelledby="mobile-menu-button"
+          title="Open mobile menu"
           rightIcon={<Menu strokeWidth={2} />}
           size="icon"
           intent="ghost"
