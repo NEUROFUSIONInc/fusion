@@ -118,10 +118,10 @@ export const quickAddPrompts: Prompt[] = [
   {
     uuid: uuidv4(),
     promptText: "What's your most important task for today?",
-    responseType: "yesno",
+    responseType: "text",
     notificationConfig_days: {
       sunday: false,
-      monday: false,
+      monday: true,
       tuesday: false,
       wednesday: false,
       thursday: true,

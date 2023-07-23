@@ -6,7 +6,7 @@ import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { Alert, Linking, Platform, StatusBar } from "react-native";
+import { Alert, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
@@ -83,21 +83,23 @@ function App() {
     // validate permission status for user
     (async () => {
       const permissionStatus = await registerForPushNotificationsAsync();
-      if (!permissionStatus) {
-        Alert.alert(
-          "Enable notifications",
-          "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
-          [
-            {
-              text: "OK",
-              onPress: async () => {
-                Linking.openURL("app-settings:Fusion");
-              },
-            },
-          ]
-        );
-        return;
-      }
+      // TODO: conditionally display this on the settings page
+      // if (!permissionStatus) {
+      //   console.log("no permission status, asking to navigate to settings");
+      //   Alert.alert(
+      //     "Enable notifications",
+      //     "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
+      //     [
+      //       {
+      //         text: "OK",
+      //         onPress: async () => {
+      //           Linking.openURL("app-settings:Fusion");
+      //         },
+      //       },
+      //     ]
+      //   );
+      //   return;
+      // }
 
       /**
        * Set up notification categories

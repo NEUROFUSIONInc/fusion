@@ -35,8 +35,9 @@ export const HomeHeader = () => {
           leftIcon={<Person />}
           onPress={() => console.log("nothing yet")}
         />
-        <Text className="font-sans text-base text-white text-[20px] ml-2">
-          {nostrAccount?.npub.slice(0, 5) + ":" + nostrAccount?.npub.slice(-5)}
+        {/* TODO: change to fusion logo */}
+        <Text className="font-sans text-base text-white text-[20px] ml-2 align-text-bottom leading-9">
+          {nostrAccount?.npub.slice(0, 8) + ":" + nostrAccount?.npub.slice(-8)}
         </Text>
       </View>
       <Button
