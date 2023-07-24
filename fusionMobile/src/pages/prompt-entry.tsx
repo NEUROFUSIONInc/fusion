@@ -184,7 +184,6 @@ export function PromptEntryScreen() {
                     inputMode="decimal"
                     keyboardType="decimal-pad"
                     onChangeText={setUserResponse}
-                    placeholder="Additional notes (optional)"
                     value={userResponse}
                     className="h-[50] leading-1.5 mx-4"
                   />
