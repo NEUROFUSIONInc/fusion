@@ -30,7 +30,8 @@ export const TeamSection = () => {
           Who is building <span className="text-primary-gradient">Fusion</span>
         </h2>
         <p className="max-w-sm text-center text-lg text-gray-600 dark:text-gray-400 md:text-xl">
-          Take a look at the team behind your new favorite platform!
+          We're a dynamic and interdisciplinary group specializing in neurotechnology, design, data infrastructure, and
+          AI.
         </p>
       </div>
 
