@@ -18,7 +18,7 @@ const Home: NextPage = () => {
     <MainLayout>
       <HeroSection />
       <FeatureSection />
-      {/* <IntegrationsSection /> */}
+      <IntegrationsSection />
       <TeamSection />
       <TestimonialSection />
       <FaqSection />

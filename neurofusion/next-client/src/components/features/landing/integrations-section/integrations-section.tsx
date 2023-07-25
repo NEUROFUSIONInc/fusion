@@ -12,7 +12,7 @@ export const IntegrationsSection = () => {
         Connect your data to Fusion <span className="text-primary-gradient">seamlessly</span>
       </h2>
       <p className="block max-w-xs text-lg text-gray-600 md:text-xl">
-        Fusion seamlessly integrates with applications you already use!
+        Fusion integrates with applications you already use!
       </p>
 
       <IntegrationsCarousel integrations={integrations} />
