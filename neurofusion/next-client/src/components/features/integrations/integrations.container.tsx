@@ -6,11 +6,10 @@ import { MagicFlowModal, NeurosityModal } from "./modals";
 
 import { useGetMagicFlowToken, useNeurosityState } from "~/hooks";
 
-type ModalState = "fusion" | "neurosity" | "magicflow" | "activitywatch" | "spotify" | undefined;
-type IntegrationSlug = (typeof integrations)[number]["slug"];
+type IntegrationSlug = (typeof integrations)[number]["slug"] | undefined;
 
 export const IntegrationsContainer = () => {
-  const [modalOpen, setModalOpen] = useState<ModalState>();
+  const [modalOpen, setModalOpen] = useState<IntegrationSlug>();
   const { data: magicflowData, isLoading: magicflowLoading } = useGetMagicFlowToken();
   const { user, loading: neurosityLoading, connectNeurosityAccount } = useNeurosityState();
 
@@ -29,8 +28,8 @@ export const IntegrationsContainer = () => {
       case "magicflow":
         setModalOpen("magicflow");
         break;
-      case "activitywatch":
-        // call function for activitywatch integration
+      case "activityWatch":
+        // call function for activityWatch integration
         break;
       case "spotify":
         // call function for spotify integration
@@ -54,8 +53,8 @@ export const IntegrationsContainer = () => {
       case "magicflow":
         // check if MagicFlow is connected
         return Boolean(magicflowData?.magicflowToken);
-      case "activitywatch":
-        // check if activitywatch is connected
+      case "activityWatch":
+        // check if activityWatch is connected
         return false;
       default:
         return false;
@@ -76,7 +75,7 @@ export const IntegrationsContainer = () => {
       case "magicflow":
         // check if MagicFlow is connected
         return magicflowLoading;
-      case "activitywatch":
+      case "activityWatch":
         // check if activityWatch is connected
         return false;
       default:

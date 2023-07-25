@@ -1,7 +1,7 @@
-import classNames from "classnames";
 import { FC, ReactNode } from "react";
 
 import { Footer, Navbar } from "~/components/ui";
+import { cn } from "~/utils";
 
 interface MainLayoutProps {
   children?: ReactNode;
@@ -10,7 +10,7 @@ interface MainLayoutProps {
 export const MainLayout: FC<MainLayoutProps> = ({ children, dark }) => {
   return (
     <div
-      className={classNames("min-h-screen bg-light-gradient dark:bg-dark-gradient", {
+      className={cn("min-h-screen bg-light-gradient dark:bg-dark-gradient", {
         "dark ": dark,
       })}
     >

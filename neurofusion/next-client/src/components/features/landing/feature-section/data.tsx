@@ -1,28 +1,39 @@
 import { Maximize } from "lucide-react";
 
-export const fusionFeatures = [
+import { IFusionFeature } from "./types";
+
+export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
-    icon: <Maximize />,
-    title: "For Individuals",
+    title: "individuals",
     description: "Create & respond to personalized prompts to understand changes in your behavior over time",
+    featuresList: [
+      "Create & respond to personalized prompts ",
+      "Take cognitive tests & see how you’re changing",
+      "Chat with your data to unlock insights on the go",
+      "Participate in quests & contribute to research",
+    ],
   },
   {
     id: 2,
-    icon: <Maximize />,
-    title: "For Explorers/Researchers",
+    title: "coaches & health professionals",
     description: "Record experiments & design quests (a set of tasks other users can run) and share results",
+    featuresList: [
+      "Automated scheduling for medication adherence",
+      "Symptom monitoring",
+      "Trialing interventions",
+      "Remote wellbeing monitoring for care specialist",
+    ],
   },
   {
     id: 3,
-    icon: <Maximize />,
-    title: "For Coaches/Health Professionals",
+    title: "explorers & researchers",
     description: "See, with consent how clients respond to recommendations & plans outside of consults",
+    featuresList: [
+      "A playground of exercises for recording brain & behavior data",
+      "Design a set of tasks and their execution flow",
+      "Run your data with available models & share your results",
+      "Define methods that update study results as new data is gotten",
+    ],
   },
-  // {
-  //   id: 4,
-  //   icon: <Maximize />,
-  //   title: "Lorem ipsum dolor",
-  //   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at eros magna. Mauris vel ",
-  // },
 ];

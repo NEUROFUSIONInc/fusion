@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
-import { MainLayout } from "~/components/layouts";
+import { MainLayout, Meta } from "~/components/layouts";
 import { LoginContainer } from "~/components/ui";
 import { magic } from "~/lib";
 
@@ -26,6 +26,11 @@ const LoginPage = () => {
 
   return (
     <MainLayout>
+      <Meta
+        meta={{
+          title: "Neurofusion Login",
+        }}
+      />
       <div className="mx-auto mt-16 flex w-full justify-center">
         <LoginContainer onSubmit={onSubmit} />
       </div>

@@ -1,8 +1,8 @@
-import { Database, Hand } from "lucide-react";
+import { Hand, Lock } from "lucide-react";
 
-export const newsletterFeatures = [
+export const fusionOfferingFeatures = [
   {
-    icon: Database,
+    icon: Lock,
     title: "Data privacy",
     description: "Prompts & responses are stored on your device. We anonymise and encrypt data from other sources.",
   },

@@ -1,10 +1,11 @@
 import { UrlObject } from "url";
 
-import classNames from "classnames";
 import Link, { LinkProps } from "next/link";
 import { AnchorHTMLAttributes, FC } from "react";
 
 import { ButtonProps, buttonStyles } from "../button/button";
+
+import { cn } from "~/utils";
 
 interface BLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">, LinkProps {
   href: string | UrlObject;
@@ -28,7 +29,7 @@ export const ButtonLink: FC<ButtonLinkProps> = ({
   return (
     <Link
       href={href}
-      className={classNames(
+      className={cn(
         buttonStyles({
           fullWidth,
           intent,
@@ -37,7 +38,7 @@ export const ButtonLink: FC<ButtonLinkProps> = ({
           rounded,
           className,
         }),
-        "focus:!ring-offset-0",
+        "focus:ring-offset-0",
         className
       )}
       {...props}

@@ -5,7 +5,6 @@ import { useEffect, useReducer } from "react";
 import { neurosityReducer, initialState, DeviceInfo } from "./config";
 
 import { API_URL } from "~/config";
-
 import { neurosity } from "~/services";
 
 export function useNeurosityState() {
