@@ -10,10 +10,10 @@ export const HeroSection = () => {
     >
       <div className="flex w-full max-w-2xl flex-col space-y-10 text-center md:min-w-[300px]">
         <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-          Unleash the power of integrated{" "}
+          Improve your{" "}
           <span className="text-primary-gradient">
             <Typist typingDelay={100} cursor={<span className="cursor">|</span>} loop>
-              well-being
+              wellbeing
               <Typist.Delay ms={2000} />
               <Typist.Backspace count={12} />
               <Typist.Delay ms={500} />
@@ -29,8 +29,7 @@ export const HeroSection = () => {
           with Fusion
         </h1>
         <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
-          Transform your well-being with Neurofusion. Seamlessly integrate behavior, health, and brain data for
-          effortless analysis, empowering personalized care on mobile devices.
+          Our copilot brings together your daily activities, fitness, and brain data for a better and healthier life.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
           <MobileStoreLink store="apple" className="w-full md:w-auto" />

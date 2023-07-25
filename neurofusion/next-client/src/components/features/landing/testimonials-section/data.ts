@@ -3,50 +3,10 @@ import { Testimonial } from "./types";
 export const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "John Doe",
-    location: "Abuja, Nigeria",
+    name: "Ayodeji Marquis",
+    location: "Seattle, WA",
     highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/john-doe.avif",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    location: "Lagos, Nigeria",
-    highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/jane-doe.avif",
-  },
-  {
-    id: 3,
-    name: "John Doe",
-    location: "Abuja, Nigeria",
-    highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/john-doe.avif",
-  },
-  {
-    id: 4,
-    name: "Jane Doe",
-    location: "Lagos, Nigeria",
-    highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/jane-doe.avif",
-  },
-  {
-    id: 5,
-    name: "John Doe",
-    location: "Abuja, Nigeria",
-    highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/john-doe.avif",
-  },
-  {
-    id: 6,
-    name: "Jane Doe",
-    location: "Lagos, Nigeria",
-    highlight:
-      "Fusion is helping me live my best life. I’ve learned a lot  and recommended it to all my friend. I really love the content they’ve offered.",
-    image: "/images/testimonials/jane-doe.avif",
+      "Fusion has been incredible in navigating my daily routine. This app has significantly improved my habits, especially when it comes to taking my medications, managing stress, and staying aware of my overall health. With various prompts set at different intervals, it ensures that I never miss a beat in my self-care journey.",
+    image: "/images/testimonials/deji.jpeg",
   },
 ];

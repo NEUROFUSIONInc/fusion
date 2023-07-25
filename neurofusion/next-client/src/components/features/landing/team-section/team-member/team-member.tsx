@@ -22,9 +22,11 @@ export const TeamMember: FC<TeamMemberProps> = ({ member, handleLeftClick, handl
       />
       <div className="w-full bg-indigo-700 bg-team-pattern bg-contain bg-center bg-no-repeat px-7 py-28 text-center md:w-3/5 md:py-12 md:text-left">
         <div className="mx-auto flex h-full w-full max-w-xs flex-col items-center justify-center space-y-8 font-normal text-white">
-          <p className="text-lg">
-            <q>{member.quote}</q>
-          </p>
+          {member?.quote && (
+            <p className="text-lg">
+              <q>{member.quote}</q>
+            </p>
+          )}
           <div className="flex w-full flex-col">
             <h3 className="text-base font-semibold">{member.name}</h3>
             <p className="text-sm text-gray-300">{member.position}</p>

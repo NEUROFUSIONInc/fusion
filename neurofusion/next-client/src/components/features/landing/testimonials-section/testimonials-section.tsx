@@ -12,7 +12,7 @@ export const TestimonialSection = () => {
     >
       <div className="md:mp-16 max-w-5xl px-4 lg:mx-auto">
         <h2 className="w-11/12 text-left text-3xl font-semibold md:text-5xl lg:text-6xl">
-          Helping hundreds of people <span className="text-primary-gradient"> understand their health</span>
+          Helping hundreds of people <span className="text-primary-gradient"> navigate their days</span>
         </h2>
       </div>
 
@@ -25,7 +25,7 @@ export const TestimonialSection = () => {
           ))}
         </div>
 
-        <div className="inline-flex items-start justify-start p-8">
+        {/* <div className="inline-flex items-start justify-start p-8">
           <div className="mr-2 flex items-end justify-start gap-0.5">
             <Star className="h-3 w-3 fill-yellow stroke-0" />
             <Star className="h-5 w-5 fill-yellow stroke-0" />
@@ -36,7 +36,7 @@ export const TestimonialSection = () => {
             200+ users rated us <span className="font-medium text-lime-700">4.67 </span>
             out of <span className="font-medium text-lime-700">5</span>
           </p>
-        </div>
+        </div> */}
       </div>
     </section>
   );
