@@ -13,12 +13,18 @@ export const frequentlyAskedQuestions = [
   },
   {
     id: 3,
+    question: "How much does fusion cost?",
+    answer:
+      "We haven't figured out pricing yet, but we know this needs to exist. We will try different experiments over time. As a founding user, you get to use it free while we figure it out and receive discounts when we launch pricing.",
+  },
+  {
+    id: 4,
     question: "How can Fusion benefit me personally?",
     answer:
       "Fusion offers you various benefits, including understanding your behavior patterns, tracking health trends, and enhancing cognitive performance. It allows you to improve various aspects by providing you with real-real-time feedback based on your data, offering personalized recommendations for improving sleep quality, managing stress, enhancing cognitive function, and more.",
   },
   {
-    id: 4,
+    id: 5,
     question: "Can I collaborate with healthcare providers or researchers using Fusion?",
     answer:
       "Absolutely. Fusion allows seamless communication and collaboration with healthcare providers and researchers. You can securely share your data and receive personalized interventions and recommendations remotely.",
