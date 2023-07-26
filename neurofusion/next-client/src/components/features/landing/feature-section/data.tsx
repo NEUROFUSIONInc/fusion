@@ -18,9 +18,9 @@ export const fusionFeatures: IFusionFeature[] = [
     title: "coaches & health professionals",
     description: "See, with consent how clients respond to recommendations & plans outside of consults",
     featuresList: [
-      "Automate medication scheduling for improved adherence",
-      "Monitor symptoms in real-time for proactive care",
-      "Effortlessly trial interventions for better outcomes",
+      "Simplify medication management for you and your clients with automated scheduling and adherence tracking",
+      "Monitor symptoms/side-effects in real-time to address concerns",
+      "Improve client care with ease by trialing interventions and treatment plans"
     ],
   },
   {
