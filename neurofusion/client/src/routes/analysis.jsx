@@ -72,6 +72,7 @@ export default function Analysis() {
     }
 
     if (brainChart) {
+      console.log("updating chart with", brainChartOptions);
       brainChart.setOption(brainChartOptions, true);
     }
   }, [brainChart, brainChartOptions]);
@@ -370,10 +371,7 @@ export default function Analysis() {
       const powerSpectrumSeries = chartCategoryBaseData.map((item) => {
         // filter for only good channels
         if (item[`${channelName}_${frequencyBand}`] <= stdDevThreshold) {
-          return [
-            item.unixTimestamp,
-            item[`${channelName}_${frequencyBand}_moving_avg`],
-          ];
+          return [item.unixTimestamp, item[`${channelName}_${frequencyBand}`]];
         }
       });
 
