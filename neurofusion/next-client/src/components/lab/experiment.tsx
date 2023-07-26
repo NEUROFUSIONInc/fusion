@@ -61,10 +61,12 @@ export const Experiment: FC = () => {
 
       <h1 style={{ marginTop: 10 }}>Flappy Birds</h1>
 
-      <p>Press 'Spacebar' to start the game. We will be recording brain activity</p>
+      <h3>
+        Press 'Spacebar' to start the game. We will be recording brain activity & correlate with spacebar presses.
+      </h3>
       <>
         <iframe
-          src="https://codesandbox.io/embed/flappy-bird-forked-h2h00z?fontsize=14&hidenavigation=1&theme=dark"
+          src="https://codesandbox.io/embed/flappy-bird-neurofusion-g8pml3?fontsize=14&hidenavigation=1&theme=dark"
           style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
           title="flappy-bird"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
