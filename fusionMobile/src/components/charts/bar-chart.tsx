@@ -3,7 +3,7 @@ import { BarChart } from "echarts/charts";
 import { GridComponent } from "echarts/components";
 import * as echarts from "echarts/core";
 import React, { FC, useRef } from "react";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
 
 echarts.use([SVGRenderer, BarChart, GridComponent]);
@@ -40,7 +40,8 @@ export const FusionBarChart: FC<BarChartProps> = ({
           },
         },
         min: () => startDate.startOf(timePeriod).valueOf(),
-        max: () => startDate.endOf(timePeriod).valueOf(),
+        // TODO: for some reason chartbar chart also shows sunday at the end & we don't want that
+        max: () => startDate.endOf(timePeriod).subtract(1, "day").valueOf(),
         splitLine: {
           show: true,
           lineStyle: {
@@ -52,8 +53,13 @@ export const FusionBarChart: FC<BarChartProps> = ({
       },
       yAxis: {
         type: "value",
-        axisLine: {
-          show: false,
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "rgba(128, 128, 128, 0.1)", // Set the color of the grid lines
+            width: 1, // Set the thickness of the grid lines
+            type: "solid", // Set the style of the grid lines
+          },
         },
         axisTick: {
           show: false,
@@ -79,7 +85,7 @@ export const FusionBarChart: FC<BarChartProps> = ({
     if (svgChartRef.current) {
       chart = echarts.init(svgChartRef.current, "light", {
         renderer: "svg",
-        width: 400,
+        width: Dimensions.get("window").width,
         height: 300,
       });
       console.log(JSON.stringify(chartOptions));

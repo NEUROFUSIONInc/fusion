@@ -3,7 +3,7 @@ import { LineChart } from "echarts/charts";
 import { GridComponent } from "echarts/components";
 import * as echarts from "echarts/core";
 import React, { FC, useRef } from "react";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
 
 // yes/ no / no response
@@ -82,7 +82,7 @@ export const FusionLineChart: FC<LineChartProps> = ({
     if (svgChartRef.current) {
       chart = echarts.init(svgChartRef.current, "light", {
         renderer: "svg",
-        width: 400,
+        width: Dimensions.get("window").width,
         height: 300,
       });
       console.log(JSON.stringify(chartOptions));
