@@ -138,7 +138,7 @@ let keymapInv = Object.entries(keymap).reduce((obj, [key, value]) => {
   
 // keymap.map((x,y) => {y:x})
 document.addEventListener('keypress', function(event) { // Allows dual inputs
-    if(document.getElementsByClassName("keyboardToBtn").length==0) return
+    if(document.getElementsByClassName("keyboardToBtn").length===0) return
     if (event.key in keymap) {
         console.log(document.getElementById('jspsych-html-button-response-btngroup').getElementsByClassName('jspsych-btn')[keymap[event.key]].innerHTML)
         document.getElementById('jspsych-html-button-response-btngroup').getElementsByClassName('jspsych-btn')[keymap[event.key]].click();
