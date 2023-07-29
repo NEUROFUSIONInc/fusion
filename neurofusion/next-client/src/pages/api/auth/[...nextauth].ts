@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async redirect() {
-      return "/playground";
+      return "/lab/playground";
     },
     async jwt({ token, user }) {
       if (user) {

@@ -1,0 +1,29 @@
+.jspsych-btn {
+    margin-bottom: 10px;
+}
+body {
+    background-color: #fafafa;
+}
+#countDown{
+    position: absolute;
+    width: 100%;
+    display: inline;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    
+}
+#countDown p{
+   align-content: center;
+   font-weight: 100;
+   font-size: large;
+}
+#jspsych-container {
+    font-size: xx-large;
+    font-family: sans;
+    font-weight: bold;
+    position:absolute;
+    overflow: none;
+    width: 100%;
+    height: 100%;
+}
