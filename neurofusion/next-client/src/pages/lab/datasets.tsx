@@ -11,6 +11,20 @@ import { FC, useState, useEffect } from "react";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "~/components/ui/dropdown-menu/dropdown-menu"; // Replace this with the actual path to your dropdown menu script
 
 
 const DatasetPage: NextPage = () => {
@@ -21,12 +35,13 @@ const DatasetPage: NextPage = () => {
   );
 };
 export const DataDisplay: FC = () => {
-
   async function getDatasets(startDate:any, endDate:any) {
-    console.log(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/search`);
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/search`,
       {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         params: {
           startTimestamp: dayjs(startDate).unix(),
           endTimestamp: dayjs(endDate).unix(),
@@ -48,6 +63,9 @@ export const DataDisplay: FC = () => {
     const res = await axios.get(
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/download`,
       {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         params: {
           blobName: blobName,
         },
@@ -75,7 +93,7 @@ export const DataDisplay: FC = () => {
   }
 
   const [filterStartDate, setFilterStartDate] = useState(
-    dayjs().subtract(1, "week").format("YYYY-MM-DD")
+    dayjs().subtract(15, "week").format("YYYY-MM-DD")
   );
 
   const [datasets, setDatasets] = useState([]);
@@ -92,22 +110,44 @@ export const DataDisplay: FC = () => {
     })();
   }, [filterStartDate]);
 
-
-  getDatasets(dayjs().format("YYYY-MM-DD"),dayjs().subtract(10,"day").format("YYYY-MM-DD"));
-
 return (
-<div><p>Hello!</p>  setFilterStartDate(1);
-</div>
-);
+  <>
+  <p>Hello</p>
+  <CollapsibleList></CollapsibleList>
+  </>
+  );
 
 };
 
+const CollapsibleList = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div>
+      {/* Your list item header */}
+      <button onClick={() => setIsExpanded(!isExpanded)}>
+        {isExpanded ? 'Collapse' : 'Expand'}
+      </button>
+
+      {/* Conditionally render the list content based on isExpanded state */}
+      {isExpanded && (
+        <ul>
+          <li>Item 1</li>
+          <li>Item 2</li>
+          <li>Item 3</li>
+          {/* Add more list items as needed */}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 
 export default DatasetPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
+
   if (!session) {
     return {
       redirect: {

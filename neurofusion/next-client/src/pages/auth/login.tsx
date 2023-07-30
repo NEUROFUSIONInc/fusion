@@ -1,7 +1,9 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps} from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
+import {createContext,useContext} from "react";
+
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
@@ -10,8 +12,6 @@ import { LoginContainer } from "~/components/ui";
 import { magic } from "~/lib";
 import axios from "axios";
 
-export var didTokenexp:any;
-
 const LoginPage = () => {
   const router = useRouter();
 
@@ -19,14 +19,13 @@ const LoginPage = () => {
     if (!magic) throw new Error(`magic not defined`);
 
     const didToken = await magic.auth.loginWithMagicLink({ email });
-    didTokenexp = didToken
 
     await signIn("credentials", {
       didToken,
       redirect: true,
       callbackUrl: router.query.callbackUrl?.toString(),
     });
-    
+
     await userLoginComplete(email,didToken);
   };
 
@@ -63,6 +62,7 @@ export async function userLoginComplete(email:any, idToken:any) {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
+
 
   if (session) {
     return {

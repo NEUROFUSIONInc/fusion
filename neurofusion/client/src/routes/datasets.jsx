@@ -31,9 +31,10 @@ export default function Datasets() {
   }, [filterStartDate]);
 
   async function getDatasets(startDate, endDate) {
+
     const res = await axios.get( 
       `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/search`,
-      {
+        {
         params: {
           startTimestamp: dayjs(startDate).unix(),
           endTimestamp: dayjs(endDate).unix(),
