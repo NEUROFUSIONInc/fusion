@@ -11,20 +11,11 @@ import { FC, useState, useEffect } from "react";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuGroup,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-} from "~/components/ui/dropdown-menu/dropdown-menu"; // Replace this with the actual path to your dropdown menu script
+
+
+import {Button
+
+} from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
 
 
 const DatasetPage: NextPage = () => {
@@ -97,29 +88,39 @@ export const DataDisplay: FC = () => {
   );
 
   const [datasets, setDatasets] = useState([]);
+
   useEffect(() => {
     (async () => {
-      setDatasets(
-        await getDatasets(
-          filterStartDate,
-          dayjs().add(1, "day").format("YYYY-MM-DD") // add 1 day to include today
+      var dataSets = {};
+      for (let i = 0; i < 20; i++) {
+          console.log(i)
+          dataSets[i] = await getDatasets(
+          dayjs().subtract(i, "day").format("YYYY-MM-DD"),
+          dayjs().subtract(i-1, "day").format("YYYY-MM-DD") // add 1 day to include today
         )
+
+      }
+      console.log(dataSets)
+      setDatasets(
+        dataSets
       );
 
       // TODO: parse datasets into provider, dataName, time format
     })();
   }, [filterStartDate]);
 
+
+
 return (
   <>
   <p>Hello</p>
-  <CollapsibleList></CollapsibleList>
+  <CollapsibleList listElements={[<CollapsibleList listElements={["3","4"]}></CollapsibleList>,"2"]}></CollapsibleList>
   </>
   );
 
 };
 
-const CollapsibleList = () => {
+const CollapsibleList = ({listElements}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -132,9 +133,12 @@ const CollapsibleList = () => {
       {/* Conditionally render the list content based on isExpanded state */}
       {isExpanded && (
         <ul>
-          <li>Item 1</li>
-          <li>Item 2</li>
-          <li>Item 3</li>
+          {listElements.map((item:any) => (
+                <li>{item} 
+                {/* <Button onClick={() => console.log(`Button for ${item} clicked!`)}>Click Me</Button> */}
+                </li> 
+                
+          ))}
           {/* Add more list items as needed */}
         </ul>
       )}
