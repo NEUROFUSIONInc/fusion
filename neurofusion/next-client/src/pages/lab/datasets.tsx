@@ -115,10 +115,11 @@ export const DataDisplay: FC = () => {
       dayjs.unix(1).format("YYYY-MM-DD"),// add 1 day to include today
       dayjs().add(1, "day").format("YYYY-MM-DD")));
       
-      const orderedTimes = Object.keys(dataSets);
+      const orderedTimes = Object.keys(dataSets).map((str)=>parseInt(str)).sort();
       var orgDataSets = {"All":{}};
-      orderedTimes.forEach((time:string) =>{
-        const timeStamp = dayjs.unix(parseInt(time));
+
+      orderedTimes.forEach((time) =>{
+        const timeStamp = dayjs.unix(time);
         if(!(timeStamp.format("YYYY") in orgDataSets["All"])) orgDataSets["All"][timeStamp.format("YYYY")] = {}
         if(!(timeStamp.format("MMMM") in orgDataSets["All"][timeStamp.format("YYYY")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")] = {}
         if(!(timeStamp.format("DD") in orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")] = {}
@@ -135,12 +136,17 @@ export const DataDisplay: FC = () => {
   }, [filterStartDate]);
 
 
+  const [fCount,setFCount]=useState(0)
 
 return (
   <>
   <div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
+  <p>{fCount} Files Selected</p><Button size={"sm"}>Download</Button> <Button size={"sm"}>Clear</Button>
+  </div>
   {
-   <CollapsibleList title="All" listElements={Object.keys(datasets).map((year) => {
+    
+   <CollapsibleList title="All" defaultOpen={true} listElements={Object.keys(datasets).map((year) => {
       return (<CollapsibleList title={year} listElements={Object.keys(datasets[year]).map((month) => {
         return(<CollapsibleList title={month} listElements={Object.keys(datasets[year][month]).map((day) => {
           return (<CollapsibleList title={day} listElements={Object.keys(datasets[year][month][day]).map((time) => {
@@ -161,28 +167,36 @@ return (
 
 };
 
-const CollapsibleList = ({listElements,title}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const CollapsibleList = ({listElements,title,defaultOpen=false}) => {
+  const [isExpanded, setIsExpanded] = useState(defaultOpen);
   console.log(listElements)
+  const [checked, setChecked] = useState(false);
+
+  const handleCheckboxChange = (event:any) => {
+    setChecked(event.target.checked);
+  };
+
   return (
     <div>
       {/* Your list item header */}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
       <button onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded ? "- "+title : "+ "+title}
       </button>
+      <input style={{marginLeft:".2em", paddingTop:"1em"}} type="checkbox" checked={checked} onChange={handleCheckboxChange} />
+      </div>
+
 
       {/* Conditionally render the list content based on isExpanded state */}
-      {isExpanded && (
-        <ul style={{ marginLeft: 20 }}>
+        <ul style={{ marginLeft: 20, display:isExpanded ? "inherit":"None" }}>
           {listElements.map((item:any) => (
-                <li>{item} 
+                <li>{item}
                 {/* <Button onClick={() => console.log(`Button for ${item} clicked!`)}>Click Me</Button> */}
                 </li> 
                 
           ))}
           {/* Add more list items as needed */}
         </ul>
-      )}
     </div>
   );
 };
