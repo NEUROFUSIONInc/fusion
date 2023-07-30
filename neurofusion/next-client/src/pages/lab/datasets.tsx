@@ -142,11 +142,11 @@ return (
   <>
   <div>
   {
-   <CollapsibleList title="All" listElements={Object.keys(datasets).map((year) => {
-      return (<CollapsibleList title={year} listElements={Object.keys(datasets[year]).map((month) => {
-        return(<CollapsibleList title={month} listElements={Object.keys(datasets[year][month]).map((day) => {
-          return (<CollapsibleList title={day} listElements={Object.keys(datasets[year][month][day]).map((time) => {
-            return( <CollapsibleList title={time} listElements={datasets[year][month][day][time].map((rec) => {
+   <CollapsibleList level = {0} title="All" listElements={Object.keys(datasets).map((year) => {
+      return (<CollapsibleList level = {1} title={year} listElements={Object.keys(datasets[year]).map((month) => {
+        return(<CollapsibleList level = {2} title={month} listElements={Object.keys(datasets[year][month]).map((day) => {
+          return (<CollapsibleList level = {3} title={day} listElements={Object.keys(datasets[year][month][day]).map((time) => {
+            return( <CollapsibleList level = {4} title={time} listElements={datasets[year][month][day][time].map((rec) => {
               return rec    
             })}></CollapsibleList>)
           })}></CollapsibleList>
@@ -163,7 +163,7 @@ return (
 
 };
 
-const CollapsibleList = ({listElements,title}) => {
+const CollapsibleList = ({listElements,title,level}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   console.log(listElements)
   return (
@@ -175,7 +175,7 @@ const CollapsibleList = ({listElements,title}) => {
 
       {/* Conditionally render the list content based on isExpanded state */}
       {isExpanded && (
-        <ul>
+        <ul style={{ marginLeft: level * 20 }}>
           {listElements.map((item:any) => (
                 <li>{item} 
                 {/* <Button onClick={() => console.log(`Button for ${item} clicked!`)}>Click Me</Button> */}
