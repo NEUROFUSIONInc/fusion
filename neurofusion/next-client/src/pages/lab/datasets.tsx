@@ -16,7 +16,22 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import {Button
 
 } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
+import { timeStamp } from "console";
 
+
+const dataSetParser = (data:Array<string>) => {
+  var recordings = {}
+
+  data.forEach((item: string) => {
+    const fname = item.split("/").pop();
+    const timestamp = parseInt(fname.substring(fname.lastIndexOf("_") + 1, fname.lastIndexOf(".json")));
+    if(!(timestamp in recordings)) recordings[timestamp] = [];
+    recordings[timestamp].push(item)
+  });
+
+  return recordings
+
+}
 
 const DatasetPage: NextPage = () => {
   return (
@@ -89,20 +104,32 @@ export const DataDisplay: FC = () => {
 
   const [datasets, setDatasets] = useState([]);
 
+  const getRange = () => {
+
+
+  }
+
   useEffect(() => {
     (async () => {
-      var dataSets = {};
-      for (let i = 0; i < 20; i++) {
-          console.log(i)
-          dataSets[i] = await getDatasets(
-          dayjs().subtract(i, "day").format("YYYY-MM-DD"),
-          dayjs().subtract(i-1, "day").format("YYYY-MM-DD") // add 1 day to include today
-        )
+      const dataSets = dataSetParser(await getDatasets(
+      dayjs.unix(1).format("YYYY-MM-DD"),// add 1 day to include today
+      dayjs().add(1, "day").format("YYYY-MM-DD")));
+      
+      const orderedTimes = Object.keys(dataSets);
+      var orgDataSets = {"All":{}};
+      orderedTimes.forEach((time:string) =>{
+        const timeStamp = dayjs.unix(parseInt(time));
+        if(!(timeStamp.format("YYYY") in orgDataSets["All"])) orgDataSets["All"][timeStamp.format("YYYY")] = {}
+        if(!(timeStamp.format("MMMM") in orgDataSets["All"][timeStamp.format("YYYY")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")] = {}
+        if(!(timeStamp.format("DD") in orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")] = {}
+        orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")][timeStamp.format("YYYY-MM-DD h:mm A")+" - EEG"] = dataSets[time];
 
-      }
-      console.log(dataSets)
+      });
+      
+      
+      // Object.keys(datasets).map((year)=>{})
       setDatasets(
-        dataSets
+        orgDataSets["All"]
       );
 
       // TODO: parse datasets into provider, dataName, time format
@@ -113,21 +140,37 @@ export const DataDisplay: FC = () => {
 
 return (
   <>
-  <p>Hello</p>
-  <CollapsibleList listElements={[<CollapsibleList listElements={["3","4"]}></CollapsibleList>,"2"]}></CollapsibleList>
+  <div>
+  {
+   <CollapsibleList title="All" listElements={Object.keys(datasets).map((year) => {
+      return (<CollapsibleList title={year} listElements={Object.keys(datasets[year]).map((month) => {
+        return(<CollapsibleList title={month} listElements={Object.keys(datasets[year][month]).map((day) => {
+          return (<CollapsibleList title={day} listElements={Object.keys(datasets[year][month][day]).map((time) => {
+            return( <CollapsibleList title={time} listElements={datasets[year][month][day][time].map((rec) => {
+              return rec    
+            })}></CollapsibleList>)
+          })}></CollapsibleList>
+              
+        )})}></CollapsibleList>
+              
+      )})}></CollapsibleList>
+)})}></CollapsibleList>
+}
+  
+</div>
   </>
   );
 
 };
 
-const CollapsibleList = ({listElements}) => {
+const CollapsibleList = ({listElements,title}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
+  console.log(listElements)
   return (
     <div>
       {/* Your list item header */}
       <button onClick={() => setIsExpanded(!isExpanded)}>
-        {isExpanded ? 'Collapse' : 'Expand'}
+        {isExpanded ? "- "+title : "+ "+title}
       </button>
 
       {/* Conditionally render the list content based on isExpanded state */}
