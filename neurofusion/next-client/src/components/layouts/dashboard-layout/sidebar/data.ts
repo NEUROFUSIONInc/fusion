@@ -4,17 +4,17 @@ export const sidebarLinks = [
   {
     icon: LayoutDashboard,
     title: "Lab",
-    href: "/lab/playground",
+    href: "/playground",
   },
   {
     icon: Plug,
     title: "Integrations",
-    href: "/lab/integrations",
+    href: "/integrations",
   },
   {
     icon: HardDrive,
     title: "Datasets",
-    href: "/lab/datasets",
+    href: "/datasets",
   },
   {
     icon: SignalHigh,

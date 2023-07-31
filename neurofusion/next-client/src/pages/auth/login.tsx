@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   if (session) {
     return {
       redirect: {
-        destination: "/lab/integrations",
+        destination: "/integrations",
         permanent: false,
       },
     };

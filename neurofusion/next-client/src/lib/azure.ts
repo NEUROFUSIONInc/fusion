@@ -4,7 +4,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { getSession } from 'next-auth/react'
 
-export const getDatasets = async (startDate:any, endDate:any) => {
+export const getDatasets = async (startDate:string, endDate:string) => {
     const session  = await getSession()
     if(!session?.user) return []
     const res = await axios.get(
@@ -21,8 +21,6 @@ export const getDatasets = async (startDate:any, endDate:any) => {
     );
   
     if (res.status == 200) {
-      console.log("avaliable datasets");
-      console.log(res.data);
       return res.data.blobNames;
     } else {
       console.error(`unable to fetch datasets`);
