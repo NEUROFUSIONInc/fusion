@@ -241,14 +241,16 @@ export const DataDisplay: FC = () => {
     setDownloadStatus(100);
   };
 
-  const CircularProgress = (percentage:number) => { 
-    const strokeDashoffset = ((100 - percentage) / 100) * 2 * Math.PI * 45;
+  const CircularProgress: React.FC<{percentage: number}> = ({percentage}) => { 
+    const [strokeDashoffset, setStrokeDashoffset] = useState(((100 - percentage) / 100) * 2 * Math.PI * 45);
+
+    useEffect(()=>{setStrokeDashoffset(((100 - percentage) / 100) * 2 * Math.PI * 45);},[percentage])
 
     return (
         <svg width="50" height="50" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="45" stroke="gray" strokeWidth="15" fill="none" />
             <circle cx="60" cy="60" r="45" stroke="blue" strokeWidth="15" fill="none" strokeDasharray="282.7" strokeDashoffset={strokeDashoffset} className="progress" />
-            <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(downloadStatus)}%`}</text>
+            <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(percentage)}%`}</text>
             <style jsx>{`
                 .progress {
                     transition: stroke-dashoffset 0.02s linear;
@@ -263,7 +265,7 @@ return (
   <div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
     
-    {downloadStatus != 100 ? <><p>Downloading files please remain on page</p> <CircularProgress percentage = {downloadStatus}> </CircularProgress></>:
+    {downloadStatus != 100 ? <><p>Downloading files please remain on page</p> <CircularProgress percentage = {downloadStatus}/></>:
       <>
       <p>{fSelected.length} Files selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
       </>
