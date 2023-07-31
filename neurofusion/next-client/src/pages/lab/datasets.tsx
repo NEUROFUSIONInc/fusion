@@ -233,6 +233,7 @@ export const DataDisplay: FC = () => {
   const [downloadStatus,setDownloadStatus] = useState(100)
 
   async function downloadSelection(){
+    if(!fSelected.length) return;
     setDownloadStatus(0);
     console.log(`Downloading`,fSelected)
 
@@ -241,21 +242,13 @@ export const DataDisplay: FC = () => {
   };
 
   const CircularProgress = (percentage:number) => { 
-    const [displayedPercentage, setDisplayedPercentage] = useState(percentage);
-    const strokeDashoffset = ((100 - displayedPercentage) / 100) * 2 * Math.PI * 45;
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setDisplayedPercentage(prev => prev + (percentage - prev) / 10);
-        }, 20);
-        return () => clearInterval(intervalId);
-    }, [percentage]);
+    const strokeDashoffset = ((100 - percentage) / 100) * 2 * Math.PI * 45;
 
     return (
         <svg width="50" height="50" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="45" stroke="gray" strokeWidth="15" fill="none" />
             <circle cx="60" cy="60" r="45" stroke="blue" strokeWidth="15" fill="none" strokeDasharray="282.7" strokeDashoffset={strokeDashoffset} className="progress" />
-            <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(displayedPercentage)}%`}</text>
+            <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(downloadStatus)}%`}</text>
             <style jsx>{`
                 .progress {
                     transition: stroke-dashoffset 0.02s linear;
