@@ -19,16 +19,19 @@ import {Button
 } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
 import { timeStamp } from "console";
 import { Type } from "lucide-react";
+import { object } from "zod";
 
 
 const dataSetParser = (data:Array<string>) => {
-  var recordings = {}
+  var recordings:{[key:number]:any} = {}
 
   data.forEach((item: string) => {
     const fname = item.split("/").pop();
-    const timestamp = parseInt(fname.substring(fname.lastIndexOf("_") + 1, fname.lastIndexOf(".json")));
-    if(!(timestamp in recordings)) recordings[timestamp] = [];
-    recordings[timestamp].push(item)
+    if(fname !== undefined){
+      const timestamp:number = parseInt(fname.substring(fname.lastIndexOf("_") + 1, fname.lastIndexOf(".json")));
+      if(!(timestamp in recordings)) recordings[timestamp] = [];
+      recordings[timestamp].push(item)
+    }
   });
 
   return recordings
@@ -102,7 +105,7 @@ export const DataDisplay: FC = () => {
     dayjs().subtract(15, "week").format("YYYY-MM-DD")
   );
 
-  const [datasets, setDatasets] = useState([]);
+  const [datasets, setDatasets] = useState({});
 
   const getRange = () => {
 
@@ -114,8 +117,8 @@ export const DataDisplay: FC = () => {
 
   const createCheckedDict = (dict:any,setter:any) => {
 
-    const createMirrorRecurse = (dictLevel) => {
-      var returnDict = {checked:false,dict:{}}
+    const createMirrorRecurse = (dictLevel:any) => {
+      var returnDict:{[key:string]:any} = {checked:false,dict:{}}
       if(isDictionary(dictLevel)){
         Object.keys(dictLevel).forEach((x:string)=>{
           returnDict.dict[x] = createMirrorRecurse(dictLevel[x])
@@ -140,7 +143,7 @@ export const DataDisplay: FC = () => {
       dayjs().add(1, "day").format("YYYY-MM-DD")));
       
       const orderedTimes = Object.keys(dataSets).map((str)=>parseInt(str)).sort();
-      var orgDataSets = {"All":{}};
+      var orgDataSets: {[key:string]:any} = {"All":{}};
 
       orderedTimes.forEach((time) =>{
         const timeStamp = dayjs.unix(time);
@@ -160,7 +163,7 @@ export const DataDisplay: FC = () => {
     })();
   }, []);
 
-  const [fSelected,setFSelected]=useState([])
+  const [fSelected,setFSelected]= useState(Array<string>)
 
   function isDictionary(variable:any) {
     return typeof variable === 'object' && !Array.isArray(variable) && variable !== null;
@@ -188,14 +191,14 @@ export const DataDisplay: FC = () => {
 
   const genHandler = (level:Array<string>) => {
     const handleCheckboxChange = (event:any) => {
-      var subDirs = datasets
+      var subDirs: {[key:string]:any} = datasets
       level.forEach((ele)=>{
         subDirs = subDirs[ele]; 
       }); 
       setCheckedDict(recurseSet(level,event.target.checked,structuredClone(checkedDict)));
     }
     
-    var head = checkedDict
+    var head : {[key:string]:any} = checkedDict
     level.forEach((ele:any)=>{
       head = head.dict[ele];
     });
@@ -206,7 +209,7 @@ export const DataDisplay: FC = () => {
   useEffect(() => {
     const recurseAdd = (head:any) => {
 
-      var arr:Array<String> = [];
+      var arr:Array<string> = [];
 
       if(isDictionary(head.dict)){
         Object.keys(head.dict).forEach((x:any)=>{
@@ -225,8 +228,8 @@ export const DataDisplay: FC = () => {
     setCheckedDict(recurseSet([],false,structuredClone(checkedDict)));
   };
 
-
   const [downloadStatus,setDownloadStatus] = useState(100)
+
   async function downloadSelection(){
     setDownloadStatus(0);
     console.log(`Downloading`,fSelected)
@@ -235,7 +238,7 @@ export const DataDisplay: FC = () => {
     setDownloadStatus(100);
   };
 
-  function CircularProgress({ percentage }) {
+  const CircularProgress = (percentage:number) => { 
     const [displayedPercentage, setDisplayedPercentage] = useState(percentage);
     const strokeDashoffset = ((100 - displayedPercentage) / 100) * 2 * Math.PI * 45;
 
@@ -296,8 +299,19 @@ return (
   );
 
 };
+interface CollapsibleListProps {
+  listElements: Array<any>;
+  title: string;
+  checkhandler: any;
+  defaultOpen?: boolean; // The ? indicates that this prop is optional
+}
 
-const CollapsibleList = ({listElements,title,checkhandler,defaultOpen=false}) => {
+const CollapsibleList: React.FC<CollapsibleListProps> = ({
+  listElements,
+  title,
+  checkhandler,
+  defaultOpen = false // Default values are set here
+}) =>{
   const [isExpanded, setIsExpanded] = useState(defaultOpen);
   const [checked, setChecked] = useState(false)
 
