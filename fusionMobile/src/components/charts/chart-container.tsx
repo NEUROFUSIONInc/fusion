@@ -144,7 +144,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                 </Text>
                 <View className="flex flex-row gap-x-2 items-center mt-1">
                   <Text className="font-sans text-sm text-white opacity-60">
-                    {dayjs(entry[0]).format("MMM D, YYYY")}
+                    {dayjs(entry[0]).format("dd MMM D, YYYY")}
                   </Text>
                   <View className="w-1 h-1 bg-white opacity-60" />
                   <Text className="font-sans text-sm text-white opacity-60">
