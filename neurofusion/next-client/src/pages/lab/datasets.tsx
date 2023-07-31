@@ -5,14 +5,13 @@ import { getServerSession } from "next-auth";
 import { IntegrationsContainer } from "~/components/features/integrations";
 import { DashboardLayout } from "~/components/layouts";
 
-import dayjs from "dayjs";
 import axios from "axios";
 import { FC, useState, useEffect } from "react";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+
+import dayjs from "dayjs";
 
 import {Button
 
@@ -21,6 +20,7 @@ import { timeStamp } from "console";
 import { Type } from "lucide-react";
 import { object } from "zod";
 
+import {getDatasets,downloadDatasets} from "~/lib";
 
 const dataSetParser = (data:Array<string>) => {
   var recordings:{[key:number]:any} = {}
@@ -46,61 +46,7 @@ const DatasetPage: NextPage = () => {
   );
 };
 export const DataDisplay: FC = () => {
-  async function getDatasets(startDate:any, endDate:any) {
-    console.log(`${localStorage.getItem("backendToken")}`)
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/search`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("backendToken")}`,
-        },
-        params: {
-          startTimestamp: dayjs(startDate).unix(),
-          endTimestamp: dayjs(endDate).unix(),
-        },
-      }
-    );
-  
-    if (res.status == 200) {
-      console.log("avaliable datasets");
-      console.log(res.data);
-      return res.data.blobNames;
-    } else {
-      console.error(`unable to fetch datasets`);
-      return [];
-    }
-  }
-  
-  async function downloadDatasets(blobNames:Array<string>) {
-    let zip = new JSZip();
-    for (let i = 0; i < blobNames.length; i++) {
-        const res = await axios.get(
-            `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("backendToken")}`,
-                },
-                params: {
-                    blobName: blobNames[i],
-                },
-                responseType: "blob",
-            }
-        );
 
-        if (res.status === 200) {
-            // add file to zip
-            zip.file(blobNames[i], res.data, { binary: true });
-        } else {
-            console.error(`Unable to fetch dataset: ${blobNames[i]}`);
-        }
-        setDownloadStatus(Math.round(100*(i/blobNames.length)))
-    }
-
-    // generate zip file
-    zip.generateAsync({ type: "blob" }).then(function (blob) {
-        saveAs(blob, "datasets.zip");
-    });
-}
 
   const [filterStartDate, setFilterStartDate] = useState(
     dayjs().subtract(15, "week").format("YYYY-MM-DD")
@@ -110,7 +56,6 @@ export const DataDisplay: FC = () => {
 
 
   const getRange = () => {
-
 
   }
 
@@ -237,7 +182,7 @@ export const DataDisplay: FC = () => {
     setDownloadStatus(0);
     console.log(`Downloading`,fSelected)
 
-    await downloadDatasets(structuredClone(fSelected))
+    await downloadDatasets(structuredClone(fSelected),setDownloadStatus)
     setDownloadStatus(100);
   };
 

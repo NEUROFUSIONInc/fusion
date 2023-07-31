@@ -2,15 +2,14 @@ import { GetServerSideProps} from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
-import {createContext,useContext} from "react";
 
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
 import { MainLayout, Meta } from "~/components/layouts";
 import { LoginContainer } from "~/components/ui";
-import { magic } from "~/lib";
-import axios from "axios";
+import { magic} from "~/lib";
+
 
 const LoginPage = () => {
   const router = useRouter();
@@ -19,16 +18,6 @@ const LoginPage = () => {
     if (!magic) throw new Error(`magic not defined`);
 
     const didToken = await magic.auth.loginWithMagicLink({ email });
-
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/userlogin`, {
-        userEmail: email,
-        magicLinkAuthToken: didToken
-    });
-  
-    if (res.status === 200) {
-        // Simple but not the most secure way to store the token
-        localStorage.setItem('backendToken', res.data.body.authToken);
-    }
 
     await signIn("credentials", {
       didToken,
