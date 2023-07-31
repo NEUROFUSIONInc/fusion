@@ -134,7 +134,10 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         <ScrollView className="flex flex-col w-full p-5 h-52">
           {chartData.map((entry) => {
             return (
-              <View className="pb-3 mb-3 border-b-2 border-tint">
+              <View
+                key={Math.random()}
+                className="pb-3 mb-3 border-b-2 border-tint"
+              >
                 <Text
                   numberOfLines={2}
                   ellipsizeMode="tail"
