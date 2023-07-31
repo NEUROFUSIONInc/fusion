@@ -17,6 +17,7 @@ import {Button
 
 } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
 import { timeStamp } from "console";
+import { Type } from "lucide-react";
 
 
 const dataSetParser = (data:Array<string>) => {
@@ -67,7 +68,7 @@ export const DataDisplay: FC = () => {
   
   async function downloadDataset(blobName:any) {
     const res = await axios.get(
-      `${process.env.REACT_APP_NEUROFUSION_BACKEND_URL}/api/storage/download`,
+      `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -109,6 +110,30 @@ export const DataDisplay: FC = () => {
 
   }
 
+
+  const [checkedDict, setCheckedDict] = useState({});
+
+  const createCheckedDict = (dict:any,setter:any) => {
+
+    const createMirrorRecurse = (dictLevel) => {
+      var returnDict = {checked:false,dict:{}}
+      if(isDictionary(dictLevel)){
+        Object.keys(dictLevel).forEach((x:string)=>{
+          returnDict.dict[x] = createMirrorRecurse(dictLevel[x])
+        })
+      }else{
+        returnDict.dict = [...dictLevel]
+      }
+
+      return returnDict;
+    }
+    var copydict = createMirrorRecurse(dict)
+    // console.log(copydict);
+
+    setter(copydict);
+  }
+
+
   useEffect(() => {
     (async () => {
       const dataSets = dataSetParser(await getDatasets(
@@ -120,46 +145,124 @@ export const DataDisplay: FC = () => {
 
       orderedTimes.forEach((time) =>{
         const timeStamp = dayjs.unix(time);
-        if(!(timeStamp.format("YYYY") in orgDataSets["All"])) orgDataSets["All"][timeStamp.format("YYYY")] = {}
+        if(!(timeStamp.format("YYYY") in orgDataSets["All"]))orgDataSets["All"][timeStamp.format("YYYY")] = {}
         if(!(timeStamp.format("MMMM") in orgDataSets["All"][timeStamp.format("YYYY")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")] = {}
         if(!(timeStamp.format("DD") in orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")])) orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")] = {}
-        orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")][timeStamp.format("YYYY-MM-DD h:mm A")+" - EEG"] = dataSets[time];
-
+        orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")][timeStamp.format("YYYY-MM-DD h:mm:ss A")+" - EEG"] = dataSets[time];
       });
-      
-        setDatasets(
+
+      createCheckedDict(orgDataSets["All"],setCheckedDict);
+
+      setDatasets(
         orgDataSets["All"]
       );
 
       // TODO: parse datasets into provider, dataName, time format
     })();
-  }, [filterStartDate]);
+  }, []);
 
+  const [fSelected,setFSelected]=useState([])
 
-  const [fCount,setFCount]=useState(0)
+  function isDictionary(variable:any) {
+    return typeof variable === 'object' && !Array.isArray(variable) && variable !== null;
+  }
+
+  const recurseSet = (level:any,checked:boolean,checkCopy:object) => {
+    var head:any = checkCopy;
+    
+    level.forEach((ele:any)=>{
+      head = head.dict[ele];
+    });
+
+    head.checked = (checked)
+
+    if(isDictionary(head.dict)){
+      Object.keys(head.dict).forEach((x:any)=>{
+        const arr = [...level];
+        arr.push(x);
+        recurseSet(arr,checked,checkCopy)})
+    }else{
+
+    }
+    return checkCopy
+  }
+
+  const genHandler = (level:Array<string>) => {
+    
+   
+  const handleCheckboxChange = (event:any) => {
+    var subDirs = datasets
+    level.forEach((ele)=>{
+      subDirs = subDirs[ele]; 
+    }); 
+    setCheckedDict(recurseSet(level,event.target.checked,structuredClone(checkedDict)));
+  }
+    
+    var head = checkedDict
+    level.forEach((ele:any)=>{
+      head = head.dict[ele];
+    });
+
+    return {"handler":handleCheckboxChange,"checked":head.checked};
+  };
+
+  useEffect(() => {
+    console.log(checkedDict); // This will show the updated value of `count` after every state update.
+    const recurseAdd = (head:any) => {
+
+      var arr:Array<String> = [];
+
+      if(isDictionary(head.dict)){
+        Object.keys(head.dict).forEach((x:any)=>{
+          arr = arr.concat(recurseAdd(head.dict[x]))})
+      }else{
+        if(head.checked){
+          arr = arr.concat(head.dict)
+        }
+      }
+        return arr;
+    }
+    setFSelected(recurseAdd(checkedDict));
+  }, [checkedDict]);
+
+  const clearSelection = () =>{
+    setCheckedDict(recurseSet([],false,structuredClone(checkedDict)));
+  };
+
+  const downloadSelection = () => {
+    console.log(`Downloading`,fSelected)
+    fSelected.forEach(file => {
+      console.log(`Downloading ${file}`)
+      downloadDataset(file);
+    });
+
+  };
 
 return (
   <>
   <div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
-  <p>{fCount} Files Selected</p><Button size={"sm"}>Download</Button> <Button size={"sm"}>Clear</Button>
+  <p>{fSelected.length} Files Selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
   </div>
   {
-    
-   <CollapsibleList title="All" defaultOpen={true} listElements={Object.keys(datasets).map((year) => {
-      return (<CollapsibleList title={year} listElements={Object.keys(datasets[year]).map((month) => {
-        return(<CollapsibleList title={month} listElements={Object.keys(datasets[year][month]).map((day) => {
-          return (<CollapsibleList title={day} listElements={Object.keys(datasets[year][month][day]).map((time) => {
-            return( <CollapsibleList title={time} listElements={datasets[year][month][day][time].map((rec) => {
+
+  
+   <CollapsibleList title="All" checkhandler = {genHandler([])} defaultOpen={true} listElements={Object.keys(datasets).map((year) => {
+      return (<CollapsibleList title={year} checkhandler = {genHandler([year])} listElements={Object.keys(datasets[year]).map((month) => {
+        return(<CollapsibleList title={month} checkhandler = {genHandler([year,month])} listElements={Object.keys(datasets[year][month]).map((day) => {
+          return (<CollapsibleList title={day} checkhandler = {genHandler([year,month,day])} listElements={Object.keys(datasets[year][month][day]).map((time) => {
+            return( <CollapsibleList title={time} checkhandler = {genHandler([year,month,day,time])} listElements={datasets[year][month][day][time].map((rec) => {
               return rec.split("/").pop()    
             })}></CollapsibleList>)
           })}></CollapsibleList>
               
         )})}></CollapsibleList>
               
-      )})}></CollapsibleList>
-)})}></CollapsibleList>
-}
+        )})}></CollapsibleList>
+  )})}></CollapsibleList>
+
+
+  }
   
 </div>
   </>
@@ -167,35 +270,25 @@ return (
 
 };
 
-const CollapsibleList = ({listElements,title,defaultOpen=false}) => {
+const CollapsibleList = ({listElements,title,checkhandler,defaultOpen=false}) => {
   const [isExpanded, setIsExpanded] = useState(defaultOpen);
-  console.log(listElements)
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(false)
 
-  const handleCheckboxChange = (event:any) => {
-    setChecked(event.target.checked);
-  };
+  useEffect(()=>{setChecked(checkhandler.checked);},[checkhandler.checked])
 
   return (
     <div>
-      {/* Your list item header */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
       <button onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded ? "- "+title : "+ "+title}
       </button>
-      <input style={{marginLeft:".2em", paddingTop:"1em"}} type="checkbox" checked={checked} onChange={handleCheckboxChange} />
+      <input style={{marginLeft:".2em"}} type="checkbox" checked={checked} onChange={checkhandler.handler} />
       </div>
-
-
-      {/* Conditionally render the list content based on isExpanded state */}
         <ul style={{ marginLeft: 20, display:isExpanded ? "inherit":"None" }}>
           {listElements.map((item:any) => (
                 <li>{item}
-                {/* <Button onClick={() => console.log(`Button for ${item} clicked!`)}>Click Me</Button> */}
                 </li> 
-                
           ))}
-          {/* Add more list items as needed */}
         </ul>
     </div>
   );
