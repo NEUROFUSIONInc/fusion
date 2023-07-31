@@ -67,9 +67,8 @@ export const DataDisplay: FC = () => {
     }
   }
   
-  async function downloadDatasets(blobNames:Array<any>) {
+  async function downloadDatasets(blobNames:Array<string>) {
     let zip = new JSZip();
-
     for (let i = 0; i < blobNames.length; i++) {
         const res = await axios.get(
             `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
@@ -232,7 +231,7 @@ export const DataDisplay: FC = () => {
     setDownloadStatus(0);
     console.log(`Downloading`,fSelected)
 
-    await downloadDatasets(fSelected)
+    await downloadDatasets(structuredClone(fSelected))
     setDownloadStatus(100);
   };
 
@@ -268,7 +267,7 @@ return (
     
     {downloadStatus != 100 ? <><p>Downloading files please remain on page</p> <CircularProgress percentage = {downloadStatus}> </CircularProgress></>:
       <>
-      <p>{fSelected.length} Files Selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
+      <p>{fSelected.length} Files selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
       </>
     }
   </div>
