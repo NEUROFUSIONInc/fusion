@@ -19,7 +19,16 @@ const LoginPage = () => {
     if (!magic) throw new Error(`magic not defined`);
 
     const didToken = await magic.auth.loginWithMagicLink({ email });
-    await userLoginComplete(email,didToken);
+
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/userlogin`, {
+        userEmail: email,
+        magicLinkAuthToken: didToken
+    });
+  
+    if (res.status === 200) {
+        // Simple but not the most secure way to store the token
+        localStorage.setItem('backendToken', res.data.body.authToken);
+    }
 
     await signIn("credentials", {
       didToken,
@@ -45,21 +54,7 @@ const LoginPage = () => {
 
 export default LoginPage;
 
-export async function userLoginComplete(email:any, idToken:any) {
-  const res = await axios.post(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/userlogin`, {
-      userEmail: email,
-      magicLinkAuthToken: idToken
-  });
-  console.log(res.data.body.authToken)
-  console.log(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/userlogin`);
 
-
-  if (res.status === 200) {
-      // Simple but not the most secure way to store the token
-      localStorage.setItem('backendToken', res.data.body.authToken);
-      return res.data;
-  }
-}
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
