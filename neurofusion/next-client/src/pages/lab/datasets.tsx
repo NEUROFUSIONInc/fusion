@@ -242,14 +242,10 @@ export const DataDisplay: FC = () => {
   };
 
   const CircularProgress: React.FC<{percentage: number}> = ({percentage}) => { 
-    const [strokeDashoffset, setStrokeDashoffset] = useState(((100 - percentage) / 100) * 2 * Math.PI * 45);
-
-    useEffect(()=>{setStrokeDashoffset(((100 - percentage) / 100) * 2 * Math.PI * 45);},[percentage])
-
     return (
         <svg width="50" height="50" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="45" stroke="gray" strokeWidth="15" fill="none" />
-            <circle cx="60" cy="60" r="45" stroke="blue" strokeWidth="15" fill="none" strokeDasharray="282.7" strokeDashoffset={strokeDashoffset} className="progress" />
+            <circle cx="60" cy="60" r="45" stroke="blue" strokeWidth="15" fill="none" strokeDasharray="282.7" strokeDashoffset={((100 - percentage) / 100) * 2 * Math.PI * 45} className="progress" />
             <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(percentage)}%`}</text>
             <style jsx>{`
                 .progress {
