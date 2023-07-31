@@ -11,7 +11,8 @@ import { FC, useState, useEffect } from "react";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
-
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 import {Button
 
@@ -66,38 +67,37 @@ export const DataDisplay: FC = () => {
     }
   }
   
-  async function downloadDataset(blobName:any) {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        params: {
-          blobName: blobName,
-        },
-        responseType: "blob",
-      }
-    );
-  
-    if (res.status == 200) {
-      // create file link in browser's memory
-      const href = URL.createObjectURL(res.data);
-  
-      // create "a" HTML element with href to file & click
-      const link = document.createElement("a");
-      link.href = href;
-      link.setAttribute("download", blobName); //or any other extension
-      document.body.appendChild(link);
-      link.click();
-  
-      // clean up "a" element & remove ObjectURL
-      document.body.removeChild(link);
-      URL.revokeObjectURL(href);
-    } else {
-      console.error(`unable to fetch datasets`);
+  async function downloadDatasets(blobNames:Array<any>) {
+    let zip = new JSZip();
+
+    for (let i = 0; i < blobNames.length; i++) {
+        const res = await axios.get(
+            `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                params: {
+                    blobName: blobNames[i],
+                },
+                responseType: "blob",
+            }
+        );
+
+        if (res.status === 200) {
+            // add file to zip
+            zip.file(blobNames[i], res.data, { binary: true });
+        } else {
+            console.error(`Unable to fetch dataset: ${blobNames[i]}`);
+        }
+        setDownloadStatus(Math.round(100*(i/blobNames.length)))
     }
-  }
+
+    // generate zip file
+    zip.generateAsync({ type: "blob" }).then(function (blob) {
+        saveAs(blob, "datasets.zip");
+    });
+}
 
   const [filterStartDate, setFilterStartDate] = useState(
     dayjs().subtract(15, "week").format("YYYY-MM-DD")
@@ -188,15 +188,13 @@ export const DataDisplay: FC = () => {
   }
 
   const genHandler = (level:Array<string>) => {
-    
-   
-  const handleCheckboxChange = (event:any) => {
-    var subDirs = datasets
-    level.forEach((ele)=>{
-      subDirs = subDirs[ele]; 
-    }); 
-    setCheckedDict(recurseSet(level,event.target.checked,structuredClone(checkedDict)));
-  }
+    const handleCheckboxChange = (event:any) => {
+      var subDirs = datasets
+      level.forEach((ele)=>{
+        subDirs = subDirs[ele]; 
+      }); 
+      setCheckedDict(recurseSet(level,event.target.checked,structuredClone(checkedDict)));
+    }
     
     var head = checkedDict
     level.forEach((ele:any)=>{
@@ -207,7 +205,6 @@ export const DataDisplay: FC = () => {
   };
 
   useEffect(() => {
-    console.log(checkedDict); // This will show the updated value of `count` after every state update.
     const recurseAdd = (head:any) => {
 
       var arr:Array<String> = [];
@@ -229,20 +226,51 @@ export const DataDisplay: FC = () => {
     setCheckedDict(recurseSet([],false,structuredClone(checkedDict)));
   };
 
-  const downloadSelection = () => {
-    console.log(`Downloading`,fSelected)
-    fSelected.forEach(file => {
-      console.log(`Downloading ${file}`)
-      downloadDataset(file);
-    });
 
+  const [downloadStatus,setDownloadStatus] = useState(100)
+  async function downloadSelection(){
+    setDownloadStatus(0);
+    console.log(`Downloading`,fSelected)
+
+    await downloadDatasets(fSelected)
+    setDownloadStatus(100);
   };
+
+  function CircularProgress({ percentage }) {
+    const [displayedPercentage, setDisplayedPercentage] = useState(percentage);
+    const strokeDashoffset = ((100 - displayedPercentage) / 100) * 2 * Math.PI * 45;
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setDisplayedPercentage(prev => prev + (percentage - prev) / 10);
+        }, 20);
+        return () => clearInterval(intervalId);
+    }, [percentage]);
+
+    return (
+        <svg width="50" height="50" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="45" stroke="gray" strokeWidth="15" fill="none" />
+            <circle cx="60" cy="60" r="45" stroke="blue" strokeWidth="15" fill="none" strokeDasharray="282.7" strokeDashoffset={strokeDashoffset} className="progress" />
+            <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(displayedPercentage)}%`}</text>
+            <style jsx>{`
+                .progress {
+                    transition: stroke-dashoffset 0.02s linear;
+                }
+            `}</style>
+        </svg>
+    );
+}
 
 return (
   <>
   <div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
-  <p>{fSelected.length} Files Selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
+    
+    {downloadStatus != 100 ? <><p>Downloading files please remain on page</p> <CircularProgress percentage = {downloadStatus}> </CircularProgress></>:
+      <>
+      <p>{fSelected.length} Files Selected</p><Button onClick={downloadSelection} size={"sm"}>Download</Button> <Button onClick={clearSelection} size={"sm"}>Clear</Button >
+      </>
+    }
   </div>
   {
 
