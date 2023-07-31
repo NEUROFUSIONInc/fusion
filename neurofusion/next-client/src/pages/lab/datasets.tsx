@@ -105,7 +105,8 @@ export const DataDisplay: FC = () => {
     dayjs().subtract(15, "week").format("YYYY-MM-DD")
   );
 
-  const [datasets, setDatasets] = useState({});
+  const [datasets, setDatasets] = useState<{[key: string]: any}>(({}));
+
 
   const getRange = () => {
 
@@ -281,7 +282,7 @@ return (
       return (<CollapsibleList title={year} checkhandler = {genHandler([year])} listElements={Object.keys(datasets[year]).map((month) => {
         return(<CollapsibleList title={month} checkhandler = {genHandler([year,month])} listElements={Object.keys(datasets[year][month]).map((day) => {
           return (<CollapsibleList title={day} checkhandler = {genHandler([year,month,day])} listElements={Object.keys(datasets[year][month][day]).map((time) => {
-            return( <CollapsibleList title={time} checkhandler = {genHandler([year,month,day,time])} listElements={datasets[year][month][day][time].map((rec) => {
+            return( <CollapsibleList title={time} checkhandler = {genHandler([year,month,day,time])} listElements={datasets[year][month][day][time].map((rec:string) => {
               return rec.split("/").pop()    
             })}></CollapsibleList>)
           })}></CollapsibleList>
@@ -299,7 +300,8 @@ return (
   );
 
 };
-interface CollapsibleListProps {
+
+interface CollapsibleListProps { // the parameters requrired for collaspable list, makes ts happy
   listElements: Array<any>;
   title: string;
   checkhandler: any;
@@ -334,7 +336,6 @@ const CollapsibleList: React.FC<CollapsibleListProps> = ({
     </div>
   );
 };
-
 
 export default DatasetPage;
 
