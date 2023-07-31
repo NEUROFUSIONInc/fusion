@@ -19,6 +19,7 @@ const LoginPage = () => {
     if (!magic) throw new Error(`magic not defined`);
 
     const didToken = await magic.auth.loginWithMagicLink({ email });
+    await userLoginComplete(email,didToken);
 
     await signIn("credentials", {
       didToken,
@@ -26,7 +27,6 @@ const LoginPage = () => {
       callbackUrl: router.query.callbackUrl?.toString(),
     });
 
-    await userLoginComplete(email,didToken);
   };
 
   return (
@@ -50,12 +50,13 @@ export async function userLoginComplete(email:any, idToken:any) {
       userEmail: email,
       magicLinkAuthToken: idToken
   });
+  console.log(res.data.body.authToken)
   console.log(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/userlogin`);
 
 
   if (res.status === 200) {
       // Simple but not the most secure way to store the token
-      localStorage.setItem('token', res.data.body.authToken);
+      localStorage.setItem('backendToken', res.data.body.authToken);
       return res.data;
   }
 }

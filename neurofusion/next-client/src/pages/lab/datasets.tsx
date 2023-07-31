@@ -47,11 +47,12 @@ const DatasetPage: NextPage = () => {
 };
 export const DataDisplay: FC = () => {
   async function getDatasets(startDate:any, endDate:any) {
+    console.log(`${localStorage.getItem("backendToken")}`)
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/search`,
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("backendToken")}`,
         },
         params: {
           startTimestamp: dayjs(startDate).unix(),
@@ -77,7 +78,7 @@ export const DataDisplay: FC = () => {
             `${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`,
             {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem("backendToken")}`,
                 },
                 params: {
                     blobName: blobNames[i],
