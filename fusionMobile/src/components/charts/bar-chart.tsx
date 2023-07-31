@@ -54,7 +54,7 @@ export const FusionBarChart: FC<BarChartProps> = ({
       yAxis: {
         type: "value",
         splitLine: {
-          show: true,
+          show: false,
           lineStyle: {
             color: "rgba(128, 128, 128, 0.1)", // Set the color of the grid lines
             width: 1, // Set the thickness of the grid lines
@@ -72,7 +72,7 @@ export const FusionBarChart: FC<BarChartProps> = ({
         {
           data: seriesData,
           type: "bar",
-          barWidth: 10,
+          barWidth: 25,
           itemStyle: {
             color: "#7a44cf",
           },

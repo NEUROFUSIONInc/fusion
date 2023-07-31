@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+// import { ScrollView } from "react-native-gesture-handler";
 
 import { FusionBarChart } from "./bar-chart";
 import { FusionLineChart } from "./line-chart";
@@ -128,10 +129,34 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             timePeriod="week"
           />
         ) : null} */}
-      {/* {prompt.responseType === "text" && chartData.length > 0 ? (
-        
-        // display the text 
-      ) : null} */}
+
+      {prompt.responseType === "text" && chartData.length > 0 ? (
+        <ScrollView className="flex flex-col w-full p-5 h-52">
+          {chartData.map((entry) => {
+            return (
+              <View className="pb-3 mb-3 border-b-2 border-tint">
+                <Text
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                  className="font-sans flex flex-wrap text-white text-base font-medium"
+                >
+                  {entry[1]}
+                </Text>
+                <View className="flex flex-row gap-x-2 items-center mt-1">
+                  <Text className="font-sans text-sm text-white opacity-60">
+                    {dayjs(entry[0]).format("MMM D, YYYY")}
+                  </Text>
+                  <View className="w-1 h-1 bg-white opacity-60" />
+                  <Text className="font-sans text-sm text-white opacity-60">
+                    {dayjs(entry[0]).format("h:mma")}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </ScrollView>
+      ) : // display the text
+      null}
     </>
   );
 };
