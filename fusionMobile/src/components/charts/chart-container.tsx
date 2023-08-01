@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 // import { ScrollView } from "react-native-gesture-handler";
+import { ProgressBar } from "react-native-paper";
 
 import { FusionBarChart } from "./bar-chart";
 import { FusionLineChart } from "./line-chart";
@@ -88,6 +89,47 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           return;
         }
 
+        if (
+          prompt.responseType === "customOptions" &&
+          filteredData.length > 0
+        ) {
+          // group responses by option so we have [option, percentage, count/totalEntries ]
+
+          interface itemPair {
+            [key: string]: number;
+          }
+          const customOptions: itemPair = {}; // {option: count}
+          filteredData.forEach((d) => {
+            // we allow multiple values so we need to split them
+            const values = d[1].toString().split(";");
+            values.forEach((value) => {
+              if (customOptions[value]) {
+                customOptions[value]++;
+              } else {
+                customOptions[value] = 1;
+              }
+            });
+          });
+
+          // total number of responses
+          const totalResponses: number = Object.values(customOptions).reduce(
+            (a: number, b: number) => a + b,
+            0
+          );
+
+          // convert to array
+          const customOptionsArr = Object.keys(customOptions).map((key) => {
+            return [
+              key,
+              customOptions[key] / totalResponses,
+              `${customOptions[key]}/${totalResponses}`,
+            ];
+          });
+
+          setChartData(customOptionsArr);
+          return;
+        }
+
         setChartData(filteredData);
       }
     })();
@@ -106,33 +148,55 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       )}
 
       {/* // if there are responses, then render the chart based on type */}
-      {prompt.responseType === "yesno" && chartData.length > 0 ? (
+      {prompt.responseType === "yesno" && chartData.length > 0 && (
         <FusionLineChart
           seriesData={chartData}
           startDate={startDate}
           timePeriod="week"
         />
-      ) : null}
+      )}
 
-      {prompt.responseType === "number" && chartData.length > 0 ? (
+      {prompt.responseType === "number" && chartData.length > 0 && (
         <FusionBarChart
           seriesData={chartData}
           startDate={startDate}
           timePeriod="week"
         />
-      ) : null}
+      )}
 
-      {/* {prompt.responseType === "customOptions" && chartData.length > 0 ? (
-          <FusionBarChart
-            seriesData={chartData}
-            startDate={startDate}
-            timePeriod="week"
-          />
-        ) : null} */}
+      {prompt.responseType === "customOptions" && chartData.length > 0 && (
+        // get the counts per response
+        <ScrollView className="flex flex-col w-full p-5">
+          {chartData.map((entry) => {
+            return (
+              <View className="mb-3">
+                <View className="flex flex-row justify-between mb-1">
+                  <Text className="font-sans text-white text-base">
+                    {entry[0]}
+                  </Text>
+                  <Text className="font-sans text-white opacity-50 text-base">
+                    {entry[2]}
+                  </Text>
+                </View>
+                <ProgressBar
+                  progress={entry[1]}
+                  color="#673AB7"
+                  style={{
+                    backgroundColor: "rgba(217,217,217,0.2)",
+                    borderRadius: 10,
+                    height: 8,
+                  }}
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
+      )}
 
-      {prompt.responseType === "text" && chartData.length > 0 ? (
+      {prompt.responseType === "text" && chartData.length > 0 && (
         <ScrollView className="flex flex-col w-full p-5 h-52">
           {chartData.map((entry) => {
+            // TODO: when clicked should navigate to response page for that entry
             return (
               <View
                 key={Math.random()}
@@ -158,8 +222,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             );
           })}
         </ScrollView>
-      ) : // display the text
-      null}
+      )}
     </>
   );
 };
