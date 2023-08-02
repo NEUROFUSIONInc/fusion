@@ -1,4 +1,8 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  StackActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
 import {
@@ -14,7 +18,6 @@ import {
 import { PromptResponse } from "~/@types";
 import { Button, Input, Tag } from "~/components";
 import { usePrompt } from "~/hooks";
-import { PromptScreenNavigationProp } from "~/navigation/prompt-navigator";
 import { RouteProp } from "~/navigation/types.js";
 import { promptService } from "~/services";
 import { maskPromptId, appInsights } from "~/utils";
@@ -27,7 +30,7 @@ const yesNoOptions = [
 // this component is to allow a user make a prompt entry.
 export function PromptEntryScreen() {
   const route = useRoute<RouteProp<"PromptEntry">>();
-  const navigation = useNavigation<PromptScreenNavigationProp>();
+  const navigation = useNavigation<any>();
   const { data: prompt } = usePrompt(route.params.promptUuid);
   const [userResponse, setUserResponse] = React.useState("");
   const [additonalNotes, setAdditionalNotes] = React.useState("");
@@ -91,8 +94,13 @@ export function PromptEntryScreen() {
         }
       );
       // navigate to prompt responses screen
-      navigation.replace("ViewResponses", {
-        prompt,
+      // clear stack history first
+      navigation.dispatch(StackActions.popToTop());
+      navigation.navigate("InsightsNavigator", {
+        screen: "InsightsPage",
+        params: {
+          promptUuid: prompt.uuid,
+        },
       });
     }
   };
