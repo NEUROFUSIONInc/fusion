@@ -241,7 +241,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         // if there are additional options, display them here
         <View className="border-t-2 border-tint p-5">
           <View className="flex flex-row justify-end border-b-2 mb-3 border-tint w-full">
-            <Text className="text-base text-[#A7ED58] font-sans">
+            <Text className="text-base text-lime font-sans">
               Additional Notes
             </Text>
           </View>

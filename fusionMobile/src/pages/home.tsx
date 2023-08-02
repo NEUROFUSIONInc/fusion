@@ -21,7 +21,7 @@ export function HomeScreen() {
             <Text className="text-base font-sans-bold text-white">
               Your health data
             </Text>
-            <Text className="text-base font-sans text-[#A7ED58]">Show all</Text>
+            <Text className="text-base font-sans text-lime">Show all</Text>
           </View>
 
           <Button

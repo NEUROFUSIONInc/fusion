@@ -37,8 +37,9 @@ export function InsightsScreen() {
     dayjs().startOf("week")
   );
 
-  const [selectedPromptUuid, setSelectedPromptUuid] =
-    React.useState<string>(null);
+  const [selectedPromptUuid, setSelectedPromptUuid] = React.useState<
+    string | undefined
+  >(savedPrompts?.[0]?.uuid);
 
   React.useEffect(() => {
     if (savedPrompts && savedPrompts.length > 0) {
@@ -93,14 +94,14 @@ export function InsightsScreen() {
 
               {chartStartDate < dayjs().startOf("week") ? (
                 <Text
-                  className="text-base font-sans text-[#A7ED58]"
+                  className="text-base font-sans text-lime"
                   onPress={() => setChartStartDate(dayjs().startOf("week"))}
                 >
                   View current week
                 </Text>
               ) : (
                 <Text
-                  className="text-base font-sans text-[#A7ED58]"
+                  className="text-base font-sans text-lime"
                   onPress={() => console.log("view all stats")}
                 >
                   View all stats
@@ -117,7 +118,7 @@ export function InsightsScreen() {
                       label: prompt.promptText,
                       value: prompt.uuid,
                     }))}
-                    value={selectedPromptUuid}
+                    value={selectedPromptUuid!}
                     placeholder="Select prompt"
                     setValue={setSelectedPromptUuid}
                     dropDownDirection="BOTTOM"
