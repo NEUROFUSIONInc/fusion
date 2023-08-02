@@ -38,6 +38,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
+  const insightsNavigator = useNavigation<any>();
   const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
   const {
     animatedHandleHeight,
@@ -129,8 +130,11 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       onPress: () => {
         onBottomSheetClose?.();
         activePrompt &&
-          navigation.navigate("ViewResponses", {
-            prompt: activePrompt,
+          insightsNavigator.navigate("InsightsNavigator", {
+            screen: "InsightsPage",
+            params: {
+              promptUuid: activePrompt.uuid,
+            },
           });
       },
     },

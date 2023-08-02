@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import { View, Text } from "react-native";
@@ -11,19 +11,19 @@ import {
 import { Prompt } from "~/@types";
 import { Screen, ChartContainer, Select } from "~/components";
 import { usePromptsQuery } from "~/hooks";
-import { appInsights } from "~/utils";
-
-export interface InsightsScreenProps {
-  activePrompt: Prompt;
-}
+import { RouteProp } from "~/navigation/types.js";
+import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
-  const navigation = useNavigation();
+  const route = useRoute<RouteProp<"InsightsPage">>();
+  let routePromptUuid = route.params?.promptUuid;
 
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Insights",
-      properties: {},
+      properties: {
+        sourcePromptId: routePromptUuid ? maskPromptId(routePromptUuid) : null,
+      },
     });
   }, []);
 
@@ -39,17 +39,20 @@ export function InsightsScreen() {
 
   const [selectedPromptUuid, setSelectedPromptUuid] = React.useState<
     string | undefined
-  >(savedPrompts?.[0]?.uuid);
+  >(routePromptUuid ? routePromptUuid : savedPrompts?.[0]?.uuid);
 
-  React.useEffect(() => {
-    if (savedPrompts && savedPrompts.length > 0) {
-      setSelectedPromptUuid(savedPrompts[0].uuid);
-    }
-  }, [isLoading]);
   const handleActivePromptSelect = (promptUuid: string) => {
     const prompt = savedPrompts?.find((p) => p.uuid === promptUuid);
     setActiveChartPrompt(prompt);
   };
+
+  useEffect(() => {
+    // we set this once and destroy afterwards
+    if (routePromptUuid) {
+      setSelectedPromptUuid(routePromptUuid);
+      routePromptUuid = null;
+    }
+  }, [routePromptUuid]);
 
   useEffect(() => {
     if (selectedPromptUuid) {
@@ -98,14 +101,7 @@ export function InsightsScreen() {
               >
                 View current week
               </Text>
-            ) : (
-              <Text
-                className="text-base font-sans text-lime"
-                onPress={() => console.log("view all stats")}
-              >
-                View all stats
-              </Text>
-            )}
+            ) : null}
           </View>
 
           {/* select the first available prompt */}
