@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, Pressable } from "react-native";
 // import { ScrollView } from "react-native-gesture-handler";
 import { ProgressBar } from "react-native-paper";
+import Animated from "react-native-reanimated";
 
 import { ResponseTextItem } from "../response-text-item";
 
@@ -29,12 +30,17 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   // on load, get the prompt responses...
   const [chartData, setChartData] = useState<any[]>([]);
   const [additionalNotes, setAdditionalNotes] = useState<any[]>([]); // [timestamp, note]
+  const [showAdditionalNotes, setShowAdditionalNotes] = useState<boolean>(true);
+  const toggleAdditionalNotes = () => {
+    setShowAdditionalNotes(!showAdditionalNotes);
+  };
 
   useEffect(() => {
     // get the prompt responses
     // filter by time period
     // generate the chart options
     setAdditionalNotes([]);
+    setShowAdditionalNotes(true);
     (async () => {
       const res = await promptService.getPromptResponses(prompt.uuid);
 
@@ -116,10 +122,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           });
 
           setChartData(dailyAverage);
-          return;
-        }
-
-        if (
+        } else if (
           prompt.responseType === "customOptions" &&
           filteredData.length > 0
         ) {
@@ -157,16 +160,15 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           });
 
           setChartData(customOptionsArr);
-          return;
+        } else {
+          setChartData(filteredData);
         }
-
-        setChartData(filteredData);
       }
     })();
   }, [prompt, startDate, timePeriod]);
 
   return (
-    <>
+    <View className="flex-1">
       {chartData.length === 0 && (
         <View className="flex flex-col items-center justify-center h-52">
           <Text className="font-sans text-white text-base align-middle">
@@ -175,7 +177,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         </View>
       )}
 
-      {/* // if there are responses, then render the chart based on type */}
       {prompt.responseType === "yesno" && chartData.length > 0 && (
         <FusionLineChart
           seriesData={chartData}
@@ -194,10 +195,13 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
       {prompt.responseType === "customOptions" && chartData.length > 0 && (
         // get the counts per response
-        <ScrollView className="flex flex-col w-full p-5">
+        <View className="flex flex-col w-full p-5">
           {chartData.map((entry) => {
+            if (typeof entry[1] != "number") {
+              return;
+            }
             return (
-              <View className="mb-3">
+              <View key={Math.random() * 1000} className="mb-3">
                 <View className="flex flex-row justify-between mb-1">
                   <Text className="font-sans text-white text-base">
                     {entry[0]}
@@ -206,30 +210,27 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                     {entry[2]}
                   </Text>
                 </View>
-                <ProgressBar
-                  progress={entry[1]}
-                  color="#673AB7"
-                  style={{
-                    backgroundColor: "rgba(217,217,217,0.2)",
-                    borderRadius: 10,
-                    height: 8,
-                  }}
-                  accessibilityValue={{
-                    min: 0,
-                    max: 100,
-                    now: convertValueToNumber(entry[2])!,
-                  }}
-                />
+
+                <Animated.View>
+                  <ProgressBar
+                    progress={entry[1]}
+                    color="#673AB7"
+                    style={{
+                      backgroundColor: "rgba(217,217,217,0.2)",
+                      borderRadius: 10,
+                      height: 8,
+                    }}
+                  />
+                </Animated.View>
               </View>
             );
           })}
-        </ScrollView>
+        </View>
       )}
 
       {prompt.responseType === "text" && chartData.length > 0 && (
         <View className="flex flex-col w-full p-5">
           {chartData.map((entry) => {
-            // TODO: when clicked should navigate to response page for that entry
             return (
               <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
             );
@@ -240,20 +241,25 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       {additionalNotes.length > 0 && (
         // if there are additional options, display them here
         <View className="border-t-2 border-tint p-5">
-          <View className="flex flex-row justify-end border-b-2 mb-3 border-tint w-full">
-            <Text className="text-base text-lime font-sans">
-              Additional Notes
-            </Text>
+          <View className="flex flex-row justify-end border-b-2 mb-3 pb-1 border-tint w-full">
+            <Pressable onPress={toggleAdditionalNotes}>
+              <Text className="text-base text-lime font-sans">
+                {showAdditionalNotes ? "Hide" : "Show"} Additional Notes
+              </Text>
+            </Pressable>
           </View>
 
-          {additionalNotes.map((entry) => {
-            // TODO: when clicked should navigate to response page for that entry
-            return (
-              <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
-            );
-          })}
+          {showAdditionalNotes && (
+            <>
+              {additionalNotes.map((entry) => {
+                return (
+                  <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
+                );
+              })}
+            </>
+          )}
         </View>
       )}
-    </>
+    </View>
   );
 };
