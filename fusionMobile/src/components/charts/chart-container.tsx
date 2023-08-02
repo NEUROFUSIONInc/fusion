@@ -4,6 +4,8 @@ import { View, Text, ScrollView } from "react-native";
 // import { ScrollView } from "react-native-gesture-handler";
 import { ProgressBar } from "react-native-paper";
 
+import { ResponseTextItem } from "../response-text-item";
+
 import { FusionBarChart } from "./bar-chart";
 import { FusionLineChart } from "./line-chart";
 
@@ -26,9 +28,13 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 }) => {
   // on load, get the prompt responses...
   const [chartData, setChartData] = useState<any[]>([]);
+  const [additionalNotes, setAdditionalNotes] = useState<any[]>([]); // [timestamp, note]
 
   useEffect(() => {
     // get the prompt responses
+    // filter by time period
+    // generate the chart options
+    setAdditionalNotes([]);
     (async () => {
       const res = await promptService.getPromptResponses(prompt.uuid);
 
@@ -55,6 +61,30 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           .map((d) => {
             return [updateTimestampToMs(d.responseTimestamp), d.value];
           });
+
+        // get any additionalNotes
+        const additionalNotes = res
+          .filter((response) => {
+            const responseTimestamp = updateTimestampToMs(
+              response.responseTimestamp
+            );
+
+            return (
+              dayjs(responseTimestamp).isAfter(startDate) &&
+              dayjs(responseTimestamp).isBefore(startDate.endOf(timePeriod)) &&
+              response.additionalMeta?.note
+            );
+          })
+          .map((d) => {
+            return [
+              updateTimestampToMs(d.responseTimestamp),
+              d.additionalMeta?.note,
+            ];
+          });
+
+        if (additionalNotes.length > 0) {
+          setAdditionalNotes(additionalNotes);
+        }
 
         // TODO: make this better pls
         if (prompt.responseType === "number" && filteredData.length > 0) {
@@ -133,8 +163,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         setChartData(filteredData);
       }
     })();
-    // filter by time period
-    // generate the chart options
   }, [prompt, startDate, timePeriod]);
 
   return (
@@ -186,6 +214,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                     borderRadius: 10,
                     height: 8,
                   }}
+                  accessibilityValue={{
+                    min: 0,
+                    max: 100,
+                    now: convertValueToNumber(entry[2])!,
+                  }}
                 />
               </View>
             );
@@ -194,34 +227,32 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       )}
 
       {prompt.responseType === "text" && chartData.length > 0 && (
-        <ScrollView className="flex flex-col w-full p-5 h-52">
+        <View className="flex flex-col w-full p-5">
           {chartData.map((entry) => {
             // TODO: when clicked should navigate to response page for that entry
             return (
-              <View
-                key={Math.random()}
-                className="pb-3 mb-3 border-b-2 border-tint"
-              >
-                <Text
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                  className="font-sans flex flex-wrap text-white text-base font-medium"
-                >
-                  {entry[1]}
-                </Text>
-                <View className="flex flex-row gap-x-2 items-center mt-1">
-                  <Text className="font-sans text-sm text-white opacity-60">
-                    {dayjs(entry[0]).format("dd MMM D, YYYY")}
-                  </Text>
-                  <View className="w-1 h-1 bg-white opacity-60" />
-                  <Text className="font-sans text-sm text-white opacity-60">
-                    {dayjs(entry[0]).format("h:mma")}
-                  </Text>
-                </View>
-              </View>
+              <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
             );
           })}
-        </ScrollView>
+        </View>
+      )}
+
+      {additionalNotes.length > 0 && (
+        // if there are additional options, display them here
+        <View className="border-t-2 border-tint p-5">
+          <View className="flex flex-row justify-end border-b-2 mb-3 border-tint w-full">
+            <Text className="text-base text-[#A7ED58] font-sans">
+              Additional Notes
+            </Text>
+          </View>
+
+          {additionalNotes.map((entry) => {
+            // TODO: when clicked should navigate to response page for that entry
+            return (
+              <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
+            );
+          })}
+        </View>
       )}
     </>
   );
