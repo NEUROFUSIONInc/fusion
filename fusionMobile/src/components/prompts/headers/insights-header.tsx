@@ -8,7 +8,7 @@ export const InsightsHeader = () => {
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
       <View className="flex flex-row">
-        <Text className="font-sans-bold text-[26px] text-white">Monthly</Text>
+        <Text className="font-sans-bold text-[26px] text-white">Weekly</Text>
         <Button
           variant="ghost"
           size="icon"

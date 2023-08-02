@@ -7,7 +7,9 @@ import { InsightsHeader } from "~/components";
 import { InsightsScreen } from "~/pages/insights";
 
 export type InsightsStackParamList = {
-  InsightsPage: undefined;
+  InsightsPage: {
+    promptUuid: string | null;
+  };
 };
 
 export type InsightsScreenNavigationProp =
