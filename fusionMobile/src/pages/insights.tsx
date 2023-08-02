@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import {
   State,
   PanGestureHandler,
@@ -85,62 +85,71 @@ export function InsightsScreen() {
 
   return (
     <Screen>
-      <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
-        <ScrollView nestedScrollEnabled>
-          <View className="flex flex-row w-full justify-between p-5">
-            <Text className="text-base font-sans-bold text-white">
-              {chartStartDate.format("MMM D") +
-                " - " +
-                chartStartDate.add(1, "week").format("MMM D")}
-            </Text>
-
-            {chartStartDate < dayjs().startOf("week") ? (
-              <Text
-                className="text-base font-sans text-lime"
-                onPress={() => setChartStartDate(dayjs().startOf("week"))}
-              >
-                View current week
+      {savedPrompts?.length === 0 && !isLoading ? (
+        <View className="flex flex-1 flex-col gap-7 items-center justify-center">
+          <Image source={require("../../assets/pie-chart.png")} />
+          <Text className="font-sans-light max-w-xs text-center text-white text-base">
+            Hello there, looks like you haven’t logged enough data to track
+          </Text>
+        </View>
+      ) : (
+        <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+          <ScrollView nestedScrollEnabled>
+            <View className="flex flex-row w-full justify-between p-5">
+              <Text className="text-base font-sans-bold text-white">
+                {chartStartDate.format("MMM D") +
+                  " - " +
+                  chartStartDate.add(1, "week").format("MMM D")}
               </Text>
-            ) : null}
-          </View>
 
-          {/* select the first available prompt */}
-          {savedPrompts && savedPrompts.length > 0 && (
-            <View className="flex flex-col w-full bg-secondary-900">
-              <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
-                <Select
-                  items={savedPrompts.map((prompt) => ({
-                    label: prompt.promptText,
-                    value: prompt.uuid,
-                  }))}
-                  value={selectedPromptUuid!}
-                  placeholder="Select prompt"
-                  setValue={setSelectedPromptUuid}
-                  dropDownDirection="BOTTOM"
-                  listMode="SCROLLVIEW"
-                  scrollViewProps={{
-                    nestedScrollEnabled: true,
-                    indicatorStyle: "white",
-                  }}
-                />
-              </View>
+              {chartStartDate < dayjs().startOf("week") ? (
+                <Text
+                  className="text-base font-sans text-lime"
+                  onPress={() => setChartStartDate(dayjs().startOf("week"))}
+                >
+                  View current week
+                </Text>
+              ) : null}
+            </View>
 
-              <View className="-z-30">
-                <View>
-                  {/* this is where the chart is */}
-                  {activeChartPrompt && (
-                    <ChartContainer
-                      prompt={activeChartPrompt}
-                      startDate={chartStartDate}
-                      timePeriod="week"
-                    />
-                  )}
+            {/* select the first available prompt */}
+            {savedPrompts && savedPrompts.length > 0 && (
+              <View className="flex flex-col w-full bg-secondary-900">
+                <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
+                  <Select
+                    items={savedPrompts.map((prompt) => ({
+                      label: prompt.promptText,
+                      value: prompt.uuid,
+                    }))}
+                    value={selectedPromptUuid!}
+                    placeholder="Select prompt"
+                    setValue={setSelectedPromptUuid}
+                    dropDownDirection="BOTTOM"
+                    listMode="SCROLLVIEW"
+                    scrollViewProps={{
+                      nestedScrollEnabled: true,
+                      indicatorStyle: "white",
+                    }}
+                  />
+                </View>
+
+                <View className="-z-30">
+                  <View>
+                    {/* this is where the chart is */}
+                    {activeChartPrompt && (
+                      <ChartContainer
+                        prompt={activeChartPrompt}
+                        startDate={chartStartDate}
+                        timePeriod="week"
+                      />
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-        </ScrollView>
-      </PanGestureHandler>
+            )}
+          </ScrollView>
+        </PanGestureHandler>
+      )}
     </Screen>
   );
 }
