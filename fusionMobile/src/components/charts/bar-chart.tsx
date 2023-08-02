@@ -88,7 +88,6 @@ export const FusionBarChart: FC<BarChartProps> = ({
         width: Dimensions.get("window").width,
         height: 300,
       });
-      console.log(JSON.stringify(chartOptions));
       chart.setOption(chartOptions);
     }
 

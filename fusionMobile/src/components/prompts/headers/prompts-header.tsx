@@ -50,7 +50,7 @@ export const PromptsHeader = () => {
           <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
             <View className="flex flex-col gap-y-2.5 items-center">
               <PromptOption
-                text="Quick add prompt"
+                text="Choose from example prompts"
                 onPress={handleQuickAddPrompt}
               />
               <PromptOption
