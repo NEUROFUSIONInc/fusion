@@ -1,5 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
+import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -8,25 +9,27 @@ import { Prompt } from "~/@types";
 import {
   Button,
   CategoryTag,
-  CreatePromptSheet,
   Plus,
   PromptDetails,
   PromptOptionsSheet,
   Screen,
 } from "~/components";
+import { AddPromptSheet } from "~/components/bottom-sheet/add-prompt-sheet";
 import { categories } from "~/config";
 import { usePromptsQuery } from "~/hooks";
+import { PromptScreenNavigationProp } from "~/navigation";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
 
 export const PromptsScreen = () => {
   const { data: savedPrompts, isLoading } = usePromptsQuery();
-  const promptSheetRef = useRef<RNBottomSheet>(null);
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     undefined
   );
+  const navigation = useNavigation<PromptScreenNavigationProp>();
+
   const filteredPrompts = useMemo(() => {
     return selectedCategory
       ? savedPrompts?.filter(
@@ -67,6 +70,7 @@ export const PromptsScreen = () => {
     setSelectedCategory(category);
   }, []);
 
+  // Bottom sheet for prompt options when user has a list of prompts
   const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
     setActivePrompt(prompt);
   }, []);
@@ -76,9 +80,16 @@ export const PromptsScreen = () => {
     promptOptionsSheetRef.current?.close();
   }, []);
 
+  // Bottom sheets for adding new prompts
+  const bottomSheetRef = useRef<RNBottomSheet>(null);
+
+  const handleExpandSheet = useCallback(
+    () => bottomSheetRef.current?.expand(),
+    []
+  );
+
   return (
     <Screen>
-      {/* {isLoading && <Text>Loading...</Text>} */}
       {(!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
@@ -87,9 +98,9 @@ export const PromptsScreen = () => {
             get started.
           </Text>
           <Button
-            title="Create your first prompt"
+            title="Add your first prompt"
             leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={() => promptSheetRef.current?.expand()}
+            onPress={handleExpandSheet}
             className="self-center"
           />
         </View>
@@ -130,7 +141,7 @@ export const PromptsScreen = () => {
       )}
 
       <Portal>
-        <CreatePromptSheet promptSheetRef={promptSheetRef} />
+        <AddPromptSheet bottomSheetRef={bottomSheetRef} />
 
         {activePrompt && (
           <PromptOptionsSheet

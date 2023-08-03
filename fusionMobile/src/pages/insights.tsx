@@ -1,6 +1,7 @@
+import RNBottomSheet from "@gorhom/bottom-sheet";
 import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { View, Text, Image } from "react-native";
 import {
   State,
@@ -9,9 +10,11 @@ import {
 } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
-import { Screen, ChartContainer, Select } from "~/components";
+import { Screen, ChartContainer, Select, Button, Plus } from "~/components";
+import { AddPromptSheet } from "~/components/bottom-sheet/add-prompt-sheet";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
+import { colors } from "~/theme";
 import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
@@ -83,6 +86,13 @@ export function InsightsScreen() {
     }
   };
 
+  // Bottom sheets for adding new prompts
+  const bottomSheetRef = useRef<RNBottomSheet>(null);
+  const handleExpandSheet = useCallback(
+    () => bottomSheetRef.current?.expand(),
+    []
+  );
+
   return (
     <Screen>
       {!savedPrompts || savedPrompts?.length === 0 ? (
@@ -91,6 +101,12 @@ export function InsightsScreen() {
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
             Hello there, looks like you haven’t logged enough data to track
           </Text>
+          <Button
+            title="Add your first prompt"
+            leftIcon={<Plus color={colors.dark} width={16} height={16} />}
+            onPress={handleExpandSheet}
+            className="self-center"
+          />
         </View>
       ) : (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
@@ -150,6 +166,8 @@ export function InsightsScreen() {
           </ScrollView>
         </PanGestureHandler>
       )}
+
+      <AddPromptSheet bottomSheetRef={bottomSheetRef} />
     </Screen>
   );
 }
