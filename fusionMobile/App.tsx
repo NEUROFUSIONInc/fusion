@@ -6,13 +6,13 @@ import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { Alert, Platform, StatusBar } from "react-native";
+import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
-import { maskPromptId, appInsights } from "./src/utils";
+import { appInsights, maskPromptId } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import { PromptContextProvider } from "~/contexts";
@@ -20,41 +20,6 @@ import { notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
-
-const registerForPushNotificationsAsync = async () => {
-  //TODO: follow the guide again for checking on Android/iOS
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-  if (existingStatus !== "granted") {
-    Alert.alert(
-      "Notification Permission",
-      "We need your permission to send you notifications based on your prompt settings.",
-      [
-        {
-          text: "OK",
-          onPress: async () => {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          },
-        },
-      ]
-    );
-  }
-  if (finalStatus !== "granted") {
-    return false;
-  }
-
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return true;
-};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -66,7 +31,63 @@ Notifications.setNotificationHandler({
   },
 });
 
-// SplashScreen.preventAutoHideAsync(); - temp remove since asking for notification permission on first load causes hiding splash screen to fail
+const registerForPushNotificationsAsync = async () => {
+  //TODO: follow the guide again for checking on Android/iOS
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  (async () => {
+    if (existingStatus !== "granted") {
+      Alert.alert(
+        "Notification Permission",
+        "We need your permission to send you notifications based on your prompt settings.",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              const { status } = await Notifications.requestPermissionsAsync();
+              finalStatus = status;
+              if (finalStatus !== "granted") {
+                Alert.alert(
+                  "Enable notifications",
+                  "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
+                  [
+                    {
+                      text: "OK",
+                      onPress: async () => {
+                        Linking.openURL("app-settings:Fusion");
+                      },
+                    },
+                  ]
+                );
+              } else {
+                if (Platform.OS === "android") {
+                  await Notifications.setNotificationChannelAsync("default", {
+                    name: "default",
+                    importance: Notifications.AndroidImportance.MAX,
+                    vibrationPattern: [0, 250, 250, 250],
+                    lightColor: "#FF231F7C",
+                  });
+                }
+              }
+            },
+          },
+        ]
+      );
+    } else {
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
+    }
+  })();
+};
+
+// - temp remove since asking for notification permission on first load causes hiding splash screen to fail
+// SplashScreen.preventAutoHideAsync();
 
 // Create a client
 const queryClient = new QueryClient({
@@ -82,25 +103,7 @@ function App() {
   React.useEffect(() => {
     // validate permission status for user
     (async () => {
-      const permissionStatus = await registerForPushNotificationsAsync();
-      // TODO: conditionally display this on the settings page
-      // if (!permissionStatus) {
-      //   console.log("no permission status, asking to navigate to settings");
-      //   Alert.alert(
-      //     "Enable notifications",
-      //     "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
-      //     [
-      //       {
-      //         text: "OK",
-      //         onPress: async () => {
-      //           Linking.openURL("app-settings:Fusion");
-      //         },
-      //       },
-      //     ]
-      //   );
-      //   return;
-      // }
-
+      await registerForPushNotificationsAsync();
       /**
        * Set up notification categories
        * TODO: set custom catgeories based on prompts
@@ -121,10 +124,8 @@ function App() {
           },
         },
       ]);
-
       let placeholderTextInput = { placeholder: "" };
       let placeholderNumberInput = { placeholder: "" };
-
       // This is work around a bug in expo-notifications
       if (Platform.OS !== "android") {
         placeholderTextInput = {
@@ -134,7 +135,6 @@ function App() {
           placeholder: "Enter a number",
         };
       }
-
       await Notifications.setNotificationCategoryAsync("number", [
         {
           identifier: "number",
@@ -148,7 +148,6 @@ function App() {
           },
         },
       ]);
-
       await Notifications.setNotificationCategoryAsync("text", [
         {
           identifier: "text",
@@ -162,7 +161,6 @@ function App() {
           },
         },
       ]);
-
       // set notification handlers
       // what happens when a user responds to notification
       // even in background
@@ -173,17 +171,14 @@ function App() {
             Notifications.dismissNotificationAsync(
               response.notification.request.identifier
             );
-
             const promptUuid =
               await notificationService.getPromptForNotificationId(
                 response.notification.request.identifier
               );
-
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
               return;
             }
-
             // dismiss all other notifications for this prompt
             const notificationIds =
               await notificationService.getNotificationIdsForPrompt(promptUuid);
@@ -194,7 +189,6 @@ function App() {
                 )
               );
             }
-
             if (
               response.actionIdentifier ===
               Notifications.DEFAULT_ACTION_IDENTIFIER
@@ -205,7 +199,6 @@ function App() {
               });
               return;
             }
-
             // get response from notification
             let response_value: string | undefined;
             let notificationCategory: string | null = "";
@@ -224,7 +217,6 @@ function App() {
             ) {
               response_value = response.userText;
             }
-
             // create prompt object
             const promptResponse = {
               promptUuid, // ensure promptUuid is always of type string
@@ -232,10 +224,8 @@ function App() {
               responseTimestamp: Math.floor(dayjs().unix()),
               value: response_value ?? "",
             };
-
             // save the prompt response
             await promptService.savePromptResponse(promptResponse);
-
             // track event
             appInsights.trackEvent(
               {
