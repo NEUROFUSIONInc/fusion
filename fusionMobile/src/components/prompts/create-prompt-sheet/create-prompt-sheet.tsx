@@ -3,7 +3,7 @@ import RNBottomSheet, {
   BottomSheetHandleProps,
 } from "@gorhom/bottom-sheet";
 import dayjs from "dayjs";
-import { FC, RefObject, useMemo, useState } from "react";
+import { FC, RefObject, useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -148,6 +148,12 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
       setSuccess(true);
     }
   };
+
+  useEffect(() => {
+    if (success) {
+      handleClose();
+    }
+  }, [success]);
 
   const handleComponent = (props: BottomSheetHandleProps) => {
     if (success) {
