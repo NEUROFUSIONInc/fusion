@@ -85,7 +85,7 @@ export function InsightsScreen() {
 
   return (
     <Screen>
-      {savedPrompts?.length === 0 && !isLoading ? (
+      {!savedPrompts || savedPrompts?.length === 0 ? (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/pie-chart.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">

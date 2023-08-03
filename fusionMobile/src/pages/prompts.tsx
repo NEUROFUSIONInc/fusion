@@ -45,6 +45,10 @@ export const PromptsScreen = () => {
   }, [savedPrompts]);
 
   useEffect(() => {
+    /**
+     * This delay is added before showing bottom sheet because some time
+     * is required for the assignment in react state to reflect in the UI.
+     */
     let delayMs = 300;
     if (Platform.OS === "android") {
       delayMs = 500;
@@ -74,8 +78,8 @@ export const PromptsScreen = () => {
 
   return (
     <Screen>
-      {isLoading && <Text>Loading...</Text>}
-      {!isLoading && savedPrompts?.length === 0 && (
+      {/* {isLoading && <Text>Loading...</Text>} */}
+      {(!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
