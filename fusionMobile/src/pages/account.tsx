@@ -137,8 +137,19 @@ export function AccountScreen() {
               />
             </View>
 
+            <Button
+              title="Book a call with our team"
+              onPress={async () => {
+                Linking.openURL(
+                  "https://calendly.com/oreogundipe/chat-about-fusion"
+                );
+              }}
+              fullWidth
+              className="mt-5"
+            />
+
             {/* Export Data */}
-            <View className="mt-10 mb-10 gap-y-5 pt-10">
+            <View className="mt-10">
               <Button
                 title="Export Prompts"
                 variant="ghost"
