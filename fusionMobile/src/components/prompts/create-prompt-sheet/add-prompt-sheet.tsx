@@ -4,10 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useCallback, useRef, FC, RefObject } from "react";
 import { View } from "react-native";
 
-import { Button } from "../button";
-import { CreatePromptSheet, PromptOption } from "../prompts";
-
-import { BottomSheet } from "./bottom-sheet";
+import { BottomSheet } from "../../bottom-sheet/bottom-sheet";
+import { Button } from "../../button";
+import { CreatePromptSheet } from "../create-prompt-sheet/create-prompt-sheet";
+import { PromptOption } from "../prompt-option/prompt-option";
 
 interface AddPromptSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;

@@ -1,6 +1,5 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,11 +12,10 @@ import {
   PromptDetails,
   PromptOptionsSheet,
   Screen,
+  AddPromptSheet,
 } from "~/components";
-import { AddPromptSheet } from "~/components/bottom-sheet/add-prompt-sheet";
 import { categories } from "~/config";
 import { usePromptsQuery } from "~/hooks";
-import { PromptScreenNavigationProp } from "~/navigation";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
 
@@ -28,7 +26,6 @@ export const PromptsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     undefined
   );
-  const navigation = useNavigation<PromptScreenNavigationProp>();
 
   const filteredPrompts = useMemo(() => {
     return selectedCategory

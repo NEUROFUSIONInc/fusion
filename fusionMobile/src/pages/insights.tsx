@@ -10,8 +10,14 @@ import {
 } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
-import { Screen, ChartContainer, Select, Button, Plus } from "~/components";
-import { AddPromptSheet } from "~/components/bottom-sheet/add-prompt-sheet";
+import {
+  Screen,
+  ChartContainer,
+  Select,
+  Button,
+  Plus,
+  AddPromptSheet,
+} from "~/components";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
 import { colors } from "~/theme";
@@ -30,6 +36,10 @@ export function InsightsScreen() {
     });
   }, []);
 
+  const chartPeriod = route.params?.chartPeriod
+    ? route.params?.chartPeriod
+    : "week";
+
   const { data: savedPrompts, isLoading } = usePromptsQuery();
 
   const [activeChartPrompt, setActiveChartPrompt] = React.useState<
@@ -37,7 +47,7 @@ export function InsightsScreen() {
   >();
 
   const [chartStartDate, setChartStartDate] = React.useState<dayjs.Dayjs>(
-    dayjs().startOf("week")
+    dayjs().startOf(chartPeriod)
   );
 
   const [selectedPromptUuid, setSelectedPromptUuid] = React.useState<
@@ -72,17 +82,18 @@ export function InsightsScreen() {
     ) {
       // Check if the swipe is left (translationX is less than -50)
       if (
-        chartStartDate.startOf("week").unix() === dayjs().startOf("week").unix()
+        chartStartDate.startOf(chartPeriod).unix() ===
+        dayjs().startOf(chartPeriod).unix()
       ) {
         return;
       }
-      setChartStartDate(chartStartDate.add(1, "week"));
+      setChartStartDate(chartStartDate.add(1, chartPeriod));
     } else if (
       event.nativeEvent.state === State.END &&
       event.nativeEvent.translationX > 50
     ) {
       // Check if the swipe is right (translationX is greater than 50)
-      setChartStartDate(chartStartDate.subtract(1, "week"));
+      setChartStartDate(chartStartDate.subtract(1, chartPeriod));
     }
   };
 
@@ -112,18 +123,26 @@ export function InsightsScreen() {
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView nestedScrollEnabled>
             <View className="flex flex-row w-full justify-between p-5">
-              <Text className="text-base font-sans-bold text-white">
-                {chartStartDate.format("MMM D") +
-                  " - " +
-                  chartStartDate.add(1, "week").format("MMM D")}
-              </Text>
+              {chartPeriod === "week" ? (
+                <Text className="text-base font-sans-bold text-white">
+                  {chartStartDate.format("MMM D") +
+                    " - " +
+                    chartStartDate.add(1, chartPeriod).format("MMM D")}
+                </Text>
+              ) : (
+                <Text className="text-base font-sans-bold text-white">
+                  {chartStartDate.format("MMMM YYYY")}
+                </Text>
+              )}
 
-              {chartStartDate < dayjs().startOf("week") ? (
+              {chartStartDate < dayjs().startOf(chartPeriod) ? (
                 <Text
                   className="text-base font-sans text-lime"
-                  onPress={() => setChartStartDate(dayjs().startOf("week"))}
+                  onPress={() =>
+                    setChartStartDate(dayjs().startOf(chartPeriod))
+                  }
                 >
-                  View current week
+                  View current {chartPeriod}
                 </Text>
               ) : null}
             </View>
@@ -156,7 +175,7 @@ export function InsightsScreen() {
                       <ChartContainer
                         prompt={activeChartPrompt}
                         startDate={chartStartDate}
-                        timePeriod="week"
+                        timePeriod={chartPeriod}
                       />
                     )}
                   </View>

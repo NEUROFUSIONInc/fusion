@@ -8,7 +8,8 @@ import { InsightsScreen } from "~/pages/insights";
 
 export type InsightsStackParamList = {
   InsightsPage: {
-    promptUuid: string | null;
+    chartPeriod?: "week" | "month";
+    promptUuid?: string;
   };
 };
 

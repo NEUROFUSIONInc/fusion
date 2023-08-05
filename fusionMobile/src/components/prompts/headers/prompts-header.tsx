@@ -4,8 +4,7 @@ import { Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { Plus } from "../../icons";
-
-import { AddPromptSheet } from "~/components/bottom-sheet/add-prompt-sheet";
+import { AddPromptSheet } from "../create-prompt-sheet/add-prompt-sheet";
 
 export const PromptsHeader = () => {
   const bottomSheetRef = useRef<RNBottomSheet>(null);
