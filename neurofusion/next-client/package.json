@@ -23,7 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
-    "lucide-react": "^0.263.1",
+    "lucide-react": "^0.261.0",
     "magic-sdk": "^18.4.1",
     "next": "latest",
     "next-auth": "^4.22.3",
