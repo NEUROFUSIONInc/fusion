@@ -136,6 +136,21 @@ export const PromptsScreen = () => {
           </ScrollView>
         </View>
       )}
+      {filteredPrompts?.length === 0 && (
+        <View className="flex flex-1 flex-col gap-7 items-center justify-center">
+          <Image source={require("../../assets/sticky-note.png")} />
+          <Text className="font-sans-light max-w-xs text-center text-white text-base">
+            Looks like you don't have any prompt in '{selectedCategory}'{" "}
+            category.
+          </Text>
+          <Button
+            title={"Add prompt for '" + selectedCategory + "'"}
+            leftIcon={<Plus color={colors.dark} width={16} height={16} />}
+            onPress={handleExpandSheet}
+            className="self-center"
+          />
+        </View>
+      )}
 
       <Portal>
         <AddPromptSheet bottomSheetRef={bottomSheetRef} />

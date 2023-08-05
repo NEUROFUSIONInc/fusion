@@ -29,6 +29,11 @@ export const categories = [
     icon: "🧘",
   },
   {
+    name: "Self-Care",
+    color: "#",
+    icon: "🧖",
+  },
+  {
     name: "Finance",
     color: "#FF0000",
     icon: "💸",
