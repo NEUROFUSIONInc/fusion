@@ -47,7 +47,7 @@ export const InsightsHeader = () => {
         onPress={() =>
           Alert.alert(
             "Navigating the insights page",
-            "Swipe left or right on the chart to move across weeks or months."
+            "Swipe left or right on the chart to view insights across weeks or months."
           )
         }
       />
