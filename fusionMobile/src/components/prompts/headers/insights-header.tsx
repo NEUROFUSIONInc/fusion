@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { ChevronDown, Help } from "../../icons";
@@ -16,29 +16,27 @@ export const InsightsHeader = () => {
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <View className="flex flex-row">
+      <Pressable
+        className="flex flex-row"
+        onPress={() => {
+          Alert.alert(
+            "Set Chart Period",
+            "Choose how you'd like to group your data",
+            [
+              {
+                text: "Weekly",
+                onPress: () => setChartPeriod("week"),
+              },
+              { text: "Monthly", onPress: () => setChartPeriod("month") },
+            ]
+          );
+        }}
+      >
         <Text className="font-sans-bold text-[26px] text-white">
           {chartPeriod === "week" ? "Weekly" : "Monthly"}
         </Text>
-        <Button
-          variant="ghost"
-          size="icon"
-          leftIcon={<ChevronDown />}
-          onPress={() => {
-            Alert.alert(
-              "Set Chart Period",
-              "Choose how you'd like to group your data",
-              [
-                {
-                  text: "Weekly",
-                  onPress: () => setChartPeriod("week"),
-                },
-                { text: "Monthly", onPress: () => setChartPeriod("month") },
-              ]
-            );
-          }}
-        />
-      </View>
+        <Button variant="ghost" size="icon" leftIcon={<ChevronDown />} />
+      </Pressable>
 
       <Button
         variant="ghost"

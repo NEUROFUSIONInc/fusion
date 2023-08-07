@@ -12,7 +12,7 @@ export interface BarChartProps {
   seriesData: any[];
   startDate: dayjs.Dayjs;
   endDate?: dayjs.Dayjs;
-  timePeriod: "day" | "week" | "month";
+  timePeriod: "day" | "week" | "month" | "year";
 }
 
 export const FusionBarChart: FC<BarChartProps> = ({

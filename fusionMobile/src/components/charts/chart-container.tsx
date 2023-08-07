@@ -181,7 +181,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         <FusionLineChart
           seriesData={chartData}
           startDate={startDate}
-          timePeriod="week"
+          timePeriod={timePeriod}
         />
       )}
 
@@ -189,7 +189,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         <FusionBarChart
           seriesData={chartData}
           startDate={startDate}
-          timePeriod="week"
+          timePeriod={timePeriod}
         />
       )}
 

@@ -13,7 +13,7 @@ export interface LineChartProps {
   seriesData: any[];
   startDate: dayjs.Dayjs;
   endDate?: dayjs.Dayjs;
-  timePeriod: "day" | "week" | "month";
+  timePeriod: "day" | "week" | "month" | "year";
 }
 
 export const FusionLineChart: FC<LineChartProps> = ({
