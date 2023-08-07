@@ -13,7 +13,6 @@ import {
   PromptsScreen,
   EditPromptScreen,
   PromptEntryScreen,
-  ResponsesScreen,
   QuickAddPromptsScreen,
 } from "~/pages";
 
@@ -29,9 +28,6 @@ export type PromptStackParamList = {
         prompt: Prompt;
       };
   QuickAddPrompts: undefined;
-  ViewResponses: {
-    prompt: Prompt;
-  };
   PromptEntry: {
     promptUuid: string;
     triggerTimestamp: number | null;
@@ -55,11 +51,6 @@ export const PromptStack = () => {
         name="EditPrompt"
         component={EditPromptScreen}
         options={{ header: () => <EditPromptHeader /> }}
-      />
-      <Stack.Screen
-        name="ViewResponses"
-        component={ResponsesScreen}
-        options={{ title: "Prompt Responses" }}
       />
       <Stack.Screen
         name="PromptEntry"
