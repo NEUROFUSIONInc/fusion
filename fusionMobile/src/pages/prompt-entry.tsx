@@ -17,6 +17,7 @@ import {
 
 import { PromptResponse } from "~/@types";
 import { Button, Input, Tag } from "~/components";
+import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
 import { promptService } from "~/services";
@@ -38,6 +39,8 @@ export function PromptEntryScreen() {
   const notificationTriggerTimestamp = route.params.triggerTimestamp
     ? route.params.triggerTimestamp
     : Math.floor(dayjs().unix());
+
+  const accountContext = React.useContext(AccountContext);
 
   React.useEffect(() => {
     navigation.setOptions({});
@@ -91,6 +94,7 @@ export function PromptEntryScreen() {
           identifier: await maskPromptId(promptResponse.promptUuid),
           triggerTimestamp: promptResponse.triggerTimestamp,
           responseTimestamp: promptResponse.responseTimestamp,
+          userNpub: accountContext?.userNpub,
         }
       );
       // navigate to prompt responses screen

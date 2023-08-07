@@ -1,6 +1,13 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -15,6 +22,7 @@ import {
   AddPromptSheet,
 } from "~/components";
 import { categories } from "~/config";
+import { AccountContext } from "~/contexts/account.context";
 import { usePromptsQuery } from "~/hooks";
 import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
@@ -26,6 +34,7 @@ export const PromptsScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     undefined
   );
+  const accountContext = useContext(AccountContext);
 
   const filteredPrompts = useMemo(() => {
     return selectedCategory
@@ -40,6 +49,7 @@ export const PromptsScreen = () => {
       name: "Prompts",
       properties: {
         prompt_count: savedPrompts?.length,
+        userNpub: accountContext?.userNpub,
       },
     });
   }, [savedPrompts]);

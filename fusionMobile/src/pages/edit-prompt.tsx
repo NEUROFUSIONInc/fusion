@@ -9,6 +9,7 @@ import {
   TimePicker,
   promptSelectionDays,
 } from "~/components";
+import { AccountContext } from "~/contexts/account.context";
 import { useCreatePrompt, usePrompt, useUpdatePrompt } from "~/hooks";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
 import {
@@ -40,6 +41,7 @@ export function EditPromptScreen() {
   const [start, setStart] = React.useState(getDayjsFromTimeString("08:00"));
   const [end, setEnd] = React.useState(getDayjsFromTimeString("22:00"));
 
+  const accountContext = React.useContext(AccountContext);
   const buttonDisabled = React.useMemo(
     () =>
       start.isAfter(end) ||
@@ -70,6 +72,7 @@ export function EditPromptScreen() {
       name: "Edit Prompt",
       properties: {
         intent: "edit",
+        userNpub: accountContext?.userNpub,
       },
     });
     const prompt = isEditPage ? promptToEdit : params.prompt;

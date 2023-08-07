@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
 // import { ScrollView } from "react-native-gesture-handler";
 import { ProgressBar } from "react-native-paper";
@@ -11,8 +11,14 @@ import { FusionBarChart } from "./bar-chart";
 import { FusionLineChart } from "./line-chart";
 
 import { Prompt } from "~/@types";
+import { AccountContext } from "~/contexts/account.context";
 import { promptService } from "~/services";
-import { convertValueToNumber, updateTimestampToMs } from "~/utils";
+import {
+  appInsights,
+  convertValueToNumber,
+  maskPromptId,
+  updateTimestampToMs,
+} from "~/utils";
 
 export interface ChartContainerProps {
   prompt: Prompt;
@@ -34,6 +40,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   const toggleAdditionalNotes = () => {
     setShowAdditionalNotes(!showAdditionalNotes);
   };
+  const accountContext = useContext(AccountContext);
 
   useEffect(() => {
     // get the prompt responses
@@ -46,6 +53,19 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
       if (!res) {
         setChartData([]);
+        appInsights.trackEvent(
+          {
+            name: "insight_loaded",
+          },
+          {
+            identifier: await maskPromptId(prompt.uuid),
+            startDate,
+            endDate,
+            timePeriod,
+            response_count: 0,
+            userNpub: accountContext?.userNpub,
+          }
+        );
       } else {
         // sort events
         res.sort((a, b) => {
@@ -91,6 +111,21 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         if (additionalNotes.length > 0) {
           setAdditionalNotes(additionalNotes);
         }
+
+        appInsights.trackEvent(
+          {
+            name: "insight_loaded",
+          },
+          {
+            identifier: await maskPromptId(prompt.uuid),
+            startDate,
+            endDate,
+            timePeriod,
+            response_count: filteredData.length,
+            additional_notes_count: additionalNotes.length,
+            userNpub: accountContext?.userNpub,
+          }
+        );
 
         // TODO: make this better pls
         if (prompt.responseType === "number" && filteredData.length > 0) {

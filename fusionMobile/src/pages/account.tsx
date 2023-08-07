@@ -15,15 +15,21 @@ import {
 
 import { PromptResponse } from "~/@types";
 import { Button, Input, Screen } from "~/components";
+import { AccountContext } from "~/contexts/account.context";
 import { promptService } from "~/services";
 import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
 
+  const accountContext = React.useContext(AccountContext);
+
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Account",
+      properties: {
+        userNpub: accountContext?.userNpub,
+      },
     });
   }, []);
 

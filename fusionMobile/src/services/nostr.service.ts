@@ -87,6 +87,23 @@ export class NostrService {
       return null;
     }
   };
+
+  public getOrCreateNostrAccount = async () => {
+    try {
+      const nostrAccount = await this.getNostrAccount();
+      if (nostrAccount) {
+        return nostrAccount;
+      }
+      const newNostrAccount = await this.createNostrAccount();
+      if (newNostrAccount) {
+        return newNostrAccount;
+      }
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 }
 
 export const nostrService = Object.freeze(new NostrService());

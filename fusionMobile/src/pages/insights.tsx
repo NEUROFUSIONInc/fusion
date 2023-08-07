@@ -18,7 +18,7 @@ import {
   Plus,
   AddPromptSheet,
 } from "~/components";
-import { InsightContext } from "~/contexts";
+import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { colors } from "~/theme";
@@ -30,11 +30,14 @@ export function InsightsScreen() {
   const insightContext = useContext(InsightContext);
   let routePromptUuid = route.params?.promptUuid;
 
+  const accountContext = React.useContext(AccountContext);
+
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Insights",
       properties: {
         sourcePromptId: routePromptUuid ? maskPromptId(routePromptUuid) : null,
+        userNpub: accountContext?.userNpub,
       },
     });
   }, []);

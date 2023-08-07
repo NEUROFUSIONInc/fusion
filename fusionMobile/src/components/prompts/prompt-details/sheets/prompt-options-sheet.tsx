@@ -4,7 +4,7 @@ import RNBottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { FC, RefObject, useCallback, useMemo } from "react";
+import React, { FC, RefObject, useCallback, useContext, useMemo } from "react";
 import { Alert, View } from "react-native";
 
 import { BottomSheet } from "../../../bottom-sheet";
@@ -13,6 +13,7 @@ import { PromptOption } from "../../prompt-option";
 
 import { Prompt } from "~/@types";
 import { Button } from "~/components/button";
+import { AccountContext } from "~/contexts/account.context";
 import {
   useDeletePrompt,
   usePrompt,
@@ -50,6 +51,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   const { mutateAsync: updatePromptNotificationState } =
     useUpdatePromptNotificationState(activePrompt?.uuid!);
 
+  const accountContext = useContext(AccountContext);
+
   const handlePromptDelete = useCallback(async () => {
     if (activePrompt) {
       Alert.alert(
@@ -69,6 +72,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
                   { name: "prompt_deleted" },
                   {
                     identifier: await maskPromptId(activePrompt.uuid),
+                    userNpub: accountContext?.userNpub,
                   }
                 );
                 onBottomSheetClose();

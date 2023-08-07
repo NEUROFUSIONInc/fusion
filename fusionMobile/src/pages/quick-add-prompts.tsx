@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { CategoryTag, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
+import { AccountContext } from "~/contexts/account.context";
 import { PromptScreenNavigationProp } from "~/navigation";
 import { appInsights } from "~/utils";
 
@@ -21,11 +22,14 @@ export const QuickAddPromptsScreen = () => {
       : quickAddPrompts;
   }, [quickAddPrompts, selectedCategory]);
 
+  const accountContext = useContext(AccountContext);
+
   useEffect(() => {
     appInsights.trackPageView({
       name: "Quick Add Prompts",
       properties: {
         prompt_count: quickAddPrompts?.length,
+        userNpub: accountContext?.userNpub,
       },
     });
   }, [quickAddPrompts]);

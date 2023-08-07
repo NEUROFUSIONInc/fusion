@@ -15,7 +15,7 @@ import { CustomNavigation } from "./src/navigation";
 import { appInsights, maskPromptId } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
-import { PromptContextProvider } from "~/contexts";
+import { PromptContextProvider, AccountContext } from "~/contexts";
 import { notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
@@ -99,6 +99,7 @@ function App() {
     Notifications.Subscription | undefined
   >();
   const navigation = useNavigation();
+  const accountContext = React.useContext(AccountContext);
 
   React.useEffect(() => {
     // validate permission status for user
@@ -235,6 +236,7 @@ function App() {
                 identifier: await maskPromptId(promptUuid || ""),
                 triggerTimestamp: promptResponse.triggerTimestamp,
                 responseTimestamp: promptResponse.responseTimestamp,
+                userNpub: accountContext?.userNpub,
               }
             );
           }
@@ -243,7 +245,12 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    appInsights.trackEvent({ name: "app_started" });
+    appInsights.trackEvent(
+      { name: "app_started" },
+      {
+        userNpub: accountContext?.userNpub,
+      }
+    );
   }, []);
 
   return (
