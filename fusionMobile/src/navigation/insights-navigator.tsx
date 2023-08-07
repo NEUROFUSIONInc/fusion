@@ -4,11 +4,12 @@ import {
 } from "@react-navigation/native-stack";
 
 import { InsightsHeader } from "~/components";
+import { InsightContextProvider } from "~/contexts";
 import { InsightsScreen } from "~/pages/insights";
 
 export type InsightsStackParamList = {
   InsightsPage: {
-    chartPeriod?: "week" | "month";
+    chartPeriod?: "day" | "week" | "month" | "year";
     promptUuid?: string;
   };
 };
@@ -20,12 +21,14 @@ const Stack = createNativeStackNavigator<InsightsStackParamList>();
 
 export const InsightsStack = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        header: () => <InsightsHeader />,
-      }}
-    >
-      <Stack.Screen name="InsightsPage" component={InsightsScreen} />
-    </Stack.Navigator>
+    <InsightContextProvider>
+      <Stack.Navigator
+        screenOptions={{
+          header: () => <InsightsHeader />,
+        }}
+      >
+        <Stack.Screen name="InsightsPage" component={InsightsScreen} />
+      </Stack.Navigator>
+    </InsightContextProvider>
   );
 };

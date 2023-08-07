@@ -1,7 +1,7 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { View, Text, Image } from "react-native";
 import {
   State,
@@ -18,13 +18,16 @@ import {
   Plus,
   AddPromptSheet,
 } from "~/components";
+import { InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
-import { RouteProp } from "~/navigation/types.js";
+import { RouteProp } from "~/navigation";
 import { colors } from "~/theme";
 import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
   const route = useRoute<RouteProp<"InsightsPage">>();
+
+  const insightContext = useContext(InsightContext);
   let routePromptUuid = route.params?.promptUuid;
 
   React.useEffect(() => {
@@ -36,10 +39,6 @@ export function InsightsScreen() {
     });
   }, []);
 
-  const chartPeriod = route.params?.chartPeriod
-    ? route.params?.chartPeriod
-    : "week";
-
   const { data: savedPrompts, isLoading } = usePromptsQuery();
 
   const [activeChartPrompt, setActiveChartPrompt] = React.useState<
@@ -47,7 +46,7 @@ export function InsightsScreen() {
   >();
 
   const [chartStartDate, setChartStartDate] = React.useState<dayjs.Dayjs>(
-    dayjs().startOf(chartPeriod)
+    dayjs().startOf(insightContext!.insightPeriod)
   );
 
   const [selectedPromptUuid, setSelectedPromptUuid] = React.useState<
@@ -58,6 +57,10 @@ export function InsightsScreen() {
     const prompt = savedPrompts?.find((p) => p.uuid === promptUuid);
     setActiveChartPrompt(prompt);
   };
+
+  useEffect(() => {
+    setChartStartDate(dayjs().startOf(insightContext!.insightPeriod));
+  }, [insightContext!.insightPeriod]);
 
   useEffect(() => {
     // we set this once and destroy afterwards
@@ -82,18 +85,20 @@ export function InsightsScreen() {
     ) {
       // Check if the swipe is left (translationX is less than -50)
       if (
-        chartStartDate.startOf(chartPeriod).unix() ===
-        dayjs().startOf(chartPeriod).unix()
+        chartStartDate.startOf(insightContext!.insightPeriod).unix() ===
+        dayjs().startOf(insightContext!.insightPeriod).unix()
       ) {
         return;
       }
-      setChartStartDate(chartStartDate.add(1, chartPeriod));
+      setChartStartDate(chartStartDate.add(1, insightContext!.insightPeriod));
     } else if (
       event.nativeEvent.state === State.END &&
       event.nativeEvent.translationX > 50
     ) {
       // Check if the swipe is right (translationX is greater than 50)
-      setChartStartDate(chartStartDate.subtract(1, chartPeriod));
+      setChartStartDate(
+        chartStartDate.subtract(1, insightContext!.insightPeriod)
+      );
     }
   };
 
@@ -123,11 +128,13 @@ export function InsightsScreen() {
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView nestedScrollEnabled>
             <View className="flex flex-row w-full justify-between p-5">
-              {chartPeriod === "week" ? (
+              {insightContext!.insightPeriod === "week" ? (
                 <Text className="text-base font-sans-bold text-white">
                   {chartStartDate.format("MMM D") +
                     " - " +
-                    chartStartDate.add(1, chartPeriod).format("MMM D")}
+                    chartStartDate
+                      .add(1, insightContext!.insightPeriod)
+                      .format("MMM D")}
                 </Text>
               ) : (
                 <Text className="text-base font-sans-bold text-white">
@@ -135,14 +142,17 @@ export function InsightsScreen() {
                 </Text>
               )}
 
-              {chartStartDate < dayjs().startOf(chartPeriod) ? (
+              {chartStartDate <
+              dayjs().startOf(insightContext!.insightPeriod) ? (
                 <Text
                   className="text-base font-sans text-lime"
                   onPress={() =>
-                    setChartStartDate(dayjs().startOf(chartPeriod))
+                    setChartStartDate(
+                      dayjs().startOf(insightContext!.insightPeriod)
+                    )
                   }
                 >
-                  View current {chartPeriod}
+                  View current {insightContext!.insightPeriod}
                 </Text>
               ) : null}
             </View>
@@ -175,7 +185,7 @@ export function InsightsScreen() {
                       <ChartContainer
                         prompt={activeChartPrompt}
                         startDate={chartStartDate}
-                        timePeriod={chartPeriod}
+                        timePeriod={insightContext!.insightPeriod}
                       />
                     )}
                   </View>
