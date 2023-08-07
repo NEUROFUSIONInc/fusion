@@ -138,7 +138,7 @@ export function AccountScreen() {
             </View>
 
             <Button
-              title="Book a call with our team"
+              title="Join a user testing session!"
               onPress={async () => {
                 Linking.openURL(
                   "https://calendly.com/oreogundipe/chat-about-fusion"
