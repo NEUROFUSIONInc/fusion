@@ -25,6 +25,8 @@ export const FusionBarChart: FC<BarChartProps> = ({
 
   React.useEffect(() => {
     const chartOptions = {
+      animation: true, // Enable animation
+      animationDuration: 500,
       xAxis: {
         type: "time",
         gap: true,
