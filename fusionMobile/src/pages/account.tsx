@@ -12,8 +12,15 @@ import {
   Linking,
   ScrollView,
 } from "react-native";
+import RNFS from "react-native-fs";
 
-import { PromptResponse } from "~/@types";
+import {
+  NotificationConfigDays,
+  Prompt,
+  PromptAdditionalMeta,
+  PromptResponse,
+  PromptResponseAdditionalMeta,
+} from "~/@types";
 import { Button, Input, Screen } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { promptService } from "~/services";
@@ -76,6 +83,74 @@ export function AccountScreen() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const importData = async () => {
+    //  read the prompt.csv file & sequentially call save prompts
+    const promptFilePath =
+      RNFS.DocumentDirectoryPath + "/fusionPrompts_1691535600.csv";
+
+    RNFS.readFile(promptFilePath, "utf8")
+      .then((content) => {
+        // Parse CSV data using PapaParse
+        const parsedData = PapaParse.parse(content, {
+          header: true, // Assuming the first row is header
+          dynamicTyping: true, // Automatically detect data types
+        });
+
+        parsedData.data.forEach(async (record: any) => {
+          const parsedPrompt: Prompt = {
+            uuid: record.uuid,
+            promptText: record.promptText,
+            responseType: record.responseType,
+            notificationConfig_days: JSON.parse(
+              record.notificationConfig_days
+            ) as unknown as NotificationConfigDays,
+            notificationConfig_startTime: record.notificationConfig_startTime,
+            notificationConfig_endTime: record.notificationConfig_endTime,
+            notificationConfig_countPerDay:
+              record.notificationConfig_countPerDay,
+            additionalMeta: JSON.parse(
+              record.additionalMeta
+            ) as unknown as PromptAdditionalMeta,
+          };
+          console.log(parsedPrompt);
+          await promptService.savePrompt(parsedPrompt);
+        });
+      })
+      .catch((error) => {
+        console.error("Error reading CSV file:", error);
+      });
+
+    //  read the responses.csv file & sequentially call save responses
+    const responseFilePath =
+      RNFS.DocumentDirectoryPath + "/fusionResponses_1691535600.csv";
+
+    RNFS.readFile(responseFilePath, "utf8")
+      .then((content) => {
+        // Parse CSV data using PapaParse
+        const parsedData = PapaParse.parse(content, {
+          header: true, // Assuming the first row is header
+          dynamicTyping: true, // Automatically detect data types
+        });
+
+        parsedData.data.forEach(async (record: any) => {
+          const parsedResponse: PromptResponse = {
+            promptUuid: record.promptUuid,
+            value: record.value,
+            triggerTimestamp: record.triggerTimestamp,
+            responseTimestamp: record.responseTimestamp,
+            additionalMeta: JSON.parse(
+              record.additionalMeta
+            ) as unknown as PromptResponseAdditionalMeta,
+          };
+          console.log(parsedResponse);
+          await promptService.savePromptResponse(parsedResponse);
+        });
+      })
+      .catch((error) => {
+        console.error("Error reading CSV file:", error);
+      });
   };
 
   return (
@@ -172,6 +247,12 @@ export function AccountScreen() {
                 fullWidth
                 onPress={async () => await exportData("responses")}
               />
+              {/* <Button
+                title="Import Data"
+                variant="ghost"
+                fullWidth
+                onPress={async () => await importData()}
+              /> */}
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>

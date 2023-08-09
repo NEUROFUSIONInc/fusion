@@ -62,6 +62,7 @@
     "react-native-csv": "^0.2.0",
     "react-native-device-info": "^10.6.0",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-get-random-values": "1.8.0",
     "react-native-health": "^1.14.0",
