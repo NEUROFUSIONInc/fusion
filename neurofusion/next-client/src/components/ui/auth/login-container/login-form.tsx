@@ -6,8 +6,11 @@ import * as z from "zod";
 import { Button } from "../../button/button";
 import { Input } from "../../input/input";
 
+import { getEventHash, getSignature, generatePrivateKey, getPublicKey, nip19, nip04, relayInit } from "nostr-tools";
+
 const validationSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  // email: z.string().min(1, "Email is required").email("Invalid email address"),
+  privateKey: z.string().min(64, "Private key is required"),
 });
 type FormValues = z.infer<typeof validationSchema>;
 
@@ -24,22 +27,34 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit }) => {
     resolver: zodResolver(validationSchema),
   });
 
-  const handleOnSubmit = async ({ email }: FormValues) => {
-    await onSubmit(email);
+  const handleOnSubmit = async ({ privateKey }: FormValues) => {
+    await onSubmit(privateKey);
   };
+
+  const privateKey = generatePrivateKey();
 
   return (
     <form onSubmit={handleSubmit(handleOnSubmit)} className="w-full">
+      <p className="w-full text-center mb-1">
+        We don't do emails here. We take your privacy seriously. Get started with an anonymous account!
+      </p>
+
+      {/* TODO: drop down to enter your nostr private key */}
+
       <Input
-        error={errors.email?.message}
-        type="email"
+        error={errors.privateKey?.message}
+        type="hidden"
         size="lg"
         fullWidth
-        placeholder="Enter Valid Email"
-        {...register("email")}
+        placeholder="Enter Private Key"
+        value={privateKey}
+        {...register("privateKey")}
       />
-      <Button type="submit" size="lg" fullWidth disabled={Boolean(errors.email)} className="mt-4">
+      {/*<Button type="submit" size="lg" fullWidth disabled={Boolean(errors.email)} className="mt-4">
         Continue with Email
+      </Button> */}
+      <Button type="submit" size="lg" fullWidth className="mt-4">
+        Get started
       </Button>
     </form>
   );
