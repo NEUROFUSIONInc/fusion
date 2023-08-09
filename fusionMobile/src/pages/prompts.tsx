@@ -146,7 +146,7 @@ export const PromptsScreen = () => {
           </ScrollView>
         </View>
       )}
-      {filteredPrompts?.length === 0 && (
+      {filteredPrompts?.length === 0 && selectedCategory && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
