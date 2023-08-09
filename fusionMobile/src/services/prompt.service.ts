@@ -531,11 +531,12 @@ class PromptService {
     await Promise.all(combiningResponses);
 
     // mask the prompt uuids
-    const maskingPromptIds = combinedResponses.map(async (response) => {
-      return (response.promptUuid = await maskPromptId(response.promptUuid));
+    const formatResponseInfo = combinedResponses.map(async (response) => {
+      response.promptUuid = await maskPromptId(response.promptUuid);
+      response.additionalMeta = JSON.stringify(response.additionalMeta);
     });
 
-    await Promise.all(maskingPromptIds);
+    await Promise.all(formatResponseInfo);
 
     return combinedResponses;
   };

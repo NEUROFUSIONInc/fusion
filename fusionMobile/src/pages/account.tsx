@@ -44,13 +44,17 @@ export function AccountScreen() {
         return;
       }
 
-      const exportTimestamp = dayjs().unix().toString();
+      const exportTimestamp = dayjs().startOf("day").unix().toString();
       if (dataType === "prompts") {
         console.log("exporting prompts");
-        const maskingPromptIds = prompts.map(async (prompt) => {
-          return (prompt.uuid = await maskPromptId(prompt.uuid));
+        const formatPromptInfo = prompts.map(async (prompt) => {
+          prompt.uuid = await maskPromptId(prompt.uuid);
+          prompt.notificationConfig_days = JSON.stringify(
+            prompt.notificationConfig_days
+          );
+          prompt.additionalMeta = JSON.stringify(prompt.additionalMeta);
         });
-        await Promise.all(maskingPromptIds);
+        await Promise.all(formatPromptInfo);
         const promptsCsv = PapaParse.unparse(prompts);
         const promptsLocalPath = await saveFileToDevice(
           `fusionPrompts_${exportTimestamp}.csv`,
