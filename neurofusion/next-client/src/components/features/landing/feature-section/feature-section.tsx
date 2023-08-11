@@ -67,22 +67,22 @@ export const FeatureSection: FC = () => {
           </div>
         </div>
         {/* Researchers & Explorers */}
-        {/* <div className="flex flex-col md:flex-row items-center justify-between gap-y-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-y-6">
           <div>
             <FusionFeature feature={fusionFeatures[2]} />
-            <ButtonLink intent="outlined" href="/auth/login" size="xl" className="mt-4 w-full md:w-11/12">
-              Get Started
+            <ButtonLink intent="outlined" href="https://github.com/neurofusioninc" size="xl" className="mt-4 w-full md:w-11/12">
+              Visit our Github
             </ButtonLink>
           </div>
 
           <Image
-            src="/images/features/iphone-mockup.png"
+            src="/images/features/phone_action.png"
             alt="User using fusion app"
             width={609}
             height={914}
             className="rounded-2xl"
           />
-        </div> */}
+        </div>
       </div>
     </section>
   );

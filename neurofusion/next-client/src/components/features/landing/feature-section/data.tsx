@@ -29,9 +29,9 @@ export const fusionFeatures: IFusionFeature[] = [
     description: "Record experiments & design quests (a set of tasks other users can run) and share results",
     featuresList: [
       "A playground of exercises for recording brain & behavior data",
-      "Design a set of tasks and their execution flow",
       "Run your data with available models & share your results",
-      "Define methods that update study results as new data is gotten",
+      "Design a set of tasks and their execution flow",
+      "Get analysis reports automatically new data is submitted",
     ],
   },
 ];
