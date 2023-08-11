@@ -70,6 +70,17 @@ const registerForPushNotificationsAsync = async () => {
                 }
               }
             },
+            isPreferred: true,
+          },
+          {
+            text: "Cancel",
+            onPress: async () => {
+              Alert.alert(
+                "Notifications Disabled",
+                "You can continue to use Fusion without notifications, but you will not be notified of any prompts you have enabled. You will need to open the app to log responses by yourself"
+              );
+            },
+            style: "destructive",
           },
         ]
       );

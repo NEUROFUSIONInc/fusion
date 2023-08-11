@@ -58,7 +58,6 @@
     "pkg-dir": "^7.0.0",
     "react": "18.2.0",
     "react-native": "0.71.8",
-    "react-native-ble-manager": "^10.0.2",
     "react-native-csv": "^0.2.0",
     "react-native-device-info": "^10.6.0",
     "react-native-dropdown-picker": "^5.4.6",
