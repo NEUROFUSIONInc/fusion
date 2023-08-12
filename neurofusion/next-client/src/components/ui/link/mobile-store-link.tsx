@@ -33,7 +33,7 @@ export const MobileStoreLink: FC<MobileStoreLinkProps> = ({ variant, store = "ap
     switch (store) {
       case "apple":
         return {
-          href: "https://testflight.apple.com/join/wU9TD7Jk",
+          href: "https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone",
           icon: (
             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="&#240;&#159;&#166;&#134; icon &#34;brand apple&#34;">
