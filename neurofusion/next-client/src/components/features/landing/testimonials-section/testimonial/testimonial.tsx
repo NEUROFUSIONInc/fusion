@@ -9,7 +9,7 @@ interface TestimonialProps {
 
 export const TestimonialComponent: FC<TestimonialProps> = ({ testimonial }) => {
   return (
-    <div className="flex min-w-[260px] flex-col items-start space-y-10 bg-gray-50 p-5 text-sm md:min-w-[420px] md:text-base">
+    <div className="flex min-w-[260px] flex-col justify-between items-start space-y-10 bg-gray-50 p-5 text-sm md:min-w-[420px] md:text-base">
       <p className="text-slate-500">
         <q>{testimonial.highlight}</q>
       </p>
