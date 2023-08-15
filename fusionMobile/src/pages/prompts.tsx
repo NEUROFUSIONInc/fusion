@@ -32,16 +32,34 @@ export const PromptsScreen = () => {
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
+    "All"
   );
   const accountContext = useContext(AccountContext);
 
   const filteredPrompts = useMemo(() => {
-    return selectedCategory
-      ? savedPrompts?.filter(
-          (prompt) => prompt.additionalMeta?.category === selectedCategory
-        )
-      : savedPrompts;
+    if (selectedCategory === "All" || selectedCategory === "") {
+      // Remove "All" category from the list of categories
+      const index = categories.findIndex((category) => category.name === "All");
+      if (index !== -1) {
+        categories.splice(index, 1);
+      }
+      return savedPrompts;
+    } else {
+      // Add "All" category to the list of categories if it doesn't exist
+      const index = categories.findIndex((category) => category.name === "All");
+      if (index === -1) {
+        categories.unshift({
+          name: "All",
+          color: "#FFC0CB",
+          icon: "💫",
+        });
+      }
+      return selectedCategory
+        ? savedPrompts?.filter(
+            (prompt) => prompt.additionalMeta?.category === selectedCategory
+          )
+        : savedPrompts;
+    }
   }, [savedPrompts, selectedCategory]);
 
   useEffect(() => {
@@ -146,21 +164,23 @@ export const PromptsScreen = () => {
           </ScrollView>
         </View>
       )}
-      {filteredPrompts?.length === 0 && selectedCategory && (
-        <View className="flex flex-1 flex-col gap-7 items-center justify-center">
-          <Image source={require("../../assets/sticky-note.png")} />
-          <Text className="font-sans-light max-w-xs text-center text-white text-base">
-            Looks like you don't have any prompt in '{selectedCategory}'{" "}
-            category.
-          </Text>
-          <Button
-            title={"Add prompt for '" + selectedCategory + "'"}
-            leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={handleExpandSheet}
-            className="self-center"
-          />
-        </View>
-      )}
+      {filteredPrompts?.length === 0 &&
+        selectedCategory &&
+        selectedCategory !== "All" && (
+          <View className="flex flex-1 flex-col gap-7 items-center justify-center">
+            <Image source={require("../../assets/sticky-note.png")} />
+            <Text className="font-sans-light max-w-xs text-center text-white text-base">
+              Looks like you don't have any prompt in '{selectedCategory}'{" "}
+              category.
+            </Text>
+            <Button
+              title={"Add prompt for '" + selectedCategory + "'"}
+              leftIcon={<Plus color={colors.dark} width={16} height={16} />}
+              onPress={handleExpandSheet}
+              className="self-center"
+            />
+          </View>
+        )}
 
       <Portal>
         <AddPromptSheet bottomSheetRef={bottomSheetRef} />
