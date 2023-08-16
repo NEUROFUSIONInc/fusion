@@ -1,4 +1,5 @@
 import { PortalProvider } from "@gorhom/portal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -252,6 +253,15 @@ function App() {
             );
           }
         );
+
+      const notificationResetStatus = await AsyncStorage.getItem(
+        "notification_reset_aug_16"
+      );
+      if (notificationResetStatus !== "true") {
+        console.log("Resetting all device notifications");
+        await promptService.resetNotificationsForActivePrompts();
+        await AsyncStorage.setItem("notification_reset_aug_16", "true");
+      }
     })();
   }, []);
 

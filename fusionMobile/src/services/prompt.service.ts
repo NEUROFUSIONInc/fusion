@@ -563,6 +563,29 @@ class PromptService {
     const res = await this.savePrompt(prompt);
     return res;
   };
+
+  /**
+   * Reset all prompt notifications
+   */
+  public resetNotificationsForActivePrompts = async () => {
+    // get savedPromptIds from db
+    try {
+      const savedPrompts = await promptService.readSavedPrompts();
+
+      savedPrompts.forEach(async (prompt) => {
+        // if prompt is scheduled, schedule it again
+        if (prompt.additionalMeta?.isNotificationActive === false) {
+          return;
+        }
+        await notificationService.cancelExistingNotificationForPrompt(
+          prompt.uuid
+        );
+        await notificationService.scheduleFusionNotification(prompt);
+      });
+    } catch (error) {
+      console.log("error resetting device notifications", error);
+    }
+  };
 }
 
 export const promptService = new PromptService(notificationService);
