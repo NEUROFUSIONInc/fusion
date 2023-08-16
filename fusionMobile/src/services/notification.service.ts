@@ -107,12 +107,9 @@ export class NotificationService {
     };
 
     // one more quirk for Android - https://github.com/expo/expo/issues/20500
-    // responding from the notification menu doesn't work for
-    // text & number responses
-    if (
-      Platform.OS === "android" &&
-      ["text", "number"].includes(prompt.responseType)
-    ) {
+    // responding from the notification menu needs more work on Android
+    // so disabling all & forcing clicks
+    if (Platform.OS === "android") {
       // make it like just a normal notification by not providing a categoryIdentifier
     } else {
       contentObject["categoryIdentifier"] = notificationIdentifier;
