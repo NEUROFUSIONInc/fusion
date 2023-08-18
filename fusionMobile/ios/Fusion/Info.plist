@@ -36,7 +36,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>37</string>
+    <string>48</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -52,8 +52,6 @@
         </dict>
       </dict>
     </dict>
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>For connecting to bluetooth devices</string>
     <key>NSHealthShareUsageDescription</key>
     <string>Read and understand health data.</string>
     <key>NSHealthUpdateUsageDescription</key>

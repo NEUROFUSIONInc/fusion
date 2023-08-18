@@ -1,8 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View, Text } from "react-native";
-
-import { Screen } from "../components";
+import { View } from "react-native";
 
 import { appInsights } from "~/utils";
 
@@ -17,13 +15,22 @@ export function HomeScreen() {
   }, []);
 
   return (
-    <Screen>
-      <View className="flex flex-row w-full justify-between p-5">
-        <Text className="text-base font-sans-bold text-white">This week</Text>
-        <Text className="text-base font-sans text-[#A7ED58]">
-          View all stats
-        </Text>
-      </View>
-    </Screen>
+    <View>
+      {/* <>
+          <View className="flex flex-row w-full justify-between p-5">
+            <Text className="text-base font-sans-bold text-white">
+              Your health data
+            </Text>
+            <Text className="text-base font-sans text-lime">Show all</Text>
+          </View>
+
+          <Button
+            title="Connect to Apple Health"
+            onPress={() => console.log("connect to apple health")}
+            className="w-full p-5"
+            size="md"
+          />
+        </> */}
+    </View>
   );
 }

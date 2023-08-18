@@ -5,10 +5,14 @@ import React from "react";
 import App from "./App.tsx";
 import { NavigationContainer } from "./src/navigation/navigation-container.tsx";
 
+import { AccountContextProvider } from "~/contexts/account.context.tsx";
+
 const MainApp = () => {
   return (
     <NavigationContainer>
-      <App />
+      <AccountContextProvider>
+        <App />
+      </AccountContextProvider>
     </NavigationContainer>
   );
 };

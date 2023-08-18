@@ -4,7 +4,7 @@ import RNBottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { FC, RefObject, useCallback, useMemo } from "react";
+import React, { FC, RefObject, useCallback, useContext, useMemo } from "react";
 import { Alert, View } from "react-native";
 
 import { BottomSheet } from "../../../bottom-sheet";
@@ -13,6 +13,7 @@ import { PromptOption } from "../../prompt-option";
 
 import { Prompt } from "~/@types";
 import { Button } from "~/components/button";
+import { AccountContext } from "~/contexts/account.context";
 import {
   useDeletePrompt,
   usePrompt,
@@ -38,6 +39,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
+  const insightsNavigator = useNavigation<any>();
   const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
   const {
     animatedHandleHeight,
@@ -48,6 +50,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   const { mutateAsync: deletePrompt } = useDeletePrompt();
   const { mutateAsync: updatePromptNotificationState } =
     useUpdatePromptNotificationState(activePrompt?.uuid!);
+
+  const accountContext = useContext(AccountContext);
 
   const handlePromptDelete = useCallback(async () => {
     if (activePrompt) {
@@ -68,6 +72,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
                   { name: "prompt_deleted" },
                   {
                     identifier: await maskPromptId(activePrompt.uuid),
+                    userNpub: accountContext?.userNpub,
                   }
                 );
                 onBottomSheetClose();
@@ -84,8 +89,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     if (activePrompt) {
       const promptUpdateLabel =
         activePrompt?.additionalMeta?.isNotificationActive === false
-          ? "Resume Prompt"
-          : "Pause Prompt";
+          ? "Enable Notifications"
+          : "Pause Notifications";
       Alert.alert(promptUpdateLabel, "Are you sure?", [
         {
           text: "Cancel",
@@ -112,7 +117,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
 
   const promptOptions = [
     {
-      option: "Log Prompt",
+      option: "Record Response",
       icon: <Notebook />,
       onPress: () => {
         onBottomSheetClose();
@@ -120,6 +125,20 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
           navigation.navigate("PromptEntry", {
             promptUuid: activePrompt?.uuid,
             triggerTimestamp: Math.floor(dayjs().unix()),
+          });
+      },
+    },
+    {
+      option: "View Insights",
+      icon: <FontAwesome5 name="history" size={18} color="white" />,
+      onPress: () => {
+        onBottomSheetClose?.();
+        activePrompt &&
+          insightsNavigator.navigate("InsightsNavigator", {
+            screen: "InsightsPage",
+            params: {
+              promptUuid: activePrompt.uuid,
+            },
           });
       },
     },
@@ -136,21 +155,10 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
-      option: "View History",
-      icon: <FontAwesome5 name="history" size={18} color="white" />,
-      onPress: () => {
-        onBottomSheetClose?.();
-        activePrompt &&
-          navigation.navigate("ViewResponses", {
-            prompt: activePrompt,
-          });
-      },
-    },
-    {
       option:
         activePrompt?.additionalMeta?.isNotificationActive === false
-          ? "Resume Prompt"
-          : "Pause Prompt",
+          ? "Enable Notifications"
+          : "Pause Notifications",
       icon:
         activePrompt?.additionalMeta?.isNotificationActive === false ? (
           <FontAwesome5 name="play" size={18} color="white" />

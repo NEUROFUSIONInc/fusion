@@ -292,6 +292,30 @@ export async function saveFileToDevice(
   }
 }
 
+export function convertValueToNumber(value: string | number) {
+  /**
+   * Takes a string and converts it to a number
+   */
+
+  // People will have a lot of stuff in here but we just need the number first
+  if (typeof value === "number") {
+    return value;
+  }
+
+  if (value === "") {
+    return null;
+  }
+
+  // use regex to get the first set of numbers before any other characters
+  const regex = /^-?\d+/;
+  const match = value.match(regex);
+  if (!match) {
+    return null;
+  }
+
+  return Number(match[0]);
+}
+
 // export async function exportFileDirectoryAsZip(
 //   filePaths: string[],
 //   zipFilename: string

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Pressable, PressableProps, Text, View } from "react-native";
 
-import { ChevronRight } from "../../icons";
+import { ChevronRightSmall } from "../../icons";
 
 interface PromptOptionProps extends PressableProps {
   text: string;
@@ -22,7 +22,7 @@ export const PromptOption: FC<PromptOptionProps> = ({
         {icon && icon}
         <Text className="font-sans text-base text-white">{text}</Text>
       </View>
-      <ChevronRight />
+      <ChevronRightSmall />
     </Pressable>
   );
 };

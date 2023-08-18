@@ -1,31 +1,53 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { CategoryTag, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
+import { AccountContext } from "~/contexts/account.context";
 import { PromptScreenNavigationProp } from "~/navigation";
 import { appInsights } from "~/utils";
 
 export const QuickAddPromptsScreen = () => {
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
+    "All"
   );
   const filteredPrompts = useMemo(() => {
-    return selectedCategory
-      ? quickAddPrompts?.filter(
-          (prompt) => prompt.additionalMeta?.category === selectedCategory
-        )
-      : quickAddPrompts;
+    if (selectedCategory === "All" || selectedCategory === "") {
+      // Remove "All" category from the list of categories
+      const index = categories.findIndex((category) => category.name === "All");
+      if (index !== -1) {
+        categories.splice(index, 1);
+      }
+      return quickAddPrompts;
+    } else {
+      // Add "All" category to the list of categories if it doesn't exist
+      const index = categories.findIndex((category) => category.name === "All");
+      if (index === -1) {
+        categories.unshift({
+          name: "All",
+          color: "#FFC0CB",
+          icon: "💫",
+        });
+      }
+      return selectedCategory
+        ? quickAddPrompts?.filter(
+            (prompt) => prompt.additionalMeta?.category === selectedCategory
+          )
+        : quickAddPrompts;
+    }
   }, [quickAddPrompts, selectedCategory]);
+
+  const accountContext = useContext(AccountContext);
 
   useEffect(() => {
     appInsights.trackPageView({
       name: "Quick Add Prompts",
       properties: {
         prompt_count: quickAddPrompts?.length,
+        userNpub: accountContext?.userNpub,
       },
     });
   }, [quickAddPrompts]);
@@ -48,7 +70,7 @@ export const QuickAddPromptsScreen = () => {
                   icon={category.icon}
                   isActive={name === selectedCategory}
                   handleValueChange={(checked) =>
-                    setSelectedCategory(checked ? name : undefined)
+                    setSelectedCategory(checked ? name : "")
                   }
                 />
               );
