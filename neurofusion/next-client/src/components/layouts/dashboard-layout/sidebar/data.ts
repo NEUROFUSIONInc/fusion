@@ -14,7 +14,7 @@ export const sidebarLinks = [
   {
     icon: HardDrive,
     title: "Datasets",
-    href: "#",
+    href: "/datasets",
   },
   {
     icon: SignalHigh,

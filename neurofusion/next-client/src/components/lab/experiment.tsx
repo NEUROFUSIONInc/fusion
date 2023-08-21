@@ -16,6 +16,8 @@ export const Experiment: FC = () => {
   const [deviceStatus, setDeviceStatus] = useState("offline");
   const [connectedDevice, setConnectedDevice] = useState<DeviceInfo | null>(null);
 
+  const [sandboxData, setSandboxData] = useState("");
+
   async function startNeurosityRecording() {
     if (connectedDevice) {
       neurosityService.startRecording(connectedDevice?.channelNames);
@@ -49,6 +51,18 @@ export const Experiment: FC = () => {
       })();
     }
   }, [user, deviceStatus, neurositySelectedDevice]);
+  if (typeof window !== "undefined") {
+    window.addEventListener("message", (event) => {
+      // IMPORTANT: Check the origin of the data!
+      // You should probably not use '*', but restrict it to certain domains:
+      if (event.origin.startsWith("https://localhost:")) {
+        // The data sent from the iframe
+        setSandboxData(event.data);
+
+        // Do something with the data
+      }
+    });
+  }
 
   return (
     <div>
@@ -65,15 +79,27 @@ export const Experiment: FC = () => {
         Press 'Spacebar' to start the game. We will be recording brain activity & correlate with spacebar presses.
       </h3>
       <>
-        <iframe
+        {/* <iframe
           src="https://codesandbox.io/embed/flappy-bird-neurofusion-g8pml3?fontsize=14&hidenavigation=1&theme=dark"
           style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
           title="flappy-bird"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
           sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+        ></iframe> */}
+        <iframe
+          src="/api/CDN?id=1&file=index.html"
+          style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
+          title="Stroop"
+          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
+          sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
         ></iframe>
       </>
       <>
+        {sandboxData !== "" && (
+          // <h1 style={{ marginTop: 10 }}>DATA:</h1>
+
+          <p>{JSON.stringify(sandboxData)}</p>
+        )}
         {/* TODO: we need a section that throws an error if the eeg device isn't active */}
         {deviceStatus === "online" && (
           <>
