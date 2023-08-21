@@ -23,6 +23,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "lucide-react": "0.261.0",
     "magic-sdk": "^18.4.1",
     "next": "latest",
