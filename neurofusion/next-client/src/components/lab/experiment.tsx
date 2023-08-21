@@ -16,7 +16,7 @@ export const Experiment: FC = () => {
   const [deviceStatus, setDeviceStatus] = useState("offline");
   const [connectedDevice, setConnectedDevice] = useState<DeviceInfo | null>(null);
 
-  const [sandboxData, setSandboxData] = useState('');
+  const [sandboxData, setSandboxData] = useState("");
 
   async function startNeurosityRecording() {
     if (connectedDevice) {
@@ -51,21 +51,20 @@ export const Experiment: FC = () => {
       })();
     }
   }, [user, deviceStatus, neurositySelectedDevice]);
-    if(typeof window !== "undefined"){
-        window.addEventListener('message', (event) => {
-          // IMPORTANT: Check the origin of the data! 
-          // You should probably not use '*', but restrict it to certain domains:
-          if (event.origin.startsWith('https://localhost:')) { 
-            // The data sent from the iframe
-            setSandboxData(event.data);
-        
-            // Do something with the data
-          }
-        });
-    }
+  if (typeof window !== "undefined") {
+    window.addEventListener("message", (event) => {
+      // IMPORTANT: Check the origin of the data!
+      // You should probably not use '*', but restrict it to certain domains:
+      if (event.origin.startsWith("https://localhost:")) {
+        // The data sent from the iframe
+        setSandboxData(event.data);
+
+        // Do something with the data
+      }
+    });
+  }
 
   return (
-    
     <div>
       <>
         <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
@@ -96,12 +95,11 @@ export const Experiment: FC = () => {
         ></iframe>
       </>
       <>
-      {sandboxData!=="" && (
-        // <h1 style={{ marginTop: 10 }}>DATA:</h1>
+        {sandboxData !== "" && (
+          // <h1 style={{ marginTop: 10 }}>DATA:</h1>
 
-        <p>{JSON.stringify(sandboxData)}</p>
-        
-      )}
+          <p>{JSON.stringify(sandboxData)}</p>
+        )}
         {/* TODO: we need a section that throws an error if the eeg device isn't active */}
         {deviceStatus === "online" && (
           <>

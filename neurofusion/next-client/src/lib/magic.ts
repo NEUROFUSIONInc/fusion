@@ -6,6 +6,5 @@ export const magic = typeof window !== "undefined" && new Magic(process.env.NEXT
 export const logout = async () => {
   if (!magic) throw new Error(`magic not defined`);
   await magic.user.logout();
-  localStorage.clear();
   signOut();
 };
