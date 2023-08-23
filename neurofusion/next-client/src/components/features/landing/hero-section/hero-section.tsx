@@ -10,10 +10,10 @@ export const HeroSection = () => {
     >
       <div className="flex w-full max-w-2xl flex-col space-y-10 text-center md:min-w-[300px]">
         <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-          Improve your{" "}
+          Manage & Improve your{" "}
           <span className="text-primary-gradient">
             <Typist typingDelay={100} cursor={<span className="cursor">|</span>} loop>
-              wellbeing
+              well-being
               <Typist.Delay ms={2000} />
               <Typist.Backspace count={12} />
               <Typist.Delay ms={500} />
@@ -21,7 +21,7 @@ export const HeroSection = () => {
               <Typist.Delay ms={2000} />
               <Typist.Backspace count={7} />
               <Typist.Delay ms={500} />
-              self-care
+              productivity
               <Typist.Delay ms={2000} />
               <Typist.Backspace count={10} />
             </Typist>
