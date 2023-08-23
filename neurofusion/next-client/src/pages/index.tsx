@@ -8,7 +8,7 @@ import {
   FaqSection,
   OfferingSection,
 } from "~/components/features/landing";
-import { MainLayout } from "~/components/layouts";
+import { MainLayout, Meta } from "~/components/layouts";
 
 import dynamic from "next/dynamic";
 const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
@@ -16,6 +16,11 @@ const HeroSection = dynamic(() => import("~/components/features/landing").then((
 const Home: NextPage = () => {
   return (
     <MainLayout>
+      <Meta
+        meta={{
+          title: "Fusion | Improve your well-being, productivity & health",
+        }}
+      />
       <HeroSection />
       <FeatureSection />
       {/* <IntegrationsSection /> */}

@@ -24,7 +24,7 @@ const LoginPage = () => {
     <MainLayout>
       <Meta
         meta={{
-          title: "NeuroFusion | Login",
+          title: "Fusion | Login",
         }}
       />
       <div className="mx-auto mt-16 flex w-full justify-center">

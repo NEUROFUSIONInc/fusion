@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { Magic } from "@magic-sdk/admin";
-import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import NextAuth, { NextAuthOptions, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { RelayPool } from "nostr-relaypool";
-import { getEventHash, getSignature, generatePrivateKey, getPublicKey, nip19, nip04, relayInit } from "nostr-tools";
-import axios from "axios";
 
-const relays = ["wss://relay.usefusion.ai"];
 import { randomBytes } from "crypto";
 
 import { authService } from "~/services";
@@ -54,15 +50,17 @@ export const authOptions: NextAuthOptions = {
         const authObject = await authService.completeNostrLogin(credentials!.privateKey);
 
         if (authObject) {
-          return {
+          const resObject: User = {
             id: randomBytes(4).toString("hex"),
             name: authObject?.userNpub,
             email: "",
             image: "/images/avatar.png",
             authToken: authObject?.authToken,
           };
+
+          return resObject;
         } else {
-          return false;
+          return null;
         }
       },
     }),

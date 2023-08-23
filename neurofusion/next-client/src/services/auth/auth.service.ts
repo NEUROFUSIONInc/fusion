@@ -4,12 +4,6 @@ import { UserCompleteLoginResponse } from "./types";
 import { api } from "~/config";
 
 import { nip19, nip04, relayInit, getPublicKey } from "nostr-tools";
-import { undefined } from "zod";
-
-interface NostrAuthResponse {
-  userNpub: string;
-  authToken: string;
-}
 
 class AuthService {
   async completeUserLogin(userEmail: string, magicLinkAuthToken: string) {
@@ -46,7 +40,7 @@ class AuthService {
       ]);
 
       const res = await api.post(`/nostrlogin`, { pubkey: publicKey });
-      const authToken = await (async () => {
+      const authToken: string = await (async () => {
         return new Promise((resolve) => {
           sub.on("event", async (event) => {
             console.log("we got the event we wanted:", event);
