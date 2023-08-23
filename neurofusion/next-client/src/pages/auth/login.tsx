@@ -12,21 +12,10 @@ import { magic } from "~/lib";
 const LoginPage = () => {
   const router = useRouter();
 
-  // const onSubmit = async (email: string) => {
-  //   if (!magic) throw new Error(`magic not defined`);
-
-  //   const didToken = await magic.auth.loginWithMagicLink({ email });
-
-  //   await signIn("credentials", {
-  //     didToken,
-  //     redirect: true,
-  //     callbackUrl: router.query.callbackUrl?.toString(),
-  //   });
-  // };
   const onSubmit = async (privateKey: string) => {
     await signIn("credentials", {
       privateKey,
-      redirect: false,
+      redirect: true,
       callbackUrl: router.query.callbackUrl?.toString(),
     });
   };
