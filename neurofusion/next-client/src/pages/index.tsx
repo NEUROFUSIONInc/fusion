@@ -18,11 +18,11 @@ const Home: NextPage = () => {
     <MainLayout>
       <HeroSection />
       <FeatureSection />
-      <IntegrationsSection />
-      <TeamSection />
+      {/* <IntegrationsSection /> */}
+      {/* <TeamSection /> */}
       <TestimonialSection />
-      <FaqSection />
       <OfferingSection />
+      <FaqSection />
     </MainLayout>
   );
 };

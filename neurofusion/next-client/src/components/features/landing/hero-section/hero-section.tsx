@@ -28,9 +28,9 @@ export const HeroSection = () => {
           </span>{" "}
           with Fusion
         </h1>
-        <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
+        {/* <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
           Our copilot brings together your daily activities, fitness, and brain data for a better and healthier life.
-        </p>
+        </p> */}
         <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
           <MobileStoreLink store="apple" className="w-full md:w-auto" />
           <MobileStoreLink store="google" className="w-full md:w-auto" />
@@ -40,7 +40,7 @@ export const HeroSection = () => {
         <iframe
           title="Neurofusion Demo Video"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          src="https://www.youtube.com/embed/8jmdCFnZklk?controls=0"
+          src="https://www.loom.com/embed/2893c581a8f44e6389b2f7d5b0f9baec?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
           allowFullScreen
           className="absolute top-0 left-0 w-full h-full rounded-3xl"
         />
