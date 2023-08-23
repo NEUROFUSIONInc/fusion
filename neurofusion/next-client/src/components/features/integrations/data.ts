@@ -8,14 +8,14 @@ export interface IIntegration {
 }
 
 export const integrations = [
-  {
-    slug: "fusion",
-    title: "Fusion (Health & Behavior)",
-    href: "https://usefusion.app/download",
-    imageUrl: "/images/logo.png",
-    description: "Connect your behavior and health data from Apple Health, Google Fit with the Fusion mobile app.",
-    active: true,
-  },
+  // {
+  //   slug: "fusion",
+  //   title: "Fusion (Health & Behavior)",
+  //   href: "https://usefusion.app/download",
+  //   imageUrl: "/images/logo.png",
+  //   description: "Connect your behavior and health data from Apple Health, Google Fit with the Fusion mobile app.",
+  //   active: true,
+  // },
   {
     slug: "neurosity",
     title: "Neurosity (EEG Brain Data)",
@@ -25,32 +25,32 @@ export const integrations = [
       "Neurosity is a wearable device that measures EEG brain activity. It also predicts how focused & calm you are in a given moment.",
     active: true,
   },
-  {
-    slug: "magicflow",
-    title: "MagicFlow (Productivity)",
-    href: "https://magicflow.com",
-    imageUrl: "/images/integrations/magicflow_icon.webp",
-    description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
-    active: true,
-  },
-  {
-    slug: "activityWatch",
-    title: "ActivityWatch (Screen Time)",
-    href: "https://activitywatch.net",
-    imageUrl: "/images/integrations/activitywatch_icon.png",
-    description:
-      "ActivityWatch is an open source, privacy first app that automatically tracks how you spend time on your devices.",
-    active: true,
-  },
-  {
-    slug: "spotify",
-    title: "Spotify (Music)",
-    href: "https://spotify.com",
-    imageUrl: "/images/integrations/spotify_icon_green.png",
-    description:
-      "A digital streaming service that gives you access to millions of songs and content from all over the world.",
-    active: false,
-  },
+  // {
+  //   slug: "magicflow",
+  //   title: "MagicFlow (Productivity)",
+  //   href: "https://magicflow.com",
+  //   imageUrl: "/images/integrations/magicflow_icon.webp",
+  //   description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
+  //   active: true,
+  // },
+  // {
+  //   slug: "activityWatch",
+  //   title: "ActivityWatch (Screen Time)",
+  //   href: "https://activitywatch.net",
+  //   imageUrl: "/images/integrations/activitywatch_icon.png",
+  //   description:
+  //     "ActivityWatch is an open source, privacy first app that automatically tracks how you spend time on your devices.",
+  //   active: true,
+  // },
+  // {
+  //   slug: "spotify",
+  //   title: "Spotify (Music)",
+  //   href: "https://spotify.com",
+  //   imageUrl: "/images/integrations/spotify_icon_green.png",
+  //   description:
+  //     "A digital streaming service that gives you access to millions of songs and content from all over the world.",
+  //   active: false,
+  // },
 ] as const;
 
 export const magicFlowSteps = [
