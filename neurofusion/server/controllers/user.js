@@ -1,10 +1,8 @@
+require("websocket-polyfill");
+
 const { Magic } = require("@magic-sdk/admin");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-/* 1. Setup Magic Admin SDK */
-const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
-
-const { RelayPool } = require("nostr-relaypool");
+global.crypto = require("crypto");
 const {
   getEventHash,
   getSignature,
@@ -12,15 +10,18 @@ const {
   getPublicKey,
   nip19,
   nip04,
+  relayInit,
 } = require("nostr-tools");
-
-let relays = ["ws://127.0.0.1:6969"];
+require("dotenv").config();
+/* 1. Setup Magic Admin SDK */
+const magic = new Magic(process.env.MAGICLINK_SECRET_KEY);
 
 // create publicKey & privateKey to sign messages as fusion
-const privateKey = generatePrivateKey();
-const publicKey = getPublicKey(privateKey);
+const serverPrivateKey = process.env.NOSTR_FUSION_PRIVATE_KEY;
+const serverPublicKey = getPublicKey(serverPrivateKey);
 
-let relayPool = new RelayPool(relays);
+console.log("privateKey", serverPrivateKey);
+console.log("publicKey", serverPublicKey);
 
 const db = require("../models/index");
 
@@ -127,6 +128,7 @@ exports.validateLogin = async (req, res) => {
 };
 
 exports.validateNostrLogin = async (req, res) => {
+  console.log("incoming request", req.body);
   if (!req.body.pubkey) {
     res.status(401).json({
       body: {
@@ -147,22 +149,56 @@ exports.validateNostrLogin = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRY,
     });
 
-    const content = await nip04.encrypt(privateKey, req.body.pubkey, authToken);
+    // basically, generate a tokey for this pubkey
+    const content = await nip04.encrypt(
+      serverPrivateKey,
+      req.body.pubkey,
+      authToken
+    );
 
     const event = {
       content: content,
       created_at: Math.floor(Date.now() / 1000),
       kind: 4,
-      pubkey: publicKey,
+      pubkey: serverPublicKey,
       tags: [["p", req.body.pubkey]],
     };
 
     event.id = getEventHash(event);
 
+    const relay = relayInit("wss://relay.usefusion.ai");
+    relay.on("connect", () => {
+      console.log("connected to relay");
+    });
+    relay.on("error", (err) => {
+      console.log("error", err);
+    });
+
+    await relay.connect();
+
+    let sub = relay.sub([
+      {
+        // ids: ["be5230ede4d50912ea7d8f989209b9e70c168c8dc930b29bcf66cd8f889bd3ca"],
+        authors: [serverPublicKey],
+        // kinds: [4],
+        // "#p": [publicKey],
+        // since: loginTimestamp,
+      },
+    ]);
+    sub.on("event", (event) => {
+      console.log("we got the event we wanted:", event);
+      // console.log("decoding...");
+      // const decoded = await nip04.decrypt(credentials!.privateKey, serverPublicKey!, event.content);
+      console.log("access token", decoded);
+      // authToken = decoded;
+    });
+
     // we sign the message with fusion server private key
-    event.sig = getSignature(event, privateKey);
+    event.id = getEventHash(event);
+    event.sig = getSignature(event, serverPrivateKey);
     console.log(event);
-    relayPool.publish(event, ["ws://127.0.0.1:6969"]);
+    console.log("sending to relay pool");
+    await relay.publish(event);
 
     res.status(200).json({
       body: {

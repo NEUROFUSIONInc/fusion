@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { randomBytes } from "crypto";
-
 import { Magic } from "@magic-sdk/admin";
-import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import NextAuth, { NextAuthOptions, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+import { randomBytes } from "crypto";
 
 import { authService } from "~/services";
 
@@ -35,37 +35,33 @@ export const authOptions: NextAuthOptions = {
     // @ts-ignore
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        session.user.image = null;
         session.user.authToken = token.authToken;
       }
-
-      return session;
+      if (session.user) return session;
     },
   },
-
   providers: [
     CredentialsProvider({
-      name: "Magic Link",
+      name: "Nostr",
       credentials: {
-        didToken: { label: "DID Token", type: "text" },
+        privateKey: { label: "privateKey", type: "password" },
       },
-      async authorize(credentials) {
-        const didToken = credentials?.didToken || "";
-        // validate magic DID token
-        magic.token.validate(didToken);
+      async authorize(credentials, req) {
+        const authObject = await authService.completeNostrLogin(credentials!.privateKey);
 
-        // fetch user metadata
-        const metadata = await magic.users.getMetadataByToken(didToken);
+        if (authObject) {
+          const resObject: User = {
+            id: randomBytes(4).toString("hex"),
+            name: authObject?.userNpub,
+            email: "",
+            image: "/images/avatar.png",
+            authToken: authObject?.authToken,
+          };
 
-        const { body } = await authService.completeUserLogin(metadata.email || "", didToken);
-
-        // return user info
-        return {
-          id: randomBytes(4).toString("hex"),
-          email: metadata.email,
-          name: metadata.email,
-          ...body,
-        };
+          return resObject;
+        } else {
+          return null;
+        }
       },
     }),
   ],

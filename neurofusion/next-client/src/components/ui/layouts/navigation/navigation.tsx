@@ -10,10 +10,13 @@ import { navigationLinks } from "./data";
 import { MobileMenu } from "./mobile-menu";
 
 import { cn } from "~/utils";
+import { useSearchParams } from "next/navigation";
 
 export const Navbar: FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pagePersona = searchParams.get("persona") ?? "default";
 
   return (
     <header className="sticky left-0 right-0 top-0 z-10 flex h-16 w-full items-center border-b border-b-gray-50/20 bg-white/50 shadow-sm dark:bg-transparent backdrop-blur-lg dark:border-b-gray-800 dark:border-opacity-50">
@@ -22,7 +25,7 @@ export const Navbar: FC = () => {
         <div className="hidden items-center justify-between md:flex">
           <div className="flex items-center">
             {navigationLinks.map((link) => {
-              const active = link.href === router.pathname;
+              const active = link.persona === pagePersona;
 
               return (
                 <Link

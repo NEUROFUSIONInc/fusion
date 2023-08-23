@@ -32,7 +32,10 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
               <AvatarFallback>{user?.name?.substring(0, 1).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="flex-flex-col">
-              <p className="w-[90%] truncate text-[14px] font-medium">{user?.name?.split("@")[0]}</p>
+              <p className="w-[90%] text-[14px] font-medium">
+                {user?.name?.slice(0, 8) + ":" + user?.name?.slice(-8)}
+                {/* {user?.name?.split("@")[0]} */}
+              </p>
               <p className=" lg:max-w-[160px] max-w-[120px] truncate text-[12.5px] text-slate-600 dark:text-slate-400">
                 {user?.email}
               </p>
@@ -61,12 +64,14 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          <Github className="mr-2 h-4 w-4" />
-          <span>GitHub</span>
+        <DropdownMenuItem>
+          <Link href="https://github.com/neurofusioninc" className="inline-flex w-full items-center">
+            <Github className="mr-2 h-4 w-4" />
+            <span>GitHub</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href="mailto:ore@usefusion.app" className="inline-flex w-full items-center">
+          <Link href="mailto:contact@usefusion.app" className="inline-flex w-full items-center">
             <LifeBuoy className="mr-2 h-4 w-4" />
             <span>Support</span>
           </Link>
