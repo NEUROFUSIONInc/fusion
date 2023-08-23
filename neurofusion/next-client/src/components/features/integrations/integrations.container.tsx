@@ -6,7 +6,13 @@ import { MagicFlowModal, NeurosityModal } from "./modals";
 
 import { useGetMagicFlowToken, useNeurosityState } from "~/hooks";
 
-type IntegrationSlug = (typeof integrations)[number]["slug"] | undefined;
+type IntegrationSlug =
+  | (typeof integrations)[number]["slug"]
+  | undefined
+  | "fusion"
+  | "magicflow"
+  | "activityWatch"
+  | "spotify";
 
 export const IntegrationsContainer = () => {
   const [modalOpen, setModalOpen] = useState<IntegrationSlug>();
