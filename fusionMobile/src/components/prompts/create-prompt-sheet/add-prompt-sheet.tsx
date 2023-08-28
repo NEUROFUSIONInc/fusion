@@ -11,9 +11,13 @@ import { PromptOption } from "../prompt-option/prompt-option";
 
 interface AddPromptSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;
+  selectedCategory?: string;
 }
 
-export const AddPromptSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
+export const AddPromptSheet: FC<AddPromptSheetProps> = ({
+  bottomSheetRef,
+  selectedCategory,
+}) => {
   const navigation = useNavigation<any>();
 
   const createPromptSheetRef = useRef<RNBottomSheet>(null);
@@ -29,8 +33,8 @@ export const AddPromptSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
 
   const handleQuickAddPrompt = useCallback(() => {
     bottomSheetRef.current?.close();
-    navigation.navigate("QuickAddPrompts");
-  }, []);
+    navigation.navigate("QuickAddPrompts", { selectedCategory });
+  }, [selectedCategory]);
 
   return (
     <Portal>

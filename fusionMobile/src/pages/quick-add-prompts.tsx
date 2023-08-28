@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -6,13 +6,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import { CategoryTag, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
 import { AccountContext } from "~/contexts/account.context";
-import { PromptScreenNavigationProp } from "~/navigation";
+import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
 import { appInsights } from "~/utils";
 
 export const QuickAddPromptsScreen = () => {
+  const route = useRoute<RouteProp<"QuickAddPrompts">>();
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    "All"
+    route.params?.selectedCategory ?? "All"
   );
   const filteredPrompts = useMemo(() => {
     if (selectedCategory === "All" || selectedCategory === "") {
