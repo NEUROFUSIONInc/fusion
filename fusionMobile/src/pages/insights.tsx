@@ -112,9 +112,27 @@ export function InsightsScreen() {
     []
   );
 
+  /**
+   * Ugly work around because react native fails to re-render the dropdown
+   * when saved prompt is updated.
+   *
+   * Tried different approaches open to something better :)
+   */
+  const [renderDropdown, setRenderDropdown] = React.useState<boolean>(false);
+  useEffect(() => {
+    if (savedPrompts) {
+      setRenderDropdown(false);
+    }
+  }, [savedPrompts]);
+  useEffect(() => {
+    if (renderDropdown === false) {
+      setRenderDropdown(true);
+    }
+  }, [renderDropdown]);
+
   return (
     <Screen>
-      {!savedPrompts || savedPrompts?.length === 0 ? (
+      {(!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/pie-chart.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
@@ -127,7 +145,9 @@ export function InsightsScreen() {
             className="self-center"
           />
         </View>
-      ) : (
+      )}
+
+      {savedPrompts && savedPrompts.length > 0 && (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView nestedScrollEnabled>
             <View className="flex flex-row w-full justify-between p-5">
@@ -161,9 +181,9 @@ export function InsightsScreen() {
             </View>
 
             {/* select the first available prompt */}
-            {savedPrompts && savedPrompts.length > 0 && (
-              <View className="flex flex-col w-full bg-secondary-900">
-                <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
+            <View className="flex flex-col w-full bg-secondary-900">
+              <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
+                {renderDropdown && (
                   <Select
                     items={savedPrompts.map((prompt) => ({
                       label: prompt.promptText,
@@ -179,22 +199,22 @@ export function InsightsScreen() {
                       indicatorStyle: "white",
                     }}
                   />
-                </View>
+                )}
+              </View>
 
-                <View className="-z-30">
-                  <View>
-                    {/* this is where the chart is */}
-                    {activeChartPrompt && (
-                      <ChartContainer
-                        prompt={activeChartPrompt}
-                        startDate={chartStartDate}
-                        timePeriod={insightContext!.insightPeriod}
-                      />
-                    )}
-                  </View>
+              <View className="-z-30">
+                <View>
+                  {/* this is where the chart is */}
+                  {activeChartPrompt && (
+                    <ChartContainer
+                      prompt={activeChartPrompt}
+                      startDate={chartStartDate}
+                      timePeriod={insightContext!.insightPeriod}
+                    />
+                  )}
                 </View>
               </View>
-            )}
+            </View>
           </ScrollView>
         </PanGestureHandler>
       )}

@@ -183,7 +183,10 @@ export const PromptsScreen = () => {
         )}
 
       <Portal>
-        <AddPromptSheet bottomSheetRef={bottomSheetRef} />
+        <AddPromptSheet
+          bottomSheetRef={bottomSheetRef}
+          selectedCategory={selectedCategory}
+        />
 
         {activePrompt && (
           <PromptOptionsSheet

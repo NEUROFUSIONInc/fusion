@@ -27,7 +27,9 @@ export type PromptStackParamList = {
         type: "add";
         prompt: Prompt;
       };
-  QuickAddPrompts: undefined;
+  QuickAddPrompts: {
+    selectedCategory?: string;
+  };
   PromptEntry: {
     promptUuid: string;
     triggerTimestamp: number | null;
