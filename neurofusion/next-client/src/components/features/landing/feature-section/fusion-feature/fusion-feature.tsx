@@ -15,7 +15,9 @@ export const FusionFeature: FC<FusionFeatureProps> = ({ feature }) => {
       <ul className="mt-7 flex flex-col items-start justify-start gap-5 md:mt-11">
         {feature.featuresList.map((feature) => (
           <li key={feature} className="flex items-center">
-            <FeatureIcon />
+            <div>
+              <FeatureIcon />
+            </div>
             <p className="ml-3 text-sm font-normal text-dark dark:text-gray-400 md:text-base lg:text-lg">{feature}</p>
           </li>
         ))}
