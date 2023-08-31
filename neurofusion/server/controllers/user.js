@@ -30,11 +30,21 @@ exports.tokenValidator = async (req, res, next) => {
     const token = req.headers["authorization"].split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await db.UserMetadata.findOne({
-      where: {
-        userGuid: decoded.userGuid,
-      },
-    });
+    let user;
+
+    if (decoded.userPubkey) {
+      user = await db.UserMetadata.findOne({
+        where: {
+          userPubkey: decoded.userPubkey,
+        },
+      });
+    } else if (decoded.userGuid) {
+      user = await db.UserMetadata.findOne({
+        where: {
+          userGuid: decoded.userGuid,
+        },
+      });
+    }
 
     if (!user) {
       return res.status(401).json({
@@ -101,9 +111,6 @@ exports.validateLogin = async (req, res) => {
       res.status(200).json({
         body: {
           userGuid: userMetadata.userGuid,
-          magicLinkAuthToken: userMetadata.magicLinkAuthToken,
-          magicflowToken: userMetadata.magicflowToken,
-          neurosityToken: userMetadata.neurosityToken,
           authToken,
         },
       });
@@ -139,12 +146,23 @@ exports.validateNostrLogin = async (req, res) => {
   }
 
   try {
-    // TODO: log the pubKey in db
-    // now try to save the account / generate one
+    // fetch/create user
+    const [userMetadata, _] = await db.UserMetadata.findOrCreate({
+      where: {
+        userPubkey: req.body.pubkey,
+      },
+    });
+
+    // update last seen
+    await userMetadata.update({
+      userLastLogin: new Date(),
+    });
+
     // connect to the relayPool and then drop message
     const userInfo = {
-      pubkey: req.body.pubkey,
+      userPubkey: req.body.pubkey,
     };
+
     const authToken = jwt.sign(userInfo, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY,
     });
@@ -175,23 +193,6 @@ exports.validateNostrLogin = async (req, res) => {
     });
 
     await relay.connect();
-
-    let sub = relay.sub([
-      {
-        // ids: ["be5230ede4d50912ea7d8f989209b9e70c168c8dc930b29bcf66cd8f889bd3ca"],
-        authors: [serverPublicKey],
-        // kinds: [4],
-        // "#p": [publicKey],
-        // since: loginTimestamp,
-      },
-    ]);
-    sub.on("event", (event) => {
-      console.log("we got the event we wanted:", event);
-      // console.log("decoding...");
-      // const decoded = await nip04.decrypt(credentials!.privateKey, serverPublicKey!, event.content);
-      console.log("access token", decoded);
-      // authToken = decoded;
-    });
 
     // we sign the message with fusion server private key
     event.id = getEventHash(event);
