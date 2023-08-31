@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       userEmail: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
       userGuid: {
@@ -24,10 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
-      magicLinkAuthToken: DataTypes.TEXT,
-      neurosityToken: DataTypes.TEXT,
-      magicflowToken: DataTypes.TEXT,
-      magicflowLastFetched: DataTypes.DATE,
+      userPubkey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+      },
       userLastLogin: DataTypes.DATE,
       userConsentUsage: {
         type: DataTypes.BOOLEAN,
