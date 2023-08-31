@@ -58,7 +58,7 @@ export const MobileStoreLink: FC<MobileStoreLinkProps> = ({ variant, store = "ap
         };
       case "google":
         return {
-          href: "https://play.google.com/apps/testing/com.neurofusion.fusion",
+          href: "https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1",
           icon: (
             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="&#240;&#159;&#166;&#134; icon &#34;brand android&#34;">
