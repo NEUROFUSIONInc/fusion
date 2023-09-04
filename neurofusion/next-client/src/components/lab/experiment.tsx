@@ -7,6 +7,7 @@ import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
+import { PlugZap } from "lucide-react";
 
 export const Experiment: FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -66,33 +67,45 @@ export const Experiment: FC = () => {
 
   return (
     <div>
-      <>
-        <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
-        <p>Device Status: {deviceStatus}</p>
-      </>
+      {!connectedDevice && (
+        <>
+          <p>Head over to the integrations page to connect a Neurosity Device</p>
+          <Button
+            intent={"dark"}
+            className="ml-auto"
+            leftIcon={<PlugZap className="fill-current" />}
+            onClick={() => {
+              location.href = "/integrations";
+            }}
+          >
+            Connect EEG device
+          </Button>
+        </>
+      )}
+      {connectedDevice && (
+        <>
+          <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
+          <p>Device Status: {deviceStatus}</p>
+        </>
+      )}
 
       {/* add live signal quality */}
 
-      <h1 style={{ marginTop: 10 }}>Flappy Birds</h1>
-
-      <h3>
-        Press 'Spacebar' to start the game. We will be recording brain activity & correlate with spacebar presses.
-      </h3>
       <>
-        <iframe
+        {/* <iframe
           src="https://codesandbox.io/embed/flappy-bird-neurofusion-g8pml3?fontsize=14&hidenavigation=1&theme=dark"
           style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
           title="flappy-bird"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
           sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe>
-        {/* <iframe
+        ></iframe> */}
+        <iframe
           src="/api/CDN?id=1&file=index.html"
           style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
           title="Stroop"
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
           sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe> */}
+        ></iframe>
       </>
       <>
         {sandboxData !== "" && (
