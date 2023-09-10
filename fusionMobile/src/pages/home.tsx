@@ -15,6 +15,8 @@ export function HomeScreen() {
   // get all the categories
   const [activeCategoryIndex, setActiveCategoryIndex] = React.useState(0);
 
+  // const savedPrompts
+
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Home",
