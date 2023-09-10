@@ -1,45 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { Person, Settings } from "../../icons";
 
-import { UserAccount } from "~/@types";
-import { nostrService } from "~/services";
+import { AccountContext } from "~/contexts";
 
 export const HomeHeader = () => {
-  const [nostrAccount, setNostrAccount] = useState<UserAccount | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      console.log("getting nostr account");
-      const res = await nostrService.getNostrAccount();
-      if (res) {
-        setNostrAccount(res);
-      } else {
-        console.log("creating nostr account");
-        const res = await nostrService.createNostrAccount();
-        if (res) {
-          setNostrAccount(res);
-        }
-      }
-    })();
-  }, []);
+  const accountContext = React.useContext(AccountContext);
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <View className="flex flex-row">
-        <Button
-          variant="ghost"
-          size="icon"
-          leftIcon={<Person />}
-          onPress={() => console.log("nothing yet")}
-        />
+      <Pressable
+        className="flex flex-row vertical-center"
+        onPress={() => {
+          console.log(accountContext?.userNpub);
+        }}
+      >
+        <Person />
         {/* TODO: change to fusion logo */}
-        <Text className="font-sans text-base text-white text-[20px] ml-2 align-text-bottom leading-9">
-          {nostrAccount?.npub.slice(0, 8) + ":" + nostrAccount?.npub.slice(-8)}
+        <Text className="font-sans text-base text-white text-[20px] ml-2">
+          {accountContext?.userNpub.slice(0, 8) +
+            ":" +
+            accountContext?.userNpub.slice(-8)}
         </Text>
-      </View>
+      </Pressable>
       <Button
         variant="ghost"
         size="icon"

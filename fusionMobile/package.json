@@ -24,6 +24,7 @@
     "@microsoft/applicationinsights-web": "^3.0.0",
     "@neurosity/sdk": "^6.5.7",
     "@react-native-async-storage/async-storage": "1.17.11",
+    "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
