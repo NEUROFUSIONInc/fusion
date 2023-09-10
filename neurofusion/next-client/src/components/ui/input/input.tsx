@@ -26,10 +26,11 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> &
     label?: string;
     helperText?: ReactNode;
     error?: string;
+    multiline?: boolean;
   };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function input(
-  { label, helperText, size = "md", fullWidth, required, error, disabled, id, className, ...props },
+  { label, helperText, size = "md", fullWidth, required, error, disabled, id, className, multiline, ...props },
   ref
 ) {
   return (
@@ -40,18 +41,32 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function input(
             {label} {required && <span className="align-middle text-red-500">*</span>}
           </p>
         )}
-        <input
-          ref={ref}
-          id={id}
-          type="text"
-          autoComplete=""
-          required={required}
-          disabled={disabled}
-          aria-invalid={Boolean(error)}
-          aria-describedby="errMsg"
-          className={styles({ size, fullWidth, className })}
-          {...props}
-        />
+        {multiline ? (
+          <textarea
+            ref={ref}
+            id={id}
+            autoComplete=""
+            required={required}
+            disabled={disabled}
+            aria-invalid={Boolean(error)}
+            aria-describedby="errMsg"
+            className={styles({ size, fullWidth, className })}
+            {...props}
+          />
+        ) : (
+          <input
+            ref={ref}
+            id={id}
+            type="text"
+            autoComplete=""
+            required={required}
+            disabled={disabled}
+            aria-invalid={Boolean(error)}
+            aria-describedby="errMsg"
+            className={styles({ size, fullWidth, className })}
+            {...props}
+          />
+        )}
         {error && (
           <p id="errMsg" className="mt-0.5 text-sm font-normal text-red-500">
             {error}
