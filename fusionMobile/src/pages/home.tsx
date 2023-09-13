@@ -4,12 +4,16 @@ import { View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Screen, Button, ChevronLeft, ChevronRight } from "~/components";
+import { categories } from "~/config";
+import { usePromptsQuery } from "~/hooks";
 import { appInsights } from "~/utils";
 
 export function HomeScreen() {
   const navigation = useNavigation();
+  const { data: savedPrompts, isLoading } = usePromptsQuery();
 
-  // const savedPrompts
+  // get all the categories
+  const [activeCategoryIndex, setActiveCategoryIndex] = React.useState(0);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -18,9 +22,28 @@ export function HomeScreen() {
     });
   }, []);
 
-  const panActiveInsightCategory = (direction: "left" | "right") => {};
+  const panActiveInsightCategory = (direction: "left" | "right") => {
+    if (direction === "left") {
+      if (activeCategoryIndex === 0) {
+        setActiveCategoryIndex(categories.length - 1);
+      } else {
+        setActiveCategoryIndex(activeCategoryIndex - 1);
+      }
+    } else if (direction === "right") {
+      if (activeCategoryIndex === categories.length - 1) {
+        setActiveCategoryIndex(0);
+      } else {
+        setActiveCategoryIndex(activeCategoryIndex + 1);
+      }
+    }
+  };
 
-  const getInsightSummary = (category: string) => {};
+  const getInsightSummary = (category: string) => {
+    // find all the prompts that have this category
+    // for starters just pick the first one
+    // take prompt data for the current week
+    // take prompt data for the past week
+  };
 
   return (
     <Screen>
@@ -44,7 +67,8 @@ export function HomeScreen() {
             />
 
             <Text className="font-sans text-base text-white text-[20px] ml-2 w-[80%] text-center">
-              Mental Health
+              {categories[activeCategoryIndex].icon}{" "}
+              {categories[activeCategoryIndex].name}
             </Text>
 
             <Button
@@ -66,7 +90,6 @@ export function HomeScreen() {
             </Text>
           </View>
         </View>
-        {/* )} */}
 
         {/* connect your apple health data */}
       </ScrollView>
