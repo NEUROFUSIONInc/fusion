@@ -6,13 +6,13 @@ import dayjs from "dayjs";
 import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import React from "react";
+import React, { useState } from "react";
 import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
 import { FontLoader } from "./FontLoader";
-import { CustomNavigation } from "./src/navigation";
+import { CustomNavigation, OnboardingNavigator } from "./src/navigation";
 import { appInsights, maskPromptId } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
@@ -266,6 +266,20 @@ function App() {
   }, []);
 
   React.useEffect(() => {
+    (async () => {
+      const onboardingViewed = await AsyncStorage.getItem("onboarding_viewed");
+
+      if (onboardingViewed !== "true") {
+        setShowOnboarding(true);
+      } else {
+        setShowOnboarding(false);
+      }
+    })();
+  }, []);
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  React.useEffect(() => {
     appInsights.trackEvent(
       { name: "app_started" },
       {
@@ -281,7 +295,8 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <PromptContextProvider>
             <PortalProvider>
-              <CustomNavigation />
+              {showOnboarding && <OnboardingNavigator />}
+              {!showOnboarding && <CustomNavigation />}
             </PortalProvider>
           </PromptContextProvider>
         </QueryClientProvider>
