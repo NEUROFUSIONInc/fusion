@@ -93,9 +93,14 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       )}
 
       {/* add live signal quality */}
-
-      {experiment.url && (
+      {experiment.description && (
         <>
+          <h1 style={{ marginTop: 10 }}>Description:</h1>
+          <p>{experiment.description}</p>
+        </>
+      )}
+      {experiment.url && (
+        <div className="m-3">
           <iframe
             src={experiment.url}
             style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
@@ -103,7 +108,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
             allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
             sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
           ></iframe>
-        </>
+        </div>
       )}
       <>
         {sandboxData !== "" && (
