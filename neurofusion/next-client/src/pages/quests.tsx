@@ -9,6 +9,7 @@ import { Button, Input } from "~/components/ui";
 const QuestsPage: NextPage = () => {
   const [recepientNpubs, setRecepientNpubs] = React.useState<string>("");
   const [promptConfig, setPromptConfig] = React.useState<string>("");
+  const [questDescription, setQuestDescription] = React.useState<string>("");
   return (
     <DashboardLayout>
       <Meta
@@ -20,7 +21,19 @@ const QuestsPage: NextPage = () => {
         <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100">Configure Quests</h1>
         <p className="mt-2 text-lg text-center text-gray-600 dark:text-gray-400"></p>
 
-        <>
+        <div className="y-3 w-full">
+          <Input
+            label="Description"
+            type="text"
+            size="lg"
+            multiline
+            fullWidth
+            placeholder="Enter Purpose of Quest"
+            value={questDescription}
+            className="pt-4 h-20 mb-2"
+            onChange={(e) => setQuestDescription(e.target.value)}
+          />
+
           <Input
             label="Recipient Fusion IDs"
             type="text"
@@ -29,6 +42,7 @@ const QuestsPage: NextPage = () => {
             placeholder="Enter Recipient Fusion IDs"
             value={recepientNpubs}
             onChange={(e) => setRecepientNpubs(e.target.value)}
+            className="mb-2"
           />
 
           <Input
@@ -46,7 +60,7 @@ const QuestsPage: NextPage = () => {
           <Button type="submit" size="lg" fullWidth className="mt-4">
             Deploy
           </Button>
-        </>
+        </div>
       </div>
     </DashboardLayout>
   );
