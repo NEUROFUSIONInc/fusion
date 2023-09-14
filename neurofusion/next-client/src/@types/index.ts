@@ -8,3 +8,12 @@ export interface MetaSeo {
   };
   social: Record<string, string>;
 }
+
+export interface IExperiment {
+  id: number;
+  name: string;
+  description: string;
+  image?: string;
+  url?: string;
+  tags?: string[];
+}

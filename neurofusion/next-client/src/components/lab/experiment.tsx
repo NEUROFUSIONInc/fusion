@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/self-closing-comp */
 import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, use } from "react";
 
 import { Button } from "../ui/button/button";
 
@@ -9,7 +9,9 @@ import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
 
-export const Experiment: FC = () => {
+import { IExperiment } from "~/@types";
+
+export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
 
   const { user, getNeurositySelectedDevice } = useNeurosityState();
@@ -52,11 +54,12 @@ export const Experiment: FC = () => {
       })();
     }
   }, [user, deviceStatus, neurositySelectedDevice]);
+
   if (typeof window !== "undefined") {
     window.addEventListener("message", (event) => {
       // IMPORTANT: Check the origin of the data!
       // You should probably not use '*', but restrict it to certain domains:
-      if (event.origin.startsWith("https://localhost:")) {
+      if (event.origin.startsWith("https://localhost:") || event.origin.startsWith("https://usefusion.app")) {
         // The data sent from the iframe
         setSandboxData(event.data);
 
@@ -91,28 +94,23 @@ export const Experiment: FC = () => {
 
       {/* add live signal quality */}
 
-      <>
-        {/* <iframe
-          src="https://codesandbox.io/embed/flappy-bird-neurofusion-g8pml3?fontsize=14&hidenavigation=1&theme=dark"
-          style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
-          title="flappy-bird"
-          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
-          sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe> */}
-        <iframe
-          src="/api/CDN?id=1&file=index.html"
-          style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
-          title="Stroop"
-          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
-          sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-        ></iframe>
-      </>
+      {experiment.url && (
+        <>
+          <iframe
+            src={experiment.url}
+            style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
+            title={experiment.name}
+            allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
+            sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+          ></iframe>
+        </>
+      )}
       <>
         {sandboxData !== "" && (
           // <h1 style={{ marginTop: 10 }}>DATA:</h1>
-
           <p>{JSON.stringify(sandboxData)}</p>
         )}
+
         {/* TODO: we need a section that throws an error if the eeg device isn't active */}
         {deviceStatus === "online" && (
           <>
