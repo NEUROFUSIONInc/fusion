@@ -42,9 +42,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function input(
           </p>
         )}
         {multiline ? (
-          <textarea
+          // <textarea
+          //   id={id}
+          //   autoComplete=""
+          //   required={required}
+          //   disabled={disabled}
+          //   aria-invalid={Boolean(error)}
+          //   aria-describedby="errMsg"
+          //   className={styles({ size, fullWidth, className })}
+          //   {...props}
+          // />
+          <input
             ref={ref}
             id={id}
+            type="text"
             autoComplete=""
             required={required}
             disabled={disabled}
