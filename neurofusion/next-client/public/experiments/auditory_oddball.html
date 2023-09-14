@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+        background-color: #fafafa;
+      }
+      #countDown {
+        position: absolute;
+        width: 100%;
+        display: inline;
+        align-content: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #countDown p {
+        align-content: center;
+        font-weight: 100;
+        font-size: large;
+      }
+      #jspsych-container {
+        font-size: xx-large;
+        font-family: sans;
+        font-weight: bold;
+        position: absolute;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="countDown"><p></p></div>
+    <div id="jspsych-container"></div>
+    <script>
+      function mapElapsedToUnix(data) {
+        let startStamp = -1;
+        data.trials.forEach((element) => {
+          if (startStamp === -1) {
+            if ("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
+          } else {
+            element.unixTimestamp = startStamp + element.time_elapsed;
+          }
+        });
+        return data;
+      }
+
+      const fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        trial_duration: 500,
+        response_ends_trial: false,
+      };
+
+      // blank (ITI stands for "inter trial interval")
+      const iti = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        trial_duration: 250,
+        response_ends_trial: false,
+      };
+      const init = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        trial_duration: 0,
+        response_ends_trial: false,
+        on_finish: (data) => {
+          data.unixTimestamp = Date.now();
+        },
+      };
+
+      function countDownGen(seconds) {
+        document.getElementById("countDown").getElementsByTagName("p")[0].innerHTML = seconds + "s";
+        if (seconds === 0) {
+          document.getElementById("countDown").getElementsByTagName("p")[0].style.visibility = false;
+          return;
+        }
+        setTimeout(countDownGen, 1000, seconds - 1);
+      }
+
+      class experimentGenerator {
+        constructor(jsPsych, trialGenerator, instructions, feedBack = false, timeLimit = 0, trialCountLimit = 20) {
+          this.jsPsych = jsPsych;
+          this.trials = [];
+          if (instructions != null) this.trials.push(instructions);
+          console.log(this.trials);
+          this.trials.push(init);
+
+          let _fixation = fixation;
+
+          if (timeLimit !== 0) {
+            init.on_finish = function (data) {
+              data.unixTimestamp = Date.now();
+              setTimeout(jsPsych.endExperiment, timeLimit * 1000);
+              countDownGen(timeLimit);
+            };
+          }
+
+          if (feedBack) {
+            _fixation.trial_duration = 750;
+            _fixation.stimulus = function () {
+              return jsPsych.data.get().last(1).trials[0].correct ? "Correct" : "Incorrect";
+            };
+          }
+
+          for (let i = 0; i < trialCountLimit; ++i) {
+            this.trials.push(...trialGenerator.next().value);
+            if (!feedBack) this.trials.push(iti);
+            this.trials.push(_fixation);
+          }
+        }
+
+        run() {
+          jsPsych.run(this.trials);
+        }
+      }
+
+      const jsPsych = initJsPsych({
+        on_finish: function () {
+          window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), "*");
+          console.log(mapElapsedToUnix(jsPsych.data.get()));
+        },
+        display_element: "jspsych-container",
+      });
+
+      // these are in HTML, so <br> means "line break"
+      var auditoryOddballInstructions = {
+        type: jsPsychInstructions,
+        pages: [
+          "Welcome to the Auditory Oddball Experiment.",
+          "You will be played two tones randomly one of higher frequency and one of lower frequency.",
+          "Press 'Start EEG Recording' if you have your EEG device connected",
+          "Press any key to start the experiment.",
+        ],
+        show_clickable_nav: true,
+      };
+
+      function* auditoryOddballGen() {
+        while (true) {
+          let stimulus;
+          if (Math.random() < 0.5) {
+            stimulus = "./assets/sounds/1024hz.mp3";
+          } else {
+            stimulus = "./assets/sounds/1920hz.mp3";
+          }
+          const trial = {
+            type: jsPsychAudioKeyboardResponse,
+            stimulus: stimulus,
+            choices: "NO_KEYS",
+            trial_ends_after_audio: true,
+          };
+
+          yield [trial];
+        }
+      }
+
+      let experimentIntance = new experimentGenerator(
+        jsPsych,
+        auditoryOddballGen(),
+        (instructions = auditoryOddballInstructions),
+        (feedBack = false),
+        (timeLimit = 30),
+        (trialCountLimit = 20)
+      );
+      experimentIntance.run();
+      // js
+      // jsPsych.data.displayData('csv')
+    </script>
+  </body>
+</html>

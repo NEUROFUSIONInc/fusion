@@ -179,8 +179,6 @@ function randomIntFromInterval(min, max) {
 
 function* mathGen() {
   while (true) {
-    // Math.random returns a random number between 0 and 1. Use this to decide
-    // whether the current trial is congruent or incongruent.
     const values = { num1: randomIntFromInterval(10, 100), num2: randomIntFromInterval(10, 100) };
     values.answer = values.num1 + values.num2;
     const trial = {
@@ -193,6 +191,36 @@ function* mathGen() {
         if ("response" in data) data.correct = data.response.response == data.answer;
       },
     };
+    yield [trial];
+  }
+}
+
+// these are in HTML, so <br> means "line break"
+var auditoryOddballInstructions = {
+  type: jsPsychInstructions,
+  pages: [
+    "Welcome to the Auditory Oddball Experiment.",
+    "You will be played two tones randomly one of higher frequency and one of lower frequency.",
+    "Press 'Start EEG Recording' if you have your EEG device connected",
+    "Press any key to start the experiment.",
+  ],
+  show_clickable_nav: true,
+};
+function* auditoryOddballGen() {
+  while (true) {
+    let stimulus;
+    if (Math.random() < 0.5) {
+      stimulus = "/sounds/1024hz.mp3";
+    } else {
+      stimulus = "/sounds/1920hz.mp3";
+    }
+    const trial = {
+      type: jsPsychAudioKeyboardResponse,
+      stimulus: stimulus,
+      choices: "NO_KEYS",
+      trial_ends_after_audio: true,
+    };
+
     yield [trial];
   }
 }
@@ -211,9 +239,11 @@ function* mathGen() {
 
 let stroopTest = new experimentGenerator(
   jsPsych,
-  stroopGen(),
-  (instructions = instructions),
-  (feedBack = true),
+  auditoryOddballGen(),
+  // stroopGen(),
+  (instructions = auditoryOddballInstructions),
+  // (feedBack = true),
+  (feedBack = false),
   (timeLimit = 30),
   (trialCountLimit = 20)
 );

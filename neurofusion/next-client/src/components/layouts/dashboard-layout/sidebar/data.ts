@@ -1,10 +1,15 @@
-import { HardDrive, Laptop, LayoutDashboard, Moon, Plug, SignalHigh, Sun } from "lucide-react";
+import { HardDrive, Laptop, LayoutDashboard, Moon, PenBox, Plug, SignalHigh, Sun } from "lucide-react";
 
 export const sidebarLinks = [
   {
     icon: LayoutDashboard,
     title: "Lab",
     href: "/playground",
+  },
+  {
+    icon: PenBox,
+    title: "Quests",
+    href: "/quests",
   },
   {
     icon: Plug,
