@@ -6,10 +6,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import { Alert } from "react-native";
 
 import { Prompt } from "~/@types";
-import { createBaseTables } from "~/lib";
 import { promptService } from "~/services";
 
 export const PromptContext = createContext<null | {
@@ -28,13 +26,6 @@ export const PromptContextProvider = ({
 
   useEffect(() => {
     (async () => {
-      const setupStatus = await createBaseTables();
-
-      if (!setupStatus) {
-        setLoading(false);
-        Alert.alert("Error", "There was an error setting up the app.");
-      }
-
       const res = await promptService.readSavedPrompts();
       if (res) {
         setSavedPrompts(res);
