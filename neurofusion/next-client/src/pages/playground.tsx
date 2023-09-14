@@ -38,6 +38,14 @@ const PlaygroundPage: NextPage = () => {
 
   const [activeExperiment, setActiveExperiment] = React.useState(experiments[0]);
 
+  const handleExperimentSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const chosenExperiment = experiments.find((experiment) => experiment.name === e.target.value);
+
+    if (chosenExperiment) {
+      setActiveExperiment(chosenExperiment);
+    }
+  };
+
   return (
     <DashboardLayout>
       <h4 className="font-body text-lg">Choose Experiment</h4>
@@ -46,7 +54,7 @@ const PlaygroundPage: NextPage = () => {
         <select
           id="countries"
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-          onChange={(e) => setActiveExperiment(experiments.find((experiment) => experiment.name === e.target.value))}
+          onChange={handleExperimentSelect}
           value={activeExperiment.name}
         >
           {experiments.map((experiment) => {
