@@ -81,52 +81,6 @@
         },
       };
 
-      function countDownGen(seconds) {
-        document.getElementById("countDown").getElementsByTagName("p")[0].innerHTML = seconds + "s";
-        if (seconds === 0) {
-          document.getElementById("countDown").getElementsByTagName("p")[0].style.visibility = false;
-          return;
-        }
-        setTimeout(countDownGen, 1000, seconds - 1);
-      }
-
-      class experimentGenerator {
-        constructor(jsPsych, trialGenerator, instructions, feedBack = false, timeLimit = 0, trialCountLimit = 20) {
-          this.jsPsych = jsPsych;
-          this.trials = [];
-          if (instructions != null) this.trials.push(instructions);
-          console.log(this.trials);
-          this.trials.push(init);
-
-          let _fixation = fixation;
-
-          if (timeLimit !== 0) {
-            init.on_finish = function (data) {
-              data.unixTimestamp = Date.now();
-              setTimeout(jsPsych.endExperiment, timeLimit * 1000);
-              countDownGen(timeLimit);
-            };
-          }
-
-          if (feedBack) {
-            _fixation.trial_duration = 750;
-            _fixation.stimulus = function () {
-              return jsPsych.data.get().last(1).trials[0].correct ? "Correct" : "Incorrect";
-            };
-          }
-
-          for (let i = 0; i < trialCountLimit; ++i) {
-            this.trials.push(...trialGenerator.next().value);
-            if (!feedBack) this.trials.push(iti);
-            this.trials.push(_fixation);
-          }
-        }
-
-        run() {
-          jsPsych.run(this.trials);
-        }
-      }
-
       const jsPsych = initJsPsych({
         on_finish: function () {
           window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), "*");
@@ -136,47 +90,68 @@
       });
 
       // these are in HTML, so <br> means "line break"
-      var auditoryOddballInstructions = {
+      const auditoryOddballInstructions = {
         type: jsPsychInstructions,
         pages: [
-          "Welcome to the Auditory Oddball Experiment.",
-          "You will be played two tones randomly one of higher frequency and one of lower frequency.",
-          "Press 'Start EEG Recording' if you have your EEG device connected",
-          "Press any key to start the experiment.",
+          "Welcome to the Auditory Oddball Experiment!",
+          "Get Ready: Find a quiet place and put on your headphones.</br> Make sure you're comfortable and ready to focus.",
+          "Listen Up: You'll hear a series of sounds through your headphones.</br>Most of these sounds will be the same, like a regular beep or tone (we call this the `standard` sound)",
+          "Spot the Oddball: Every now and then, you'll hear a different sound, which we'll call the `oddball` sound.</br>This sound might be a bit different in pitch or tone compared to the regular beep.",
+          "Your Task: Your job is simple – pay attention!</br>Try to notice and remember when you hear the oddball sound amidst the regular beeps.",
+          "Start EEG Recording: If you have your EEG device connected",
         ],
         show_clickable_nav: true,
       };
 
-      function* auditoryOddballGen() {
-        while (true) {
-          let stimulus;
-          if (Math.random() < 0.5) {
-            stimulus = "./assets/sounds/1024hz.mp3";
-          } else {
-            stimulus = "./assets/sounds/1920hz.mp3";
-          }
-          const trial = {
-            type: jsPsychAudioKeyboardResponse,
-            stimulus: stimulus,
-            choices: "NO_KEYS",
-            trial_ends_after_audio: true,
-          };
+      // Define the standard and oddball stimuli
+      const standardStimulus = {
+        type: jsPsychAudioKeyboardResponse,
+        stimulus: "./assets/sounds/1024hz.mp3",
+        prompt: "x",
+        choices: "NO_KEYS",
+        trial_ends_after_audio: true,
+      };
+      const oddballStimulus = {
+        type: jsPsychAudioKeyboardResponse,
+        stimulus: "./assets/sounds/1920hz.mp3",
+        prompt: "o",
+        choices: "NO_KEYS",
+        trial_ends_after_audio: true,
+      };
 
-          yield [trial];
+      const trials = [];
+      trials.push(auditoryOddballInstructions);
+      trials.push(init);
+
+      /**
+       * Generate the trial sequence
+       */
+      const numberOfSequences = 20;
+
+      for (let i = 0; i < numberOfSequences; i++) {
+        // Generate three standard stimuli at the beginning
+        for (let i = 0; i < 3; i++) {
+          trials.push(standardStimulus);
+          trials.push(iti);
+          trials.push(fixation);
+        }
+
+        // Generate the oddball stimulus at a random position between 4th and 9th
+        const oddballPosition = Math.floor(Math.random() * 6) + 3;
+
+        // Insert the oddball stimulus at the chosen position
+        for (let i = 3; i <= 8; i++) {
+          if (i === oddballPosition) {
+            trials.push(oddballStimulus);
+          } else {
+            trials.push(standardStimulus);
+          }
+          trials.push(iti);
+          trials.push(fixation);
         }
       }
 
-      let experimentIntance = new experimentGenerator(
-        jsPsych,
-        auditoryOddballGen(),
-        (instructions = auditoryOddballInstructions),
-        (feedBack = false),
-        (timeLimit = 30),
-        (trialCountLimit = 20)
-      );
-      experimentIntance.run();
-      // js
-      // jsPsych.data.displayData('csv')
+      jsPsych.run(trials);
     </script>
   </body>
 </html>

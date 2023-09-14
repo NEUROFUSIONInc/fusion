@@ -25,7 +25,8 @@ const PlaygroundPage: NextPage = () => {
     {
       id: 3,
       name: "Auditory Oddball - ERP, P300",
-      description: "Auditory Oddball - ERP, P300",
+      description:
+        "We are keen to understand how our brains react when something unexpected happens. They're particularly interested in a brain wave called the 'P300 wave'. This wave is like a signal your brain sends when it recognizes a change in the pattern of sounds. It usually occurs around 300 milliseconds after your brain registers the oddball sound. Start the experiment to see how your brain responsds!",
       url: "/experiments/auditory_oddball.html",
     },
     // {
@@ -48,9 +49,9 @@ const PlaygroundPage: NextPage = () => {
 
   return (
     <DashboardLayout>
-      <h4 className="font-body text-lg">Choose Experiment</h4>
+      <h4 className="font-body text-lg">Playground</h4>
       <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-        Select an option
+        Select activity:
         <select
           id="countries"
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
