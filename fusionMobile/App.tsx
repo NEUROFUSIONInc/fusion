@@ -297,6 +297,7 @@ function App() {
             <PortalProvider>
               {showOnboarding && <OnboardingNavigator />}
               {!showOnboarding && <CustomNavigation />}
+              {/* <CustomNavigation /> */}
             </PortalProvider>
           </PromptContextProvider>
         </QueryClientProvider>
