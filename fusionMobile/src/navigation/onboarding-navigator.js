@@ -24,7 +24,7 @@ const slides = [
     title: "See How Your Body Changes In the Moment",
     description:
       "Author and participate in engaging experiments while simultaneously recording EEG (electroencephalogram) data on the go",
-    image: require("../../assets/slide-one.png"),
+    image: require("../../assets/slide-four.png"),
   },
 ];
 
