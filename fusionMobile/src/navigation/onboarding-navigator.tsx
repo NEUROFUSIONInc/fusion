@@ -28,46 +28,42 @@ const slides = [
   },
 ];
 
+const OnboardPromptScreen = () => {
+  return (
+    <View>
+      <View className="flex justify-center items-center mt-6">
+        <Text className="font-sans-bold text-center text-white text-base pb-2">
+          What’s been top of mind for you lately
+        </Text>
+        <Text className="font-sans-light max-w-xs text-center text-white text-base">
+          We will use this to suggest you prompts
+        </Text>
+      </View>
+      {/* Add content for the new screen */}
+    </View>
+  );
+};
+
 export const OnboardingNavigator = () => {
   const [nextStep, setNextStep] = useState(1);
+  const [onboardingPromptScreen, setOnboardingPromptScreen] = useState(false);
 
   const handleNextSlide = () => {
     if (nextStep < slides.length) {
       setNextStep(nextStep + 1);
+      setOnboardingPromptScreen(false);
     }
   };
 
   const handleBackSlide = () => {
     if (nextStep > 1) {
       setNextStep(nextStep - 1);
+      setOnboardingPromptScreen(false);
     }
   };
 
   const handleInitialPrompt = () => {
-    alert("hi");
-  };
-
-  const renderHeader = () => {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingHorizontal: 16,
-        }}
-      >
-        {nextStep > 1 ? (
-          <Pressable onPress={handleBackSlide}>
-            <Text className="text-white text-base">Back</Text>
-          </Pressable>
-        ) : (
-          <View />
-        )}
-        <Pressable onPress={() => {}}>
-          <Text className="text-white text-base">Skip</Text>
-        </Pressable>
-      </View>
-    );
+    setOnboardingPromptScreen(true);
   };
 
   const renderSlide = () => {
@@ -76,21 +72,34 @@ export const OnboardingNavigator = () => {
       <View style={{ flex: 1 }}>
         <View
           style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 16,
+          }}
+        >
+          {nextStep > 1 ? (
+            <Pressable onPress={handleBackSlide}>
+              {/* <Text className="text-white text-base">Back</Text> */}
+              <Image
+                style={{ resizeMode: "contain", width: 40, height: 35 }}
+                source={require("../../assets/arrow-left.png")}
+              />
+            </Pressable>
+          ) : (
+            <View />
+          )}
+          <Pressable onPress={() => setOnboardingPromptScreen(true)}>
+            <Text className="text-white text-base">Skip</Text>
+          </Pressable>
+        </View>
+        <View
+          style={{
             justifyContent: "center",
             marginTop: 27,
             alignItems: "center",
           }}
         >
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              color: "#fff",
-              textAlign: "center",
-              width: "80%",
-              lineHeight: 28,
-            }}
-          >
+          <Text className="font-sans-bold max-w-xs text-center text-white text-lg">
             {slide.title}
           </Text>
         </View>
@@ -117,15 +126,7 @@ export const OnboardingNavigator = () => {
               paddingHorizontal: 24,
             }}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: "#00050C",
-                textAlign: "center",
-                lineHeight: 24,
-              }}
-            >
+            <Text className="font-sans-medium text-center text-dark text-base">
               {slide.description}
             </Text>
             <View
@@ -185,8 +186,7 @@ export const OnboardingNavigator = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {renderHeader()}
-      {renderSlide()}
+      {onboardingPromptScreen ? <OnboardPromptScreen /> : renderSlide()}
     </View>
   );
 };
