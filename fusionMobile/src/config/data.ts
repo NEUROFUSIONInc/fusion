@@ -50,6 +50,53 @@ export const categories = [
   },
 ];
 
+export const onboardingQuickAddPrompts: Prompt[] = [
+  // Mental Health
+  {
+    uuid: uuidv4(),
+    promptText: "Did you practice any form of self-care today?",
+    responseType: "yesno",
+    notificationConfig_days: {
+      sunday: false,
+      monday: true,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+    },
+    notificationConfig_startTime: "22:00",
+    notificationConfig_endTime: "22:02",
+    notificationConfig_countPerDay: 1,
+    additionalMeta: {
+      category: "Self-Care",
+      isNotificationActive: true,
+    },
+  },
+  {
+    uuid: uuidv4(),
+    promptText:
+      "On a scale of 1-10, how would you rate your current stress level?",
+    responseType: "number",
+    notificationConfig_days: {
+      sunday: false,
+      monday: true,
+      tuesday: true,
+      wednesday: false,
+      thursday: false,
+      friday: true,
+      saturday: false,
+    },
+    notificationConfig_startTime: "11:00",
+    notificationConfig_endTime: "22:00",
+    notificationConfig_countPerDay: 3,
+    additionalMeta: {
+      category: "Mental Health",
+      isNotificationActive: true,
+    },
+  },
+];
+
 export const quickAddPrompts: Prompt[] = [
   // Mental Health
   {

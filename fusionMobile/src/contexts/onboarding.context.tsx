@@ -11,7 +11,7 @@ export const OnboardingContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
@@ -20,7 +20,7 @@ export const OnboardingContextProvider = ({
       if (onboardingViewed !== "true") {
         setShowOnboarding(true);
       } else {
-        setShowOnboarding(false);
+        setShowOnboarding(true);
       }
     })();
   }, []);
