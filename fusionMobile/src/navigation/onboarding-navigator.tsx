@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, Image } from "react-native";
 
+import { Button } from "~/components/button";
+
 const slides = [
   {
     title: "Real-time Tracking and Feedback through Experience Sampling",
@@ -30,7 +32,7 @@ const slides = [
 
 const OnboardPromptScreen = () => {
   return (
-    <View>
+    <View className="px-8">
       <View className="flex justify-center items-center mt-6">
         <Text className="font-sans-bold text-center text-white text-base pb-2">
           What’s been top of mind for you lately
@@ -40,6 +42,14 @@ const OnboardPromptScreen = () => {
         </Text>
       </View>
       {/* Add content for the new screen */}
+      <View>
+        <Button
+          title="Continue"
+          className="m-0 px-4 py-2 self-center "
+          fullWidth
+          // onPress={onClick}
+        />
+      </View>
     </View>
   );
 };
