@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Pressable, Image } from "react-native";
 
 import { Button } from "~/components/button";
+import { OnboardingContext } from "~/contexts";
 
 const slides = [
   {
@@ -31,6 +32,7 @@ const slides = [
 ];
 
 const OnboardPromptScreen = () => {
+  const onboardingContext = React.useContext(OnboardingContext);
   return (
     <View className="px-8">
       <View className="flex justify-center items-center mt-6">
@@ -47,7 +49,9 @@ const OnboardPromptScreen = () => {
           title="Continue"
           className="m-0 px-4 py-2 self-center "
           fullWidth
-          // onPress={onClick}
+          onPress={() => {
+            onboardingContext?.setShowOnboarding(false);
+          }}
         />
       </View>
     </View>

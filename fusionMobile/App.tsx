@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import React, { useState } from "react";
+import React from "react";
 import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
@@ -16,7 +16,11 @@ import { CustomNavigation, OnboardingNavigator } from "./src/navigation";
 import { appInsights, maskPromptId } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
-import { PromptContextProvider, AccountContext } from "~/contexts";
+import {
+  PromptContextProvider,
+  AccountContext,
+  OnboardingContext,
+} from "~/contexts";
 import { notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
@@ -112,6 +116,7 @@ function App() {
   >();
   const navigation = useNavigation();
   const accountContext = React.useContext(AccountContext);
+  const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
     // validate permission status for user
@@ -266,26 +271,13 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    (async () => {
-      const onboardingViewed = await AsyncStorage.getItem("onboarding_viewed");
-
-      if (onboardingViewed !== "true") {
-        setShowOnboarding(true);
-      } else {
-        setShowOnboarding(false);
-      }
-    })();
-  }, []);
-
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
-  React.useEffect(() => {
     appInsights.trackEvent(
       { name: "app_started" },
       {
         userNpub: accountContext?.userNpub,
       }
     );
+    console.log(onboardingContext);
   }, []);
 
   return (
@@ -295,8 +287,8 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <PromptContextProvider>
             <PortalProvider>
-              {showOnboarding && <OnboardingNavigator />}
-              {!showOnboarding && <CustomNavigation />}
+              {onboardingContext?.showOnboarding && <OnboardingNavigator />}
+              {!onboardingContext?.showOnboarding && <CustomNavigation />}
               {/* <CustomNavigation /> */}
             </PortalProvider>
           </PromptContextProvider>
