@@ -4,6 +4,7 @@ import { View, Text, Pressable, Image } from "react-native";
 
 import { LeftArrow } from "../components/icons";
 
+import { Input } from "~/components";
 import { Button } from "~/components/button";
 import { OnboardingContext } from "~/contexts";
 
@@ -35,9 +36,13 @@ const slides = [
 ];
 
 const OnboardPromptScreen = () => {
+  const [onboardingPromptScreen, setOnboardingPromptScreen] = useState("");
   const onboardingContext = React.useContext(OnboardingContext);
+
+  console.log(onboardingPromptScreen);
+
   return (
-    <View className="px-8">
+    <View className="px-8 flex-1 justify-between">
       <View className="flex justify-center items-center mt-6">
         <Text className="font-sans-bold text-center text-white text-base pb-2">
           What’s been top of mind for you lately
@@ -45,17 +50,28 @@ const OnboardPromptScreen = () => {
         <Text className="font-sans-light max-w-xs text-center text-white text-base">
           We will use this to suggest you prompts
         </Text>
+        <Input
+          size="lg"
+          placeholder="I want to be more energetic about work"
+          value={onboardingPromptScreen}
+          className="mt-6"
+          onChangeText={setOnboardingPromptScreen}
+          fullWidth
+        />
       </View>
       {/* Add content for the new screen */}
-      <View className="">
+      <View className="mb-10">
         <Button
           title="Continue"
-          className="m-0 px-4 py-2 self-center"
+          className="m-0 px-4 py-2 self-center mb-4"
           fullWidth
           onPress={() => {
             onboardingContext?.setShowOnboarding(false);
           }}
         />
+        <Pressable>
+          <Text className="text-white text-base text-center">Cancel</Text>
+        </Pressable>
       </View>
     </View>
   );
