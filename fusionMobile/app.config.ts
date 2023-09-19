@@ -44,6 +44,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     appInsightsConnectionString:
       process.env.APP_INSIGHTS_CONNECTION_STRING ??
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+    fusionBackendUrl: "https://neurofusion-backend.azurewebsites.net",
+    fusionRelayUrl: "wss://relay.usefusion.ai",
+    fusionNostrPublicKey:
+      "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
   },
   plugins: [["expo-notifications", { icon: "./assets/notification-icon.png" }]],
   owner: "oreogundipe",

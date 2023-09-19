@@ -2,6 +2,7 @@ import "./globals.js";
 import { registerRootComponent } from "expo";
 import React from "react";
 import { Alert } from "react-native";
+import PolyfillCrypto from "react-native-webview-crypto";
 
 import App from "./App.tsx";
 import { NavigationContainer } from "./src/navigation/navigation-container.tsx";
@@ -18,11 +19,15 @@ import { createBaseTables } from "~/lib";
 
 const MainApp = () => {
   return (
-    <NavigationContainer>
-      <AccountContextProvider>
-        <App />
-      </AccountContextProvider>
-    </NavigationContainer>
+    <>
+      {/* Added to support window.crypto.subtle calls required for nostr */}
+      <PolyfillCrypto />
+      <NavigationContainer>
+        <AccountContextProvider>
+          <App />
+        </AccountContextProvider>
+      </NavigationContainer>
+    </>
   );
 };
 

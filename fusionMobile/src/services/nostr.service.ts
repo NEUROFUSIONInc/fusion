@@ -1,4 +1,13 @@
-import { generatePrivateKey, getPublicKey, nip19 } from "nostr-tools";
+import axios from "axios";
+import dayjs from "dayjs";
+import Constants from "expo-constants";
+import {
+  generatePrivateKey,
+  getPublicKey,
+  nip19,
+  nip04,
+  relayInit,
+} from "nostr-tools";
 
 import { UserAccount } from "~/@types";
 import { db } from "~/lib";
@@ -99,6 +108,76 @@ export class NostrService {
         return newNostrAccount;
       }
       return null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  public getApiToken = async (userDetails: UserAccount) => {
+    // TODO: save fetched token in secure storage & check if token is active before requesting a new one
+    let serverPublicKey = "";
+    let nostrRelayUrl = "";
+    let fusionBackendUrl = "";
+    if (Constants.expoConfig?.extra) {
+      serverPublicKey = Constants.expoConfig.extra.fusionNostrPublicKey;
+      nostrRelayUrl = Constants.expoConfig.extra.fusionRelayUrl;
+      fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
+    }
+    if (!serverPublicKey || !nostrRelayUrl) {
+      return null;
+    }
+
+    try {
+      const loginTimestamp = dayjs().unix();
+
+      const relay = relayInit(nostrRelayUrl);
+      relay.on("connect", () => {
+        console.log(`connected to ${relay.url}`);
+      });
+      relay.on("error", () => {
+        console.log(`failed to connect to ${relay.url}`);
+      });
+      await relay.connect();
+
+      const sub = relay.sub([
+        {
+          authors: [serverPublicKey!],
+          kinds: [4],
+          "#p": [userDetails.pubkey],
+          since: loginTimestamp,
+        },
+      ]);
+
+      const res = await axios.post(
+        `${fusionBackendUrl}/api/nostrlogin`,
+        { pubkey: userDetails.pubkey },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-type": "application/json",
+          },
+        }
+      );
+
+      const authToken: string = await (async () => {
+        return new Promise((resolve) => {
+          sub.on("event", async (event) => {
+            const decoded = await nip04.decrypt(
+              userDetails.privkey,
+              serverPublicKey!,
+              event.content
+            );
+            resolve(decoded);
+          });
+        });
+      })();
+
+      if (res.status === 200 && authToken) {
+        return authToken;
+      } else {
+        return null;
+      }
     } catch (error) {
       console.log(error);
       return null;
