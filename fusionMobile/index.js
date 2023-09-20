@@ -8,6 +8,7 @@ import App from "./App.tsx";
 import { NavigationContainer } from "./src/navigation/navigation-container.tsx";
 
 import { AccountContextProvider } from "~/contexts/account.context.tsx";
+import { OnboardingContextProvider } from "~/contexts/onboarding.context.tsx";
 import { createBaseTables } from "~/lib";
 
 (async () => {
@@ -23,9 +24,11 @@ const MainApp = () => {
       {/* Added to support window.crypto.subtle calls required for nostr */}
       <PolyfillCrypto />
       <NavigationContainer>
-        <AccountContextProvider>
-          <App />
-        </AccountContextProvider>
+        <OnboardingContextProvider>
+          <AccountContextProvider>
+            <App />
+          </AccountContextProvider>
+        </OnboardingContextProvider>
       </NavigationContainer>
     </>
   );

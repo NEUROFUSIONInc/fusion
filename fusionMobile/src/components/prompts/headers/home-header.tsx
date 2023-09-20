@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
@@ -8,13 +9,14 @@ import { AccountContext } from "~/contexts";
 
 export const HomeHeader = () => {
   const accountContext = React.useContext(AccountContext);
+  const navigation = useNavigation<any>();
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
       <Pressable
         className="flex flex-row vertical-center"
         onPress={() => {
-          console.log(accountContext?.userNpub);
+          navigation.navigate("SettingsPage");
         }}
       >
         <Person />
@@ -29,7 +31,9 @@ export const HomeHeader = () => {
         variant="ghost"
         size="icon"
         leftIcon={<Settings />}
-        onPress={() => console.log("nothing yet")}
+        onPress={() => {
+          navigation.navigate("SettingsPage");
+        }}
       />
     </View>
   );
