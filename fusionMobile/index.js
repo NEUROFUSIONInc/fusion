@@ -21,12 +21,13 @@ import { createBaseTables } from "~/lib";
 const MainApp = () => {
   return (
     <>
-      {/* Added to support window.crypto.subtle calls required for nostr */}
-      <PolyfillCrypto />
       <NavigationContainer>
         <OnboardingContextProvider>
           <AccountContextProvider>
-            <App />
+            <App>
+              {/* Added to support window.crypto.subtle calls required for nostr */}
+              <PolyfillCrypto />
+            </App>
           </AccountContextProvider>
         </OnboardingContextProvider>
       </NavigationContainer>
