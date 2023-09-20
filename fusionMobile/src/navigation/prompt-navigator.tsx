@@ -14,7 +14,6 @@ import {
   EditPromptScreen,
   PromptEntryScreen,
   QuickAddPromptsScreen,
-  OnboardingPromptScreen,
 } from "~/pages";
 
 export type PromptStackParamList = {
@@ -65,11 +64,6 @@ export const PromptStack = () => {
         name="QuickAddPrompts"
         component={QuickAddPromptsScreen}
         options={{ header: () => <QuickAddPromptsHeader /> }}
-      />
-      <Stack.Screen
-        name="OnboardingPrompt"
-        component={OnboardingPromptScreen}
-        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

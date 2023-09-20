@@ -52,6 +52,7 @@ export const Tags: Story = {
       <Tag {...props} isActive />
       <Tag {...props} title="Mental Health" />
       <Tag {...props} title="Spiritual Practice" />
+      <Tag {...props} title="Suggested" />
     </View>
   ),
 };

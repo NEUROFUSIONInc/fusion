@@ -4,6 +4,11 @@ import { Prompt } from "~/@types";
 
 export const categories = [
   {
+    name: "Suggested",
+    color: "#3FC0CB",
+    icon: "⭐️",
+  },
+  {
     name: "Mental Health",
     color: "#FFC0CB",
     icon: "🧠",
@@ -50,11 +55,10 @@ export const categories = [
   },
 ];
 
-export const onboardingQuickAddPrompts: Prompt[] = [
-  // Mental Health
+export const suggestedPrompts: Prompt[] = [
   {
     uuid: uuidv4(),
-    promptText: "Did you practice any form of self-care today?",
+    promptText: "Mediation",
     responseType: "yesno",
     notificationConfig_days: {
       sunday: false,
@@ -69,14 +73,34 @@ export const onboardingQuickAddPrompts: Prompt[] = [
     notificationConfig_endTime: "22:02",
     notificationConfig_countPerDay: 1,
     additionalMeta: {
-      category: "Self-Care",
+      category: "Suggested",
       isNotificationActive: true,
     },
   },
   {
     uuid: uuidv4(),
-    promptText:
-      "On a scale of 1-10, how would you rate your current stress level?",
+    promptText: "Sleeping",
+    responseType: "yesno",
+    notificationConfig_days: {
+      sunday: false,
+      monday: true,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+    },
+    notificationConfig_startTime: "22:00",
+    notificationConfig_endTime: "22:02",
+    notificationConfig_countPerDay: 1,
+    additionalMeta: {
+      category: "Suggested",
+      isNotificationActive: true,
+    },
+  },
+  {
+    uuid: uuidv4(),
+    promptText: "Walking",
     responseType: "number",
     notificationConfig_days: {
       sunday: false,
@@ -91,7 +115,7 @@ export const onboardingQuickAddPrompts: Prompt[] = [
     notificationConfig_endTime: "22:00",
     notificationConfig_countPerDay: 3,
     additionalMeta: {
-      category: "Mental Health",
+      category: "Suggested",
       isNotificationActive: true,
     },
   },

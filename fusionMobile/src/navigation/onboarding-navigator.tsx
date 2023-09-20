@@ -39,8 +39,6 @@ const OnboardPromptScreen = () => {
   const [onboardingPromptScreen, setOnboardingPromptScreen] = useState("");
   const onboardingContext = React.useContext(OnboardingContext);
 
-  console.log(onboardingPromptScreen);
-
   return (
     <View className="px-8 flex-1 justify-between">
       <View className="flex justify-center items-center mt-6">
@@ -99,7 +97,7 @@ export const OnboardingNavigator = () => {
   };
 
   const handleInitialPrompt = () => {
-    console.log("test");
+    onboardingContext?.setShowOnboarding(false);
   };
 
   const renderSlide = () => {
