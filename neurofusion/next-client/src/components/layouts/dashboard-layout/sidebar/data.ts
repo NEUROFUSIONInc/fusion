@@ -6,26 +6,26 @@ export const sidebarLinks = [
     title: "Lab",
     href: "/playground",
   },
-  {
-    icon: PenBox,
-    title: "Quests",
-    href: "/quests",
-  },
+  // {
+  //   icon: PenBox,
+  //   title: "Quests",
+  //   href: "/quests",
+  // },
   {
     icon: Plug,
     title: "Integrations",
     href: "/integrations",
   },
-  {
-    icon: HardDrive,
-    title: "Datasets",
-    href: "/datasets",
-  },
-  {
-    icon: SignalHigh,
-    title: "Analysis",
-    href: "#",
-  },
+  // {
+  //   icon: HardDrive,
+  //   title: "Datasets",
+  //   href: "/datasets",
+  // },
+  // {
+  //   icon: SignalHigh,
+  //   title: "Analysis",
+  //   href: "#",
+  // },
 ];
 
 export const appearanceModes = [

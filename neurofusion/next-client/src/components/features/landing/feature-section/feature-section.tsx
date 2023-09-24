@@ -69,7 +69,7 @@ export const FeatureSection: FC = () => {
                 className="mt-4"
                 fullWidth
               >
-                Schedule a call with us
+                Get started
               </ButtonLink>
             </div>
           </div>
@@ -81,11 +81,11 @@ export const FeatureSection: FC = () => {
               <FusionFeature feature={fusionFeatures[2]} />
               <ButtonLink
                 intent="outlined"
-                href="https://github.com/neurofusioninc"
+                href="https://usefusion.app/playground"
                 size="xl"
                 className="mt-4 w-full md:w-11/12"
               >
-                Visit our Github
+                Get started
               </ButtonLink>
             </div>
 
