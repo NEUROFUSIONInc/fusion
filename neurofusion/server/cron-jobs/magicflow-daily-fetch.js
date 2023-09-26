@@ -21,7 +21,7 @@ const job = async () => {
     console.log(`MAGICFLOW_DAILY_FETCH: running on ${dayjs().toString()}`);
 
     const magicflowProvider = await db.Provider.findOne({
-      where: { name: providerName },
+      where: { name: "Magicflow" },
     });
 
     if (!magicflowProvider) {

@@ -11,11 +11,12 @@ const userController = require("./controllers/user");
 const storageController = require("./controllers/storage");
 const magicFlowController = require("./controllers/magicflow");
 const neurosityController = require("./controllers/neurosity");
-const vitalController = require("./controllers/vital");
+// const vitalController = require("./controllers/vital");
+const insightController = require("./controllers/insight");
 
 // import cron runners
 const magicFlowCron = require("./cron-jobs/magicflow-daily-fetch");
-const vitalCron = require("./cron-jobs/vital-daily-fetch");
+// const vitalCron = require("./cron-jobs/vital-daily-fetch");
 
 // create express app
 const app = express();
@@ -64,9 +65,9 @@ app.get("/api/magicflow/get-token", magicFlowController.fetchToken);
 /**
  * Vital Routes
  */
-app.get("/api/vital/get-token", vitalController.generateToken);
+// app.get("/api/vital/get-token", vitalController.generateToken);
 
-app.get("/api/vital/get-devices", vitalController.getDevices);
+// app.get("/api/vital/get-devices", vitalController.getDevices);
 
 /**
  * Storage Routes
@@ -98,6 +99,11 @@ app.get(
 );
 
 /**
+ * Language Model Calls
+ */
+app.post("/api/getpromptsummary", insightController.getPromptSummary);
+
+/**
  * Start server
  */
 app.listen(port, async () => {
@@ -108,5 +114,5 @@ app.listen(port, async () => {
 
   // Schedule cron jobs after db is connected (for jobs that require db query)
   cron.schedule(magicFlowCron.expression, magicFlowCron.job);
-  cron.schedule(vitalCron.expression, vitalCron.job);
+  // cron.schedule(vitalCron.expression, vitalCron.job);
 });
