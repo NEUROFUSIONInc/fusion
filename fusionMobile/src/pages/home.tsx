@@ -6,7 +6,15 @@ import React from "react";
 import { View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { Screen, Button, ChevronLeft, ChevronRight } from "~/components";
+import {
+  Screen,
+  Button,
+  ChevronLeft,
+  ChevronRight,
+  Reload,
+  ThumbsUp,
+  ThumbsDown,
+} from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
@@ -109,7 +117,7 @@ export function HomeScreen() {
 
         {/* show each category at a time */}
         {/* {savedPrompts && savedPrompts.length > 0 && ( */}
-        <View className="flex flex-col w-full bg-secondary-900">
+        <View className="flex flex-col w-full bg-secondary-900 rounded">
           <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
             {/* this is where the header of the chart is */}
             <Button
@@ -139,6 +147,36 @@ export function HomeScreen() {
             >
               {summaryText}
             </Text>
+          </View>
+
+          <View className="flex flex-row w-full justify-between p-5">
+            <Button
+              variant="ghost"
+              size="icon"
+              leftIcon={<Reload />}
+              onPress={() => {
+                console.log("reloading insight");
+              }}
+            />
+
+            <View className="flex flex-row gap-x-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                leftIcon={<ThumbsUp />}
+                onPress={() => {
+                  console.log("thumbs up");
+                }}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                leftIcon={<ThumbsDown />}
+                onPress={() => {
+                  console.log("thumbs down");
+                }}
+              />
+            </View>
           </View>
         </View>
 
