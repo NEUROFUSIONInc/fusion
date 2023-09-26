@@ -80,12 +80,12 @@ export const FeatureSection: FC = () => {
             <div>
               <FusionFeature feature={fusionFeatures[2]} />
               <ButtonLink
-                intent="outlined"
-                href="https://github.com/neurofusioninc"
+                intent="filled"
+                href="https://usefusion.app/playground"
                 size="xl"
                 className="mt-4 w-full md:w-11/12"
               >
-                Visit our Github
+                Use Fusion Explorer!
               </ButtonLink>
             </div>
 
