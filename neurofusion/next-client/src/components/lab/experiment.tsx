@@ -94,20 +94,23 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         </>
       )}
 
-      <div className="my-5">
-        <Button
-          onClick={() => {
-            setShowSignalQuality(!showSignalQuality);
-          }}
-        >
-          {showSignalQuality ? "Hide" : "Show"} Signal Quality
-        </Button>
-        {deviceStatus === "online" && connectedDevice?.channelNames && showSignalQuality && (
-          <>
-            <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
-          </>
-        )}
-      </div>
+      {deviceStatus === "online" && connectedDevice?.channelNames && (
+        <div className="my-5">
+          <Button
+            onClick={() => {
+              setShowSignalQuality(!showSignalQuality);
+            }}
+          >
+            {showSignalQuality ? "Hide" : "Show"} Signal Quality
+          </Button>
+
+          {showSignalQuality && (
+            <>
+              <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
+            </>
+          )}
+        </div>
+      )}
       {/* add live signal quality */}
       {experiment.description && (
         <>
