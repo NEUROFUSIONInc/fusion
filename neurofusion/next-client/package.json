@@ -26,6 +26,8 @@
     "dayjs": "^1.11.9",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.6",
+    "echarts": "^5.4.3",
+    "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "lucide-react": "0.261.0",

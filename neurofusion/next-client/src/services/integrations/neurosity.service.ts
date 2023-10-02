@@ -34,6 +34,24 @@ class NeurosityService {
 
   async stopRecording() {
     this.recordingStatus = "stopped";
+
+    // write data to store for each series
+    writeDataToStore("rawBrainwaves", this.rawBrainwavesSeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("powerByBand", this.powerByBandSeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("signalQuality", this.signalQualitySeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("psd", this.fftSeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("accelerometer", this.accelerometerSeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("focus", this.focusSeries, this.recordingStartTimestamp.toString(), "download");
+    writeDataToStore("calm", this.calmSeries, this.recordingStartTimestamp.toString(), "download");
+
+    // empty series
+    this.rawBrainwavesSeries = [];
+    this.powerByBandSeries = [];
+    this.signalQualitySeries = [];
+    this.fftSeries = [];
+    this.focusSeries = [];
+    this.calmSeries = [];
+    this.accelerometerSeries = [];
   }
 
   async startRecording(channelNames: string[]) {
@@ -66,15 +84,6 @@ class NeurosityService {
           }
           this.rawBrainwavesSeries.push(brainwaveEntry);
         }
-      })
-      .add(() => {
-        console.log("stopped recording");
-        writeDataToStore(
-          "rawBrainwaves",
-          this.rawBrainwavesSeries,
-          this.recordingStartTimestamp.toString(),
-          "download"
-        );
       });
 
     /**
@@ -104,10 +113,6 @@ class NeurosityService {
         }
 
         this.powerByBandSeries.push(bandPowerObject);
-      })
-      .add(() => {
-        console.log("stopped recording powerByBand");
-        writeDataToStore("powerByBand", this.powerByBandSeries, this.recordingStartTimestamp.toString(), "download");
       });
 
     /**
@@ -129,15 +134,6 @@ class NeurosityService {
         }
 
         this.signalQualitySeries.push(signalQualityEntry);
-      })
-      .add(() => {
-        console.log("stopped recording signalQuality");
-        writeDataToStore(
-          "signalQuality",
-          this.signalQualitySeries,
-          this.recordingStartTimestamp.toString(),
-          "download"
-        );
       });
 
     /**
@@ -161,10 +157,6 @@ class NeurosityService {
         }
 
         this.fftSeries.push(fftEntry);
-      })
-      .add(() => {
-        console.log("stopped recording fft");
-        writeDataToStore("psd", this.fftSeries, this.recordingStartTimestamp.toString(), "download");
       });
 
     /**
@@ -175,15 +167,6 @@ class NeurosityService {
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((accelerometer) => {
         this.accelerometerSeries.push(accelerometer);
-      })
-      .add(() => {
-        console.log("stopped recording accelerometer");
-        writeDataToStore(
-          "accelerometer",
-          this.accelerometerSeries,
-          this.recordingStartTimestamp.toString(),
-          "download"
-        );
       });
 
     /**
@@ -194,10 +177,6 @@ class NeurosityService {
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((focus) => {
         this.focusSeries.push(focus);
-      })
-      .add(() => {
-        console.log("stopped recording focus");
-        writeDataToStore("focus", this.focusSeries, this.recordingStartTimestamp.toString(), "download");
       });
 
     /**
@@ -208,10 +187,6 @@ class NeurosityService {
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((calm) => {
         this.calmSeries.push(calm);
-      })
-      .add(() => {
-        console.log("stopped recording calm");
-        writeDataToStore("calm", this.calmSeries, this.recordingStartTimestamp.toString(), "download");
       });
   }
 }

@@ -10,6 +10,7 @@ import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
 
 import { IExperiment } from "~/@types";
+import SignalQuality from "./signalquality";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -18,6 +19,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   const [neurositySelectedDevice] = useState(getNeurositySelectedDevice());
   const [deviceStatus, setDeviceStatus] = useState("offline");
   const [connectedDevice, setConnectedDevice] = useState<DeviceInfo | null>(null);
+  const [showSignalQuality, setShowSignalQuality] = useState(true);
 
   const [sandboxData, setSandboxData] = useState("");
 
@@ -92,6 +94,20 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         </>
       )}
 
+      <div className="my-5">
+        <Button
+          onClick={() => {
+            setShowSignalQuality(!showSignalQuality);
+          }}
+        >
+          {showSignalQuality ? "Hide" : "Show"} Signal Quality
+        </Button>
+        {deviceStatus === "online" && connectedDevice?.channelNames && showSignalQuality && (
+          <>
+            <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
+          </>
+        )}
+      </div>
       {/* add live signal quality */}
       {experiment.description && (
         <>
