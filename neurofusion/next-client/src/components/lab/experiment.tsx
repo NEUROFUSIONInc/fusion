@@ -31,6 +31,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   async function stopNeurosityRecording() {
     neurosityService.stopRecording();
+    // log to app insights
   }
 
   useEffect(() => {

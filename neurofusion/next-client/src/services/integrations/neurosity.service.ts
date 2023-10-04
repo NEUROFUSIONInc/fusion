@@ -1,12 +1,25 @@
-import { Neurosity } from "@neurosity/sdk";
+import { Neurosity, WebBluetoothTransport } from "@neurosity/sdk";
 import { Epoch, PSD } from "@neurosity/sdk/dist/esm/types/brainwaves";
 import axios from "axios";
 import dayjs from "dayjs";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { takeWhile } from "rxjs";
+import * as path from "path";
+import * as Papa from "papaparse";
+import { promises as fsPromises } from "fs";
+import JSZip, { JSZipFileOptions } from "jszip";
+
+export declare enum STREAMING_MODE {
+  WIFI_ONLY = "wifi-only",
+  WIFI_WITH_BLUETOOTH_FALLBACK = "wifi-with-bluetooth-fallback",
+  BLUETOOTH_WITH_WIFI_FALLBACK = "bluetooth-with-wifi-fallback",
+}
 
 export const neurosity = new Neurosity({
   autoSelectDevice: false,
+  timesync: true,
+  // bluetoothTransport: new WebBluetoothTransport(),
+  // streamingMode: STREAMING_MODE.BLUETOOTH_WITH_WIFI_FALLBACK,
 });
 
 export interface PowerByBand {
@@ -28,6 +41,9 @@ class NeurosityService {
   calmSeries: any = [];
   accelerometerSeries: any = [];
 
+  // datastorage mode, fetch from localstorage...
+  dataStorageMode = "local"; // local | remote
+
   recordingStatus: "not-started" | "started" | "stopped" = "not-started";
 
   recordingStartTimestamp = 0;
@@ -35,25 +51,50 @@ class NeurosityService {
   async stopRecording() {
     this.recordingStatus = "stopped";
 
-    // write data to store for each series
-    writeDataToStore("rawBrainwaves", this.rawBrainwavesSeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("powerByBand", this.powerByBandSeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("signalQuality", this.signalQualitySeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("psd", this.fftSeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("accelerometer", this.accelerometerSeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("focus", this.focusSeries, this.recordingStartTimestamp.toString(), "download");
-    writeDataToStore("calm", this.calmSeries, this.recordingStartTimestamp.toString(), "download");
+    // call the download data as zip function
+    const datasetExport: DatasetExport = {
+      fileNames: [
+        "rawBrainwaves.csv",
+        "powerByBand.csv",
+        "signalQuality.csv",
+        "psd.csv",
+        "accelerometer.csv",
+        "focus.csv",
+        "calm.csv",
+      ],
+      dataSets: [
+        this.rawBrainwavesSeries,
+        this.powerByBandSeries,
+        this.signalQualitySeries,
+        this.fftSeries,
+        this.accelerometerSeries,
+        this.focusSeries,
+        this.calmSeries,
+      ],
+    };
 
-    // empty series
-    this.rawBrainwavesSeries = [];
-    this.powerByBandSeries = [];
-    this.signalQualitySeries = [];
-    this.fftSeries = [];
-    this.focusSeries = [];
-    this.calmSeries = [];
-    this.accelerometerSeries = [];
+    try {
+      console.log("exporting");
+      await downloadDataAsZip(
+        datasetExport,
+        `fusionExport_${this.recordingStartTimestamp}`,
+        dayjs.unix(this.recordingStartTimestamp)
+      );
+    } catch (e) {
+      console.log(e);
+    } finally {
+      // empty series
+      this.rawBrainwavesSeries = [];
+      this.powerByBandSeries = [];
+      this.signalQualitySeries = [];
+      this.fftSeries = [];
+      this.focusSeries = [];
+      this.calmSeries = [];
+      this.accelerometerSeries = [];
+    }
   }
 
+  // todo: log event to app insights
   async startRecording(channelNames: string[]) {
     this.recordingStartTimestamp = dayjs().unix();
 
@@ -189,6 +230,28 @@ class NeurosityService {
         this.calmSeries.push(calm);
       });
   }
+}
+
+export interface DatasetExport {
+  fileNames: string[];
+  dataSets: Array<any>;
+}
+
+async function downloadDataAsZip(datasetExport: DatasetExport, zipFileName: string, unixTimestamp: dayjs.Dayjs) {
+  const filePath = `${unixTimestamp.unix()}_${zipFileName}.zip`;
+
+  let zip = new JSZip();
+  for (let i = 0; i < datasetExport.dataSets.length; i++) {
+    const dataSet = datasetExport.dataSets[i];
+    zip.file(datasetExport.fileNames[i], dataSet, { binary: true });
+  }
+
+  // download the zip file
+  const downloadLink = document.createElement("a");
+  const blob = await zip.generateAsync({ type: "blob" });
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `${filePath}`;
+  downloadLink.click();
 }
 
 function convertToCSV(arr: any[]) {
