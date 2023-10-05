@@ -123,12 +123,17 @@ export default function SignalQuality({ channelNames, deviceStatus }) {
       <div id="sidebars" style={{ display: "flex" }}>
         <div style={{ width: "50%", textAlign: "center" }}>
           <ReactEcharts option={signalQualityChartOptions} />
-
           <p>
-            Signal quality thresholds:{" "}
-            <strong>Great: between 1.5 and 10, Good: between 10 and 15, Poor: over 15</strong>
+            Signal quality is a measure of change in voltage across electrodes on headset. Example measure - standard
+            deviation
           </p>
-          <p>Sit still for about 10 seconds after adjusting to see signal average</p>
+          <p>Sit still for about 5 seconds after adjusting to see signal average</p>
+          <p>
+            <strong>Great</strong>: between 1.5 and 10, <strong>Good</strong>: between 10 and 15, <strong>Poor:</strong>{" "}
+            over 15
+          </p>
+          <br />
+          Once you have a couple green bars, across most channels you can start the experiment
         </div>
       </div>
     </div>

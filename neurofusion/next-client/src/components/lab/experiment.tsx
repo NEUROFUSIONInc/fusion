@@ -73,6 +73,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   return (
     <div>
+      {/* this needs to move to it's own component */}
       {!connectedDevice && (
         <>
           <p>Head over to the integrations page to connect a Neurosity Device</p>
@@ -112,61 +113,65 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           )}
         </div>
       )}
-      {/* add live signal quality */}
-      {experiment.description && (
-        <>
-          <h1 style={{ marginTop: 10 }}>Description:</h1>
-          <p>{experiment.description}</p>
-        </>
-      )}
-      {experiment.url && (
-        <div className="m-3">
-          <iframe
-            src={experiment.url}
-            style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
-            title={experiment.name}
-            allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
-            sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-          ></iframe>
-        </div>
-      )}
-      <>
-        {sandboxData !== "" && (
-          // <h1 style={{ marginTop: 10 }}>DATA:</h1>
-          <p>{JSON.stringify(sandboxData)}</p>
-        )}
 
-        {/* TODO: we need a section that throws an error if the eeg device isn't active */}
-        {deviceStatus === "online" && (
+      {/* {add live brain wave} */}
+
+      <div id="experiment-container" className="mt-5">
+        {experiment.description && (
           <>
-            {isRecording ? (
-              <Button
-                onClick={() => {
-                  // stop recording & save eeg data
-                  setIsRecording(false);
-
-                  // stop neurosity recording
-                  stopNeurosityRecording();
-                }}
-              >
-                Stop EEG Recording
-              </Button>
-            ) : (
-              <Button
-                onClick={async () => {
-                  // record eeg data
-                  setIsRecording(true);
-
-                  // start neurosity recording
-                  await startNeurosityRecording();
-                }}
-              >
-                Start EEG Recording
-              </Button>
-            )}
+            <h1 style={{ marginTop: 10 }}>Description:</h1>
+            <p>{experiment.description}</p>
           </>
         )}
-      </>
+        {experiment.url && (
+          <div className="m-3">
+            <iframe
+              src={experiment.url}
+              style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
+              title={experiment.name}
+              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
+              sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+            ></iframe>
+          </div>
+        )}
+        <>
+          {sandboxData !== "" && (
+            // <h1 style={{ marginTop: 10 }}>DATA:</h1>
+            <p>{JSON.stringify(sandboxData)}</p>
+          )}
+
+          {/* TODO: we need a section that throws an error if the eeg device isn't active */}
+          {deviceStatus === "online" && (
+            <>
+              {isRecording ? (
+                <Button
+                  onClick={() => {
+                    // stop recording & save eeg data
+                    setIsRecording(false);
+
+                    // stop neurosity recording
+                    stopNeurosityRecording();
+                  }}
+                >
+                  Stop EEG Recording
+                </Button>
+              ) : (
+                <Button
+                  onClick={async () => {
+                    // record eeg data
+                    setIsRecording(true);
+
+                    // start neurosity recording
+                    await startNeurosityRecording();
+                  }}
+                >
+                  Start EEG Recording
+                </Button>
+              )}
+            </>
+          )}
+        </>
+      </div>
     </div>
   );
 };

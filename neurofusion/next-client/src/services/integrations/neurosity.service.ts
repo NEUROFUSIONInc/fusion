@@ -41,6 +41,16 @@ class NeurosityService {
   calmSeries: any = [];
   accelerometerSeries: any = [];
 
+  // eventName = "";
+  // eventDescription = "";
+  // eventTags: string[] = [];
+
+  // constructor(eventName: string, eventDescription: string, eventTags: string[]) {
+  //   this.eventName = eventName;
+  //   this.eventDescription = eventDescription;
+  //   this.eventTags = eventTags;
+  // }
+
   // datastorage mode, fetch from localstorage...
   dataStorageMode = "local"; // local | remote
 
@@ -75,11 +85,7 @@ class NeurosityService {
 
     try {
       console.log("exporting");
-      await downloadDataAsZip(
-        datasetExport,
-        `fusionExport_${this.recordingStartTimestamp}`,
-        dayjs.unix(this.recordingStartTimestamp)
-      );
+      await downloadDataAsZip(datasetExport, `fusionExport`, dayjs.unix(this.recordingStartTimestamp));
     } catch (e) {
       console.log(e);
     } finally {
@@ -243,7 +249,8 @@ async function downloadDataAsZip(datasetExport: DatasetExport, zipFileName: stri
   let zip = new JSZip();
   for (let i = 0; i < datasetExport.dataSets.length; i++) {
     const dataSet = datasetExport.dataSets[i];
-    zip.file(datasetExport.fileNames[i], dataSet, { binary: true });
+    const content = convertToCSV(dataSet); // convert to csv format
+    zip.file(datasetExport.fileNames[i], content);
   }
 
   // download the zip file

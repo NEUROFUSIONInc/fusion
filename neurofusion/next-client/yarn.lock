@@ -4760,6 +4760,14 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brainflow@^5.10.1:
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/brainflow/-/brainflow-5.10.1.tgz#e443990a3c0743b51e08f9f63973e3f492eb48d0"
+  integrity sha512-GKqA/7MnkzllJvFrqTOIv97XWPx3xSOheXlQ3zbGPhnV6ze9R/DzPd47oN8D6BPT5aEJ09W5n3Wk3Gu+YyJo1g==
+  dependencies:
+    koffi "2.5.7"
+    lodash "4.17.21"
+
 brorand@^1.0.1, brorand@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/brorand/-/brorand-1.1.0.tgz"
@@ -8082,6 +8090,11 @@ klona@^2.0.4, klona@^2.0.6:
   resolved "https://registry.npmjs.org/klona/-/klona-2.0.6.tgz"
   integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
 
+koffi@2.5.7:
+  version "2.5.7"
+  resolved "https://registry.yarnpkg.com/koffi/-/koffi-2.5.7.tgz#1f96ccfc8b7dd9674687f6124194139b31390ce4"
+  integrity sha512-BQfUHG6hXJ8Wpd0kwl1n0jx3VPYN9F6yFCWEEUdyrBvb7YJBt5e762y5nQpbORkq5Tj96ZzriGIK9VCgY1qmGg==
+
 language-subtag-registry@~0.3.2:
   version "0.3.22"
   resolved "https://registry.npmjs.org/language-subtag-registry/-/language-subtag-registry-0.3.22.tgz"
@@ -8210,7 +8223,7 @@ lodash.merge@^4.6.2:
   resolved "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21:
+lodash@4.17.21, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

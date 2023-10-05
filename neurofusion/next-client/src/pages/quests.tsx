@@ -7,9 +7,10 @@ import { DashboardLayout, Meta } from "~/components/layouts";
 import { Button, Input } from "~/components/ui";
 
 const QuestsPage: NextPage = () => {
-  const [recepientNpubs, setRecepientNpubs] = React.useState<string>("");
-  const [promptConfig, setPromptConfig] = React.useState<string>("");
+  const [questTitle, setQuestTitle] = React.useState<string>("");
   const [questDescription, setQuestDescription] = React.useState<string>("");
+  const [promptConfig, setPromptConfig] = React.useState<string>("");
+  const [recepientNpubs, setRecepientNpubs] = React.useState<string>("");
   return (
     <DashboardLayout>
       <Meta
@@ -23,10 +24,22 @@ const QuestsPage: NextPage = () => {
 
         <div className="y-3 w-full">
           <Input
+            label="Title"
+            type="text"
+            size="lg"
+            // multiline
+            fullWidth
+            placeholder="Enter Purpose of Quest"
+            value={questTitle}
+            className="mb-2"
+            onChange={(e) => setQuestTitle(e.target.value)}
+          />
+
+          <Input
             label="Description"
             type="text"
             size="lg"
-            multiline
+            // multiline
             fullWidth
             placeholder="Enter Purpose of Quest"
             value={questDescription}
@@ -52,13 +65,13 @@ const QuestsPage: NextPage = () => {
             fullWidth
             placeholder="Enter Prompt Config (JSON)"
             value={promptConfig}
-            multiline
+            // multiline
             className="pt-4 h-40"
             onChange={(e) => setPromptConfig(e.target.value)}
           />
 
           <Button type="submit" size="lg" fullWidth className="mt-4">
-            Deploy
+            Save Quest
           </Button>
         </div>
       </div>

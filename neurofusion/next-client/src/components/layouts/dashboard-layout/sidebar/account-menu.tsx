@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Github, LifeBuoy, LogOut, Settings, User as UserIcon } from "lucide-react";
+import { ChevronsUpDown, Github, LifeBuoy, LogOut, Settings, User as UserIcon, Users2 } from "lucide-react";
 import Link from "next/link";
 import { User } from "next-auth";
 import React, { FC } from "react";
@@ -51,7 +51,7 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <Link href="#" className="inline-flex w-full items-center">
+            <Link href="/account" className="inline-flex w-full items-center">
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </Link>
@@ -64,6 +64,12 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link href="https://discord.gg/jaKG9KAG" target="_blank" className="inline-flex w-full items-center">
+            <Users2 className="mr-2 h-4 w-4" />
+            <span>Community</span>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem>
           <Link href="https://github.com/neurofusioninc" className="inline-flex w-full items-center">
             <Github className="mr-2 h-4 w-4" />
