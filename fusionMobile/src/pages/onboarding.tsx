@@ -4,45 +4,57 @@ import { View, Text, Pressable, Image } from "react-native";
 
 import { LeftArrow } from "../components/icons";
 
+import { Input } from "~/components";
 import { Button } from "~/components/button";
 import { OnboardingContext } from "~/contexts";
-
-const slides = [
-  {
-    title: "Real-time Tracking and Feedback through Experience Sampling",
-    description:
-      "Use experience sampling to track patterns over time, gather real-time feedback through simple response options.",
-    image: require("../../assets/onboarding/slide-one.png"),
-  },
-  {
-    title: "Data Analysis for Insights and Relationship Discovery",
-    description:
-      "Gain immediate insights into recorded data and uncover relationships between different data points",
-    image: require("../../assets/onboarding/slide-two.png"),
-  },
-  //   {
-  //     title: "Data Analysis for Insights and Relationship Discovery",
-  //     description:
-  //       "Gain immediate insights into recorded data and uncover relationships between different data points",
-  //     image: require("../../assets/onboarding/slide-two.png"),
-  //   },
-  //   {
-  //     title: "Connect Your Data Sources",
-  //     description:
-  //       "Connect your health devices, synced with Apple Health/Google Fit, to consolidate your health data.",
-  //     image: require("../../assets/onboarding/slide-three.png"),
-  //   },
-  //   {
-  //     title: "See How Your Body Changes In the Moment",
-  //     description:
-  //       "Author and participate in engaging experiments while simultaneously recording EEG (electroencephalogram) data on the go",
-  //     image: require("../../assets/onboarding/slide-four.png"),
-  //   },
-];
+import { appInsights } from "~/utils";
 
 export const OnboardingScreen = () => {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const onboardingContext = React.useContext(OnboardingContext);
+
+  const [onboardingEmail, setOnboardingEmail] = useState("");
+
+  const slides = [
+    {
+      title: "Engaging Personalized Prompts",
+      description:
+        "Manage and improve your wellbeing with customized prompts. You’ll get notified to respond to them based on times you set.",
+      image: require("../../assets/onboarding/engaging-prompts.png"),
+    },
+    {
+      title: "Your Prompts and Responses are saved locally on your device",
+      description:
+        "We're private by design. We've created an anonymous account for you. This is your identity on Fusion.",
+      image: require("../../assets/onboarding/prompt_responses.png"),
+    },
+    {
+      title: "Get summaries and recommendations with AI",
+      description:
+        "Fusion Copilot will send you summaries and suggested actions based on your responses over time.",
+      // image: require("../../assets/onboarding/fusion-copilot.png"),
+      image: require("../../assets/onboarding/intelligent_recommendations.png"),
+    },
+    {
+      title: "Stay in the loop",
+      description:
+        "Get updates from the team, on features, experiments and more. This is not linked to your fusion account, it’s only to send you mail.",
+      image: require("../../assets/onboarding/fusion-newsletter.png"),
+      hasInput: true,
+      onclick: () => {
+        if (onboardingEmail !== "") {
+          // make api call to add email to newsletter
+          appInsights.trackEvent({
+            name: "onboarding_newsletter",
+            properties: {
+              email: onboardingEmail,
+            },
+          });
+        }
+      },
+      buttonText: "Get updates",
+    },
+  ];
 
   const panActiveSlide = (direction: "left" | "right") => {
     if (direction === "left") {
@@ -76,26 +88,41 @@ export const OnboardingScreen = () => {
         ) : (
           <View />
         )}
-        <Pressable onPress={() => handleOnboardingComplete()}>
-          <Text className="text-white text-base">Skip</Text>
-        </Pressable>
+        {activeSlideIndex > 1 && (
+          <Pressable onPress={() => handleOnboardingComplete()}>
+            <Text className="text-white text-base">Skip</Text>
+          </Pressable>
+        )}
       </View>
       <View className="justify-center items-center mt-4">
         <Text className="font-sans-bold max-w-xs text-center text-white text-lg">
           {slides[activeSlideIndex].title}
         </Text>
       </View>
-      <Image
-        className="w-full"
-        style={{ resizeMode: "contain" }}
-        source={slides[activeSlideIndex].image}
-      />
+
+      <View className="item-center">
+        <Image
+          className="w-full h-4/5 mt-10"
+          style={{ resizeMode: "contain" }}
+          source={slides[activeSlideIndex].image}
+        />
+      </View>
 
       <View className="bg-white rounded-t-lg h-2/5 absolute bottom-0 pt-10 w-full">
         <View className="justify-between h-4/5 px-6">
           <Text className="font-sans-medium text-center text-dark text-lg">
             {slides[activeSlideIndex].description}
           </Text>
+
+          {slides[activeSlideIndex].hasInput && (
+            <Input
+              value={onboardingEmail}
+              className="my-5 border-2 border-tint rounded text-dark text-base leading-1.5"
+              onChangeText={setOnboardingEmail}
+              placeholder="I want to be more energetic about work"
+            />
+          )}
+
           <View className="flex-row justify-between items-center">
             <View className="flex-row justify-center items-center">
               {slides.map((_, index) => (
@@ -121,7 +148,11 @@ export const OnboardingScreen = () => {
               variant="primary"
               textColor="white"
               size="md"
-              onPress={() => {
+              onPress={async () => {
+                if (slides[activeSlideIndex].onclick) {
+                  await slides[activeSlideIndex].onclick!();
+                }
+
                 if (activeSlideIndex === slides.length - 1) {
                   handleOnboardingComplete();
                 } else {
@@ -129,7 +160,7 @@ export const OnboardingScreen = () => {
                 }
               }}
               className="bg-dark px-10 py-3"
-              title="Next"
+              title={slides[activeSlideIndex].buttonText ?? "Next"}
             />
           </View>
         </View>

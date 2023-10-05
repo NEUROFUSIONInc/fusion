@@ -11,7 +11,6 @@ import { AccountStack } from "./account-navigator";
 import { HomeStack } from "./home-navigator";
 import { InsightsStack } from "./insights-navigator";
 import { PromptStack } from "./prompt-navigator";
-import { QuestStack } from "./quest-navigator";
 
 import {
   Home as HomeIcon,
@@ -70,15 +69,15 @@ const tabs: TabType[] = [
     component: InsightsStack,
     label: "Insights",
   },
-  {
-    name: "QuestNavigator",
-    component: QuestStack,
-    label: "Quests",
-  },
+  // {
+  //   name: "QuestNavigator",
+  //   component: QuestStack,
+  //   label: "Quests",
+  // },
   {
     name: "Community",
     component: AccountStack,
-    label: "Community",
+    label: "Account",
   },
 ];
 
