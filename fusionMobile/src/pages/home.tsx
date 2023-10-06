@@ -67,6 +67,10 @@ export function HomeScreen() {
       (prompt) => prompt.additionalMeta?.category === category
     );
 
+    if (filteredPrompts.length === 0) {
+      return "You need to add prompts to this category in order to see insights.";
+    }
+
     const categoryPromptResponses: any = {};
     const pastWeekTimestamp = dayjs().subtract(7, "day").valueOf();
     await Promise.all(
