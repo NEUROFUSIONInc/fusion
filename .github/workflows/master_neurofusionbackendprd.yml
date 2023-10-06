@@ -31,7 +31,7 @@ jobs:
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./neurofusion/server -r
+        run: zip release.zip ./neurofusion/server -r -x "*node_modules*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3.1.2
@@ -55,7 +55,7 @@ jobs:
       - name: unzip artifact for deployment
         run: unzip release.zip
 
-      - name: 'Deploy to Azure Web App'
+      - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:

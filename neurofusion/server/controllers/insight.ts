@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-
+import dayjs from "dayjs";
 import { Prompt, PromptResponse } from "../types";
 
 const openai = new OpenAI({
@@ -14,11 +14,15 @@ export async function getPromptSummary(req: any, res: any) {
   const responses: PromptResponse[] = req.body.responses;
 
   // TODO: create an interface and parse
-  let prompt_responses = "timestamp, value, additionalNotes\n";
+  let prompt_responses =
+    "date, month, day, timeofday, value, additionalNotes\n";
   if (responses.length > 0) {
     await Promise.all(
       responses.map((response) => {
-        prompt_responses += `- ${response.responseTimestamp}, ${response.value}, ${response.additionalMeta?.note}\n`;
+        const dateObj = dayjs(response.responseTimestamp);
+        prompt_responses += `- ${dateObj.format(
+          "DD/MM/YYYY , MMMM, DD, HH:MM"
+        )}, ${response.value}, ${response.additionalMeta?.note}\n`;
       })
     );
   }

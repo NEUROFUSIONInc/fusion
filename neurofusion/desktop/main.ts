@@ -35,7 +35,7 @@ function createWindow() {
     return { action: "deny" };
   });
   // Uncomment the line below to open the DevTools in Electron
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -51,5 +51,13 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+// set up surrealdb
+// {timestamp: nowStr, duration: 0, data: { label: "just testing!" }}
+// export interface Event {
+//   startTimestamp: number;
+//   duration: number;
+//   data: {};
+// }
 
 //  pass information to the browser window of npub..
