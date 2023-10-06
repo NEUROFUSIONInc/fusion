@@ -1,4 +1,4 @@
-## Neurofusion Backend Server
+# Neurofusion Backend Server
 
 Server is run using Node.js (express/CommonJS)
 
@@ -32,6 +32,7 @@ yarn start
 - Analytics
   - calls after related data points are fetched (can only perform action if token matches user account)
     - merge eegPowerSpectrum with signal quality
+- Soon surreal
 
 ## Database
 
