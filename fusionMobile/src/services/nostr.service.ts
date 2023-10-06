@@ -1,6 +1,7 @@
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
+import * as SecureStore from "expo-secure-store";
 import {
   generatePrivateKey,
   getPublicKey,
@@ -49,6 +50,13 @@ export class NostrService {
       if (!saveAccountStatus) {
         return false;
       }
+
+      // save info to keychain
+      await SecureStore.setItemAsync(
+        "activeFusionAccount",
+        JSON.stringify(nostrAccount)
+      );
+
       return nostrAccount;
     } catch (error) {
       console.log(error);
@@ -90,6 +98,17 @@ export class NostrService {
       };
 
       const account = await getAccountFromDb();
+
+      // check if accountInfo is saved / save if not
+      const activeFusionAccount = await SecureStore.getItemAsync(
+        "activeFusionAccount"
+      );
+      if (!activeFusionAccount) {
+        await SecureStore.setItemAsync(
+          "activeFusionAccount",
+          JSON.stringify(account)
+        );
+      }
       return account;
     } catch (error) {
       console.log(error);
