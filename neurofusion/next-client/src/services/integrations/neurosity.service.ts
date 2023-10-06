@@ -8,6 +8,7 @@ import * as path from "path";
 import * as Papa from "papaparse";
 import { promises as fsPromises } from "fs";
 import JSZip, { JSZipFileOptions } from "jszip";
+import { IExperiment } from "~/@types";
 
 export declare enum STREAMING_MODE {
   WIFI_ONLY = "wifi-only",
@@ -21,6 +22,12 @@ export const neurosity = new Neurosity({
   // bluetoothTransport: new WebBluetoothTransport(),
   // streamingMode: STREAMING_MODE.BLUETOOTH_WITH_WIFI_FALLBACK,
 });
+
+export interface EventData {
+  startTimestamp: number;
+  duration: number;
+  data: string;
+}
 
 export interface PowerByBand {
   data: {
@@ -41,19 +48,10 @@ class NeurosityService {
   calmSeries: any = [];
   accelerometerSeries: any = [];
 
-  // eventName = "";
-  // eventDescription = "";
-  // eventTags: string[] = [];
-
-  // constructor(eventName: string, eventDescription: string, eventTags: string[]) {
-  //   this.eventName = eventName;
-  //   this.eventDescription = eventDescription;
-  //   this.eventTags = eventTags;
-  // }
+  eventSeries: EventData[] = [];
 
   // datastorage mode, fetch from localstorage...
-  dataStorageMode = "local"; // local | remote
-
+  dataStorageMode: "local" | "remote" = "local";
   recordingStatus: "not-started" | "started" | "stopped" = "not-started";
 
   recordingStartTimestamp = 0;
@@ -71,6 +69,7 @@ class NeurosityService {
         "accelerometer.csv",
         "focus.csv",
         "calm.csv",
+        "events.csv",
       ],
       dataSets: [
         this.rawBrainwavesSeries,
@@ -80,6 +79,7 @@ class NeurosityService {
         this.accelerometerSeries,
         this.focusSeries,
         this.calmSeries,
+        this.eventSeries,
       ],
     };
 
@@ -97,15 +97,26 @@ class NeurosityService {
       this.focusSeries = [];
       this.calmSeries = [];
       this.accelerometerSeries = [];
+      this.eventSeries = [];
     }
   }
 
   // todo: log event to app insights
-  async startRecording(channelNames: string[]) {
-    this.recordingStartTimestamp = dayjs().unix();
-
+  async startRecording(experiment: IExperiment, channelNames: string[]) {
     console.log("starting recording");
+
+    this.recordingStartTimestamp = dayjs().unix();
     this.recordingStatus = "started";
+
+    /**
+     * Add experiment data to the store
+     */
+    const eventEntry: EventData = {
+      startTimestamp: this.recordingStartTimestamp,
+      duration: experiment.duration ?? 0,
+      data: JSON.stringify(experiment),
+    };
+    this.eventSeries.push(eventEntry);
 
     /**
      * Record raw brainwaves

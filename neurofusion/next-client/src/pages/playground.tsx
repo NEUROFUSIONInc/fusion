@@ -16,6 +16,7 @@ const PlaygroundPage: NextPage = () => {
       description:
         "The 'Eyes Closed/Eyes Open' task is a common neurofeedback protocol used to measure brain activity during periods of rest and activity. During the task, the participant is instructed to close their eyes for a period of time, followed by opening their eyes for a period of time. This cycle is repeated several times, and the brain activity is measured using EEG sensors. The task is often used to measure changes in brain activity associated with attention, relaxation, and other cognitive processes.",
       url: "/experiments/eyes_closed_eyes_open.html",
+      tags: [""],
     },
     {
       id: 2,
@@ -23,12 +24,14 @@ const PlaygroundPage: NextPage = () => {
       description:
         "We are keen to understand how our brains react when something unexpected happens. They're particularly interested in a brain wave called the 'P300 wave'. This wave is like a signal your brain sends when it recognizes a change in the pattern of sounds. It usually occurs around 300 milliseconds after your brain registers the oddball sound. Start the experiment to see how your brain responsds!",
       url: "/experiments/auditory_oddball.html",
+      tags: ["auditory_oddball"],
     },
     {
       id: 3,
       name: "Open Ended Brain Recording",
       description: "Open Ended Brain Recording ",
       url: "",
+      tags: ["open_ended"],
     },
     {
       id: 4,

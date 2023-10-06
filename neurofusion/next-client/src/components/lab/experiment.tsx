@@ -6,11 +6,12 @@ import { FC, useState, useEffect, use } from "react";
 import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
-import { neurosityService, neurosity } from "~/services";
+import { neurosityService, neurosity, EventData } from "~/services";
 import { PlugZap } from "lucide-react";
 
 import { IExperiment } from "~/@types";
 import SignalQuality from "./signalquality";
+import { Input } from "../ui";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -23,9 +24,18 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   const [sandboxData, setSandboxData] = useState("");
 
+  const [duration, setDuration] = useState(0);
+  const [tags, setTags] = useState<string[]>([]);
+
+  const [experimentInfo, setExperimentInfo] = useState<IExperiment>(experiment);
+
+  useEffect(() => {
+    setExperimentInfo({ ...experimentInfo, duration, tags });
+  }, [tags, duration]);
+
   async function startNeurosityRecording() {
     if (connectedDevice) {
-      neurosityService.startRecording(connectedDevice?.channelNames);
+      neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames);
     }
   }
 
@@ -97,20 +107,23 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       )}
 
       {deviceStatus === "online" && connectedDevice?.channelNames && (
-        <div className="my-5">
-          <Button
-            onClick={() => {
-              setShowSignalQuality(!showSignalQuality);
-            }}
-          >
-            {showSignalQuality ? "Hide" : "Show"} Signal Quality
-          </Button>
+        <div className="flex flex-col justify-between">
+          <div className="my-5">
+            {showSignalQuality && (
+              <>
+                <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
+              </>
+            )}
+            <Button
+              onClick={() => {
+                setShowSignalQuality(!showSignalQuality);
+              }}
+            >
+              {showSignalQuality ? "Hide" : "Show"} Signal Quality
+            </Button>
+          </div>
 
-          {showSignalQuality && (
-            <>
-              <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
-            </>
-          )}
+          <div className="my-5"></div>
         </div>
       )}
 
@@ -118,10 +131,40 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
       <div id="experiment-container" className="mt-5">
         {experiment.description && (
-          <>
-            <h1 style={{ marginTop: 10 }}>Description:</h1>
+          <div className="mt-10">
+            <h1>Description:</h1>
             <p>{experiment.description}</p>
-          </>
+          </div>
+        )}
+
+        {!experiment.url && (
+          <div className="mt-5">
+            <div>
+              <p>
+                Duration <em>(optional)</em> :
+              </p>
+              <Input
+                type="number"
+                placeholder="Duration"
+                onChange={(e) => setDuration(e.target.valueAsNumber)}
+                value={duration ?? 0}
+              />
+            </div>
+            <div>
+              <p>
+                Tags <em>(optional)</em> :
+              </p>
+              <Input
+                type="text"
+                placeholder="Tags"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setTags(e.target.value.split(","));
+                }}
+                value={tags.join(",")}
+              />
+            </div>
+          </div>
         )}
         {experiment.url && (
           <div className="m-3">
@@ -136,13 +179,17 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         )}
         <>
           {sandboxData !== "" && (
-            // <h1 style={{ marginTop: 10 }}>DATA:</h1>
-            <p>{JSON.stringify(sandboxData)}</p>
+            // TODO: this should be stored a fusion event data
+            <p>
+              Event data obtained:
+              {JSON.stringify(sandboxData)}
+              {/* ideally we want to include this in the same zip for recordings */}
+            </p>
           )}
 
           {/* TODO: we need a section that throws an error if the eeg device isn't active */}
           {deviceStatus === "online" && (
-            <>
+            <div className="mt-10">
               {isRecording ? (
                 <Button
                   onClick={() => {
@@ -168,7 +215,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                   Start EEG Recording
                 </Button>
               )}
-            </>
+            </div>
           )}
         </>
       </div>

@@ -1,6 +1,11 @@
-import { HardDrive, Laptop, LayoutDashboard, Moon, PenBox, Plug, SignalHigh, Sun } from "lucide-react";
+import { HardDrive, Laptop, LayoutDashboard, MessageSquare, Moon, PenBox, Plug, SignalHigh, Sun } from "lucide-react";
 
 export const sidebarLinks = [
+  // {
+  //   icon: MessageSquare,
+  //   title: "Prompts",
+  //   href: "/prompts",
+  // },
   {
     icon: LayoutDashboard,
     title: "Lab",

@@ -16,4 +16,5 @@ export interface IExperiment {
   image?: string;
   url?: string;
   tags?: string[];
+  duration?: number;
 }
