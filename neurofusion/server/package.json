@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "neurofusion server",
   "main": "index.js",
-  "repository": "https://github.com/oreHGA/fusion.git",
-  "author": "https://oreogundipe.dev/",
+  "repository": "https://github.com/NEUROFUSIONInc/fusion.git",
+  "author": "https://usefusion.app/",
   "scripts": {
     "build": "npx tsc",
     "start": "npx ts-node index.ts"
