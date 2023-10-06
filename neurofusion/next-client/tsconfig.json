@@ -20,6 +20,12 @@
       "~/*": ["src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/api/auth/[...nextauth].ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/pages/api/auth/[...nextauth].ts",
+    "src/components/lab/signalquality.jsx"
+  ],
   "exclude": ["node_modules"]
 }

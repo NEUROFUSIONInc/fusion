@@ -19,3 +19,6 @@ export * from "./help";
 export * from "./chevron-down";
 export * from "./chevron-left";
 export * from "./chevron-right";
+export * from "./reload";
+export * from "./thumbsdown";
+export * from "./thumbsup";

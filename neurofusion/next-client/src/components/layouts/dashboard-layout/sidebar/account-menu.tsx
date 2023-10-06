@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Github, LifeBuoy, LogOut, Settings, User as UserIcon } from "lucide-react";
+import { ChevronsUpDown, Github, LifeBuoy, LogOut, Settings, User as UserIcon, Users2 } from "lucide-react";
 import Link from "next/link";
 import { User } from "next-auth";
 import React, { FC } from "react";
@@ -47,31 +47,27 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-60">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Link href="#" className="inline-flex w-full items-center">
-              <UserIcon className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link href="/integrations" className="inline-flex w-full items-center">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link href="https://github.com/neurofusioninc" className="inline-flex w-full items-center">
+          <Link href="/account" className="inline-flex w-full items-center">
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="https://discord.gg/jaKG9KAG" target="_blank" className="inline-flex w-full items-center">
+            <Users2 className="mr-2 h-4 w-4" />
+            <span>Join Fusion Community</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem>
+          <Link href="https://github.com/neurofusioninc" target="_blank" className="inline-flex w-full items-center">
             <Github className="mr-2 h-4 w-4" />
             <span>GitHub</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href="mailto:contact@usefusion.app" className="inline-flex w-full items-center">
+          <Link href="mailto:contact@usefusion.app" target="_blank" className="inline-flex w-full items-center">
             <LifeBuoy className="mr-2 h-4 w-4" />
             <span>Support</span>
           </Link>

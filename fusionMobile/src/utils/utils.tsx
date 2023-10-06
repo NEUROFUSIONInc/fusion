@@ -7,8 +7,6 @@ import * as Sharing from "expo-sharing";
 
 import { promptFrequencyData } from "../components/timepicker/data";
 
-import { appInsights } from "./appInsights";
-
 import { Days, NotificationConfigDays } from "~/@types";
 
 /**
@@ -258,7 +256,9 @@ export async function maskPromptId(promptId: string) {
 export async function saveFileToDevice(
   fileName: string,
   fileContents: string,
-  exportFile: boolean = false
+  exportFile: boolean = false,
+  fileType: string = "text/csv",
+  fileUti: string = "public.comma-separated-values-text"
 ) {
   /**
    * Takes file content and saves it to the local directory of user device.
@@ -277,13 +277,13 @@ export async function saveFileToDevice(
         return;
       }
       await Sharing.shareAsync(fileUri, {
-        mimeType: "text/csv",
+        mimeType: fileType,
         dialogTitle: "Your fusion data",
-        UTI: "public.comma-separated-values-text",
+        UTI: fileUti,
       });
     }
 
-    appInsights.trackEvent({ name: "data_export" });
+    // appInsights.trackEvent({ name: "data_export" });
 
     return fileUri;
   } catch (error) {

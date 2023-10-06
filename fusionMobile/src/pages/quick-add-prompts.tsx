@@ -1,9 +1,9 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CategoryTag, PromptDetails, Screen } from "~/components";
+import { CategoryTag, Input, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
 import { AccountContext } from "~/contexts/account.context";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
@@ -53,43 +53,61 @@ export const QuickAddPromptsScreen = () => {
     });
   }, [quickAddPrompts]);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   return (
     <Screen>
       {quickAddPrompts && quickAddPrompts?.length > 0 && (
-        <View className="mb-10">
-          <ScrollView
-            horizontal
-            className="flex gap-x-3 gap-y-3 pl-2"
-            showsHorizontalScrollIndicator={false}
-          >
-            {categories.map((category) => {
-              const name = category.name;
-              return (
-                <CategoryTag
-                  key={name}
-                  title={name}
-                  icon={category.icon}
-                  isActive={name === selectedCategory}
-                  handleValueChange={(checked) =>
-                    setSelectedCategory(checked ? name : "")
-                  }
-                />
-              );
-            })}
-          </ScrollView>
-          <ScrollView className="flex mt-4 mx-1 flex-col">
-            {filteredPrompts.map((prompt) => (
-              <View key={prompt.uuid} className="my-2">
-                <PromptDetails
-                  prompt={prompt}
-                  variant="add"
-                  onClick={() =>
-                    navigation.navigate("EditPrompt", { prompt, type: "add" })
-                  }
-                />
-              </View>
-            ))}
-          </ScrollView>
+        <View>
+          <View className="flex justify-center items-center w-full">
+            <Text className="font-sans-bold text-center text-white text-base pb-2">
+              What’s been top of mind for you lately
+            </Text>
+            <Text className="font-sans-light max-w-xs text-center text-white text-base">
+              We will use this to suggest you prompts
+            </Text>
+          </View>
+          <Input
+            value={searchTerm}
+            className="my-5"
+            onChangeText={setSearchTerm}
+            placeholder="I want to be more energetic about work"
+          />
+          <View className="mb-10">
+            <ScrollView
+              horizontal
+              className="flex gap-x-3 gap-y-3 pl-2"
+              showsHorizontalScrollIndicator={false}
+            >
+              {categories.map((category) => {
+                const name = category.name;
+                return (
+                  <CategoryTag
+                    key={name}
+                    title={name}
+                    icon={category.icon}
+                    isActive={name === selectedCategory}
+                    handleValueChange={(checked) =>
+                      setSelectedCategory(checked ? name : "")
+                    }
+                  />
+                );
+              })}
+            </ScrollView>
+            <ScrollView className="flex mt-4 mx-1 flex-col">
+              {filteredPrompts.map((prompt) => (
+                <View key={prompt.uuid} className="my-2">
+                  <PromptDetails
+                    prompt={prompt}
+                    variant="add"
+                    onClick={() =>
+                      navigation.navigate("EditPrompt", { prompt, type: "add" })
+                    }
+                  />
+                </View>
+              ))}
+            </ScrollView>
+          </View>
         </View>
       )}
     </Screen>

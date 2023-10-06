@@ -12,22 +12,32 @@ const PlaygroundPage: NextPage = () => {
   const experiments: IExperiment[] = [
     {
       id: 1,
-      name: "Open Ended Brain Recording",
-      description: "Open Ended Brain Recording",
-      url: "",
+      name: "Eyes Closed/Eyes Open",
+      description:
+        "The 'Eyes Closed/Eyes Open' task is a common neurofeedback protocol used to measure brain activity during periods of rest and activity. During the task, the participant is instructed to close their eyes for a period of time, followed by opening their eyes for a period of time. This cycle is repeated several times, and the brain activity is measured using EEG sensors. The task is often used to measure changes in brain activity associated with attention, relaxation, and other cognitive processes.",
+      url: "/experiments/eyes_closed_eyes_open.html",
+      tags: [""],
     },
     {
       id: 2,
-      name: "Flappy Bird - Training Intent",
-      description: "Flappy Bird - Training Intent",
-      url: "/experiments/flappy_bird.html",
-    },
-    {
-      id: 3,
       name: "Auditory Oddball - ERP, P300",
       description:
         "We are keen to understand how our brains react when something unexpected happens. They're particularly interested in a brain wave called the 'P300 wave'. This wave is like a signal your brain sends when it recognizes a change in the pattern of sounds. It usually occurs around 300 milliseconds after your brain registers the oddball sound. Start the experiment to see how your brain responsds!",
       url: "/experiments/auditory_oddball.html",
+      tags: ["auditory_oddball"],
+    },
+    {
+      id: 3,
+      name: "Open Ended Brain Recording",
+      description: "Open Ended Brain Recording ",
+      url: "",
+      tags: ["open_ended"],
+    },
+    {
+      id: 4,
+      name: "Neuro Game - Training Intent / (measuring emotional affect 'frustration')",
+      description: "The user plays flappy bird while brain activity (eeg) data is recorded - Training Intent",
+      url: "/experiments/flappy_bird.html",
     },
     // {
     //   id: 4,
@@ -49,7 +59,7 @@ const PlaygroundPage: NextPage = () => {
 
   return (
     <DashboardLayout>
-      <h4 className="font-body text-lg">Playground</h4>
+      <h1 className="text-4xl">Playground</h1>
       <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
         Select activity:
         <select

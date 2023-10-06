@@ -44,7 +44,7 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
 
           <h4 className="font-body text-lg">Devices</h4>
           <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-            Select an option
+            Choose a device
             <select
               id="countries"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
@@ -66,6 +66,20 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
                   );
                 }
               })}
+            </select>
+          </label>
+
+          <h4 className="font-body text-lg">Recordings</h4>
+          <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
+            Allow Fusion to start recordings when device turns on automatically
+            <select
+              id="countries"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+              onChange={updateNeurositySelectedDevice}
+            >
+              <option value="">Choose option</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
             </select>
           </label>
 

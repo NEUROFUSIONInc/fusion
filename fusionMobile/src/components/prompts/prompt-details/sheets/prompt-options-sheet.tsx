@@ -64,7 +64,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
             style: "cancel",
           },
           {
-            text: "OK",
+            text: "Delete",
             onPress: async () => {
               const res = await deletePrompt(activePrompt.uuid);
               if (res) {
@@ -79,6 +79,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
                 navigation.navigate("Prompts");
               }
             },
+            style: "destructive",
           },
         ]
       );

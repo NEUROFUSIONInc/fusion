@@ -153,3 +153,9 @@ export async function connectToNeurosityDevice(deviceId: string) {
   console.log("connecting to device", device);
   return device;
 }
+
+export async function enableBackgroundRecording() {
+  // when this fuction is called, we make a request to the backend to
+  // - store neurosity tokens to enable a recurding
+  // - backend will search for active devices and use token to connect.
+}

@@ -69,7 +69,7 @@ export const FeatureSection: FC = () => {
                 className="mt-4"
                 fullWidth
               >
-                Schedule a call with us
+                Get started
               </ButtonLink>
             </div>
           </div>

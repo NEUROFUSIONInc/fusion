@@ -57,8 +57,44 @@ export function AccountScreen() {
 
         /* Can now read or write to HealthKit */
         const options = {
-          startDate: dayjs().subtract(7, "days").toISOString(),
+          startDate: dayjs().startOf("day").toISOString(),
         };
+
+        // AppleHealthKit.getSleepSamples(
+        //   options,
+        //   async (err: any, results: HealthValue[]) => {
+        //     if (err) {
+        //       return;
+        //     }
+
+        //     await saveFileToDevice(
+        //       `fusionSleep.json`,
+        //       JSON.stringify(results),
+        //       true,
+        //       "application/json",
+        //       "public.json"
+        //     );
+        //     // console.log(results);
+        //   }
+        // );
+
+        // AppleHealthKit.getDailyStepCountSamples(
+        //   options,
+        //   async (err: any, results: HealthValue[]) => {
+        //     if (err) {
+        //       return;
+        //     }
+
+        //     await saveFileToDevice(
+        //       `fusionSteps.json`,
+        //       JSON.stringify(results),
+        //       true,
+        //       "application/json",
+        //       "public.json"
+        //     );
+        //     // console.log(results);
+        //   }
+        // );
 
         AppleHealthKit.getStepCount(
           options,
@@ -124,7 +160,7 @@ export function AccountScreen() {
   const importData = async () => {
     //  read the prompt.csv file & sequentially call save prompts
     const promptFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionPrompts_1691535600.csv";
+      RNFS.DocumentDirectoryPath + "/fusionPrompts_1696402800.csv";
 
     RNFS.readFile(promptFilePath, "utf8")
       .then((content) => {
@@ -160,7 +196,7 @@ export function AccountScreen() {
 
     //  read the responses.csv file & sequentially call save responses
     const responseFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionResponses_1691535600.csv";
+      RNFS.DocumentDirectoryPath + "/fusionResponses_1696402800.csv";
 
     RNFS.readFile(responseFilePath, "utf8")
       .then((content) => {

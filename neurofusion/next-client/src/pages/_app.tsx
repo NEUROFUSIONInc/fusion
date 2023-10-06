@@ -24,6 +24,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "h7a11p7zxo");`}
         </script>
+        {/* make frame draggable */}
+        <style type="text/css">
+          {`body {
+  -webkit-app-region: drag;
+}
+button {
+  -webkit-app-region: no-drag;
+}`}
+        </style>
       </Head>
       <Meta />
       <SessionProvider session={session}>

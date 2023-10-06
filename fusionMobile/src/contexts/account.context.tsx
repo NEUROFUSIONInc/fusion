@@ -4,12 +4,9 @@ import { nostrService } from "~/services/nostr.service";
 
 export const AccountContext = createContext<null | {
   userNpub: string;
+  userApiToken: string;
+  userLoading: boolean;
 }>(null);
-
-async function fetchUserNpub() {
-  const userDetails = await nostrService.getOrCreateNostrAccount();
-  return userDetails?.npub;
-}
 
 export const AccountContextProvider = ({
   children,
@@ -17,16 +14,24 @@ export const AccountContextProvider = ({
   children: ReactNode;
 }) => {
   const [userNpub, setUserNpub] = useState<string>("");
+  const [userApiToken, setUserApiToken] = useState<string>("");
+  const [userLoading, setUserLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
-      const npub = await fetchUserNpub();
-      setUserNpub(npub!);
+      const userDetails = await nostrService.getOrCreateNostrAccount();
+      setUserNpub(userDetails!.npub);
+
+      // now make request to get api token
+      const apiToken = await nostrService.getApiToken(userDetails!);
+      setUserApiToken(apiToken!);
+
+      setUserLoading(false);
     })();
   }, []);
 
   return (
-    <AccountContext.Provider value={{ userNpub }}>
+    <AccountContext.Provider value={{ userNpub, userApiToken, userLoading }}>
       {children}
     </AccountContext.Provider>
   );

@@ -16,7 +16,12 @@ import { CustomNavigation } from "./src/navigation";
 import { appInsights, maskPromptId } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
-import { PromptContextProvider, AccountContext } from "~/contexts";
+import {
+  PromptContextProvider,
+  AccountContext,
+  OnboardingContext,
+} from "~/contexts";
+import { OnboardingScreen } from "~/pages/onboarding";
 import { notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
@@ -33,7 +38,6 @@ Notifications.setNotificationHandler({
 });
 
 const registerForPushNotificationsAsync = async () => {
-  //TODO: follow the guide again for checking on Android/iOS
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
   (async () => {
@@ -110,8 +114,9 @@ function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
   >();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const accountContext = React.useContext(AccountContext);
+  const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
     // validate permission status for user
@@ -206,9 +211,13 @@ function App() {
               response.actionIdentifier ===
               Notifications.DEFAULT_ACTION_IDENTIFIER
             ) {
-              navigation.navigate("PromptEntry", {
-                promptUuid,
-                triggerTimestamp: Math.floor(response.notification.date),
+              // TODO: fix bug that doesn't let this load when the home page stack is the first one
+              navigation.navigate("PromptNavigator", {
+                screen: "PromptEntry",
+                params: {
+                  promptUuid,
+                  triggerTimestamp: Math.floor(response.notification.date),
+                },
               });
               return;
             }
@@ -274,6 +283,12 @@ function App() {
     );
   }, []);
 
+  React.useEffect(() => {
+    // check is showOnboarding is false & if user has completed onboarding
+    // if user has completed onboarding, take to home page
+    // if user hasn't completed onboarding, take to quick add prompts page
+  }, [onboardingContext?.showOnboarding]);
+
   return (
     <GestureHandlerRootView className="flex flex-1 flex-grow-1">
       <FontLoader>
@@ -281,7 +296,8 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <PromptContextProvider>
             <PortalProvider>
-              <CustomNavigation />
+              {onboardingContext?.showOnboarding && <OnboardingScreen />}
+              {!onboardingContext?.showOnboarding && <CustomNavigation />}
             </PortalProvider>
           </PromptContextProvider>
         </QueryClientProvider>

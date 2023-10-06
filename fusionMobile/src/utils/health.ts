@@ -4,7 +4,7 @@ import AppleHealthKit from "react-native-health";
 export const permissions = {
   permissions: {
     read: [
-      // AppleHealthKit.Constants.Permissions.HeartRate,
+      AppleHealthKit.Constants.Permissions.HeartRate,
       // AppleHealthKit.Constants.Permissions.HeartbeatSeries,
       // AppleHealthKit.Constants.Permissions.RestingHeartRate,
       // AppleHealthKit.Constants.Permissions.HeartRateVariability,
@@ -16,7 +16,7 @@ export const permissions = {
       // AppleHealthKit.Constants.Permissions.RespiratoryRate,
       // AppleHealthKit.Constants.Permissions.BloodGlucose,
       // Sleep
-      // AppleHealthKit.Constants.Permissions.SleepAnalysis,
+      AppleHealthKit.Constants.Permissions.SleepAnalysis,
       // Activity
       // AppleHealthKit.Constants.Permissions.ActivitySummary,
       AppleHealthKit.Constants.Permissions.Steps,

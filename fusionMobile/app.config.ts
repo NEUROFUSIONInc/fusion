@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion",
   slug: "fusion",
-  version: "1.1.0",
+  version: "1.3.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -22,6 +22,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: "com.neurofusion.fusion",
     buildNumber: "1",
     backgroundColor: "#0B0816",
+    config: {
+      usesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {
@@ -29,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 30,
+    versionCode: 1,
     softwareKeyboardLayoutMode: "pan",
   },
   web: {
@@ -44,6 +47,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     appInsightsConnectionString:
       process.env.APP_INSIGHTS_CONNECTION_STRING ??
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+    fusionBackendUrl:
+      process.env.FUSION_BACKEND_API_URL ?? "http://localhost:4000", //"https://neurofusion-backend.azurewebsites.net",
+    fusionRelayUrl: "wss://relay.usefusion.ai",
+    fusionNostrPublicKey:
+      "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
   },
   plugins: [["expo-notifications", { icon: "./assets/notification-icon.png" }]],
   owner: "oreogundipe",

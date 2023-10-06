@@ -70,4 +70,10 @@ export interface UserAccount {
   npub: string;
   pubkey: string;
   privkey: string;
+  preferences?: UserPreferences;
+}
+
+export interface UserPreferences {
+  enableCopilot: boolean;
+  enableResearchMode: boolean;
 }

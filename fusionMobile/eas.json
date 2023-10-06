@@ -10,7 +10,8 @@
         "resourceClass": "m-medium"
       },
       "env": {
-        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://localhost:4000"
       }
     },
     "preview": {
@@ -19,7 +20,8 @@
         "resourceClass": "m-medium"
       },
       "env": {
-        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://neurofusion-backend.azurewebsites.net"
       }
     },
     "production": {
@@ -27,7 +29,8 @@
         "resourceClass": "m-medium"
       },
       "env": {
-        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=e9a047e3-efc6-4339-acef-1ef135fd15ea;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=e9a047e3-efc6-4339-acef-1ef135fd15ea;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://neurofusionbackendprd.azurewebsites.net"
       }
     }
   },

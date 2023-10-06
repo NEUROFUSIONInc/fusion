@@ -354,14 +354,28 @@ class PromptService {
     }
   };
 
-  public getPromptResponses = async (promptUuid: string) => {
+  public getPromptResponses = async (
+    promptUuid: string,
+    startTimestamp: number = -1,
+    endTimestamp: number = -1
+  ) => {
     try {
+      let queryString = "SELECT * FROM prompt_responses WHERE promptUuid = ?";
+      const queryParams: (string | number)[] = [promptUuid];
+      if (startTimestamp > 0) {
+        queryString += " AND responseTimestamp >= ?";
+        queryParams.push(startTimestamp);
+      }
+      if (endTimestamp > 0) {
+        queryString += " AND responseTimestamp <= ?";
+        queryParams.push(endTimestamp);
+      }
       const getPromptResponsesFromDb = () => {
         return new Promise<PromptResponse[]>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
-              "SELECT * FROM prompt_responses WHERE promptUuid = ?",
-              [promptUuid],
+              queryString,
+              queryParams,
               (_, { rows }) => {
                 const responses = rows._array.map((row) => {
                   return {
