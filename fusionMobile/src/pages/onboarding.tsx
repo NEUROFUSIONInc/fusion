@@ -6,14 +6,23 @@ import { LeftArrow } from "../components/icons";
 
 import { Input } from "~/components";
 import { Button } from "~/components/button";
-import { OnboardingContext } from "~/contexts";
+import { AccountContext, OnboardingContext } from "~/contexts";
 import { appInsights } from "~/utils";
+import { requestCopilotConsent } from "~/utils/consent";
 
 export const OnboardingScreen = () => {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const onboardingContext = React.useContext(OnboardingContext);
+  const accountContext = React.useContext(AccountContext);
 
   const [onboardingEmail, setOnboardingEmail] = useState("");
+
+  React.useEffect(() => {
+    appInsights.trackPageView({
+      name: "Onboarding",
+      properties: {},
+    });
+  });
 
   const slides = [
     {
@@ -34,6 +43,13 @@ export const OnboardingScreen = () => {
         "Fusion Copilot will send you summaries and suggested actions based on your responses over time.",
       // image: require("../../assets/onboarding/fusion-copilot.png"),
       image: require("../../assets/onboarding/intelligent_recommendations.png"),
+      onclick: async () => {
+        appInsights.trackEvent({
+          name: "onboarding_copilot_triggered",
+        });
+
+        await requestCopilotConsent(accountContext!.userNpub);
+      },
     },
     {
       title: "Stay in the loop",
@@ -119,7 +135,8 @@ export const OnboardingScreen = () => {
               value={onboardingEmail}
               className="my-5 border-2 border-tint rounded text-dark text-base leading-1.5"
               onChangeText={setOnboardingEmail}
-              placeholder="I want to be more energetic about work"
+              placeholderTextColor="#181230"
+              placeholder="e.g you@example.com"
             />
           )}
 

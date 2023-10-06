@@ -2,9 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
+import * as SecureStore from "expo-secure-store";
 import React from "react";
 import { View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 import {
   Screen,
@@ -56,6 +58,11 @@ export function HomeScreen() {
   const [summaryText, setSummaryText] = React.useState("Loading summary...");
 
   const getInsightSummary = async (category: string) => {
+    // only run this function if user has consented for FusionCopilot
+    const copilotConsent = await SecureStore.getItemAsync("copilotConsent");
+    if (copilotConsent !== "true")
+      return "You need to enable Fusion Copilot in order to see insights.";
+
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
     );
@@ -116,10 +123,8 @@ export function HomeScreen() {
         </View>
 
         {/* show each category at a time */}
-        {/* {savedPrompts && savedPrompts.length > 0 && ( */}
         <View className="flex flex-col w-full bg-secondary-900 rounded">
           <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
-            {/* this is where the header of the chart is */}
             <Button
               variant="ghost"
               size="icon"
@@ -165,7 +170,17 @@ export function HomeScreen() {
                 size="icon"
                 leftIcon={<ThumbsUp />}
                 onPress={() => {
-                  console.log("thumbs up");
+                  appInsights.trackEvent({
+                    name: "fusion_copilot_feedback",
+                    properties: {
+                      feedback: "thumbs_down",
+                    },
+                  });
+                  Toast.show({
+                    type: "success",
+                    // text1: "Feedback sent",
+                    text2: "Thank you for your feedback!",
+                  });
                 }}
               />
               <Button
@@ -173,7 +188,18 @@ export function HomeScreen() {
                 size="icon"
                 leftIcon={<ThumbsDown />}
                 onPress={() => {
-                  console.log("thumbs down");
+                  appInsights.trackEvent({
+                    name: "fusion_copilot_feedback",
+                    properties: {
+                      feedback: "thumbs_down",
+                    },
+                  });
+
+                  Toast.show({
+                    type: "success",
+                    // text1: "Feedback sent",
+                    text2: "Thank you for your feedback!",
+                  });
                 }}
               />
             </View>
