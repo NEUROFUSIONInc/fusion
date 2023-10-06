@@ -35,7 +35,8 @@
     "sqlite3": "^5.1.4",
     "websocket-polyfill": "^0.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@types/node": "^20.6.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.0",
@@ -44,7 +45,6 @@
     "@babel/preset-env": "^7.22.20",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
-    "@types/node": "^20.6.5",
     "sequelize-cli": "^6.5.2"
   }
 }

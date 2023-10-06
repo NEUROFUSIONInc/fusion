@@ -52,9 +52,6 @@ jobs:
         with:
           name: node-app
 
-      - name: unzip artifact post deployment
-        run: unzip release.zip
-
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -62,4 +59,4 @@ jobs:
           app-name: "neurofusionbackendprd"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C82240E272334D0987319152B6FB2953 }}
-          package: .
+          package: ./release.zip
