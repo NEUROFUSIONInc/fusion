@@ -30,10 +30,9 @@ function createWindow() {
     // open url in a browser and prevent default
     if (url) {
       shell.openExternal(url);
-      return { action: "allow" };
-    } else {
-      return { action: "deny" };
     }
+
+    return { action: "deny" };
   });
   // Uncomment the line below to open the DevTools in Electron
   // win.webContents.openDevTools();
