@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion",
   slug: "fusion",
-  version: "1.2.0",
+  version: "1.3.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
