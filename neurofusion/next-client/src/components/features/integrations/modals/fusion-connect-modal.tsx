@@ -10,7 +10,7 @@ interface INeurosityModalProps {
   onCloseModal: () => void;
 }
 
-export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal }) => {
+export const FusionConnectModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal }) => {
   const { devices, getNeurositySelectedDevice, disconnectNeurosityAccount } = useNeurosityState();
   const [neurositySelectedDevice] = useState(getNeurositySelectedDevice());
 
@@ -71,15 +71,28 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
 
           <h4 className="font-body text-lg">Recordings</h4>
           <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-            Allow Fusion to start recordings when device turns on automatically
+            Select an option
             <select
               id="countries"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
               onChange={updateNeurositySelectedDevice}
             >
-              <option value="">Choose option</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
+              <option value="">Select a device</option>
+              {devices.map((device) => {
+                if (device.deviceId === neurositySelectedDevice) {
+                  return (
+                    <option key={device.deviceId} value={device.deviceId} selected>
+                      {device.deviceNickname}
+                    </option>
+                  );
+                } else {
+                  return (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.deviceNickname}
+                    </option>
+                  );
+                }
+              })}
             </select>
           </label>
 

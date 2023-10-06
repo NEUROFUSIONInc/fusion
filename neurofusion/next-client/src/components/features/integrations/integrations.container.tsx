@@ -2,9 +2,10 @@ import { useState } from "react";
 
 import { integrations } from "./data";
 import { Integration } from "./integration/integration";
-import { MagicFlowModal, NeurosityModal } from "./modals";
+import { ActivityWatchModal, BiometricsModal, FusionConnectModal, MagicFlowModal, NeurosityModal } from "./modals";
 
 import { useGetMagicFlowToken, useNeurosityState } from "~/hooks";
+import { MuseClient } from "muse-js";
 
 type IntegrationSlug =
   | (typeof integrations)[number]["slug"]
@@ -12,7 +13,8 @@ type IntegrationSlug =
   | "fusion"
   | "magicflow"
   | "activityWatch"
-  | "spotify";
+  | "spotify"
+  | "biometrics";
 
 export const IntegrationsContainer = () => {
   const [modalOpen, setModalOpen] = useState<IntegrationSlug>();
@@ -23,6 +25,7 @@ export const IntegrationsContainer = () => {
     switch (integrationSlug) {
       case "fusion":
         // call function for fusion integration
+        setModalOpen("fusion");
         break;
       case "neurosity":
         if (user) {
@@ -36,9 +39,15 @@ export const IntegrationsContainer = () => {
         break;
       case "activityWatch":
         // call function for activityWatch integration
+        setModalOpen("activityWatch");
         break;
       case "spotify":
         // call function for spotify integration
+        break;
+      case "biometrics":
+        // call function for biometrics integration
+        // connectMuse();
+        setModalOpen("biometrics");
         break;
       default:
       // handle default case (optional)
@@ -111,6 +120,15 @@ export const IntegrationsContainer = () => {
       )}
       {modalOpen === "neurosity" && (
         <NeurosityModal isOpen={modalOpen === "neurosity"} onCloseModal={() => setModalOpen(undefined)} />
+      )}
+      {modalOpen === "biometrics" && (
+        <BiometricsModal isOpen={modalOpen === "biometrics"} onCloseModal={() => setModalOpen(undefined)} />
+      )}
+      {modalOpen === "activityWatch" && (
+        <ActivityWatchModal isOpen={modalOpen === "activityWatch"} onCloseModal={() => setModalOpen(undefined)} />
+      )}
+      {modalOpen === "fusion" && (
+        <FusionConnectModal isOpen={modalOpen === "fusion"} onCloseModal={() => setModalOpen(undefined)} />
       )}
     </section>
   );
