@@ -32,7 +32,7 @@ yarn start
 - Analytics
   - calls after related data points are fetched (can only perform action if token matches user account)
     - merge eegPowerSpectrum with signal quality
-- Soon surreal db integration
+- Soon surreal db
 
 ## Database
 
