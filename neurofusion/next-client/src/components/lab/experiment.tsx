@@ -139,7 +139,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
         {!experiment.url && (
           <div className="mt-5">
-            <div>
+            <div className="my-5">
               <p>
                 Duration <em>(optional)</em> :
               </p>
@@ -150,7 +150,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                 value={duration ?? 0}
               />
             </div>
-            <div>
+            <div className="my-5">
               <p>
                 Tags <em>(optional)</em> :
               </p>
