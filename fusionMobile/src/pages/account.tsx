@@ -160,7 +160,7 @@ export function AccountScreen() {
   const importData = async () => {
     //  read the prompt.csv file & sequentially call save prompts
     const promptFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionPrompts_1696402800.csv";
+      RNFS.DocumentDirectoryPath + "/fusionPrompts_1696834800.csv";
 
     RNFS.readFile(promptFilePath, "utf8")
       .then((content) => {
@@ -196,7 +196,7 @@ export function AccountScreen() {
 
     //  read the responses.csv file & sequentially call save responses
     const responseFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionResponses_1696402800.csv";
+      RNFS.DocumentDirectoryPath + "/fusionResponses_1696834800.csv";
 
     RNFS.readFile(responseFilePath, "utf8")
       .then((content) => {

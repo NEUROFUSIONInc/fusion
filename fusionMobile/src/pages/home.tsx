@@ -60,7 +60,7 @@ export function HomeScreen() {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "You need to enable Fusion Copilot in order to see insights.";
+      return "You need to enable Fusion Copilot to summaries and AI recommendations from your prompt responses.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
@@ -121,7 +121,11 @@ export function HomeScreen() {
         }));
       });
     })();
-  }, [savedPrompts, activeCategoryIndex, accountContext?.userLoading]);
+  }, [
+    savedPrompts,
+    accountContext?.userLoading,
+    accountContext?.userPreferences.enableCopilot,
+  ]);
 
   // get the summary for the active category
   React.useEffect(() => {
@@ -243,6 +247,19 @@ export function HomeScreen() {
             </View>
           </View>
         </View>
+
+        {!accountContext?.userLoading &&
+          accountContext?.userPreferences.enableCopilot !== true && (
+            <Button
+              onPress={() => {
+                navigation.navigate("SettingsPage");
+              }}
+              title="Enable Fusion Copilot"
+              fullWidth
+              className="mt-5 bg-secondary-900"
+              variant="secondary"
+            />
+          )}
 
         {/* connect your apple health data */}
       </ScrollView>
