@@ -13,7 +13,7 @@ export const requestCopilotConsent = async (userNpub: string) => {
     new Promise((resolve) => {
       Alert.alert(
         "Fusion Copilot Consent",
-        "Fusion Copilot will send you summaries and suggested actions based on your responses over time.\n\n When enabled, your prompt & responses will be sent for processing to Fusion servers. Your data will not be saved on Fusion servers.\n\n You can change this in your app settings.",
+        "Fusion Copilot will send you summaries and suggested actions based on your responses over time.\n\n When enabled, your prompt & responses will be sent to Fusion analysis servers for processing. Your data will not be saved.\n\n You can change this in your app settings.",
         [
           {
             text: "Enable",
