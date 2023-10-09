@@ -2,7 +2,6 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
-import * as SecureStore from "expo-secure-store";
 import React from "react";
 import { View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -59,8 +58,8 @@ export function HomeScreen() {
 
   const getInsightSummary = async (category: string) => {
     // only run this function if user has consented for FusionCopilot
-    const copilotConsent = await SecureStore.getItemAsync("copilotConsent");
-    if (copilotConsent !== "true")
+    const copilotConsent = accountContext?.userPreferences.enableCopilot!;
+    if (copilotConsent !== true)
       return "You need to enable Fusion Copilot in order to see insights.";
 
     const filteredPrompts = savedPrompts!.filter(
@@ -106,16 +105,31 @@ export function HomeScreen() {
     }
   };
 
+  const [categoryInsightSummaries, setCategoryInsightSummaries] =
+    React.useState<{ [key: string]: string }>({});
+
   React.useEffect(() => {
     if (!savedPrompts) return;
     if (accountContext?.userLoading) return;
     (async () => {
-      const selectedCategory = categories[activeCategoryIndex].name;
-
-      const ai_summary = await getInsightSummary(selectedCategory);
-      setSummaryText(ai_summary);
+      // make a batch request for summary of each category
+      categories.forEach(async (category) => {
+        const ai_summary = await getInsightSummary(category.name);
+        setCategoryInsightSummaries((prev) => ({
+          ...prev,
+          [category.name]: ai_summary,
+        }));
+      });
     })();
   }, [savedPrompts, activeCategoryIndex, accountContext?.userLoading]);
+
+  // get the summary for the active category
+  React.useEffect(() => {
+    if (!categoryInsightSummaries) return;
+    const selectedCategory = categories[activeCategoryIndex].name;
+    setSummaryText(categoryInsightSummaries[selectedCategory]);
+  }, [categoryInsightSummaries, activeCategoryIndex]);
+  // now that we have all the summaries, set the summary text
 
   return (
     <Screen>
@@ -164,7 +178,24 @@ export function HomeScreen() {
               size="icon"
               leftIcon={<Reload />}
               onPress={() => {
-                console.log("reloading insight");
+                appInsights.trackEvent({
+                  name: "fusion_copilot_reload_summary",
+                  properties: {
+                    category: categories[activeCategoryIndex].name,
+                  },
+                });
+
+                // reload the summary
+                setSummaryText("Loading summary...");
+                (async () => {
+                  const ai_summary = await getInsightSummary(
+                    categories[activeCategoryIndex].name
+                  );
+                  setCategoryInsightSummaries((prev) => ({
+                    ...prev,
+                    [categories[activeCategoryIndex].name]: ai_summary,
+                  }));
+                })();
               }}
             />
 
@@ -177,13 +208,15 @@ export function HomeScreen() {
                   appInsights.trackEvent({
                     name: "fusion_copilot_feedback",
                     properties: {
-                      feedback: "thumbs_down",
+                      feedback: "thumps_up",
+                      category: categories[activeCategoryIndex].name,
                     },
                   });
                   Toast.show({
                     type: "success",
                     // text1: "Feedback sent",
-                    text2: "Thank you for your feedback!",
+                    text2:
+                      "Thank you for your feedback! Glad the insight was helpful.",
                   });
                 }}
               />
@@ -196,13 +229,14 @@ export function HomeScreen() {
                     name: "fusion_copilot_feedback",
                     properties: {
                       feedback: "thumbs_down",
+                      category: categories[activeCategoryIndex].name,
                     },
                   });
 
                   Toast.show({
                     type: "success",
                     // text1: "Feedback sent",
-                    text2: "Thank you for your feedback!",
+                    text2: "Thank you for your feedback! It helps us improve.",
                   });
                 }}
               />

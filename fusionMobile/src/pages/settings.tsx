@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -12,24 +12,17 @@ import { requestCopilotConsent } from "~/utils/consent";
 export function SettingsScreen() {
   const onboardingContext = React.useContext(OnboardingContext);
   const accountContext = React.useContext(AccountContext);
+  const navigation = useNavigation();
 
+  const [copilotConsent, setCopilotConsent] = React.useState<boolean>(
+    accountContext?.userPreferences.enableCopilot!
+  );
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Settings",
       properties: {},
     });
-
-    (async () => {
-      const consent = await SecureStore.getItemAsync("copilot_consent");
-      if (consent === "true") {
-        setCopilotConsent(true);
-      } else {
-        setCopilotConsent(false);
-      }
-    })();
   }, []);
-
-  const [copilotConsent, setCopilotConsent] = React.useState<boolean>(false);
 
   const itemList = [
     {
@@ -40,10 +33,18 @@ export function SettingsScreen() {
       },
     },
     {
-      text: copilotConsent ? "Enable Copilot" : "Disable Copilot",
+      text: copilotConsent ? "Disable Copilot" : "Enable Copilot",
       onPress: async () => {
         // call bottom sheet
-        await requestCopilotConsent(accountContext!.userNpub);
+        const consentStatus = await requestCopilotConsent(
+          accountContext!.userNpub
+        );
+        setCopilotConsent(consentStatus);
+        accountContext?.setUserPreferences({
+          ...accountContext.userPreferences,
+          enableCopilot: consentStatus,
+        });
+        navigation.navigate("HomePage");
       },
     },
     // {
