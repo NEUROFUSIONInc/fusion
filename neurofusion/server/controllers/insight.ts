@@ -9,19 +9,26 @@ const openai = new OpenAI({
 export async function getPromptSummary(req: any, res: any) {
   // prompt
   // responses
-  const prompt: Prompt = req.body.prompt;
+  const prompts: Prompt[] = req.body.prompts;
   const responses: PromptResponse[] = req.body.responses;
+
+  const uuidToPromptText: { [key: string]: string } = {};
+  prompts.forEach((prompt) => {
+    uuidToPromptText[prompt.uuid] = prompt.promptText;
+  });
 
   // TODO: create an interface and parse
   let prompt_responses =
-    "date, month, day, timeofday, value, additionalNotes\n";
+    "promptText, date, month, day, timeofday, value, additionalNotes\n";
   if (responses.length > 0) {
     await Promise.all(
       responses.map((response) => {
         const dateObj = dayjs(response.responseTimestamp);
-        prompt_responses += `- ${dateObj.format(
-          "DD/MM/YYYY , MMMM, DD, HH:MM"
-        )}, ${response.value}, ${response.additionalMeta?.note}\n`;
+        prompt_responses += `${
+          uuidToPromptText[response.promptUuid]
+        }, ${dateObj.format("DD/MM/YYYY , MMMM, DD, HH:MM")}, ${
+          response.value
+        }, ${response.additionalMeta?.note ?? ""}\n`;
       })
     );
   }
@@ -35,7 +42,7 @@ export async function getPromptSummary(req: any, res: any) {
           role: "system",
           content: `You are a helpful assistant that for an Fusion that helps people manage & improve their wellbeing.
             We look at wellbeing holistically across the following categories - Mental Health, Productivity, Relationships, Health and Fitness, Spiritual Practice, Self Care, Finance, Personal Interest, Other.
-            Please provide a concise summary of trends and insights for the '${prompt.additionalMeta?.category}' category in the past ${timePeriod} to the user.
+            Please provide a concise summary of trends and insights for the '${prompts[0].additionalMeta?.category}' category in the past ${timePeriod} to the user.
             Include any notable changes in responses and suggest actionable steps for the user. Be curious, not judgemental.
             
             YOU MUST ADHERE TO THE FOLLOWING WHEN RESPONDING:
@@ -48,7 +55,15 @@ export async function getPromptSummary(req: any, res: any) {
         },
         {
           role: "user",
-          content: `These are responses my responses to the prompt '${prompt.promptText}'.\n\n
+          content: `Today is ${dayjs().format(
+            "DD MMMM YYYY"
+          )}. Here are my prompt responses to the following prompts below. \n
+          Follow the rules and generate a response within the guidelines.\n
+          If I have not provided any responses in the time period say that and then give generic advise around the category.\n\n
+          Review the following prompts and responses and provide a summary of trends and insights for the '${
+            prompts[0].additionalMeta?.category
+          }' category in the past ${timePeriod} to the user. \n
+          Validate the response is under 500 characters and is data-driven and based on the most recent data.\n
           
           ${prompt_responses}
           `,
