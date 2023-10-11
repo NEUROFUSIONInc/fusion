@@ -11,6 +11,7 @@ import {
 } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
+import { PromptResponse } from "~/@types";
 import {
   Screen,
   Button,
@@ -74,7 +75,8 @@ export function HomeScreen() {
       return "You need to add prompts to this category in order to see insights.";
     }
 
-    const categoryPromptResponses: any = {};
+    const categoryPromptResponses: PromptResponse[] = [];
+    // we want to be able to look back a bit more if not enough responses
     const pastWeekTimestamp = dayjs().subtract(7, "day").valueOf();
     await Promise.all(
       filteredPrompts.map(async (prompt) => {
@@ -82,8 +84,17 @@ export function HomeScreen() {
           prompt.uuid,
           pastWeekTimestamp
         );
-        categoryPromptResponses[prompt.uuid] = res;
+        categoryPromptResponses.push(...res);
       })
+    );
+
+    if (categoryPromptResponses.length === 0) {
+      return `You haven't responsed any prompts in this category in a while. Add responses to your '${category}' prompts in order to see insights.`;
+    }
+
+    // sort responses by timestamp ascending
+    categoryPromptResponses.sort(
+      (a, b) => a.responseTimestamp - b.responseTimestamp
     );
 
     let fusionBackendUrl = "";
@@ -91,21 +102,26 @@ export function HomeScreen() {
       fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
     }
 
-    const res = await axios.post(
-      `${fusionBackendUrl}/api/getpromptsummary`,
-      {
-        prompt: filteredPrompts[0],
-        responses: categoryPromptResponses[filteredPrompts[0].uuid],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accountContext?.userApiToken}`,
+    try {
+      const res = await axios.post(
+        `${fusionBackendUrl}/api/getpromptsummary`,
+        {
+          prompts: filteredPrompts,
+          responses: categoryPromptResponses,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${accountContext?.userApiToken}`,
+          },
+        }
+      );
 
-    if (res.status === 200) {
-      return res.data.summary;
+      if (res.status === 200) {
+        return res.data.summary;
+      }
+    } catch (err: any) {
+      console.log("error", JSON.stringify(err));
+      return "Sorry we ran into an error loading summary. Please contact support.";
     }
   };
 
@@ -166,6 +182,7 @@ export function HomeScreen() {
       </View>
 
       {/* show each category at a time */}
+      {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
       <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
         <ScrollView nestedScrollEnabled>
           <View className="flex flex-col w-full bg-secondary-900 rounded">

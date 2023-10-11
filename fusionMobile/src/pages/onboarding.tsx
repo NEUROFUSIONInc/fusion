@@ -34,7 +34,7 @@ export const OnboardingScreen = () => {
     {
       title: "Your Prompts and Responses are saved locally on your device",
       description:
-        "We're private by design. We've created an anonymous account for you. This is your identity on Fusion.",
+        "Your privacy is important to us, so we’ve set up an anonymous account just for you. This is your unique identity on Fusion.",
       image: require("../../assets/onboarding/prompt_responses.png"),
     },
     {
@@ -46,9 +46,19 @@ export const OnboardingScreen = () => {
       onclick: async () => {
         appInsights.trackEvent({
           name: "onboarding_copilot_triggered",
+          properties: {
+            userNpub: accountContext!.userNpub,
+          },
         });
 
-        await requestCopilotConsent(accountContext!.userNpub);
+        const consentStatus = await requestCopilotConsent(
+          accountContext!.userNpub
+        );
+        // set account context value
+        accountContext?.setUserPreferences({
+          ...accountContext.userPreferences,
+          enableCopilot: consentStatus,
+        });
       },
     },
     {
