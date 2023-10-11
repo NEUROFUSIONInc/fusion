@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import { Alert, Platform } from "react-native";
 import AppleHealthKit from "react-native-health";
 
 /* Permission options */
@@ -31,4 +33,68 @@ export const permissions = {
     ],
     write: [],
   },
+};
+
+export const connectAppleHealth = async () => {
+  if (Platform.OS === "ios") {
+    AppleHealthKit.initHealthKit(permissions, (error) => {
+      /* Called after we receive a response from the system */
+      if (error) {
+        console.log("[ERROR] Cannot grant permissions!");
+      }
+
+      /* Can now read or write to HealthKit */
+      const options = {
+        startDate: dayjs().startOf("day").toISOString(),
+      };
+
+      // AppleHealthKit.getSleepSamples(
+      //   options,
+      //   async (err: any, results: HealthValue[]) => {
+      //     if (err) {
+      //       return;
+      //     }
+
+      //     await saveFileToDevice(
+      //       `fusionSleep.json`,
+      //       JSON.stringify(results),
+      //       true,
+      //       "application/json",
+      //       "public.json"
+      //     );
+      //     // console.log(results);
+      //   }
+      // );
+
+      // AppleHealthKit.getDailyStepCountSamples(
+      //   options,
+      //   async (err: any, results: HealthValue[]) => {
+      //     if (err) {
+      //       return;
+      //     }
+
+      //     await saveFileToDevice(
+      //       `fusionSteps.json`,
+      //       JSON.stringify(results),
+      //       true,
+      //       "application/json",
+      //       "public.json"
+      //     );
+      //     // console.log(results);
+      //   }
+      // );
+
+      // AppleHealthKit.getStepCount(options, (err: any, results: HealthValue) => {
+      //   if (err) {
+      //     return;
+      //   }
+      //   Alert.alert("Total steps today", `${Math.floor(results.value)} steps`);
+      // });
+
+      Alert.alert(
+        "Apple Health Connected",
+        "We will use your health data to support Copilot recommendations"
+      );
+    });
+  }
 };

@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Screen, ChevronRightSmall } from "~/components";
 import { AccountContext, OnboardingContext } from "~/contexts";
-import { appInsights } from "~/utils";
+import { appInsights, connectAppleHealth } from "~/utils";
 import { requestCopilotConsent } from "~/utils/consent";
 
 export function SettingsScreen() {
@@ -47,13 +47,25 @@ export function SettingsScreen() {
         navigation.navigate("HomePage");
       },
     },
-    // {
-    //   text: "Manage Subscription",
-    //   onPress: () => {
-    //     // direct user to fusion website with login page
-    //   },
-    // },
   ];
+
+  if (Platform.OS === "ios") {
+    itemList.push({
+      text: "Connect with Apple Health",
+      onPress: async () => {
+        // call bottom sheet
+        // request permissions
+        await connectAppleHealth();
+      },
+    });
+  }
+  // {
+  //   text: "Manage Subscription",
+  //   onPress: () => {
+  //     // direct user to fusion website with login page
+  //   },
+  // },
+
   return (
     <Screen>
       <ScrollView>
