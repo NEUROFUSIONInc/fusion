@@ -11,10 +11,8 @@ import {
   Keyboard,
   Linking,
   ScrollView,
-  Platform,
 } from "react-native";
 import RNFS from "react-native-fs";
-import AppleHealthKit, { HealthValue } from "react-native-health";
 
 import {
   NotificationConfigDays,
@@ -26,12 +24,7 @@ import {
 import { Button, Input, Screen } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { promptService } from "~/services";
-import {
-  appInsights,
-  maskPromptId,
-  permissions,
-  saveFileToDevice,
-} from "~/utils";
+import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
 export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
@@ -46,71 +39,6 @@ export function AccountScreen() {
       },
     });
   }, []);
-
-  const showStepsToday = async () => {
-    if (Platform.OS === "ios") {
-      AppleHealthKit.initHealthKit(permissions, (error) => {
-        /* Called after we receive a response from the system */
-        if (error) {
-          console.log("[ERROR] Cannot grant permissions!");
-        }
-
-        /* Can now read or write to HealthKit */
-        const options = {
-          startDate: dayjs().startOf("day").toISOString(),
-        };
-
-        // AppleHealthKit.getSleepSamples(
-        //   options,
-        //   async (err: any, results: HealthValue[]) => {
-        //     if (err) {
-        //       return;
-        //     }
-
-        //     await saveFileToDevice(
-        //       `fusionSleep.json`,
-        //       JSON.stringify(results),
-        //       true,
-        //       "application/json",
-        //       "public.json"
-        //     );
-        //     // console.log(results);
-        //   }
-        // );
-
-        // AppleHealthKit.getDailyStepCountSamples(
-        //   options,
-        //   async (err: any, results: HealthValue[]) => {
-        //     if (err) {
-        //       return;
-        //     }
-
-        //     await saveFileToDevice(
-        //       `fusionSteps.json`,
-        //       JSON.stringify(results),
-        //       true,
-        //       "application/json",
-        //       "public.json"
-        //     );
-        //     // console.log(results);
-        //   }
-        // );
-
-        AppleHealthKit.getStepCount(
-          options,
-          (err: any, results: HealthValue) => {
-            if (err) {
-              return;
-            }
-            Alert.alert(
-              "Total steps today",
-              `${Math.floor(results.value)} steps`
-            );
-          }
-        );
-      });
-    }
-  };
 
   const exportData = async (dataType: string) => {
     // get all the available prompts
@@ -325,15 +253,6 @@ export function AccountScreen() {
                 fullWidth
                 onPress={async () => await importData()}
               /> */}
-
-              {Platform.OS === "ios" && (
-                <Button
-                  title="Show Steps from Apple Health"
-                  variant="ghost"
-                  fullWidth
-                  onPress={async () => await showStepsToday()}
-                />
-              )}
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
