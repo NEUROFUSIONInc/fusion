@@ -39,7 +39,9 @@ export function HomeScreen() {
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Home",
-      properties: {},
+      properties: {
+        userNpub: accountContext?.userNpub,
+      },
     });
   }, []);
 
@@ -226,6 +228,7 @@ export function HomeScreen() {
                     name: "fusion_copilot_reload_summary",
                     properties: {
                       category: categories[activeCategoryIndex].name,
+                      userNpub: accountContext?.userNpub,
                     },
                   });
 
@@ -254,6 +257,7 @@ export function HomeScreen() {
                       properties: {
                         feedback: "thumps_up",
                         category: categories[activeCategoryIndex].name,
+                        userNpub: accountContext?.userNpub,
                       },
                     });
                     Toast.show({
@@ -274,6 +278,7 @@ export function HomeScreen() {
                       properties: {
                         feedback: "thumbs_down",
                         category: categories[activeCategoryIndex].name,
+                        userNpub: accountContext?.userNpub,
                       },
                     });
 
@@ -299,7 +304,7 @@ export function HomeScreen() {
             }}
             title="Enable Fusion Copilot"
             fullWidth
-            className="mt-5 bg-secondary-900"
+            className=" bg-secondary-900 my-5"
             variant="secondary"
           />
         )}

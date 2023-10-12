@@ -45,7 +45,7 @@ export const connectAppleHealth = async () => {
 
       /* Can now read or write to HealthKit */
       const options = {
-        startDate: dayjs().startOf("day").toISOString(),
+        startDate: dayjs().subtract(30, "day").startOf("day").toISOString(),
       };
 
       // AppleHealthKit.getSleepSamples(
@@ -84,6 +84,24 @@ export const connectAppleHealth = async () => {
       //   }
       // );
 
+      // AppleHealthKit.getHeartRateSamples(
+      //   options,
+      //   async (err: any, results: HealthValue[]) => {
+      //     if (err) {
+      //       return;
+      //     }
+
+      //     await saveFileToDevice(
+      //       `fusionHeartRate.json`,
+      //       JSON.stringify(results),
+      //       true,
+      //       "application/json",
+      //       "public.json"
+      //     );
+      //     // console.log(results);
+      //   }
+      // );
+
       // AppleHealthKit.getStepCount(options, (err: any, results: HealthValue) => {
       //   if (err) {
       //     return;
@@ -93,7 +111,7 @@ export const connectAppleHealth = async () => {
 
       Alert.alert(
         "Apple Health Connected",
-        "We will use your health data to support Copilot recommendations"
+        "We will use your health data to personalize your Copilot recommendations"
       );
     });
   }
