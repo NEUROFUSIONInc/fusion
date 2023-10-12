@@ -65,7 +65,7 @@ export function HomeScreen() {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "You need to enable Fusion Copilot to summaries and AI recommendations from your prompt responses.";
+      return "Enable Fusion Copilot to see get smart summaries and personalized recommendations based on your responses.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
@@ -177,7 +177,7 @@ export function HomeScreen() {
     <Screen>
       <View className="flex flex-row w-full justify-between p-5">
         <Text className="text-base font-sans-bold text-white">
-          Fusion Digest
+          Fusion Copilot
         </Text>
       </View>
 
@@ -212,7 +212,7 @@ export function HomeScreen() {
                 ellipsizeMode="tail"
                 className="font-sans flex flex-wrap text-white text-base font-medium m-5"
               >
-                {summaryText}
+                {summaryText ? summaryText : "Loading summary..."}
               </Text>
             </View>
 

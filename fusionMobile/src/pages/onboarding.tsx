@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable, Image, Alert } from "react-native";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 import { LeftArrow } from "../components/icons";
 
-import { Input } from "~/components";
 import { Button } from "~/components/button";
 import { AccountContext, OnboardingContext } from "~/contexts";
 import { appInsights } from "~/utils";
@@ -15,12 +15,30 @@ export const OnboardingScreen = () => {
   const onboardingContext = React.useContext(OnboardingContext);
   const accountContext = React.useContext(AccountContext);
 
-  const [onboardingEmail, setOnboardingEmail] = useState("");
+  const onHandlerStateChange = (event: {
+    nativeEvent: { state: number; translationX: number };
+  }) => {
+    if (
+      event.nativeEvent.state === State.END &&
+      event.nativeEvent.translationX < -50
+    ) {
+      // Check if the swipe is left (translationX is less than -50)
+      panActiveSlide("right");
+    } else if (
+      event.nativeEvent.state === State.END &&
+      event.nativeEvent.translationX > 50
+    ) {
+      // Check if the swipe is right (translationX is greater than 50)
+      panActiveSlide("left");
+    }
+  };
 
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "Onboarding",
-      properties: {},
+      properties: {
+        userNpub: accountContext?.userNpub,
+      },
     });
   });
 
@@ -67,13 +85,36 @@ export const OnboardingScreen = () => {
         "Get updates from the team, on features, experiments and more. This is not linked to your fusion account, it’s only to send you mail.",
       image: require("../../assets/onboarding/fusion-newsletter.png"),
       hasInput: true,
-      onclick: () => {
-        if (onboardingEmail !== "") {
-          // make api call to add email to newsletter
+      onclick: async () => {
+        const requestEmail = new Promise((resolve) => {
+          Alert.prompt(
+            "Get Email Updates",
+            "Please enter your email so we can reach you",
+            [
+              {
+                text: "Cancel",
+                onPress: () => {
+                  resolve("");
+                },
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: (email) => {
+                  resolve(email);
+                },
+              },
+            ]
+          );
+        });
+
+        const email = await requestEmail;
+
+        if (email) {
           appInsights.trackEvent({
             name: "onboarding_newsletter",
             properties: {
-              email: onboardingEmail,
+              onboardingEmail: email,
             },
           });
         }
@@ -102,96 +143,88 @@ export const OnboardingScreen = () => {
   };
 
   return (
-    <View className="flex-1">
-      <View className="justify-between flex-row px-4">
-        {activeSlideIndex > 0 ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            leftIcon={<LeftArrow width={32} height={32} />}
-            onPress={() => panActiveSlide("left")}
-          />
-        ) : (
-          <View />
-        )}
-        {activeSlideIndex > 1 && (
-          <Pressable onPress={() => handleOnboardingComplete()}>
-            <Text className="text-white text-base">Skip</Text>
-          </Pressable>
-        )}
-      </View>
-      <View className="justify-center items-center mt-4">
-        <Text className="font-sans-bold max-w-xs text-center text-white text-lg">
-          {slides[activeSlideIndex].title}
-        </Text>
-      </View>
-
-      <View className="item-center">
-        <Image
-          className="w-full h-4/5 mt-10"
-          style={{ resizeMode: "contain" }}
-          source={slides[activeSlideIndex].image}
-        />
-      </View>
-
-      <View className="bg-white rounded-t-lg h-2/5 absolute bottom-0 pt-10 w-full">
-        <View className="justify-between h-4/5 px-6">
-          <Text className="font-sans-medium text-center text-dark text-lg">
-            {slides[activeSlideIndex].description}
-          </Text>
-
-          {slides[activeSlideIndex].hasInput && (
-            <Input
-              value={onboardingEmail}
-              className="my-5 border-2 border-tint rounded text-dark text-base leading-1.5"
-              onChangeText={setOnboardingEmail}
-              placeholderTextColor="#181230"
-              placeholder="e.g you@example.com"
-            />
-          )}
-
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row justify-center items-center">
-              {slides.map((_, index) => (
-                <Pressable
-                  key={index}
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor:
-                      index === activeSlideIndex ? "#181230" : "transparent",
-                    borderColor:
-                      index !== activeSlideIndex ? "#181230" : "transparent",
-                    borderWidth: 1,
-                    marginHorizontal: 5,
-                  }}
-                  onPress={() => setActiveSlideIndex(index)}
-                />
-              ))}
-            </View>
-
+    <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+      <View className="flex-1">
+        <View className="justify-between flex-row px-4">
+          {activeSlideIndex > 0 ? (
             <Button
-              variant="primary"
-              textColor="white"
-              size="md"
-              onPress={async () => {
-                if (slides[activeSlideIndex].onclick) {
-                  await slides[activeSlideIndex].onclick!();
-                }
-
-                if (activeSlideIndex === slides.length - 1) {
-                  handleOnboardingComplete();
-                } else {
-                  panActiveSlide("right");
-                }
-              }}
-              className="bg-dark px-10 py-3"
-              title={slides[activeSlideIndex].buttonText ?? "Next"}
+              variant="ghost"
+              size="icon"
+              leftIcon={<LeftArrow width={32} height={32} />}
+              onPress={() => panActiveSlide("left")}
             />
+          ) : (
+            <View />
+          )}
+          {activeSlideIndex > 1 && (
+            <Pressable onPress={() => handleOnboardingComplete()}>
+              <Text className="text-white text-base">Skip</Text>
+            </Pressable>
+          )}
+        </View>
+        <View className="justify-center items-center mt-4">
+          <Text className="font-sans-bold max-w-xs text-center text-white text-lg">
+            {slides[activeSlideIndex].title}
+          </Text>
+        </View>
+
+        <View className="item-center">
+          <Image
+            className="w-full h-4/5 mt-10"
+            style={{ resizeMode: "contain" }}
+            source={slides[activeSlideIndex].image}
+          />
+        </View>
+
+        <View className="bg-white rounded-t-lg h-2/5 absolute bottom-0 pt-10 w-full">
+          <View className="justify-between h-4/5 px-6">
+            <Text className="font-sans-medium text-center text-dark text-lg">
+              {slides[activeSlideIndex].description}
+            </Text>
+
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row justify-center items-center">
+                {slides.map((_, index) => (
+                  <Pressable
+                    key={index}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                      backgroundColor:
+                        index === activeSlideIndex ? "#181230" : "transparent",
+                      borderColor:
+                        index !== activeSlideIndex ? "#181230" : "transparent",
+                      borderWidth: 1,
+                      marginHorizontal: 5,
+                    }}
+                    onPress={() => setActiveSlideIndex(index)}
+                  />
+                ))}
+              </View>
+
+              <Button
+                variant="primary"
+                textColor="white"
+                size="md"
+                onPress={async () => {
+                  if (slides[activeSlideIndex].onclick) {
+                    await slides[activeSlideIndex].onclick!();
+                  }
+
+                  if (activeSlideIndex === slides.length - 1) {
+                    handleOnboardingComplete();
+                  } else {
+                    panActiveSlide("right");
+                  }
+                }}
+                className="bg-dark px-10 py-3"
+                title={slides[activeSlideIndex].buttonText ?? "Next"}
+              />
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </PanGestureHandler>
   );
 };
