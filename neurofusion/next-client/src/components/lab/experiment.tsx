@@ -12,6 +12,8 @@ import { PlugZap } from "lucide-react";
 import { IExperiment } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
+import dayjs from "dayjs";
+import exp from "constants";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -29,18 +31,34 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   const [experimentInfo, setExperimentInfo] = useState<IExperiment>(experiment);
 
+  console.log("active experment in component is", experimentInfo);
   useEffect(() => {
-    setExperimentInfo({ ...experimentInfo, duration, tags });
-  }, [tags, duration]);
+    setExperimentInfo({ ...experiment, duration, tags });
+  }, [experiment, tags, duration]);
 
   async function startNeurosityRecording() {
     if (connectedDevice) {
+      console.log(experimentInfo);
       neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames);
     }
   }
 
   async function stopNeurosityRecording() {
+    // const eventData: EventData = {
+    //     startTimestamp: ;
+    //     duration: number;
+    //     data: string
     neurosityService.stopRecording();
+    // if (experimentInfo.url) {
+    // } else {
+    //   if (sandboxData !== "") {
+    //     neurosityService.stopRecording({
+    //       startTimestamp: dayjs().unix(),
+    //       duration: 0,
+    //       data: sandboxData,
+    //     });
+    //   }
+    // }
     // log to app insights
   }
 
@@ -76,6 +94,8 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         // The data sent from the iframe
         setSandboxData(event.data);
 
+        // the experiment sereisdata obtained from the iframe
+        // TODO: jspsych experiments & other experiments
         // Do something with the data
       }
     });
@@ -139,7 +159,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
         {!experiment.url && (
           <div className="mt-5">
-            <div className="my-5">
+            {/* <div className="my-5">
               <p>
                 Duration <em>(optional)</em> :
               </p>
@@ -149,7 +169,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                 onChange={(e) => setDuration(e.target.valueAsNumber)}
                 value={duration ?? 0}
               />
-            </div>
+            </div> */}
             <div className="my-5">
               <p>
                 Tags <em>(optional)</em> :
