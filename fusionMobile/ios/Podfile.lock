@@ -506,6 +506,8 @@ PODS:
     - React-Core
   - RNGestureHandler (2.9.0):
     - React-Core
+  - RNIap (12.10.8):
+    - React-Core
   - RNPermissions (3.8.1):
     - React-Core
   - RNReanimated (2.14.4):
@@ -629,6 +631,7 @@ DEPENDENCIES:
   - "RNFitnessTracker (from `../node_modules/@kilohealth/rn-fitness-tracker`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNIap (from `../node_modules/react-native-iap`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -792,6 +795,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -886,6 +891,7 @@ SPEC CHECKSUMS:
   RNFitnessTracker: 3d80a66cbb25525ec0f92e8bdb1bf506837577d4
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNIap: 99a559a3642155b47aa0622f9693632010a0b4f7
   RNPermissions: 8614afba1abbd56ae5c02e2af8ab6e8e11f8e236
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f

@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "3",
+    buildNumber: "5",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -32,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 3,
+    versionCode: 40,
     softwareKeyboardLayoutMode: "pan",
   },
   web: {
@@ -53,6 +53,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
   },
-  plugins: [["expo-notifications", { icon: "./assets/notification-icon.png" }]],
+  plugins: [
+    ["expo-notifications", { icon: "./assets/notification-icon.png" }],
+    "react-native-iap",
+  ],
   owner: "oreogundipe",
 });

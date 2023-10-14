@@ -4,6 +4,7 @@ import "react-native-get-random-values";
 
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { useEffect, useState } from "react";
 
 import { promptFrequencyData } from "../components/timepicker/data";
 
@@ -349,3 +350,15 @@ export function convertValueToNumber(value: string | number) {
 //     console.log(error);
 //   }
 // }
+
+export function useSearchDebounce(delay = 350) {
+  const [search, setSearch] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(null);
+
+  useEffect(() => {
+    const delayFn = setTimeout(() => setSearch(searchQuery), delay);
+    return () => clearTimeout(delayFn);
+  }, [searchQuery, delay]);
+
+  return [search, setSearchQuery];
+}

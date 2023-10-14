@@ -70,6 +70,7 @@ react {
 // Override `hermesEnabled` by `expo.jsEngine`
 ext {
   hermesEnabled = (findProperty('expo.jsEngine') ?: "hermes") == "hermes"
+  supportLibVersion = "28.0.0"
 }
 
 /**
@@ -115,11 +116,13 @@ android {
 
     namespace 'com.neurofusion.fusion'
     defaultConfig {
+missingDimensionStrategy "store", "play"
         applicationId 'com.neurofusion.fusion'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
+        versionCode 40
         versionName "1.3.0"
+        missingDimensionStrategy 'store', 'play'
     }
 
     splits {

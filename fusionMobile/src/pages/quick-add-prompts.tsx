@@ -55,6 +55,10 @@ export const QuickAddPromptsScreen = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    console.log("Search text", searchTerm);
+  }, [searchTerm]);
+
   return (
     <Screen>
       {quickAddPrompts && quickAddPrompts?.length > 0 && (

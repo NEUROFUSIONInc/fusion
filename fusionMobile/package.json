@@ -67,6 +67,7 @@
     "react-native-gesture-handler": "~2.9.0",
     "react-native-get-random-values": "1.8.0",
     "react-native-health": "^1.14.0",
+    "react-native-iap": "^12.10.8",
     "react-native-modal-datetime-picker": "^15.0.0",
     "react-native-paper": "^5.7.2",
     "react-native-permissions": "^3.8.0",
