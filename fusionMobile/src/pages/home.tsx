@@ -67,7 +67,7 @@ export function HomeScreen() {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "Enable Fusion Copilot to see get smart summaries and personalized recommendations based on your responses.";
+      return "Use Fusion Copilot to see get summaries and personalized recommendations based on your responses.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
@@ -106,7 +106,7 @@ export function HomeScreen() {
 
     try {
       const res = await axios.post(
-        `${fusionBackendUrl}/api/getpromptsummary`,
+        `${fusionBackendUrl}/api/getpromptsummary/v2`,
         {
           prompts: filteredPrompts,
           responses: categoryPromptResponses,
