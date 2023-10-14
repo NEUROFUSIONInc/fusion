@@ -12,6 +12,11 @@ export const sidebarLinks = [
     href: "/playground",
   },
   // {
+  //   icon: HardDrive,
+  //   title: "Datasets",
+  //   href: "/datasets",
+  // },
+  // {
   //   icon: PenBox,
   //   title: "Quests",
   //   href: "/quests",
@@ -21,11 +26,6 @@ export const sidebarLinks = [
     title: "Integrations",
     href: "/integrations",
   },
-  // {
-  //   icon: HardDrive,
-  //   title: "Datasets",
-  //   href: "/datasets",
-  // },
   // {
   //   icon: SignalHigh,
   //   title: "Analysis",

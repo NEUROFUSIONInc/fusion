@@ -9,6 +9,7 @@ import * as Notifications from "expo-notifications";
 import React from "react";
 import { Alert, Linking, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { withIAPContext } from "react-native-iap";
 import Toast from "react-native-toast-message";
 
 import { FontLoader } from "./FontLoader";
@@ -307,7 +308,7 @@ function App() {
   );
 }
 
-let AppEntryPoint = App;
+let AppEntryPoint = withIAPContext(App);
 
 if (Constants.expoConfig?.extra?.storybookEnabled === "true") {
   AppEntryPoint = require("./.storybook").default;

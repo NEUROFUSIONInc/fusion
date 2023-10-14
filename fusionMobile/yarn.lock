@@ -1532,7 +1532,7 @@
     node-forge "^1.2.1"
     nullthrows "^1.1.1"
 
-"@expo/config-plugins@6.0.2", "@expo/config-plugins@~6.0.0":
+"@expo/config-plugins@6.0.2", "@expo/config-plugins@^6.0.1", "@expo/config-plugins@~6.0.0":
   version "6.0.2"
   resolved "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-6.0.2.tgz"
   integrity sha512-Cn01fXMHwjU042EgO9oO3Mna0o/UCrW91MQLMbJa4pXM41CYGjNgVy1EVXiuRRx/upegHhvltBw5D+JaUm8aZQ==
@@ -11657,6 +11657,13 @@ react-native-health@^1.14.0:
   integrity sha512-7s8YKqcfPLtIp/3cTAGKzhZxHypiZkCGr3zByjnmnNTXGyUZKzjS5ySvpHac/2saBYYlJctk0qq2/MWZv8LnWw==
   dependencies:
     "@expo/config-plugins" "^4.1.5"
+
+react-native-iap@^12.10.8:
+  version "12.10.8"
+  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-12.10.8.tgz#4cf1670ca3401381b48a822ef444e0835f9af4f3"
+  integrity sha512-n5iw1Lzw0tXN54sx/bcS5nttfnJ6ecQb95FYzLHN3NIsrRK9nkudcf5LhmNXznHkfh6YdMk0w8V1vRWRWiDRcA==
+  dependencies:
+    "@expo/config-plugins" "^6.0.1"
 
 react-native-modal-datetime-picker@^14.0.0:
   version "14.0.1"

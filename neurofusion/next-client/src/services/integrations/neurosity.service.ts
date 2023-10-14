@@ -56,8 +56,12 @@ class NeurosityService {
 
   recordingStartTimestamp = 0;
 
-  async stopRecording() {
+  async stopRecording(eventData?: EventData) {
     this.recordingStatus = "stopped";
+    if (eventData) {
+      console.log("stopping recording passing eventData:\n", eventData);
+      this.eventSeries.push(eventData);
+    }
 
     // call the download data as zip function
     const datasetExport: DatasetExport = {
@@ -85,7 +89,7 @@ class NeurosityService {
 
     try {
       console.log("exporting");
-      await downloadDataAsZip(datasetExport, `fusionExport`, dayjs.unix(this.recordingStartTimestamp));
+      await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
     } catch (e) {
       console.log(e);
     } finally {

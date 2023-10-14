@@ -103,6 +103,8 @@ app.get(
  */
 app.post("/api/getpromptsummary", insightController.getPromptSummary);
 
+app.post("/api/getpromptsummary/v2", insightController.getPromptSummaryV2);
+
 /**
  * Start server
  */
