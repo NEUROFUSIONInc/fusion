@@ -11,7 +11,6 @@ export async function getPromptSummary(req: any, res: any) {
   // responses
   const prompt: Prompt = req.body.prompt;
   const responses: PromptResponse[] = req.body.responses;
-
   // TODO: create an interface and parse
   let prompt_responses =
     "date, month, day, timeofday, value, additionalNotes\n";
@@ -75,6 +74,7 @@ export async function getPromptSummaryV2(req: any, res: any) {
   // responses
   const prompts: Prompt[] = req.body.prompts;
   const responses: PromptResponse[] = req.body.responses;
+  let timePeriod = req.body.timePeriod ?? "week";
 
   const uuidToPromptText: { [key: string]: string } = {};
   prompts.forEach((prompt) => {
@@ -97,7 +97,6 @@ export async function getPromptSummaryV2(req: any, res: any) {
     );
   }
 
-  const timePeriod = "week";
   try {
     const chatCompletions = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

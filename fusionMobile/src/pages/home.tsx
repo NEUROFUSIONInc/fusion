@@ -63,6 +63,8 @@ export function HomeScreen() {
 
   const [summaryText, setSummaryText] = React.useState("Loading summary...");
 
+  const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
+
   const getInsightSummary = async (category: string) => {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
@@ -79,12 +81,12 @@ export function HomeScreen() {
 
     const categoryPromptResponses: PromptResponse[] = [];
     // we want to be able to look back a bit more if not enough responses
-    const pastWeekTimestamp = dayjs().subtract(7, "day").valueOf();
+    const pastPeriodTimestamp = dayjs().subtract(1, timePeriod).valueOf();
     await Promise.all(
       filteredPrompts.map(async (prompt) => {
         const res = await promptService.getPromptResponses(
           prompt.uuid,
-          pastWeekTimestamp
+          pastPeriodTimestamp
         );
         categoryPromptResponses.push(...res);
       })
@@ -110,6 +112,7 @@ export function HomeScreen() {
         {
           prompts: filteredPrompts,
           responses: categoryPromptResponses,
+          timePeriod,
         },
         {
           headers: {
@@ -169,6 +172,7 @@ export function HomeScreen() {
     if (!savedPrompts) return;
     if (accountContext?.userLoading) return;
     (async () => {
+      setSummaryText("Loading summary...");
       // make a batch request for summary of each category
       categories.forEach(async (category) => {
         const ai_summary = await getInsightSummary(category.name);
@@ -182,6 +186,7 @@ export function HomeScreen() {
     savedPrompts,
     accountContext?.userLoading,
     accountContext?.userPreferences.enableCopilot,
+    timePeriod,
   ]);
 
   // get the summary for the active category
@@ -199,6 +204,17 @@ export function HomeScreen() {
           <Text className="text-base font-sans-bold text-white">
             Fusion Copilot
           </Text>
+
+          {accountContext?.userPreferences.enableCopilot === true && (
+            <Text
+              className="text-base font-sans text-lime"
+              onPress={() =>
+                setTimePeriod(timePeriod === "week" ? "month" : "week")
+              }
+            >
+              This {timePeriod === "week" ? "week" : "month"}
+            </Text>
+          )}
         </View>
 
         {/* show each category at a time */}
