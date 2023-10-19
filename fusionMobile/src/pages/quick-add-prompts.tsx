@@ -1,9 +1,9 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CategoryTag, Input, PromptDetails, Screen } from "~/components";
+import { CategoryTag, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
 import { AccountContext } from "~/contexts/account.context";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
@@ -63,7 +63,7 @@ export const QuickAddPromptsScreen = () => {
     <Screen>
       {quickAddPrompts && quickAddPrompts?.length > 0 && (
         <View>
-          <View className="flex justify-center items-center w-full">
+          {/* <View className="flex justify-center items-center w-full">
             <Text className="font-sans-bold text-center text-white text-base pb-2">
               What’s been top of mind for you lately
             </Text>
@@ -76,7 +76,7 @@ export const QuickAddPromptsScreen = () => {
             className="my-5"
             onChangeText={setSearchTerm}
             placeholder="I want to be more energetic about work"
-          />
+          /> */}
           <View className="mb-10">
             <ScrollView
               horizontal
