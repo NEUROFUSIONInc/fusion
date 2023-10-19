@@ -118,11 +118,28 @@ export function HomeScreen() {
         }
       );
 
+      appInsights.trackEvent({
+        name: "fusion_copilot_trigger",
+        properties: {
+          category,
+          userNpub: accountContext?.userNpub,
+          status: "success",
+        },
+      });
+
       if (res.status === 200) {
         return res.data.summary;
       }
     } catch (err: any) {
       console.log("error", JSON.stringify(err));
+      appInsights.trackEvent({
+        name: "fusion_copilot_trigger",
+        properties: {
+          category,
+          userNpub: accountContext?.userNpub,
+          status: "failed",
+        },
+      });
       return "Sorry we ran into an error loading summary. Please contact support.";
     }
   };
