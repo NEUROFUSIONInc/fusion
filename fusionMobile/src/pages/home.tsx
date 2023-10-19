@@ -74,7 +74,7 @@ export function HomeScreen() {
     );
 
     if (filteredPrompts.length === 0) {
-      return "You need to add prompts to this category in order to see insights.";
+      return "You need to add prompts to this category to get summaries and personalized recommendations.";
     }
 
     const categoryPromptResponses: PromptResponse[] = [];
@@ -177,137 +177,139 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <View className="flex flex-row w-full justify-between p-5">
-        <Text className="text-base font-sans-bold text-white">
-          Fusion Copilot
-        </Text>
-      </View>
+      <View>
+        <View className="flex flex-row w-full justify-between p-5">
+          <Text className="text-base font-sans-bold text-white">
+            Fusion Copilot
+          </Text>
+        </View>
 
-      {/* show each category at a time */}
-      {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
-      <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
-        <ScrollView nestedScrollEnabled>
-          <View className="flex flex-col w-full bg-secondary-900 rounded">
-            <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
-              <Button
-                variant="ghost"
-                size="icon"
-                leftIcon={<ChevronLeft />}
-                onPress={() => panActiveInsightCategory("left")}
-              />
-
-              <Text className="font-sans text-base text-white text-[20px] ml-2 w-[80%] text-center">
-                {categories[activeCategoryIndex].icon}{" "}
-                {categories[activeCategoryIndex].name}
-              </Text>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                leftIcon={<ChevronRight />}
-                onPress={() => panActiveInsightCategory("right")}
-              />
-            </View>
-
-            <View>
-              <Text
-                ellipsizeMode="tail"
-                className="font-sans flex flex-wrap text-white text-base font-medium m-5"
-              >
-                {summaryText ? summaryText : "Loading summary..."}
-              </Text>
-            </View>
-
-            <View className="flex flex-row w-full justify-between p-5">
-              <Button
-                variant="ghost"
-                size="icon"
-                leftIcon={<Reload />}
-                onPress={() => {
-                  appInsights.trackEvent({
-                    name: "fusion_copilot_reload_summary",
-                    properties: {
-                      category: categories[activeCategoryIndex].name,
-                      userNpub: accountContext?.userNpub,
-                    },
-                  });
-
-                  // reload the summary
-                  setSummaryText("Loading summary...");
-                  (async () => {
-                    const ai_summary = await getInsightSummary(
-                      categories[activeCategoryIndex].name
-                    );
-                    setCategoryInsightSummaries((prev) => ({
-                      ...prev,
-                      [categories[activeCategoryIndex].name]: ai_summary,
-                    }));
-                  })();
-                }}
-              />
-
-              <View className="flex flex-row gap-x-1">
+        {/* show each category at a time */}
+        {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
+        <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+          <ScrollView nestedScrollEnabled>
+            <View className="flex flex-col w-full bg-secondary-900 rounded">
+              <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
                 <Button
                   variant="ghost"
                   size="icon"
-                  leftIcon={<ThumbsUp />}
-                  onPress={() => {
-                    appInsights.trackEvent({
-                      name: "fusion_copilot_feedback",
-                      properties: {
-                        feedback: "thumps_up",
-                        category: categories[activeCategoryIndex].name,
-                        userNpub: accountContext?.userNpub,
-                      },
-                    });
-                    Toast.show({
-                      type: "success",
-                      // text1: "Feedback sent",
-                      text2:
-                        "Thank you for your feedback! Glad the insight was helpful.",
-                    });
-                  }}
+                  leftIcon={<ChevronLeft />}
+                  onPress={() => panActiveInsightCategory("left")}
                 />
+
+                <Text className="font-sans text-base text-white text-[20px] ml-2 w-[80%] text-center">
+                  {categories[activeCategoryIndex].icon}{" "}
+                  {categories[activeCategoryIndex].name}
+                </Text>
+
                 <Button
                   variant="ghost"
                   size="icon"
-                  leftIcon={<ThumbsDown />}
-                  onPress={() => {
-                    appInsights.trackEvent({
-                      name: "fusion_copilot_feedback",
-                      properties: {
-                        feedback: "thumbs_down",
-                        category: categories[activeCategoryIndex].name,
-                        userNpub: accountContext?.userNpub,
-                      },
-                    });
-
-                    Toast.show({
-                      type: "success",
-                      // text1: "Feedback sent",
-                      text2:
-                        "Thank you for your feedback! It helps us improve.",
-                    });
-                  }}
+                  leftIcon={<ChevronRight />}
+                  onPress={() => panActiveInsightCategory("right")}
                 />
               </View>
-            </View>
-          </View>
-        </ScrollView>
-      </PanGestureHandler>
 
-      {!accountContext?.userLoading &&
-        accountContext?.userPreferences.enableCopilot !== true && (
-          <Button
-            onPress={() => {
-              navigation.navigate("SettingsPage");
-            }}
-            title="Enable Fusion Copilot"
-            fullWidth
-            className=" bg-secondary-900 my-5"
-            variant="secondary"
-          />
-        )}
+              <View>
+                <Text
+                  ellipsizeMode="tail"
+                  className="font-sans flex flex-wrap text-white text-base font-medium m-5"
+                >
+                  {summaryText ? summaryText : "Loading summary..."}
+                </Text>
+              </View>
+
+              <View className="flex flex-row w-full justify-between p-5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  leftIcon={<Reload />}
+                  onPress={() => {
+                    appInsights.trackEvent({
+                      name: "fusion_copilot_reload_summary",
+                      properties: {
+                        category: categories[activeCategoryIndex].name,
+                        userNpub: accountContext?.userNpub,
+                      },
+                    });
+
+                    // reload the summary
+                    setSummaryText("Loading summary...");
+                    (async () => {
+                      const ai_summary = await getInsightSummary(
+                        categories[activeCategoryIndex].name
+                      );
+                      setCategoryInsightSummaries((prev) => ({
+                        ...prev,
+                        [categories[activeCategoryIndex].name]: ai_summary,
+                      }));
+                    })();
+                  }}
+                />
+
+                <View className="flex flex-row gap-x-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    leftIcon={<ThumbsUp />}
+                    onPress={() => {
+                      appInsights.trackEvent({
+                        name: "fusion_copilot_feedback",
+                        properties: {
+                          feedback: "thumps_up",
+                          category: categories[activeCategoryIndex].name,
+                          userNpub: accountContext?.userNpub,
+                        },
+                      });
+                      Toast.show({
+                        type: "success",
+                        // text1: "Feedback sent",
+                        text2:
+                          "Thank you for your feedback! Glad the insight was helpful.",
+                      });
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    leftIcon={<ThumbsDown />}
+                    onPress={() => {
+                      appInsights.trackEvent({
+                        name: "fusion_copilot_feedback",
+                        properties: {
+                          feedback: "thumbs_down",
+                          category: categories[activeCategoryIndex].name,
+                          userNpub: accountContext?.userNpub,
+                        },
+                      });
+
+                      Toast.show({
+                        type: "success",
+                        // text1: "Feedback sent",
+                        text2:
+                          "Thank you for your feedback! It helps us improve.",
+                      });
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        </PanGestureHandler>
+
+        {!accountContext?.userLoading &&
+          accountContext?.userPreferences.enableCopilot !== true && (
+            <Button
+              onPress={() => {
+                navigation.navigate("SettingsPage");
+              }}
+              title="Enable Fusion Copilot"
+              fullWidth
+              className=" bg-secondary-900 my-5"
+              variant="secondary"
+            />
+          )}
+      </View>
 
       {/* connect your apple health data */}
     </Screen>
