@@ -123,11 +123,12 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
           You can use Fusion for free forever, but you'll be missing out on some
           cool features.
           {"\n\n"}
-          With Fusion Premium, you can connect your health data and get
-          intelligent recommendations & summaries from our Copilot.
+          With Fusion Premium, you get intelligent recommendations & summaries
+          from our Copilot just when you need them.
           {"\n\n"}
-          You also get first dibs on what we're building next like editing &
-          sharing responses, connecting music & screentime, quests & much more!{" "}
+          Since we're still early, you get first dibs on what we're building
+          next like editing and sharing responses, connecting music, screentime
+          & much more!{" "}
         </Text>
 
         <View className="flex">
