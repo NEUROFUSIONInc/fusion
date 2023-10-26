@@ -171,8 +171,8 @@ export function AccountScreen() {
               <Text className="font-sans text-center text-base text-white">
                 We value your privacy and data security.{"\n"}Your prompts and
                 responses are stored solely on your device, not our servers.
-                {"\n\n"}Rest assured, your entries remain private and
-                inaccessible to anyone else unless you decide to share them.
+                They are private and inaccessible to anyone else unless you
+                decide to share them.
               </Text>
             </View>
 

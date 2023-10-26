@@ -2,6 +2,7 @@ import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import Constants from "expo-constants";
 import React, { useCallback } from "react";
 import { View, Text, Pressable, Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -114,6 +115,10 @@ export function SettingsScreen() {
           })}
         </View>
         {renderSubscriptionSheet()}
+
+        <Text className="font-sans text-base text-white text-center">
+          Fusion v.{Constants.expoConfig?.version}
+        </Text>
       </ScrollView>
     </Screen>
   );

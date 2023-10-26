@@ -3,7 +3,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Linking } from "react-native";
 import {
   ScrollView,
   PanGestureHandler,
@@ -147,6 +147,8 @@ export function HomeScreen() {
     }
   };
 
+  // order by categories by prompts with responses
+
   const [categoryInsightSummaries, setCategoryInsightSummaries] =
     React.useState<{ [key: string]: string }>({});
 
@@ -199,27 +201,27 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <View>
-        <View className="flex flex-row w-full justify-between p-5">
-          <Text className="text-base font-sans-bold text-white">
-            Fusion Copilot
-          </Text>
-
-          {accountContext?.userPreferences.enableCopilot === true && (
-            <Text
-              className="text-base font-sans text-lime"
-              onPress={() =>
-                setTimePeriod(timePeriod === "week" ? "month" : "week")
-              }
-            >
-              This {timePeriod === "week" ? "week" : "month"}
+      <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+        <View className="h-full">
+          <View className="flex flex-row w-full justify-between p-5">
+            <Text className="text-base font-sans-bold text-white">
+              Fusion Copilot
             </Text>
-          )}
-        </View>
 
-        {/* show each category at a time */}
-        {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
-        <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+            {accountContext?.userPreferences.enableCopilot === true && (
+              <Text
+                className="text-base font-sans text-lime"
+                onPress={() =>
+                  setTimePeriod(timePeriod === "week" ? "month" : "week")
+                }
+              >
+                This {timePeriod === "week" ? "week" : "month"}
+              </Text>
+            )}
+          </View>
+
+          {/* show each category at a time */}
+          {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
           <ScrollView nestedScrollEnabled>
             <View className="flex flex-col w-full bg-secondary-900 rounded">
               <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
@@ -328,21 +330,50 @@ export function HomeScreen() {
               </View>
             </View>
           </ScrollView>
-        </PanGestureHandler>
 
-        {!accountContext?.userLoading &&
-          accountContext?.userPreferences.enableCopilot !== true && (
-            <Button
-              onPress={() => {
-                navigation.navigate("SettingsPage");
-              }}
-              title="Enable Fusion Copilot"
-              fullWidth
-              className=" bg-secondary-900 my-5"
-              variant="secondary"
-            />
-          )}
-      </View>
+          {!accountContext?.userLoading &&
+            accountContext?.userPreferences.enableCopilot !== true && (
+              <Button
+                onPress={() => {
+                  navigation.navigate("SettingsPage");
+                }}
+                title="Enable Fusion Copilot"
+                fullWidth
+                className=" bg-secondary-900 my-5"
+                variant="secondary"
+              />
+            )}
+
+          <View>
+            {categories[activeCategoryIndex].name === "Mental Health" && (
+              <Button
+                onPress={async () => {
+                  await Linking.openURL(
+                    "https://cmha.ca/find-info/mental-health/general-info/"
+                  );
+                }}
+                title="Mental Health Resources"
+                fullWidth
+                className=" bg-secondary-900 my-5"
+                variant="secondary"
+              />
+            )}
+            {categories[activeCategoryIndex].name === "Health and Fitness" && (
+              <Button
+                onPress={async () => {
+                  await Linking.openURL(
+                    "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
+                  );
+                }}
+                title="Learn more about physical activity"
+                fullWidth
+                className=" bg-secondary-900 my-5"
+                variant="secondary"
+              />
+            )}
+          </View>
+        </View>
+      </PanGestureHandler>
 
       {/* connect your apple health data */}
     </Screen>
