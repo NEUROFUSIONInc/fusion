@@ -345,31 +345,76 @@ export function HomeScreen() {
             )}
 
           <View>
-            {categories[activeCategoryIndex].name === "Mental Health" && (
+            {!savedPrompts?.find(
+              (prompt) =>
+                prompt.additionalMeta?.category ===
+                categories[activeCategoryIndex].name
+            ) ? (
               <Button
                 onPress={async () => {
-                  await Linking.openURL(
-                    "https://cmha.ca/find-info/mental-health/general-info/"
-                  );
+                  const val = categories[activeCategoryIndex].name;
+                  navigation.navigate("QuickAddPrompts", {
+                    selectedCategory: val,
+                  });
                 }}
-                title="Mental Health Resources"
+                title="Add Prompt"
                 fullWidth
-                className=" bg-secondary-900 my-5"
+                className="bg-secondary-900 my-5"
                 variant="secondary"
               />
-            )}
-            {categories[activeCategoryIndex].name === "Health and Fitness" && (
-              <Button
-                onPress={async () => {
-                  await Linking.openURL(
-                    "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
-                  );
-                }}
-                title="Learn more about physical activity"
-                fullWidth
-                className=" bg-secondary-900 my-5"
-                variant="secondary"
-              />
+            ) : (
+              <>
+                <>
+                  <Button
+                    title="View Responses"
+                    fullWidth
+                    onPress={async () => {
+                      const val = categories[activeCategoryIndex].name;
+                      navigation.navigate("InsightsNavigator", {
+                        screen: "InsightsPage",
+                        params: {
+                          promptUuid: savedPrompts?.find(
+                            (prompt) =>
+                              prompt.additionalMeta?.category ===
+                              categories[activeCategoryIndex].name
+                          )?.uuid,
+                        },
+                      });
+                    }}
+                    className="bg-secondary-900"
+                    variant="secondary"
+                  />
+                </>
+                <>
+                  {categories[activeCategoryIndex].name === "Mental Health" && (
+                    <Button
+                      onPress={async () => {
+                        await Linking.openURL(
+                          "https://cmha.ca/find-info/mental-health/general-info/"
+                        );
+                      }}
+                      title="Mental Health Resources"
+                      fullWidth
+                      className=" bg-secondary-900 my-5"
+                      variant="secondary"
+                    />
+                  )}
+                  {categories[activeCategoryIndex].name ===
+                    "Health and Fitness" && (
+                    <Button
+                      onPress={async () => {
+                        await Linking.openURL(
+                          "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
+                        );
+                      }}
+                      title="Learn more about physical activity"
+                      fullWidth
+                      className=" bg-secondary-900 my-5"
+                      variant="secondary"
+                    />
+                  )}
+                </>
+              </>
             )}
           </View>
         </View>

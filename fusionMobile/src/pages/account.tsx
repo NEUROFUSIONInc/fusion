@@ -219,6 +219,8 @@ export function AccountScreen() {
                   );
                 }}
                 fullWidth
+                className=" bg-secondary-900"
+                variant="secondary"
               />
             </View>
 
@@ -230,7 +232,8 @@ export function AccountScreen() {
                 );
               }}
               fullWidth
-              className="mt-5"
+              className="mt-5 bg-secondary-900 my-5"
+              variant="secondary"
             />
 
             {/* Export Data */}
