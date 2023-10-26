@@ -120,15 +120,11 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
         onLayout={handleContentLayout}
       >
         <Text className="font-sans text-base text-white ">
-          You can use Fusion for free forever, but you'll be missing out on some
-          cool features.
-          {"\n\n"}
-          With Fusion Premium, you get intelligent recommendations & summaries
-          from our Copilot just when you need them.
-          {"\n\n"}
-          Since we're still early, you get first dibs on what we're building
-          next like editing and sharing responses, connecting music, screentime
-          & much more!{" "}
+          Fusion Premium gives you access Fusion Copilot with personalized
+          recommendations on how to navigate your day based on your responses.
+          {"\n\n"}In future releases, you'd be able to:{"\n"}- Edit responses
+          and share custom reports.{"\n"}- Pair Fusion with your sleep, activity
+          trackers, music listening history and screen time.
         </Text>
 
         <View className="flex">
@@ -149,11 +145,43 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
               }}
             />
           ) : (
-            <Button
-              title="Get Fusion Premium"
-              fullWidth
-              onPress={async () => await handlePurchase()}
-            />
+            <>
+              <Button
+                title="Get Fusion Premium"
+                fullWidth
+                onPress={async () => await handlePurchase()}
+              />
+              <Text className="font-sans text-base text-white text-center">
+                3 days free, then $9.99/month
+              </Text>
+
+              <View className="flex flex-row justify-around">
+                <Button
+                  title="Privacy Policy"
+                  variant="ghost"
+                  onPress={async () =>
+                    await Linking.openURL(
+                      "http://www.apple.com/legal/itunes/appstore/dev/stdeula"
+                    )
+                  }
+                />
+                <Button
+                  title="Terms of Service"
+                  variant="ghost"
+                  onPress={async () =>
+                    await Linking.openURL("https://usefusion.app/privacy")
+                  }
+                />
+              </View>
+              <Text className="font-sans text-white text-xs text-center">
+                Payment will be charged to your credit card through your iTunes
+                account at confirmation of purchase. Subscription renews
+                automatically unless canceled at least 24 hrs prior to the end
+                of the subscription period. You can turn off auto-renew at any
+                time from your iTunes account settings but refunds will not be
+                provided for any unused portion.
+              </Text>
+            </>
           )}
           <Button
             title="Close"
