@@ -3,7 +3,11 @@ import RNBottomSheet, {
 } from "@gorhom/bottom-sheet";
 import React, { FC, RefObject, useMemo, useEffect } from "react";
 import { View, Text, Platform, Linking, Alert } from "react-native";
-import { requestPurchase, useIAP } from "react-native-iap";
+import {
+  getAvailablePurchases,
+  requestPurchase,
+  useIAP,
+} from "react-native-iap";
 
 import { BottomSheet } from "~/components/bottom-sheet";
 import { Button } from "~/components/button";
@@ -73,6 +77,34 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
     }
   };
 
+  const handleRestorePurchases = async () => {
+    try {
+      const purchases = await getAvailablePurchases();
+      // Handle the restored purchases (e.g., unlock premium features)
+      console.log("Restored Purchases:", purchases);
+
+      await Promise.all(
+        purchases.map(async (purchase) => {
+          switch (purchase.productId) {
+            case "fusion.premium.monthly":
+              await finishTransaction({ purchase });
+              setUserSubscribed(true);
+              appInsights.trackEvent({
+                name: "subscription_restored",
+                properties: {
+                  userNpub: accountContext?.userNpub,
+                  purchase,
+                },
+              });
+              break;
+          }
+        })
+      );
+    } catch (error) {
+      console.error("Failed to restore purchases:", error);
+    }
+  };
+
   useEffect(() => {
     // ... listen to currentPurchaseError, to check if any error happened
     if (currentPurchaseError) {
@@ -91,11 +123,13 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
     // ... listen to currentPurchase, to check if the purchase went through
     if (currentPurchase) {
       console.log("currentPurchase", currentPurchase);
-      finishTransaction({ purchase: currentPurchase });
+      (async () => {
+        await finishTransaction({ purchase: currentPurchase });
 
-      if (currentPurchase.productId === subscriptionSkus![0]) {
-        setUserSubscribed(true);
-      }
+        if (currentPurchase.productId === subscriptionSkus![0]) {
+          setUserSubscribed(true);
+        }
+      })();
     }
 
     appInsights.trackEvent({
@@ -146,14 +180,26 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
             />
           ) : (
             <>
+              <View>
+                <Button
+                  title="Get Fusion Premium"
+                  fullWidth
+                  onPress={async () => await handlePurchase()}
+                />
+                <Text className="font-sans text-base text-white text-center">
+                  3 days free, then $9.99/month
+                </Text>
+              </View>
+
               <Button
-                title="Get Fusion Premium"
+                title="Restore Purchase"
                 fullWidth
-                onPress={async () => await handlePurchase()}
+                onPress={async () => {
+                  await handleRestorePurchases();
+                }}
+                variant="ghost"
+                className="mt-5"
               />
-              <Text className="font-sans text-base text-white text-center">
-                3 days free, then $9.99/month
-              </Text>
 
               <View className="flex flex-row justify-around">
                 <Button
