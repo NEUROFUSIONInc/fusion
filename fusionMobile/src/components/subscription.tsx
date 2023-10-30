@@ -122,23 +122,31 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
   useEffect(() => {
     // ... listen to currentPurchase, to check if the purchase went through
     if (currentPurchase) {
-      console.log("currentPurchase", currentPurchase);
       (async () => {
         await finishTransaction({ purchase: currentPurchase });
 
         if (currentPurchase.productId === subscriptionSkus![0]) {
           setUserSubscribed(true);
         }
-      })();
-    }
 
-    appInsights.trackEvent({
-      name: "subscription_validation",
-      properties: {
-        userNpub: accountContext?.userNpub,
-        purchase: currentPurchase,
-      },
-    });
+        appInsights.trackEvent({
+          name: "subscription_validation",
+          properties: {
+            userNpub: accountContext?.userNpub,
+            purchase: currentPurchase,
+          },
+        });
+      })();
+    } else {
+      // console.log("No Purchase Made");
+      appInsights.trackEvent({
+        name: "subscription_error",
+        properties: {
+          userNpub: accountContext?.userNpub,
+          message: "currentPurchase is null.",
+        },
+      });
+    }
   }, [currentPurchase]);
 
   const [userSubscribed, setUserSubscribed] = React.useState(false);
