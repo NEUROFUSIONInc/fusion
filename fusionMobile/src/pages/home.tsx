@@ -353,8 +353,11 @@ export function HomeScreen() {
               <Button
                 onPress={async () => {
                   const val = categories[activeCategoryIndex].name;
-                  navigation.navigate("QuickAddPrompts", {
-                    selectedCategory: val,
+                  navigation.navigate("PromptNavigator", {
+                    screen: "QuickAddPrompts",
+                    params: {
+                      selectedCategory: val,
+                    },
                   });
                 }}
                 title="Add Prompt"
