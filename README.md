@@ -4,7 +4,7 @@ What do we find when we stop treating our usage data across apps as a by-product
 
 ## Why Fusion
 
-- We desperately need an open platform for self experimentation that is easy to use and doesn't sacrifice user privacy.
+- We desperately need an open platform for self experimentation that is secure, easy to use and doesn't sacrifice user privacy.
 
 ## Links
 - [Fusion website](https://usefusion.app)
@@ -18,7 +18,9 @@ See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the latest
 I've had wonderful people devote their time & energy to Fusion in different ways. To them I'm eternally grateful.
 
 - AdA
+- MiJ
 - AyM
+- YeO
 - EmA
 - ErB
 - KeO
