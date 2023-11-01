@@ -15,10 +15,11 @@ What do we find when we stop treating our usage data across apps as a by-product
 
 See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the latest.
 
-I've had wonderful people devote their time & energy to Fusion in different forms and I'm eternally grateful.
+I've had wonderful people devote their time & energy to Fusion in different ways. To them I'm eternally grateful.
 
 - AdA
 - AyM
 - EmA
 - ErB
 - KeO
+- (You?)
