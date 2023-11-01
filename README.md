@@ -2,95 +2,10 @@
 
 What do we find when we stop treating our usage data across apps as a by-product but as signals that we could use to understand ourselves better?
 
-[Fusion](https://usefusion.app) allows you to record brain activity and correlate with other health & behaviour data like - interests, productivity data.
-
-[](./overview.png)
-
-## core data integrations
-
-- brain activity (neurosity)
-- productivity / actions on device - (magicflow, activitywatch)
-- health (directly from Apple Health / Google Fit)
-
-## Data Storage
-
-Folder structure for uploaded data in Blob storage is in this format
-
-`<userid>/YYYY/MM/DD/<data-type>/<data-type_unixtimestamp.json>`
-
-Tags are stored in the storage for search. Tags used,
-
-- userGuid
-- dataName
-- provider
-- unixTimestamp
-
-## Schemas
-
-### Events
-
-Events are used to tag recordings. You can have multiple events within a time range
-
-- event must have 'startTimestamp' & 'event' obj
-- if 'endTimestamp' is ommited, it is assumed you're just logging point in time (single action e.g drink coffee)
-- 'eventValue' will be very useful for self sampling
-
-```json
-{
-    startTimestamp
-    endTimestamp
-    name
-    description
-    value
-}
-```
-
-## Visualizations
-
-Goal build the best intuitive visualization
-
-- allow to see visualization side by side
-
-## Architecture
-
-
-![](./architecture.png)
-
-## Getting started
-
-- Clone the repo
-
-### Mobile App
-
-See [set up details in fusionMobile folder](./fusionMobile/README.md)
-
-### Frontend Client
-
-See [set up details in neurofusion/client folder](./neurofusion/client/README.md)
-
-### Backend Server
-
-See [set up details in neurofusion/server folder](./neurofusion/server/README.md)
-
-### Analysis
-
-See [/analysis folder](./analysis/README.md)
-
-### Other Services
-
-Blob Storage - Azure
-Authentication - Magic Link
-Brain Data - Neurosity
-
-## References
-
-Project Overview & Lab Notes - https://www.notion.so/next-steps-for-fusion-betting-on-magicFlow-56c74371306c4816a9e08722868a9163
-
-Project Monthly Updates - https://neurofusion.substack.com
-
-Dev Tasks - https://github.com/users/oreHGA/projects/1
-
-User Flows - https://www.notion.so/Fusion-User-flows-9c454c9f767a403b9384e94b1dfdc48b
+## Links
+- [Fusion website](https://usefusion.app)
+- [iOS App](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone)
+- [Android App](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1)
 
 ## Working on this repo
 
@@ -103,6 +18,7 @@ When you finish and are all set, open a PR to the `staging` branch.
 - staging branch will be periodically merged to prod
 
 ## Contributions
+I've had wonderful people devote their time & energy to Fusion and I'm eternally grateful.
 
 - AdA
 - AyM
