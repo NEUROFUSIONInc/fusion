@@ -13,7 +13,9 @@ What do we find when we stop treating our usage data across apps as a by-product
 
 ## Contributing to this repo
 
-See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the latest.
+See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the thoughts & challenges.
+
+[Join our community on Discord](https://discord.gg/3wCNJ6X4RF)
 
 I've had wonderful people devote their time & energy to Fusion in different ways. To them I'm eternally grateful.
 
