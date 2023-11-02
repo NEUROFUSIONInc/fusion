@@ -22,6 +22,7 @@ I've had wonderful people devote their time & energy to Fusion in different ways
 - AdA
 - MiJ
 - AyM
+- JoG
 - YeO
 - EmA
 - ErB
