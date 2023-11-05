@@ -13,6 +13,7 @@ import eeg
 
 app = Flask(__name__)
 
+# TODO: handle multiple files
 @app.route('/api/v1/process_eeg', methods=['POST'])
 def process():
     try:
@@ -20,7 +21,12 @@ def process():
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
 
+        if 'fileTimestamp' not in request.form:
+            return jsonify({'error': 'No file timestamp'}), 400
+
         file = request.files['file']
+
+        fileTimestamp = request.form['fileTimestamp']
 
         # Check if the file has a filename
         if file.filename == '':
@@ -45,10 +51,10 @@ def process():
             # TODO: validate that is has all the files we need for processing
             # now call eeg.py methods to return distributions
             # this is assuming it's only one session
-            file_bundles = eeg.extractBundledEEG(temp_dir + "/raw_files/" + file.filename[:-4])
+            file_bundles = eeg.extractBundledEEG(temp_dir + "/raw_files/")
             analysisEngine = eeg.analysisEngine({
-                "session": file_bundles.extractById(1698443037)
-            }, bundleType="ids", qualityCutoffFilter=0)
+                "session": file_bundles.extractById(int(fileTimestamp))
+            }, bundleType="ids", qualityCutoffFilter=1)
 
             # if - isApi, these methods should return png            
             powerDistributionData = analysisEngine.distributionVetting(returnAsImageArray=True)

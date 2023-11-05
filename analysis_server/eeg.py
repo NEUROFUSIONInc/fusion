@@ -20,9 +20,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import io
 
-plt.switch_backend('Agg') 
-
-
 timezone = 'America/Vancouver'
 
 
@@ -480,6 +477,8 @@ class analysisEngine():
                         self.accumulatedPowerBands [x][band].append(y[epoch]["avg_power_by_band"][band])
         
         if returnAsImageArray:
+            plt.switch_backend('Agg') 
+
             num_bands = len(bands_ordered)
             num_files = len(self.fileBundles)
             
@@ -534,6 +533,8 @@ class analysisEngine():
                 accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) * 2
             
         if returnAsImageArray:
+            plt.switch_backend('Agg') 
+
             fig, ax = plt.subplots()
             bar_width = .3
             currentBarDist = bar_width
