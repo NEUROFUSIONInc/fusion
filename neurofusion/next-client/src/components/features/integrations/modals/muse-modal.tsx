@@ -11,8 +11,6 @@ interface IBiometricsModalProps {
   onCloseModal: () => void;
 }
 
-async function connectDevice() {}
-
 export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModal }) => {
   const [deviceConfig, setDeviceConfig] = useState("");
 
@@ -31,15 +29,15 @@ export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModa
       try {
         client = await connectMuse();
         console.log(client);
-        client.eegReadings.subscribe((reading) => {
-          console.log(reading);
-        });
-        client.telemetryData.subscribe((telemetry) => {
-          console.log(telemetry);
-        });
-        client.accelerometerData.subscribe((acceleration) => {
-          console.log(acceleration);
-        });
+        // client.eegReadings.subscribe((reading) => {
+        //   console.log(reading);
+        // });
+        // client.telemetryData.subscribe((telemetry) => {
+        //   console.log(telemetry);
+        // });
+        // client.accelerometerData.subscribe((acceleration) => {
+        //   console.log(acceleration);
+        // });
       } catch (err) {
         console.log(err);
       }
@@ -63,13 +61,10 @@ export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModa
         />
         <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-[50%] top-[50%] z-30 h-auto max-h-[85vh] w-[450px] max-w-[90vw] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-[6px] bg-white p-8 focus:outline-none dark:bg-slate-800 md:w-[600px]">
           <Dialog.Title className="mb-1 w-10/12 font-body text-lg md:w-full md:text-2xl">
-            Connect EEG Device with Brainflow
+            Connect Your Muse Headset
           </Dialog.Title>
           <Dialog.Description className="mb-5 text-sm text-gray-700 dark:text-gray-300 md:text-base">
-            Enter details for your EEG device
-            <Link href="https://brainflow.readthedocs.io/en/stable/SupportedBoards.html" target="_blank">
-              Brainflow supported device details
-            </Link>
+            Works with the Muse S and Muse 2 headbands.
           </Dialog.Description>
 
           <Dialog.Close
@@ -80,21 +75,9 @@ export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModa
             <span className="sr-only">Close</span>
           </Dialog.Close>
 
-          <h4 className="font-body text-lg">Device Configurations</h4>
-          <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-            Enter Device Config (JSON)
-            <textarea
-              id="countries"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-              rows={10}
-              cols={50}
-              onChange={updateDeviceConfig}
-            ></textarea>
-          </label>
-
           <div className="mt-8 flex w-full flex-wrap items-center gap-4 py-6 md:flex-nowrap">
             <Button type="submit" onClick={handleConnect}>
-              Connect EEG Device
+              Connect Muse
             </Button>
           </div>
         </Dialog.Content>
