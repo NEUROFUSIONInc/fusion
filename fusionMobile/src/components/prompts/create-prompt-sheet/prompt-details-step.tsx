@@ -50,7 +50,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
   };
 
   return (
-    <View className="flex-1 flex-col space-y-5 -z-auto">
+    <View className="flex-1 flex-col space-y-5">
       {isCreating && (
         <Text className="text-xl font-sans-bold text-white">
           Enter Prompt Details
@@ -77,7 +77,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
           />
         )}
 
-        <View className="-z-30">
+        <View className="-z-100">
           <Input
             value={promptText}
             onChangeText={setPromptText}

@@ -354,7 +354,7 @@ export function HomeScreen() {
                 onPress={async () => {
                   const val = categories[activeCategoryIndex].name;
                   navigation.navigate("PromptNavigator", {
-                    screen: "QuickAddPrompts",
+                    screen: "Prompts",
                     params: {
                       selectedCategory: val,
                     },
