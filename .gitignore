@@ -21,3 +21,6 @@ __pycache__/
 nostr.sqlite3
 
 .hintrc
+
+neurofusion/client
+archive/*
