@@ -17,11 +17,11 @@ All of this is to get us closer of our vision for a future where we live our day
 - [Blog](https://neurofusion.substack.com)
 
 
-## Contributing to this repo
+## Contributions are welcome!
 
 See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the thoughts & challenges.
 
-[Join Fusion's Discord](https://discord.gg/3wCNJ6X4RF)
+[Join Fusion Community](https://discord.gg/3wCNJ6X4RF)
 
 Over time, I've had wonderful people devote their time & energy to Fusion in different ways. To them I'm eternally grateful.
 
