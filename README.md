@@ -12,14 +12,14 @@ All of this is to get us closer of our vision for a future where we live our day
 - [Fusion website](https://usefusion.app)
 - [iOS App](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone)
 - [Android App](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1)
-- [Neuro Explorer Client](https://usefusion.app/playground)
+- [Fusion Explorer Client](https://usefusion.app/playground)
 - [Why is Fusion open source & how do we fund it?](https://github.com/NEUROFUSIONInc/fusion/discussions/167)
 - [Blog](https://neurofusion.substack.com)
 
 
 ## Contributions are welcome!
 
-See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for the thoughts & challenges.
+See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
 
 [Join Fusion Community](https://discord.gg/3wCNJ6X4RF)
 
