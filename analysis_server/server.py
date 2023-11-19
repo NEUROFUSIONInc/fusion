@@ -6,12 +6,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import time
 from PIL import Image
-
-
+from flask_cors import CORS
 
 import eeg
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # TODO: handle multiple files
 @app.route('/api/v1/process_eeg', methods=['POST'])

@@ -464,10 +464,12 @@ class analysisEngine():
                 sum += len(self.fileBundleSummeries[x])
             else:
                 raise Exception("Invalid bundleType")
-            
 
-    # Generates histogram on epochs average powerband values for inspection of distrobutions
-    def distributionVetting(self, returnAsImageArray=False):
+        # generate file bundle stats
+        self.computeFileBundleStats()
+            
+    def computeFileBundleStats(self):
+        # Generates a dictionary of all the powerband values for epochs in recording groups
         self.accumulatedPowerBands = {x:dict() for x in self.fileBundles}
         for x in self.fileBundles: # Basic sanity checks of distributions
             for y in self.fileBundleSummeries[x]:
@@ -475,7 +477,20 @@ class analysisEngine():
                     for band in y[epoch]["avg_power_by_band"]:
                         if band not in self.accumulatedPowerBands [x]: self.accumulatedPowerBands [x][band] = []
                         self.accumulatedPowerBands [x][band].append(y[epoch]["avg_power_by_band"][band])
-        
+ 
+        self.accumulatedPowerBandStats = {x:dict() for x in self.fileBundles}
+        self.accumulatedPowerBandErrors = {x:dict() for x in self.fileBundles}
+
+        for x in self.accumulatedPowerBands: # avgs with error bars
+            for band in self.accumulatedPowerBands[x]:
+                self.accumulatedPowerBandStats[x][band] = np.nanmean(np.array(self.accumulatedPowerBands[x][band]))
+                # print(np.array(accumulatedPowerBands[x][band]))
+                self.accumulatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) * 2
+
+
+    # Generates histogram on epochs average powerband values for inspection of distrobutions
+    def distributionVetting(self, returnAsImageArray=False):
+
         if returnAsImageArray:
             plt.switch_backend('Agg') 
 
@@ -513,25 +528,15 @@ class analysisEngine():
                     plt.hist(self.accumulatedPowerBands [x][band],alpha=0.5,bins=160,label=x)
                     
                 plt.title(f'{band} Epoch Averages')
-
                 plt.legend()
                 plt.xlabel('uV')
                 plt.ylabel('Count')
                 plt.grid(True)
                 plt.show()
-
+    
 
     # basic bar chart of powerbybands comparing between catergories with error bars encompassing 95% confidence interval assuming normal distrobutions
     def basicComparisons(self, returnAsImageArray=False):
-        accumatedPowerBandStats = {x:dict() for x in self.fileBundles}
-        accumatedPowerBandErrors = {x:dict() for x in self.fileBundles}
-
-        for x in self.accumulatedPowerBands: # avgs with error bars
-            for band in self.accumulatedPowerBands[x]:
-                accumatedPowerBandStats[x][band] = np.nanmean(np.array(self.accumulatedPowerBands[x][band]))
-                # print(np.array(accumulatedPowerBands[x][band]))
-                accumatedPowerBandErrors[x][band] = np.nanstd(np.array(self.accumulatedPowerBands[x][band])) * 2
-            
         if returnAsImageArray:
             plt.switch_backend('Agg') 
 
@@ -540,17 +545,17 @@ class analysisEngine():
             currentBarDist = bar_width
             figs = {x:0 for x in self.fileBundles}
             index = np.arange(5)
-            for x in accumatedPowerBandStats:
-                print(x,accumatedPowerBandStats[x])
-                ax.bar(index+currentBarDist,list(accumatedPowerBandStats[x].values()), bar_width,
-                            label=x,yerr=list(accumatedPowerBandErrors[x].values()))
+            for x in self.accumulatedPowerBandStats:
+                print(x,self.accumulatedPowerBandStats[x])
+                ax.bar(index+currentBarDist,list(self.accumulatedPowerBandStats[x].values()), bar_width,
+                            label=x,yerr=list(self.accumulatedPowerBandErrors[x].values()))
                 currentBarDist+=bar_width
 
             ax.set_xticks(index + bar_width / 2)
-            ax.set_xticklabels(accumatedPowerBandStats[x].keys())
+            ax.set_xticklabels(self.accumulatedPowerBandStats[x].keys())
             ax.set_xlabel('Band')
-            ax.set_ylabel('Average uV')
-            ax.set_title('Average uV by Band')
+            ax.set_ylabel('Average Power (uV^2)')
+            ax.set_title('Average Power (uV^2) by Band')
             ax.legend()
 
             # Render the figure to an Agg backend (image buffer)
@@ -568,17 +573,17 @@ class analysisEngine():
             currentBarDist = bar_width
             figs = {x:0 for x in self.fileBundles}
             index = np.arange(5)
-            for x in accumatedPowerBandStats:
-                print(x,accumatedPowerBandStats[x])
-                ax.bar(index+currentBarDist,list(accumatedPowerBandStats[x].values()), bar_width,
-                            label=x,yerr=list(accumatedPowerBandErrors[x].values()))
+            for x in self.accumulatedPowerBandStats:
+                print(x,self.accumulatedPowerBandStats[x])
+                ax.bar(index+currentBarDist,list(self.accumulatedPowerBandStats[x].values()), bar_width,
+                            label=x,yerr=list(self.accumulatedPowerBandErrors[x].values()))
                 currentBarDist+=bar_width
 
             ax.set_xticks(index + bar_width / 2)
-            ax.set_xticklabels(accumatedPowerBandStats[x].keys())
+            ax.set_xticklabels(self.accumulatedPowerBandStats[x].keys())
             ax.set_xlabel('Band')
-            ax.set_ylabel('Average uV')
-            ax.set_title('Average uV by Band')
+            ax.set_ylabel('Average Power (uV^2)')
+            ax.set_title('Average Power (uV^2) by Band')
             ax.legend()
 
             plt.show()
