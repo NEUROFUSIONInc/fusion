@@ -57,7 +57,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
         </Text>
       )}
 
-      <View>
+      <View className="-z-200">
         {!isCreating && setCategory && (
           <Select
             label="Category"

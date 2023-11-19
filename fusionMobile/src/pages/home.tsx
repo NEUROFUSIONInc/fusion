@@ -172,6 +172,15 @@ export function HomeScreen() {
 
   React.useEffect(() => {
     if (!savedPrompts) return;
+    if (savedPrompts.length === 0) {
+      // redirect to prompts page
+      navigation.navigate("PromptNavigator", {
+        screen: "Prompts",
+        params: {
+          selectedCategory: categories[activeCategoryIndex].name,
+        },
+      });
+    }
     if (accountContext?.userLoading) return;
     (async () => {
       setSummaryText("Loading summary...");
