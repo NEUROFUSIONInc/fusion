@@ -155,6 +155,82 @@ export async function getPromptSuggestions(req: any, res: any) {
   // prompt
   // responses
   console.log(req.body.text);
-  const prompt: Prompt = req.body.prompt;
-  const responses: PromptResponse[] = req.body.responses;
+  const searchTerm: string = req.body.searchTerm;
+
+  const examples = `
+  `;
+
+  console.log("searchTerm", searchTerm);
+
+  try {
+    const searchCompletions = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `You are a helpful assistant that for an Fusion that helps people manage & improve their wellbeing. \
+          We look at wellbeing holistically across the following categories - Mental Health, Productivity, Relationships, Health and Fitness, Spiritual Practice, Self-Care, Finance, Personal Interest, Other. \
+          Your task is to understand a persons response the question "what's been top of mind for you lately" . \
+          Suggest 3 prompts to ask the user daily based on the response, following the guidelines provided. \
+          The startTime should be relative to the question asked, and the prompts should be asked once to 3 times in a week.`,
+        },
+        {
+          role: "user",
+          content: `Generate prompts for this response to "what's been top of mind for you lately?". User's response '${searchTerm}' \n`,
+        },
+      ],
+      functions: [
+        {
+          name: "generate_prompt",
+          description:
+            "Generates prompts to ask a user based on what's top of mind for them. One of them should be yesno \
+            It must be based on deep understanding of top of mind response provided. Prompts must be based on the day. \
+            The promptText MUST be less that 10 words, and question like. Suggested prompts can touch on vary angles related to 'whats top of mind'  \
+            One should be action oriented on something the user can do to improve their wellbeing based on the prompt.\
+            One should be such that it measures an outcome by them responding to it.\
+            Prompt should make sense to be answered once to 3 times in a week.",
+          parameters: {
+            type: "object",
+            properties: {
+              prompts: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    promptText: {
+                      type: "string",
+                      description: `Understand the provided response to 'top of mind' and suggest \
+                      prompts to ask the user daily based on the response.\"`,
+                    },
+                    responseType: {
+                      type: "string",
+                      description:
+                        "Understand the prompt and decide what kind of response type is required, \
+              it must be one of 'text', 'number', 'yesno'",
+                      enum: ["text", "number", "yesno"],
+                    },
+                    category: {
+                      type: "string",
+                      description:
+                        "Understand the prompt and select it's category. It must be one of either Mental Health, Productivity, Relationships, Health and Fitness, Spiritual Practice, Self-Care, Finance, Personal Interest",
+                    },
+                  },
+                  required: ["promptText", "responseType", "category"],
+                },
+              },
+            },
+          },
+        },
+      ],
+    });
+
+    console.log("searchTerm: ", searchTerm);
+    console.log(searchCompletions.choices[0].message.function_call?.arguments);
+
+    return res.status(200).json({
+      status: "success",
+      suggestions:
+        searchCompletions.choices[0].message.function_call?.arguments,
+    });
+  } catch (err) {}
 }
