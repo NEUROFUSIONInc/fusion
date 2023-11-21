@@ -24,12 +24,17 @@ yarn start
 
 ## Authentication
 
-- Auth is done using [Magic](https://magic.link)
+- Auth is done using [Nostr](https://nostr.com)
 
-  - user enters email & get sign in link
-  - once verified, the page loads
-  - TODO: api request is made to the backend to create/store latest use timestamp
-  - authenticated routes check for if the user is signed in, if not redirect to /login
+With Nostr
+  - Client & Fusion server are connected to Fusion's relay endpoint ws://relay.usefusion.ai
+  - Client makes a request to Fusion server with it's pubic key
+  - Fusion server
+      - receives request,
+      - creates/validates account,
+      - sends signs a nip04 encrpyted message containing authToken, with Client as receiver
+      - drops message on Fusion relay
+  - Client listens for message, decrypts message using nip04
+  - Client stores authToken and uses it for future api requests to server
 
-- User token stored in the local storage when receive on the frontend
-  TODO: verify that the frontend auth no longer users metadata values from api but from decoded token
+See auth.service.ts for implementation details
