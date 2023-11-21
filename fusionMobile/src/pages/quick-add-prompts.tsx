@@ -56,27 +56,14 @@ export const QuickAddPromptsScreen = () => {
   }, [quickAddPrompts]);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [suggestedPrompts, setSuggestedPrompts] = useState<any[]>([]);
 
-  // Debounce input
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 250); // 500ms delay
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
-
-  useEffect(() => {
-    if (!debouncedSearchTerm) {
+  const generatePrompts = async () => {
+    if (!searchTerm) {
       setSuggestedPrompts([]);
       return;
     }
-    console.log("API call with:", debouncedSearchTerm);
-    // now make api call to server
+    console.log("API call with:", searchTerm);
     (async () => {
       try {
         let fusionBackendUrl;
@@ -131,7 +118,7 @@ export const QuickAddPromptsScreen = () => {
         console.log("error", e);
       }
     })();
-  }, [debouncedSearchTerm]);
+  };
 
   return (
     <Screen>
@@ -145,13 +132,28 @@ export const QuickAddPromptsScreen = () => {
               We will use this to suggest you prompts
             </Text>
           </View>
-          <Input
-            inputMode="text"
-            value={searchTerm}
-            className="my-5"
-            onChangeText={setSearchTerm}
-            placeholder="I want to be more energetic about work"
-          />
+          <View className="flex flex-10 flex-row justify-between items-center w-full">
+            <View className="w-[80%] mb-3">
+              <Input
+                inputMode="text"
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+                className="mt-3"
+                placeholder="I want to be more energetic about work"
+              />
+            </View>
+
+            <Text
+              className="font-sans text-base text-lime m-auto self-center underline"
+              onPress={async () => {
+                console.log("searchTerm", searchTerm);
+                console.log("making api call");
+                await generatePrompts();
+              }}
+            >
+              Suggest{" "}
+            </Text>
+          </View>
           <View className="mb-10">
             {suggestedPrompts?.length > 0 ? (
               <ScrollView className="flex mt-4 mx-1 flex-col">
