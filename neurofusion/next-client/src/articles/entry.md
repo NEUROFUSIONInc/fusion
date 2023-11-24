@@ -1,7 +1,8 @@
 ---
 title: "Entry #00: Risking it all for the sake of my passion"
 description: I’ve only scratched the surface of neurotechnology and I’m convinced this is where I want to spend the bulk of my creative energy.
-publishedDate: 20/12/2022
+publishedDate: 20-12-2023
+coverImage: /images/fusion_banner.jpg
 tags:
   - fusion
 ---

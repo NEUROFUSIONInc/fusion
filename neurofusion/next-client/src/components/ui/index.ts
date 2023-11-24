@@ -10,3 +10,4 @@ export * from "./tabs/tabs";
 export * from "./avatar/avatar";
 export * from "./dialog/dialog";
 export * from "./dropdown-menu/dropdown-menu";
+export * from "./card/blog-card";

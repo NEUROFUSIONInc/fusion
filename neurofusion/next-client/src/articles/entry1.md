@@ -1,7 +1,8 @@
 ---
 title: "Entry #01: What does making your health & behaviour data accessible even mean?"
 description: notes on what I've gathered so far!
-publishedDate: 31/01/2023
+publishedDate: 31-01-2023
+coverImage: /images/fusion_banner.jpg
 tags:
   - fusion
 ---
