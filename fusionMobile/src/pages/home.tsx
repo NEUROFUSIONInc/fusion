@@ -20,6 +20,7 @@ import {
   Reload,
   ThumbsUp,
   ThumbsDown,
+  ChatBubble,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
@@ -208,231 +209,285 @@ export function HomeScreen() {
   }, [categoryInsightSummaries, activeCategoryIndex]);
   // now that we have all the summaries, set the summary text
 
+  // Fetch what's top of mind
+  const [topOfMind, setTopOfMind] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    if (!savedPrompts) return;
+    if (savedPrompts.length === 0) return;
+    (async () => {
+      // get the top 3 prompts with most responses
+      const topOfMindPrompts = savedPrompts
+        .sort((a, b) => b.responses.length - a.responses.length)
+        .slice(0, 3);
+      setTopOfMind(topOfMindPrompts.map((prompt) => prompt.prompt));
+    })();
+  }, [savedPrompts]);
+
+  // TODO: remove "All" from copilot categories
+
   return (
     <Screen>
       <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
-        <View className="h-full">
-          <View className="flex flex-row w-full justify-between p-5">
-            <Text className="text-base font-sans-bold text-white">
-              Fusion Copilot
-            </Text>
-
-            {accountContext?.userPreferences.enableCopilot === true && (
-              <Text
-                className="text-base font-sans text-lime"
-                onPress={() =>
-                  setTimePeriod(timePeriod === "week" ? "month" : "week")
-                }
-              >
-                This {timePeriod === "week" ? "week" : "month"}
-              </Text>
-            )}
-          </View>
-
-          {/* show each category at a time */}
-          {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
-          <ScrollView nestedScrollEnabled>
-            <View className="flex flex-col w-full bg-secondary-900 rounded">
-              <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  leftIcon={<ChevronLeft />}
-                  onPress={() => panActiveInsightCategory("left")}
-                />
-
-                <Text className="font-sans text-base text-white text-[20px] ml-2 w-[80%] text-center">
-                  {categories[activeCategoryIndex].icon}{" "}
-                  {categories[activeCategoryIndex].name}
-                </Text>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  leftIcon={<ChevronRight />}
-                  onPress={() => panActiveInsightCategory("right")}
-                />
-              </View>
-
-              <View>
-                <Text
-                  ellipsizeMode="tail"
-                  className="font-sans flex flex-wrap text-white text-base font-medium m-5"
-                >
-                  {summaryText ? summaryText : "Loading summary..."}
-                </Text>
-              </View>
-
+        <View className="flex-1">
+          <ScrollView>
+            <>
               <View className="flex flex-row w-full justify-between p-5">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  leftIcon={<Reload />}
-                  onPress={() => {
-                    appInsights.trackEvent({
-                      name: "fusion_copilot_reload_summary",
-                      properties: {
-                        category: categories[activeCategoryIndex].name,
-                        userNpub: accountContext?.userNpub,
-                      },
-                    });
+                <Text className="text-base font-sans-bold text-white">
+                  Fusion Copilot
+                </Text>
 
-                    // reload the summary
-                    setSummaryText("Loading summary...");
-                    (async () => {
-                      const ai_summary = await getInsightSummary(
-                        categories[activeCategoryIndex].name
-                      );
-                      setCategoryInsightSummaries((prev) => ({
-                        ...prev,
-                        [categories[activeCategoryIndex].name]: ai_summary,
-                      }));
-                    })();
-                  }}
-                />
-
-                <View className="flex flex-row gap-x-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    leftIcon={<ThumbsUp />}
-                    onPress={() => {
-                      appInsights.trackEvent({
-                        name: "fusion_copilot_feedback",
-                        properties: {
-                          feedback: "thumps_up",
-                          category: categories[activeCategoryIndex].name,
-                          userNpub: accountContext?.userNpub,
-                        },
-                      });
-                      Toast.show({
-                        type: "success",
-                        // text1: "Feedback sent",
-                        text2:
-                          "Thank you for your feedback! Glad the insight was helpful.",
-                      });
-                    }}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    leftIcon={<ThumbsDown />}
-                    onPress={() => {
-                      appInsights.trackEvent({
-                        name: "fusion_copilot_feedback",
-                        properties: {
-                          feedback: "thumbs_down",
-                          category: categories[activeCategoryIndex].name,
-                          userNpub: accountContext?.userNpub,
-                        },
-                      });
-
-                      Toast.show({
-                        type: "success",
-                        // text1: "Feedback sent",
-                        text2:
-                          "Thank you for your feedback! It helps us improve.",
-                      });
-                    }}
-                  />
-                </View>
+                {accountContext?.userPreferences.enableCopilot === true && (
+                  <Text
+                    className="text-base font-sans text-lime underline"
+                    onPress={() =>
+                      setTimePeriod(timePeriod === "week" ? "month" : "week")
+                    }
+                  >
+                    This {timePeriod === "week" ? "week" : "month"}
+                  </Text>
+                )}
               </View>
-            </View>
-          </ScrollView>
 
-          {!accountContext?.userLoading &&
-            accountContext?.userPreferences.enableCopilot !== true && (
-              <Button
-                onPress={() => {
-                  navigation.navigate("SettingsPage");
-                }}
-                title="Enable Fusion Copilot"
-                fullWidth
-                className=" bg-secondary-900 my-5"
-                variant="secondary"
-              />
-            )}
+              {/* show each category at a time */}
+              {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
+              <ScrollView nestedScrollEnabled>
+                <View className="flex flex-col w-full bg-secondary-900 rounded">
+                  <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      leftIcon={<ChevronLeft />}
+                      onPress={() => panActiveInsightCategory("left")}
+                    />
 
-          <View>
-            {!savedPrompts?.find(
-              (prompt) =>
-                prompt.additionalMeta?.category ===
-                categories[activeCategoryIndex].name
-            ) ? (
-              <Button
-                onPress={async () => {
-                  const val = categories[activeCategoryIndex].name;
-                  navigation.navigate("PromptNavigator", {
-                    screen: "Prompts",
-                    params: {
-                      selectedCategory: val,
-                    },
-                  });
-                }}
-                title="Add Prompt"
-                fullWidth
-                className="bg-secondary-900 my-5"
-                variant="secondary"
-              />
-            ) : (
-              <>
-                <>
+                    <Text className="font-sans text-base text-white text-[20px] ml-2 w-[80%] text-center">
+                      {categories[activeCategoryIndex].icon}{" "}
+                      {categories[activeCategoryIndex].name}
+                    </Text>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      leftIcon={<ChevronRight />}
+                      onPress={() => panActiveInsightCategory("right")}
+                    />
+                  </View>
+
+                  <View>
+                    <Text
+                      ellipsizeMode="tail"
+                      className="font-sans flex flex-wrap text-white text-base font-medium m-5"
+                    >
+                      {summaryText ? summaryText : "Loading summary..."}
+                    </Text>
+                  </View>
+
+                  <View className="flex flex-row w-full justify-between p-5">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      leftIcon={<Reload />}
+                      onPress={() => {
+                        appInsights.trackEvent({
+                          name: "fusion_copilot_reload_summary",
+                          properties: {
+                            category: categories[activeCategoryIndex].name,
+                            userNpub: accountContext?.userNpub,
+                          },
+                        });
+
+                        // reload the summary
+                        setSummaryText("Loading summary...");
+                        (async () => {
+                          const ai_summary = await getInsightSummary(
+                            categories[activeCategoryIndex].name
+                          );
+                          setCategoryInsightSummaries((prev) => ({
+                            ...prev,
+                            [categories[activeCategoryIndex].name]: ai_summary,
+                          }));
+                        })();
+                      }}
+                    />
+
+                    <View className="flex flex-row gap-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={<ThumbsUp />}
+                        onPress={() => {
+                          appInsights.trackEvent({
+                            name: "fusion_copilot_feedback",
+                            properties: {
+                              feedback: "thumps_up",
+                              category: categories[activeCategoryIndex].name,
+                              userNpub: accountContext?.userNpub,
+                            },
+                          });
+                          Toast.show({
+                            type: "success",
+                            // text1: "Feedback sent",
+                            text2:
+                              "Thank you for your feedback! Glad the insight was helpful.",
+                          });
+                        }}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={<ThumbsDown />}
+                        onPress={() => {
+                          appInsights.trackEvent({
+                            name: "fusion_copilot_feedback",
+                            properties: {
+                              feedback: "thumbs_down",
+                              category: categories[activeCategoryIndex].name,
+                              userNpub: accountContext?.userNpub,
+                            },
+                          });
+
+                          Toast.show({
+                            type: "success",
+                            // text1: "Feedback sent",
+                            text2:
+                              "Thank you for your feedback! It helps us improve.",
+                          });
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+
+              {!accountContext?.userLoading &&
+                accountContext?.userPreferences.enableCopilot !== true && (
                   <Button
-                    title="View Responses"
-                    fullWidth
-                    onPress={async () => {
-                      const val = categories[activeCategoryIndex].name;
-                      navigation.navigate("InsightsNavigator", {
-                        screen: "InsightsPage",
-                        params: {
-                          promptUuid: savedPrompts?.find(
-                            (prompt) =>
-                              prompt.additionalMeta?.category ===
-                              categories[activeCategoryIndex].name
-                          )?.uuid,
-                        },
-                      });
+                    onPress={() => {
+                      navigation.navigate("SettingsPage");
                     }}
-                    className="bg-secondary-900"
+                    title="Enable Fusion Copilot"
+                    fullWidth
+                    className=" bg-secondary-900 my-5"
                     variant="secondary"
                   />
-                </>
-                <>
-                  {categories[activeCategoryIndex].name === "Mental Health" && (
-                    <Button
-                      onPress={async () => {
-                        await Linking.openURL(
-                          "https://cmha.ca/find-info/mental-health/general-info/"
-                        );
-                      }}
-                      title="Mental Health Resources"
-                      fullWidth
-                      className=" bg-secondary-900 my-5"
-                      variant="secondary"
-                    />
-                  )}
-                  {categories[activeCategoryIndex].name ===
-                    "Health and Fitness" && (
-                    <Button
-                      onPress={async () => {
-                        await Linking.openURL(
-                          "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
-                        );
-                      }}
-                      title="Learn more about physical activity"
-                      fullWidth
-                      className=" bg-secondary-900 my-5"
-                      variant="secondary"
-                    />
-                  )}
-                </>
+                )}
+            </>
+
+            {/* TODO: display sleep activity & heart rate */}
+            {!accountContext?.userLoading &&
+            accountContext?.userPreferences["healthConnect"] === true ? (
+              <View className="">
+                <View className="flex flex-row w-full justify-between p-5">
+                  <Text className="text-base font-sans-bold text-white">
+                    Your sleep, activity & heart rate
+                  </Text>
+                </View>
+
+                <View className="flex flex-col w-full bg-secondary-900 rounded">
+                  <Text className="text-base font-sans text-white p-5">
+                    I want to be better at talking about my work
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <>
+                <Button
+                  title="Sync your sleep, activity & heart rate"
+                  fullWidth
+                  onPress={async () => {
+                    // reuse functions from settings page
+                  }}
+                  className="bg-secondary-900 my-4"
+                  variant="secondary"
+                />
               </>
             )}
-          </View>
+
+            {/* Contextual action buttons */}
+            <View>
+              {!savedPrompts?.find(
+                (prompt) =>
+                  prompt.additionalMeta?.category ===
+                  categories[activeCategoryIndex].name
+              ) ? (
+                <Button
+                  onPress={async () => {
+                    const val = categories[activeCategoryIndex].name;
+                    navigation.navigate("PromptNavigator", {
+                      screen: "Prompts",
+                      params: {
+                        selectedCategory: val,
+                      },
+                    });
+                  }}
+                  title="Add Prompt"
+                  fullWidth
+                  className="bg-secondary-900 my-5"
+                  variant="secondary"
+                />
+              ) : (
+                <>
+                  {/* Connect with data source */}
+                  <>
+                    <Button
+                      title="View Responses"
+                      fullWidth
+                      onPress={async () => {
+                        const val = categories[activeCategoryIndex].name;
+                        navigation.navigate("InsightsNavigator", {
+                          screen: "InsightsPage",
+                          params: {
+                            promptUuid: savedPrompts?.find(
+                              (prompt) =>
+                                prompt.additionalMeta?.category ===
+                                categories[activeCategoryIndex].name
+                            )?.uuid,
+                          },
+                        });
+                      }}
+                      className="bg-secondary-900"
+                      variant="secondary"
+                    />
+                  </>
+
+                  {/* Display Related Resources */}
+                  <>
+                    {categories[activeCategoryIndex].name ===
+                      "Mental Health" && (
+                      <Button
+                        onPress={async () => {
+                          await Linking.openURL(
+                            "https://cmha.ca/find-info/mental-health/general-info/"
+                          );
+                        }}
+                        title="Mental Health Resources"
+                        fullWidth
+                        className=" bg-secondary-900 my-5"
+                        variant="secondary"
+                      />
+                    )}
+                    {categories[activeCategoryIndex].name ===
+                      "Health and Fitness" && (
+                      <Button
+                        onPress={async () => {
+                          await Linking.openURL(
+                            "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
+                          );
+                        }}
+                        title="Learn more about physical activity"
+                        fullWidth
+                        className=" bg-secondary-900 my-5"
+                        variant="secondary"
+                      />
+                    )}
+                  </>
+                </>
+              )}
+            </View>
+          </ScrollView>
+          <ChatBubble />
         </View>
       </PanGestureHandler>
-
-      {/* connect your apple health data */}
     </Screen>
   );
 }

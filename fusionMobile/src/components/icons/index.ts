@@ -22,3 +22,4 @@ export * from "./chevron-right";
 export * from "./reload";
 export * from "./thumbsdown";
 export * from "./thumbsup";
+export * from "./chat";
