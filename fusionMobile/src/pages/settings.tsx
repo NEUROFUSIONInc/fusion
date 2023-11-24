@@ -75,6 +75,14 @@ export function SettingsScreen() {
     });
   }
 
+  // add data export
+  itemList.push({
+    text: "Export Data",
+    onPress: async () => {
+      // TODO: move functions from settings page
+    },
+  });
+
   const [showSubscriptionSheet, setShowSubscriptionSheet] =
     React.useState<boolean>(false);
 

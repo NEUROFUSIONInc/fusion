@@ -3,13 +3,17 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 
+import { AccountHeader, ChatHeader } from "~/components/headers";
 import { HomeHeader } from "~/components/prompts/headers/home-header";
-import { SettingsScreen } from "~/pages";
+import { AccountScreen, SettingsScreen } from "~/pages";
+import { ChatScreen } from "~/pages/chat";
 import { HomeScreen } from "~/pages/home";
 
 export type HomeStackParamList = {
   HomePage: undefined;
   SettingsPage: undefined;
+  AccountPage: undefined;
+  ChatPage: undefined;
 };
 export type HomeScreenNavigationProp =
   NativeStackNavigationProp<HomeStackParamList>;
@@ -25,6 +29,18 @@ export const HomeStack = () => {
     >
       <Stack.Screen name="HomePage" component={HomeScreen} />
       <Stack.Screen name="SettingsPage" component={SettingsScreen} />
+      <Stack.Screen
+        name="AccountPage"
+        component={AccountScreen}
+        options={{ header: () => <AccountHeader /> }}
+      />
+      <Stack.Screen
+        name="ChatPage"
+        component={ChatScreen}
+        options={{
+          header: () => <ChatHeader />,
+        }}
+      />
     </Stack.Navigator>
   );
 };
