@@ -1,9 +1,19 @@
 # Fusion Mobile
 
-Expo react native application for fusion.
+Expo react native application for Fusion.
 
-Initial feature is customized self prompting & seeing results from connected data.
-Data is currently stored using AsyncStorage (SQLite)
+[Download on iOS](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone)
+[Download on Android](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1)
+
+The mobile application has the following features:
+
+- Ability to create and respond to personalized prompts
+- Getting summaries and recommendations from prompt responses
+- Get prompt suggestions based on what's top of mind for you
+- Connect your sleep, activity and heart rate data
+- Reason over changes in your data by chatting with Fusion
+
+Data is stored on the phone using SQLite.
 
 ## Prompt Structure
 
@@ -34,6 +44,7 @@ Response to prompts are saved in format
   promptUuid
   additionalMeta {
     note: string
+    media: [string] // local path to media on phone
   }
 }
 ```
@@ -41,7 +52,9 @@ Response to prompts are saved in format
 when responseType == customOption,
 value can contain "valA;valB"
 
-They can eventually exported in fusion Event schema [doc](../README.md)
+Prompts and responses can be exported as individual csv files for analysis.
+
+### Misc
 
 Mapping Fusion event schema to prompt_response
 
@@ -150,31 +163,15 @@ TODO: handle when user is offline :p
 
 - Have only one notification for a prompt in the tray.
 
-# Notes from integrating with bluetooth
-
-- Following this doc: https://docs.neurosity.co/docs/api/bluetooth-react-native
-
 # Gotchas
 
-When installing "isomorphic-webcrypto", set "--ignore-optional"
+- When installing "isomorphic-webcrypto", set "--ignore-optional"
 
-- if things aren't making sense, run expo run:ios --no-build-cache
+- if things aren't making sense, run `expo run:ios --no-build-cache`
 
----
-
-todo
-
-- enable local permissions for "research program"
-- display Quests when
-
-- Measuring prompt response rate
-
-- Add some templates for people
-
-P- Share prompts flow
-should eventually allow users select what prompts & who they want to share the results to in Fusion :)
-
-# Setting environment variables
+- Setting environment variables
 
 Expo handles environment variables a little different than regular web app. We set them in the app.config.ts file.
 and then use constants. See appInsights.js for an example. More docs - https://docs.expo.dev/build-reference/variables/
+
+- Follow this doc for neurosity bluetooth integration: https://docs.neurosity.co/docs/api/bluetooth-react-native

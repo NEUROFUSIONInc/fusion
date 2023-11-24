@@ -280,6 +280,7 @@ class PromptService {
           await this.notificationService.scheduleFusionNotification(prompt);
         }
 
+        // TODO: include userNpub
         // app insights tracking
         appInsights.trackEvent(
           { name: "prompt_saved" },
