@@ -34,4 +34,6 @@ function Blog({ posts }) {
   );
 }
 
+(Blog as any).theme = "light";
+
 export default Blog;

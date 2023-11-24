@@ -16,9 +16,14 @@ export const navigationLinks = [
   },
   {
     title: "Blog",
-    href: "https://neurofusion.substack.com/",
-    external: true,
+    href: "/blog",
+    persona: "default",
   },
+  // {
+  //   title: "Blog",
+  //   href: "https://neurofusion.substack.com/",
+  //   external: true,
+  // },
   // {
   //   title: "Contact",
   //   href: "mailto:ore@usefusion.app",

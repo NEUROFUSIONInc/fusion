@@ -42,4 +42,6 @@ function BlogPost({ frontMatter, markdownBody }: any) {
   );
 }
 
+(BlogPost as any).theme = "light";
+
 export default BlogPost;

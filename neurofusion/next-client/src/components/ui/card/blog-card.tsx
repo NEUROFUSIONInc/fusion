@@ -9,14 +9,12 @@ const BlogCard = ({ posts }: any) => {
       <div className="flex flex-col gap-y-6">
         {posts &&
           posts
-            .sort((a, b) => {
-              const dateA = new Date(a.frontMatter.publishedDate.split("-").reverse().join("-"));
-              const dateB = new Date(b.frontMatter.publishedDate.split("-").reverse().join("-"));
-              return dateB - dateA;
+            .sort((a: any, b: any) => {
+              return new Date(b.frontMatter.publishedDate).getTime() - new Date(a.frontMatter.publishedDate).getTime();
             })
             .map((post) => {
               return (
-                <Link href={{ pathname: `/blogs/${post.slug}` }}>
+                <Link href={{ pathname: `/blog/${post.slug}` }} key={post.slug}>
                   <article key={post.slug} className="flex justify-between p-2">
                     <div className="flex flex-col mr-8 gap-y-4">
                       <h2>{post.frontMatter.title}</h2>
