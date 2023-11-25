@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text } from "react-native";
 
 import { Button } from "../button";
-import { Help, LeftArrow } from "../icons";
+import { InfoCircle, LeftArrow } from "../icons";
 
 import { AccountContext } from "~/contexts";
 
@@ -29,7 +29,7 @@ export const ChatHeader = () => {
       <Button
         variant="ghost"
         size="icon"
-        leftIcon={<Help />}
+        leftIcon={<InfoCircle />}
         onPress={() => {
           // TODO: pop up model for Fusion bot
         }}
@@ -37,20 +37,3 @@ export const ChatHeader = () => {
     </View>
   );
 };
-
-{
-  /* Header */
-}
-{
-  /* <View style={tailwind("flex-row items-center p-4 bg-black")}>
-  <TouchableOpacity style={tailwind("")}>
-    <Text style={tailwind("text-white")}>←</Text>
-  </TouchableOpacity>
-  <Text style={tailwind("flex-1 text-center text-white")}>
-    Chat with Fusion
-  </Text>
-  <TouchableOpacity style={tailwind("")}>
-    <Text style={tailwind("text-white")}>i</Text>
-  </TouchableOpacity>
-</View>; */
-}
