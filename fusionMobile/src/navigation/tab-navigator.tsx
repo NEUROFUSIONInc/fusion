@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
 import type { SvgProps } from "react-native-svg";
 
-import { AccountStack } from "./account-navigator";
+import { CommunityStack } from "./community-navigator";
 import { HomeStack } from "./home-navigator";
 import { InsightsStack } from "./insights-navigator";
 import { PromptStack } from "./prompt-navigator";
@@ -76,7 +76,7 @@ const tabs: TabType[] = [
   // },
   {
     name: "Community",
-    component: AccountStack,
+    component: CommunityStack,
     label: "Community",
   },
 ];
