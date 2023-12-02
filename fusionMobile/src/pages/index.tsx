@@ -6,3 +6,5 @@ export * from "./prompt-entry";
 export * from "./prompts";
 export * from "./quick-add-prompts";
 export * from "./settings";
+export * from "./chat";
+export * from "./community";

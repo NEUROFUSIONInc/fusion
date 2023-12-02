@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
-import { View, Text, Pressable, Image, Alert } from "react-native";
+import { View, Text, Pressable, Image, Alert, Platform } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
+import prompt from "react-native-prompt-android";
 
 import { LeftArrow } from "../components/icons";
 
@@ -87,25 +88,48 @@ export const OnboardingScreen = () => {
       hasInput: true,
       onclick: async () => {
         const requestEmail = new Promise((resolve) => {
-          Alert.prompt(
-            "Get Email Updates",
-            "Please enter your email so we can reach you",
-            [
-              {
-                text: "Cancel",
-                onPress: () => {
-                  resolve("");
+          if (Platform.OS === "ios") {
+            Alert.prompt(
+              "Get Email Updates",
+              "Please enter your email so we can reach you",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => {
+                    resolve("");
+                  },
+                  style: "cancel",
                 },
-                style: "cancel",
-              },
-              {
-                text: "OK",
-                onPress: (email) => {
-                  resolve(email);
+                {
+                  text: "OK",
+                  onPress: (email) => {
+                    resolve(email);
+                  },
                 },
-              },
-            ]
-          );
+              ]
+            );
+          } else {
+            prompt(
+              "Get Email Updates",
+              "Please enter your email so we can reach you",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => resolve(""),
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: (email) => resolve(email),
+                },
+              ],
+              {
+                type: "email-address",
+                placeholder: "you@email.com",
+                style: "shimo",
+              }
+            );
+          }
         });
 
         const email = await requestEmail;

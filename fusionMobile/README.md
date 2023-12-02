@@ -1,10 +1,19 @@
 # Fusion Mobile
 
-Expo react native application for fusion.
+Expo react native application for Fusion.
 
-Initial feature is customized self prompting & seeing results from connected data.
+[Download on iOS](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone)
+[Download on Android](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1)
 
-Data is currently stored using AsyncStorage (SQLite)
+The mobile application has the following features:
+
+- Ability to create and respond to personalized prompts
+- Getting summaries and recommendations from prompt responses
+- Get prompt suggestions based on what's top of mind for you
+- Connect your sleep, activity and heart rate data
+- Reason over changes in your data by chatting with Fusion
+
+Data is stored on the phone using SQLite.
 
 ## Prompt Structure
 
@@ -35,6 +44,7 @@ Response to prompts are saved in format
   promptUuid
   additionalMeta {
     note: string
+    media: [string] // local path to media on phone
   }
 }
 ```
@@ -42,7 +52,9 @@ Response to prompts are saved in format
 when responseType == customOption,
 value can contain "valA;valB"
 
-They can eventually exported in fusion Event schema [doc](../README.md)
+Prompts and responses can be exported as individual csv files for analysis.
+
+### Misc
 
 Mapping Fusion event schema to prompt_response
 
@@ -55,7 +67,7 @@ Mapping Fusion event schema to prompt_response
   - to build android locally `eas build --local --platform=android`
 - Submit build - eas submit --platform ios
 
-Before submission, we need to run `npx expo prebuild
+Before submission, we need to run `npx expo prebuild`
 
 ## Prompts
 
@@ -145,130 +157,21 @@ TODO: handle when user is offline :p
 
 - (done) logic to save prompt responses & read
 
-### Migration to SQLite
-
-(I want to make sure people don't have to lose old prompt data)
-
-- (done) prompts
-
-  - read from async storage
-  - parse with some default config into db prompt..
-    - daily, 8am - 10pm
-
-- (done) prompt_responses
-
-  - read from async storage
-  - check the db for prompt with "Fusion: ${promptText}"
-  - get the promptUuid and store prompt response
-
-- (done) delete ('prompts' & 'events') from async storage
-  - using "migrated" value in AsyncStorage
-
-## Planned Releases
-
-Mid-april release
-
-- Use "Expletus Sans" font.
-- Apple health data connection & chat integration
-- Connect fusion account & periodically upload logs to remote storage
-
-bugs:
-
-(done) Change press & hold text for android
-(done) Clear notification tray for other similar prompts when one is answered
-
-## Remaining items for Apr. 9
-
-(done) edit prompts
-
-- (done) start date & end date need to be parsed
-  - get the current day, apply the hours & minutes as day.js objects
-
-allow to respond after tapping to notifications
-
-- Input Validation
-
-  - don't set startTime for after endTime
-  - don't allow to have prompts with duplicated `promptText`
-
-- Add a modal
-
-  - letting user know what changes have occured.
-    - default, 3 times between 8-6pm.
-
-- Quick add prompt
-
 (notes on notifications)
 
 - remove other ones when a new one is presented (we should only have one in the tray at a time)
 
-- come back to resync feature
-
-- add summary in the response page
-
-# Android Feedback
-
-# IOS Feedback
-
-- move request notification when prompt is being created for the first time
-
-- when a person selects one time, change the selector to just one time
-
-* include screenshots...
-
-## Change log
-
-- Usage - `prompt_notification_response` is now `prompt_response`
-
-# Notes from integrating with bluetooth
-
-- Following this doc: https://docs.neurosity.co/docs/api/bluetooth-react-native
-
----
-
-login flow:
-
-- generate code
-- type it in on computer
-
-export data - in responses page.
-
-summary from chat gpt
+- Have only one notification for a prompt in the tray.
 
 # Gotchas
 
-When installing "isomorphic-webcrypto", set "--ignore-optional"
+- When installing "isomorphic-webcrypto", set "--ignore-optional"
 
-- if things aren't making sense, run expo run:ios --no-build-cache
+- if things aren't making sense, run `expo run:ios --no-build-cache`
 
----
-
-todo
-
-- enable local permissions for "research program"
-- display Quests when
-
-- underline the "anonymously" and use it to display user detail
-- set up nostr relay
-
-- Be sure to delete the notification category when noitification with customOptions is being canceled
-
-- Measuring prompt response rate
-
-- Add some templates for people
-
-Prompt response view
-
-- filter just like charts
-- change time to local time
-- export prompt responses -- call util function (getPromptResponses) & download json
-
-- Summarize content from text responses
-
-- Share screen should eventually allow users select what prompts
-  & who they want to share the results to in Fusion :)
-
-# Setting environment variables
+- Setting environment variables
 
 Expo handles environment variables a little different than regular web app. We set them in the app.config.ts file.
 and then use constants. See appInsights.js for an example. More docs - https://docs.expo.dev/build-reference/variables/
+
+- Follow this doc for neurosity bluetooth integration: https://docs.neurosity.co/docs/api/bluetooth-react-native

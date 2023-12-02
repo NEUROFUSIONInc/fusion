@@ -1,11 +1,14 @@
+import RNBottomSheet from "@gorhom/bottom-sheet";
+import { Portal } from "@gorhom/portal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import Constants from "expo-constants";
+import React, { useCallback } from "react";
 import { View, Text, Pressable, Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { requestPurchase, useIAP } from "react-native-iap";
 
-import { Screen, ChevronRightSmall } from "~/components";
+import { Screen, ChevronRightSmall, SubscriptionSheet } from "~/components";
 import { AccountContext, OnboardingContext } from "~/contexts";
 import { appInsights, connectAppleHealth } from "~/utils";
 import { requestCopilotConsent } from "~/utils/consent";
@@ -18,34 +21,11 @@ export function SettingsScreen() {
   const onboardingContext = React.useContext(OnboardingContext);
   const accountContext = React.useContext(AccountContext);
   const navigation = useNavigation();
-
-  const {
-    connected,
-    products,
-    promotedProductsIOS,
-    subscriptions,
-    purchaseHistories,
-    availablePurchases,
-    currentPurchase,
-    currentPurchaseError,
-    initConnectionError,
-    finishTransaction,
-    getProducts,
-    getSubscriptions,
-    getAvailablePurchases,
-    getPurchaseHistories,
-  } = useIAP();
+  const subscriptionSheetRef = React.useRef<RNBottomSheet>(null);
 
   const [copilotConsent, setCopilotConsent] = React.useState<boolean>(
     accountContext?.userPreferences.enableCopilot!
   );
-
-  React.useEffect(() => {
-    console.log("connected", connected);
-    console.log("initConnectionError", initConnectionError);
-    console.log("products", products);
-    console.log("subscriptions", subscriptions);
-  }, [connected]);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -83,46 +63,48 @@ export function SettingsScreen() {
 
   if (Platform.OS === "ios") {
     itemList.push({
-      text: "Connect with Apple Health",
+      text: "Connect your sleep & health data",
       onPress: async () => {
         // call bottom sheet
         // request permissions
         await connectAppleHealth();
       },
     });
+    itemList.push({
+      text: "Manage Subscription",
+      onPress: async () => {
+        console.log("display subscription sheet");
+        setShowSubscriptionSheet(true);
+        subscriptionSheetRef.current?.expand();
+      },
+    });
   }
 
+  // add data export
   itemList.push({
-    text: "Manage Subscription",
+    text: "Export Data",
     onPress: async () => {
-      try {
-        // const res = await getSubscriptions({ skus: [""] });
-        // console.log(res);
-        const testVal = await getProducts({ skus: subscriptionSkus! });
-        console.log();
-        console.log("pruducts", products);
-
-        console.log("triggering request");
-
-        handlePurchase(products![0].productId!);
-      } catch (error) {
-        console.log("error", error);
-      }
+      // TODO: move functions from settings page
     },
   });
 
-  const handlePurchase = async (sku: string) => {
-    await requestPurchase({ sku });
+  const [showSubscriptionSheet, setShowSubscriptionSheet] =
+    React.useState<boolean>(false);
+
+  const handleSubscriptionSheetClose = useCallback(() => {
+    subscriptionSheetRef.current?.close();
+  }, []);
+
+  const renderSubscriptionSheet = () => {
+    return (
+      <Portal>
+        <SubscriptionSheet
+          subscriptionSheetRef={subscriptionSheetRef}
+          onBottomSheetClose={handleSubscriptionSheetClose}
+        />
+      </Portal>
+    );
   };
-
-  useEffect(() => {
-    // ... listen to currentPurchaseError, to check if any error happened
-  }, [currentPurchaseError]);
-
-  useEffect(() => {
-    // ... listen to currentPurchase, to check if the purchase went through
-  }, [currentPurchase]);
-
   return (
     <Screen>
       <ScrollView>
@@ -145,6 +127,11 @@ export function SettingsScreen() {
             );
           })}
         </View>
+        {renderSubscriptionSheet()}
+
+        <Text className="font-sans text-base text-white text-center">
+          Fusion v.{Constants.expoConfig?.version}
+        </Text>
       </ScrollView>
     </Screen>
   );

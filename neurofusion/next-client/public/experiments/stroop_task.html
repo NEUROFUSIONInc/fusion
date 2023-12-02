@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+        background-color: #fafafa;
+      }
+      #countDown {
+        position: absolute;
+        width: 100%;
+        display: inline;
+        align-content: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #countDown p {
+        align-content: center;
+        font-weight: 100;
+        font-size: large;
+      }
+      #jspsych-container {
+        font-size: xx-large;
+        font-family: sans;
+        font-weight: bold;
+        position: absolute;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="countDown"><p></p></div>
+    <div id="jspsych-container"></div>
+    <script>
+      function mapElapsedToUnix(data) {
+        let startStamp = -1;
+        data.trials.forEach((element) => {
+          if (startStamp === -1) {
+            if ("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
+          } else {
+            element.unixTimestamp = startStamp + element.time_elapsed;
+          }
+        });
+        return data;
+      }
+
+      const fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        trial_duration: 500,
+        response_ends_trial: false,
+      };
+
+      // blank (ITI stands for "inter trial interval")
+      const iti = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        trial_duration: 250,
+        response_ends_trial: false,
+      };
+      const init = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        trial_duration: 0,
+        response_ends_trial: false,
+        on_finish: (data) => {
+          data.unixTimestamp = Date.now();
+        },
+      };
+
+      const jsPsych = initJsPsych({
+        on_finish: function () {
+          window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), "*");
+          console.log(mapElapsedToUnix(jsPsych.data.get()));
+        },
+        display_element: "jspsych-container",
+      });
+
+      // these are in HTML, so <br> means "line break"
+      const stroopTaskInstructions = {
+        type: jsPsychInstructions,
+        pages: [
+          "Welcome to the Stroop Task Experiment!",
+          "In this experiment you will be presented with the words blue, red, yellow and green.",
+          "As soon as you see a new word, press the first letter of the color you and ignore the word itself.<br>For example, if the word `green` is written in `red` ink, you should press `r`.",
+          "Try to answer as quickly as you can!",
+          "Start EEG Recording: If you have your EEG device connected",
+        ],
+        show_clickable_nav: true,
+      };
+
+      var keymap = { r: 0, g: 1, b: 2, y: 3 };
+      let keymapInv = Object.entries(keymap).reduce((obj, [key, value]) => {
+        obj[value] = key;
+        return obj;
+      }, {});
+
+      // keymap.map((x,y) => {y:x})
+      document.addEventListener("keypress", function (event) {
+        // Allows dual inputs
+        if (document.getElementsByClassName("keyboardToBtn").length === 0) return;
+        if (event.key in keymap) {
+          console.log(
+            document.getElementById("jspsych-html-button-response-btngroup").getElementsByClassName("jspsych-btn")[
+              keymap[event.key]
+            ].innerHTML
+          );
+          document
+            .getElementById("jspsych-html-button-response-btngroup")
+            .getElementsByClassName("jspsych-btn")
+            [keymap[event.key]].click();
+        }
+      });
+
+      const colours = ["red", "green", "blue", "yellow"];
+
+      // returns a JavaScript object with { text: ...., colour: .... }
+      // using a random colour (text is the same as colour)
+      function congruent() {
+        // pick a colour ....
+        // (when we're only picking one, with/without replacement doesn't matter)
+        const colourList = jsPsych.randomization.sampleWithReplacement(colours, 1);
+        // this returns a list with one item, so we select the first (only) item
+        return { text: colourList[0], colour: colourList[0], condition: "congruent" };
+      }
+
+      // returns a JavaScript object with { text: ...., colour: .... }
+      // using a random colour (text is different to colour)
+      function incongruent() {
+        // pick two colours without replacement (i.e. they will be different)
+        var colour_list = jsPsych.randomization.sampleWithoutReplacement(colours, 2);
+        // this returns a list with two item, we select these out
+        return { text: colour_list[0], colour: colour_list[1], condition: "incongruent" };
+      }
+
+      const trials = [];
+      trials.push(stroopTaskInstructions);
+      trials.push(init);
+
+      /**
+       * Generate the trial sequence
+       */
+      const numberOfSequences = 60;
+
+      for (let i = 0; i < numberOfSequences; i++) {
+        // Generate number of standard/deviant trials randomly
+        let values;
+        // Math.random returns a random number between 0 and 1. Use this to decide
+        // whether the current trial is congruent or incongruent.
+        if (Math.random() < 0.5) {
+          values = congruent();
+        } else {
+          values = incongruent();
+        }
+
+        let stimulus = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: '<p class="keyboardToBtn" style="color: ' + values.colour + '">' + values.text + "</p>",
+          // 'choices' restricts the available responses for the participant
+          choices: ["r", "g", "b", "y"],
+          data: values,
+          on_finish: (data) => {
+            console.log(data);
+            data.response = keymapInv[data.response];
+            data.correct = data.colour[0] == data.response;
+          },
+        };
+        trials.push(stimulus);
+        trials.push(iti);
+        trials.push(fixation);
+      }
+
+      jsPsych.run(trials);
+    </script>
+  </body>
+</html>

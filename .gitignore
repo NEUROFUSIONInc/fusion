@@ -19,3 +19,8 @@ __pycache__/
 */.eslintcache
 
 nostr.sqlite3
+
+.hintrc
+
+neurofusion/client
+archive/*

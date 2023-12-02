@@ -6,7 +6,8 @@ name: Fusion Next Client - staging
 on:
   push:
     branches:
-      - staging
+      - master
+      - "feat/**"
     paths:
       - "neurofusion/next-client/**"
   workflow_dispatch:

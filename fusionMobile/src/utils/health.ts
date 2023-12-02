@@ -111,7 +111,7 @@ export const connectAppleHealth = async () => {
 
       Alert.alert(
         "Apple Health Connected",
-        "We will use your health data to personalize your Copilot recommendations"
+        "We will use your sleep, activity and heart rate over time to personalize your Copilot recommendations"
       );
     });
   }
