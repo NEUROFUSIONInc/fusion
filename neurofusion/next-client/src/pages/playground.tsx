@@ -62,6 +62,20 @@ const PlaygroundPage: NextPage = () => {
     //     "You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
     //   url: "/experiments/thought_to_text.html",
     // },
+    // {
+    //   id: 7,
+    //   name: "N-Back Task - Cognitive Test",
+    //   description:
+    //     "See if you remember the sequence or word patterns. You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
+    //   url: "/experiments/thought_to_text.html",
+    // },
+    // {
+    //   id: 6,
+    //   name: "Neuro Game - Thought to text",
+    //   description:
+    //     "You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
+    //   url: "/experiments/thought_to_text.html",
+    // },
   ];
 
   const [activeExperiment, setActiveExperiment] = React.useState(experiments[0]);

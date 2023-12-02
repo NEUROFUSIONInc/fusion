@@ -6,11 +6,16 @@ import Constants from "expo-constants";
 import React, { useCallback } from "react";
 import { View, Text, Pressable, Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { requestPurchase, useIAP } from "react-native-iap";
 
 import { Screen, ChevronRightSmall, SubscriptionSheet } from "~/components";
 import { AccountContext, OnboardingContext } from "~/contexts";
 import { appInsights, connectAppleHealth } from "~/utils";
 import { requestCopilotConsent } from "~/utils/consent";
+
+const subscriptionSkus = Platform.select({
+  ios: ["Fusion_Premium_001"],
+});
 
 export function SettingsScreen() {
   const onboardingContext = React.useContext(OnboardingContext);

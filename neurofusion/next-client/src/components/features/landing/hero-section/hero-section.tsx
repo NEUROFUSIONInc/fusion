@@ -81,7 +81,7 @@ export const HeroSection = () => {
         <iframe
           title="Neurofusion Demo Video"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          src="https://www.loom.com/embed/2893c581a8f44e6389b2f7d5b0f9baec?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
+          src="https://www.loom.com/embed/2633999afb5a4887bb94769b22e809c0?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
           allowFullScreen
           className="absolute top-0 left-0 w-full h-full rounded-3xl"
         />

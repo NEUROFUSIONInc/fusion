@@ -120,6 +120,10 @@ export const QuickAddPromptsScreen = () => {
     })();
   };
 
+  useEffect(() => {
+    console.log("Search text", searchTerm);
+  }, [searchTerm]);
+
   return (
     <Screen>
       {quickAddPrompts && quickAddPrompts?.length > 0 && (
