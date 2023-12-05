@@ -32,9 +32,9 @@ export const FeatureSection: FC = () => {
                 className="rounded-2xl"
               />
               <PromptExample
-                title="Have you taken a 5 minute walk?"
+                title="What's top of mind for you today?"
                 leftSubtitle="Mo, Tu, We, Th, Fr"
-                rightSubtitle="Every 5 hrs"
+                rightSubtitle="Once"
                 className="hidden md:block absolute top-4 right-1/2 md:transform md:-translate-x-2 lg:-translate-x-1/2"
               />
             </div>

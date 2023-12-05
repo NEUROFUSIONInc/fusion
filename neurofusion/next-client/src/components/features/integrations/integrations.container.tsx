@@ -102,7 +102,7 @@ export const IntegrationsContainer = () => {
     <section>
       <h1 className="text-4xl">Integrations and all connected apps</h1>
       <p className="mb-10 mt-2 text-lg dark:text-slate-400">
-        Supercharge your workflow and connect to tools you use everyday{" "}
+        Connect to applications and sensors for context on your life experiences{" "}
       </p>
       <div className="flex flex-wrap gap-8">
         {integrations.map((integration) => (

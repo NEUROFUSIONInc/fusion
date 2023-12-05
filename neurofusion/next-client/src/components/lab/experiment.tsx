@@ -224,7 +224,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
       {!connectedDevice && (
         <>
-          <p>Head over to the integrations page to connect a Neurosity Device</p>
+          <p>Head over to the integrations page to connect your brain computer interface</p>
           <Button
             intent={"dark"}
             className="ml-auto"
