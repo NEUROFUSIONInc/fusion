@@ -5,12 +5,12 @@ import { FC, useState } from "react";
 import { Button } from "~/components/ui";
 import { updateNeurositySelectedDevice, useNeurosityState } from "~/hooks";
 
-interface INeurosityModalProps {
+interface IFusionModalProps {
   isOpen: boolean;
   onCloseModal: () => void;
 }
 
-export const FusionConnectModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal }) => {
+export const FusionConnectModal: FC<IFusionModalProps> = ({ isOpen, onCloseModal }) => {
   const { devices, getNeurositySelectedDevice, disconnectNeurosityAccount } = useNeurosityState();
   const [neurositySelectedDevice] = useState(getNeurositySelectedDevice());
 
@@ -28,10 +28,10 @@ export const FusionConnectModal: FC<INeurosityModalProps> = ({ isOpen, onCloseMo
         />
         <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-[50%] top-[50%] z-30 h-auto max-h-[85vh] w-[450px] max-w-[90vw] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-[6px] bg-white p-8 focus:outline-none dark:bg-slate-800 md:w-[600px]">
           <Dialog.Title className="mb-1 w-10/12 font-body text-lg md:w-full md:text-2xl">
-            Update Neurosity account
+            Connect Fusion Mobile Account
           </Dialog.Title>
           <Dialog.Description className="mb-5 text-sm text-gray-700 dark:text-gray-300 md:text-base">
-            Select a device to update your Neurosity account
+            Follow the instructions below to connect your Fusion Mobile account.
           </Dialog.Description>
 
           <Dialog.Close
@@ -42,65 +42,7 @@ export const FusionConnectModal: FC<INeurosityModalProps> = ({ isOpen, onCloseMo
             <span className="sr-only">Close</span>
           </Dialog.Close>
 
-          <h4 className="font-body text-lg">Devices</h4>
-          <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-            Choose a device
-            <select
-              id="countries"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-              onChange={updateNeurositySelectedDevice}
-            >
-              <option value="">Select a device</option>
-              {devices.map((device) => {
-                if (device.deviceId === neurositySelectedDevice) {
-                  return (
-                    <option key={device.deviceId} value={device.deviceId} selected>
-                      {device.deviceNickname}
-                    </option>
-                  );
-                } else {
-                  return (
-                    <option key={device.deviceId} value={device.deviceId}>
-                      {device.deviceNickname}
-                    </option>
-                  );
-                }
-              })}
-            </select>
-          </label>
-
-          <h4 className="font-body text-lg">Recordings</h4>
-          <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-            Select an option
-            <select
-              id="countries"
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-              onChange={updateNeurositySelectedDevice}
-            >
-              <option value="">Select a device</option>
-              {devices.map((device) => {
-                if (device.deviceId === neurositySelectedDevice) {
-                  return (
-                    <option key={device.deviceId} value={device.deviceId} selected>
-                      {device.deviceNickname}
-                    </option>
-                  );
-                } else {
-                  return (
-                    <option key={device.deviceId} value={device.deviceId}>
-                      {device.deviceNickname}
-                    </option>
-                  );
-                }
-              })}
-            </select>
-          </label>
-
-          <div className="mt-8 flex w-full flex-wrap items-center gap-4 py-6 md:flex-nowrap">
-            <Button type="submit" onClick={handleDisconnect}>
-              Disconnect Neurosity account
-            </Button>
-          </div>
+          <h4 className="font-body text-lg">Steps</h4>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

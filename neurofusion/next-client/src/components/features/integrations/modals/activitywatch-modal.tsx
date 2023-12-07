@@ -7,13 +7,14 @@ import { FC, useState } from "react";
 import { AWClient } from "aw-client";
 
 import { Button, Input } from "~/components/ui";
+import { activityWatchSteps } from "../data";
 
-interface IMagicFlowModalProps {
+interface IActivityWatchModalProps {
   isOpen: boolean;
   onCloseModal: () => void;
 }
 
-export const ActivityWatchModal: FC<IMagicFlowModalProps> = ({ isOpen, onCloseModal }) => {
+export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onCloseModal }) => {
   const { data: sessionData } = useSession();
   const [hostname, setHostname] = useState("");
 
@@ -52,7 +53,7 @@ export const ActivityWatchModal: FC<IMagicFlowModalProps> = ({ isOpen, onCloseMo
 
           <h4 className="font-body text-lg">Steps</h4>
           <Accordion.Root type="single" collapsible className="divide-y dark:divide-slate-600">
-            {/* {magicFlowSteps.map((step) => (
+            {activityWatchSteps.map((step) => (
               <Accordion.Item key={step.id} value={`step-${step.id}`}>
                 <Accordion.Trigger className="flex w-full items-center justify-between py-4 transition-all [&[data-state=open]>svg]:rotate-180">
                   <div className="flex items-center">
@@ -65,18 +66,18 @@ export const ActivityWatchModal: FC<IMagicFlowModalProps> = ({ isOpen, onCloseMo
                   <ChevronDown className="hidden transition-transform duration-200 sm:block" />
                 </Accordion.Trigger>
                 <Accordion.Content>
-                  <Image src={step.image} alt="Magic Flow Home page" width={600} height={300} />
+                  {/* <Image src={step.image} alt="Magic Flow Home page" width={600} height={300} /> */}
                 </Accordion.Content>
               </Accordion.Item>
-            ))} */}
+            ))}
             {/* TODO: Update activity watch steps and include it here */}
             {/* we should actually fetch the buckets */}
           </Accordion.Root>
 
           <div className="mt-8 flex w-full flex-wrap items-center gap-4 py-6 md:flex-nowrap">
-            <Input value={hostname} placeholder="ActivityWatch Hostname" onChange={handleChange} fullWidth />
+            {/* <Input value={hostname} placeholder="ActivityWatch Hostname" onChange={handleChange} fullWidth /> */}
             <Button type="submit" onClick={handleSubmit}>
-              {hostname ? "Update" : "Connect"}
+              {"Fetch Hosts"}
             </Button>
           </div>
         </Dialog.Content>

@@ -46,7 +46,6 @@ export const IntegrationsContainer = () => {
         break;
       case "biometrics":
         // call function for biometrics integration
-        // connectMuse();
         setModalOpen("biometrics");
         break;
       default:
@@ -70,6 +69,9 @@ export const IntegrationsContainer = () => {
         return Boolean(magicflowData?.magicflowToken);
       case "activityWatch":
         // check if activityWatch is connected
+        return false;
+      case "biometrics":
+        // call function for biometrics integration
         return false;
       default:
         return false;

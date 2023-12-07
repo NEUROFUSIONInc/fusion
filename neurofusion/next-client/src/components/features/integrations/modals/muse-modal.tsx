@@ -1,10 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { Button } from "~/components/ui";
 import { MuseClient } from "muse-js";
+import { connectMuse } from "~/services/integrations/muse.service";
 
 interface IBiometricsModalProps {
   isOpen: boolean;
@@ -12,44 +13,14 @@ interface IBiometricsModalProps {
 }
 
 export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModal }) => {
-  const [deviceConfig, setDeviceConfig] = useState("");
+  const [museClient, setMuseClient] = useState<MuseClient>();
 
-  const connectMuse = async () => {
-    const museClient = new MuseClient();
-    await museClient.connect();
-    await museClient.start();
-    return museClient;
-  };
-
-  const handleConnect = () => {
+  const getMuseClient = () => {
     (async () => {
-      console.log("connecting device");
-
-      let client: MuseClient;
-      try {
-        client = await connectMuse();
-        console.log(client);
-        // client.eegReadings.subscribe((reading) => {
-        //   console.log(reading);
-        // });
-        // client.telemetryData.subscribe((telemetry) => {
-        //   console.log(telemetry);
-        // });
-        // client.accelerometerData.subscribe((acceleration) => {
-        //   console.log(acceleration);
-        // });
-      } catch (err) {
-        console.log(err);
-      }
+      console.log("connecting muse device");
+      const muse = await connectMuse();
+      setMuseClient(muse);
     })();
-    // onCloseModal();
-  };
-
-  const updateDeviceConfig = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDeviceConfig(evt.target.value);
-    console.log(evt.target.value);
-
-    // this is where we invoke the brainflow connection
   };
 
   return (
@@ -76,9 +47,19 @@ export const BiometricsModal: FC<IBiometricsModalProps> = ({ isOpen, onCloseModa
           </Dialog.Close>
 
           <div className="mt-8 flex w-full flex-wrap items-center gap-4 py-6 md:flex-nowrap">
-            <Button type="submit" onClick={handleConnect}>
-              Connect Muse
-            </Button>
+            {museClient ? (
+              <>
+                <p>{museClient.deviceName} is connected!</p>
+
+                <Button type="submit" onClick={getMuseClient}>
+                  Update Connection
+                </Button>
+              </>
+            ) : (
+              <Button type="submit" onClick={getMuseClient}>
+                Connect Muse
+              </Button>
+            )}
           </div>
         </Dialog.Content>
       </Dialog.Portal>
