@@ -1,7 +1,7 @@
 import {
-  StackActions,
   useNavigation,
   useRoute,
+  CommonActions,
 } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
@@ -99,13 +99,26 @@ export function PromptEntryScreen() {
       );
       // navigate to prompt responses screen
       // clear stack history first
-      navigation.dispatch(StackActions.popToTop());
-      navigation.navigate("InsightsNavigator", {
-        screen: "InsightsPage",
-        params: {
-          promptUuid: prompt.uuid,
-        },
-      });
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: "InsightsNavigator",
+              state: {
+                routes: [
+                  {
+                    name: "InsightsPage",
+                    params: {
+                      promptUuid: prompt.uuid,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        })
+      );
     }
   };
 
@@ -223,6 +236,12 @@ export function PromptEntryScreen() {
                     </View>
                   )
               }
+
+              {
+                // TODO: Add a photo
+              }
+
+              {/* Add additional notes */}
               <View
                 className={`${
                   prompt?.responseType !== "text" ? "mt-10" : "mt-0"
