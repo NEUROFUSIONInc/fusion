@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
-import React from "react";
+import React, { useRef } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import { Screen } from "~/components";
@@ -17,6 +18,8 @@ interface ChatMessageProps {
 }
 
 export const ChatScreen = () => {
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const [messages, setMessages] = React.useState<ChatMessageProps[]>([]);
   const [input, setInput] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -28,10 +31,16 @@ export const ChatScreen = () => {
   return (
     <Screen>
       {/* Chat Messages */}
-      <ScrollView className="flex-1 bg-black">
+      <ScrollView
+        className="flex-1 bg-black"
+        ref={scrollViewRef}
+        onContentSizeChange={() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }}
+      >
         {/* Messages will go here */}
         {messages.map((message) => (
-          <>
+          <View key={Math.random()}>
             <View
               className={`flex-row items-center p-4 rounded-md m-0.5 my-2 w-3/4
             ${message.isUser ? "ml-auto bg-secondary" : "bg-secondary-900"}`}
@@ -45,17 +54,18 @@ export const ChatScreen = () => {
             >
               {dayjs(message.timestamp).format("h:mma")}
             </Text>
-          </>
+          </View>
         ))}
       </ScrollView>
 
       {/* Suggestions for conversation, based on what we know */}
 
       {/* Input Area */}
-      <View
+      <KeyboardAvoidingView
+        behavior="padding"
         className="
-          flex-row items-center p-4 bg-secondary-900 rounded-md
-          m-0.5 my-2"
+          flex-1 flex-row items-center bg-secondary-900 rounded-md
+          my-2 max-h-[10%] pl-4 pr-4"
       >
         <TextInput
           placeholder="Type in your message..."
@@ -66,7 +76,6 @@ export const ChatScreen = () => {
           onChangeText={(text) => setInput(text)}
         />
         <TouchableOpacity
-          className="ml-4 rounded-md"
           onPress={() => {
             // Send message
             setMessages([
@@ -82,7 +91,7 @@ export const ChatScreen = () => {
         >
           <Text className="text-lime font-sans">Send</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </Screen>
   );
 };
