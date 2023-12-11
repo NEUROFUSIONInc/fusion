@@ -31,29 +31,15 @@ export const PromptsScreen = () => {
   const { data: savedPrompts, isLoading } = usePromptsQuery();
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    "All"
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    string | undefined
+  >();
   const accountContext = useContext(AccountContext);
 
   const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "All" || selectedCategory === "") {
-      // Remove "All" category from the list of categories
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index !== -1) {
-        categories.splice(index, 1);
-      }
+    if (selectedCategory === "") {
       return savedPrompts;
     } else {
-      // Add "All" category to the list of categories if it doesn't exist
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index === -1) {
-        categories.unshift({
-          name: "All",
-          color: "#FFC0CB",
-          icon: "💫",
-        });
-      }
       return selectedCategory
         ? savedPrompts?.filter(
             (prompt) => prompt.additionalMeta?.category === selectedCategory

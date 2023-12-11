@@ -15,26 +15,12 @@ export const QuickAddPromptsScreen = () => {
   const route = useRoute<RouteProp<"QuickAddPrompts">>();
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    route.params?.selectedCategory ?? "All"
+    route.params?.selectedCategory ?? ""
   );
   const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "All" || selectedCategory === "") {
-      // Remove "All" category from the list of categories
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index !== -1) {
-        categories.splice(index, 1);
-      }
+    if (selectedCategory === "") {
       return quickAddPrompts;
     } else {
-      // Add "All" category to the list of categories if it doesn't exist
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index === -1) {
-        categories.unshift({
-          name: "All",
-          color: "#FFC0CB",
-          icon: "💫",
-        });
-      }
       return selectedCategory
         ? quickAddPrompts?.filter(
             (prompt) => prompt.additionalMeta?.category === selectedCategory
