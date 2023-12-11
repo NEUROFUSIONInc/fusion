@@ -71,6 +71,12 @@ export const QuickAddPromptsScreen = () => {
         if (Constants.expoConfig?.extra) {
           fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
         }
+        appInsights.trackEvent({
+          name: "prompt_suggestion_init",
+          properties: {
+            userNpub: accountContext?.userNpub,
+          },
+        });
         const response = await axios.post(
           `${fusionBackendUrl}/api/getpromptsuggestions`,
           {
@@ -110,13 +116,31 @@ export const QuickAddPromptsScreen = () => {
             },
           };
         });
+
+        appInsights.trackEvent({
+          name: "prompt_suggestion_complete",
+          properties: {
+            userNpub: accountContext?.userNpub,
+            prompt_count: formattedResponse ? formattedResponse.length : 0,
+          },
+        });
+
         setLoading(false);
         setSuggestedPrompts(formattedResponse);
       } catch (e) {
-        console.log("error", e);
+        appInsights.trackException({
+          exception: new Error("CORE_API_ERROR"),
+          properties: {
+            message: "Error generating prompt suggestions",
+            userNpub: accountContext?.userNpub,
+          },
+        });
         setSuggestedPrompts([]);
         setLoading(false);
-        Alert.alert("Error", "Something went wrong. Please try again later.");
+        Alert.alert(
+          "Error",
+          "Something went wrong & we've notified the team. Please try again later"
+        );
       }
     })();
   };
@@ -127,7 +151,7 @@ export const QuickAddPromptsScreen = () => {
         <ScrollView>
           <View className="flex justify-center items-center w-full">
             <Text className="font-sans-bold text-center text-white text-base pb-2">
-              What’s been top of mind for you lately
+              What’s been on your mind lately
             </Text>
             <Text className="font-sans-light max-w-xs text-center text-white text-base">
               We will use this to suggest you prompts
