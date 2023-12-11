@@ -5,13 +5,14 @@ import { IFusionFeature } from "./types";
 export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
-    title: "personal wellbeing",
+    pretitle: "Your",
+    title: "digital companion",
     description: "Create & respond to personalized prompts to understand changes in your behavior over time",
     featuresList: [
       "Get personalized plans and recommendations to meet your desired goals",
       "Understand the impact of daily activities on your health and performance",
       "Reflect in one-click, even on your busiest days",
-      "Share how you're doing with those who matter to you",
+      "Share reports with your friends & family",
     ],
   },
   {

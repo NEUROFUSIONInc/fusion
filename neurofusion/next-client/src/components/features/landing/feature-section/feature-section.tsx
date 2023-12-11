@@ -25,7 +25,7 @@ export const FeatureSection: FC = () => {
             </div>
             <div className="relative w-auto h-auto">
               <Image
-                src="/images/features/iphone-mockup.png"
+                src="/images/features/womanphone2.png"
                 alt="User using fusion app"
                 width={609}
                 height={914}
@@ -79,12 +79,7 @@ export const FeatureSection: FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-y-6">
             <div>
               <FusionFeature feature={fusionFeatures[2]} />
-              <ButtonLink
-                intent="filled"
-                href="https://usefusion.app/playground"
-                size="xl"
-                className="mt-4 w-full md:w-11/12"
-              >
+              <ButtonLink intent="filled" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
                 Use Fusion Explorer!
               </ButtonLink>
             </div>

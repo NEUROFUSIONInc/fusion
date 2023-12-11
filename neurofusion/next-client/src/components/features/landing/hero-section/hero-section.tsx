@@ -12,23 +12,30 @@ export const HeroSection = () => {
     >
       <div className="flex w-full max-w-2xl flex-col space-y-10 text-center md:min-w-[300px]">
         {(searchParams.get("persona") == null || searchParams.get("persona") == "default") && (
-          <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-            Understand what impacts your <span className="text-primary-gradient">wellbeing</span>
-          </h1>
+          <>
+            <h1 className="font-body text-3xl font-semibold sm:text-6xl">
+              Personal Insights from Your <span className="text-primary-gradient">Daily Habits and Actions</span>
+            </h1>
+            <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
+              Use Fusion to understand changes in your behavior and improve your quality of life.
+            </p>
+          </>
         )}
         {searchParams.get("persona") == "coaches_health_professionals" && (
-          <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-            Understand your client's <span className="text-primary-gradient">experience outside sessions</span>{" "}
-          </h1>
+          <>
+            <h1 className="font-body text-3xl font-semibold sm:text-6xl">
+              Understand your client's <span className="text-primary-gradient">experience outside sessions</span>{" "}
+            </h1>
+            {/* <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
+              Get the most value from having your better and healthier life.
+            </p> */}
+          </>
         )}
         {searchParams.get("persona") == "explorers_researchers" && (
           <h1 className="font-body text-3xl font-semibold sm:text-6xl">
             Perform behavior and neurotech <span className="text-primary-gradient">research seamlessly</span>{" "}
           </h1>
         )}
-        {/* <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
-          Get the most value from having your better and healthier life.
-        </p> */}
 
         {searchParams.get("persona") != "explorers_researchers" && (
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
