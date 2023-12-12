@@ -1,6 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Updates from "expo-updates";
-import { Alert } from "react-native";
+import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -14,10 +12,14 @@ import {
   Prompt,
   PromptAdditionalMeta,
   PromptResponse,
-  PromptResponseWithEvent,
 } from "~/@types";
 import { db } from "~/lib";
-import { appInsights, maskPromptId, updateTimestampToMs } from "~/utils";
+import {
+  appInsights,
+  getEvenlySpacedTimes,
+  maskPromptId,
+  updateTimestampToMs,
+} from "~/utils";
 
 class PromptService {
   constructor(private readonly notificationService: NotificationService) {}
@@ -431,102 +433,91 @@ class PromptService {
     }
   };
 
-  async resyncOldPrompts() {
-    const oldPrompts = await AsyncStorage.getItem("prompts");
-    if (oldPrompts) {
-      /**
-       * dismiss all notifications & cancel before migration
-       */
+  /**
+   * This is the hackiest function in the codebase & it's held
+   * together by duct tape and prayers. We will deprecte it once we
+   * start logging when notifications are triggered and when they are
+   * responded to.
+   */
+  public getMissedPromptsToday = async () => {
+    // get all prompts that have been missed since the timestamp
+    // make sure prompts are also active
+    const prompts = await this.readSavedPrompts();
+    const missedPrompts: Prompt[] = [];
 
-      // getting the prompts that are in local storage.
-      const parsedPrompts = JSON.parse(oldPrompts) as Prompt[];
+    for (const prompt of prompts) {
+      // if notification is not active, skip
+      if (
+        !prompt.additionalMeta ||
+        prompt.additionalMeta?.isNotificationActive === false
+      ) {
+        continue;
+      }
 
-      parsedPrompts.forEach(async (prompt) => {
-        // if prompt doesn't have a uuid, generate one
-        console.log("resyncing prompt - ", prompt.promptText);
-        if (!prompt.uuid) {
-          prompt.uuid = uuidv4(); // very unlikely but being defensive
-        }
+      // if notification is not supposed to come up on the current day, skip
+      const daysObject =
+        typeof prompt.notificationConfig_days === "string"
+          ? (JSON.parse(
+              prompt.notificationConfig_days
+            ) as NotificationConfigDays)
+          : prompt.notificationConfig_days;
+      const activeDays = Object.entries(daysObject)
+        .filter(([day, value]) => value)
+        .map(([day, value]) => day);
 
-        // check the db if a prompt with the same name already exists if yes, skip
-        const existingPrompts = await this.fetchExistingPromptsForText(
-          prompt.promptText
-        );
-        const promptExists = existingPrompts && existingPrompts.length > 0;
+      // find the days in string between sinceTimestamp and currentTimestamp
+      if (
+        !activeDays.includes(
+          dayjs().startOf("day").format("dddd").toLowerCase()
+        )
+      ) {
+        console.log("skipping prompt because it's not active today");
+        continue;
+      }
 
-        let savePromptStatus;
-
-        if (promptExists) {
-          prompt.uuid = existingPrompts[0].uuid;
-        } else {
-          // create a new prompt in the db
-          savePromptStatus = await this.savePrompt({
-            ...prompt,
-            notificationConfig_countPerDay: 3,
-            notificationConfig_startTime: "08:00",
-            notificationConfig_endTime: "18:00",
-            notificationConfig_days: {
-              monday: true,
-              tuesday: true,
-              wednesday: true,
-              thursday: true,
-              friday: true,
-              saturday: true,
-              sunday: true,
-            },
-          });
-        }
-
-        if (savePromptStatus || promptExists) {
-          // fetch old prompt responses and store in db
-          const responses = await AsyncStorage.getItem("events");
-
-          if (responses) {
-            console.log("saving responses for - ", prompt.promptText);
-            const parsedResponses = JSON.parse(
-              responses
-            ) as PromptResponseWithEvent[];
-            parsedResponses.forEach(async (response) => {
-              console.log("evaluating, response name: ", response.event.name);
-              if (response.event.name === `Fusion: ${prompt.promptText}`) {
-                console.log("response name matches promptText");
-                // save using the new flow
-                const status = await this.savePromptResponse({
-                  promptUuid: prompt.uuid,
-                  triggerTimestamp: updateTimestampToMs(
-                    response.startTimestamp
-                  ),
-                  responseTimestamp: updateTimestampToMs(
-                    response.startTimestamp
-                  ),
-                  value: response.event.value,
-                });
-                if (status) {
-                  console.log("save response status: ", status);
-                }
-              }
-            });
-          }
-        }
-      });
-
-      Alert.alert(
-        "Prompts & Responses Synced",
-        "Force close & restart the app if it doesn't happened automatically."
+      const responses = await this.getPromptResponses(
+        prompt.uuid,
+        dayjs().startOf("day").unix() * 1000
       );
 
-      appInsights.trackEvent(
-        {
-          name: "resyncOldPrompts",
-        },
-        {
-          promptCount: parsedPrompts.length,
-        }
+      if (responses.length === prompt.notificationConfig_countPerDay) {
+        console.log("skipping prompt because it's already been answered today");
+        continue;
+      }
+
+      console.log("prompt is active today, fetching missed times");
+
+      // check the times we expected notifications to be triggered
+      const notificationTimes = getEvenlySpacedTimes(
+        prompt.notificationConfig_startTime,
+        prompt.notificationConfig_endTime,
+        prompt.notificationConfig_countPerDay
       );
 
-      await Updates.reloadAsync();
+      // get which times have actually been triggered
+      const triggeredNotificationTimes = [];
+      for (let i = 0; i < notificationTimes.length; i++) {
+        const [hours, minutes] = notificationTimes[i].split(":").map(Number);
+        const notificationTimestamp =
+          dayjs()
+            .startOf("day")
+            .add(hours, "hour")
+            .add(minutes, "minute")
+            .unix() * 1000;
+
+        if (notificationTimestamp <= dayjs().unix() * 1000) {
+          triggeredNotificationTimes.push(notificationTimestamp);
+        }
+      }
+
+      // if triggeredTimes < responseTimes, add to missedPrompts
+      if (triggeredNotificationTimes.length > responses.length) {
+        missedPrompts.push(prompt);
+      }
+
+      return missedPrompts;
     }
-  }
+  };
 
   public processPromptResponses = async (
     prompts: Prompt[],
