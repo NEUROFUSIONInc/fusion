@@ -7,7 +7,7 @@ import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { Alert, Linking, Platform, StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { withIAPContext } from "react-native-iap";
 import Toast from "react-native-toast-message";
@@ -38,71 +38,6 @@ Notifications.setNotificationHandler({
   },
 });
 
-const registerForPushNotificationsAsync = async () => {
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-  (async () => {
-    if (existingStatus !== "granted") {
-      Alert.alert(
-        "Notification Permission",
-        "We need your permission to send you notifications based on your prompt settings.",
-        [
-          {
-            text: "OK",
-            onPress: async () => {
-              const { status } = await Notifications.requestPermissionsAsync();
-              finalStatus = status;
-              if (finalStatus !== "granted") {
-                Alert.alert(
-                  "Enable notifications",
-                  "We only notify you based on your prompt settings. Please enable notifications in your settings to continue.",
-                  [
-                    {
-                      text: "OK",
-                      onPress: async () => {
-                        Linking.openURL("app-settings:Fusion");
-                      },
-                    },
-                  ]
-                );
-              } else {
-                if (Platform.OS === "android") {
-                  await Notifications.setNotificationChannelAsync("default", {
-                    name: "default",
-                    importance: Notifications.AndroidImportance.MAX,
-                    vibrationPattern: [0, 250, 250, 250],
-                    lightColor: "#FF231F7C",
-                  });
-                }
-              }
-            },
-            isPreferred: true,
-          },
-          {
-            text: "Cancel",
-            onPress: async () => {
-              Alert.alert(
-                "Notifications Disabled",
-                "You can continue to use Fusion without notifications, but you will not be notified of any prompts you have enabled. You will need to open the app to log responses by yourself"
-              );
-            },
-            style: "destructive",
-          },
-        ]
-      );
-    } else {
-      if (Platform.OS === "android") {
-        await Notifications.setNotificationChannelAsync("default", {
-          name: "default",
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: "#FF231F7C",
-        });
-      }
-    }
-  })();
-};
-
 // - temp remove since asking for notification permission on first load causes hiding splash screen to fail
 // SplashScreen.preventAutoHideAsync();
 
@@ -122,64 +57,9 @@ function App() {
   React.useEffect(() => {
     // validate permission status for user
     (async () => {
-      await registerForPushNotificationsAsync();
-      /**
-       * Set up notification categories
-       * TODO: set custom catgeories based on prompts
-       */
-      await Notifications.setNotificationCategoryAsync("yesno", [
-        {
-          identifier: "Yes",
-          buttonTitle: "Yes",
-          options: {
-            opensAppToForeground: false,
-          },
-        },
-        {
-          identifier: "No",
-          buttonTitle: "No",
-          options: {
-            opensAppToForeground: false,
-          },
-        },
-      ]);
-      let placeholderTextInput = { placeholder: "" };
-      let placeholderNumberInput = { placeholder: "" };
-      // This is work around a bug in expo-notifications
-      if (Platform.OS !== "android") {
-        placeholderTextInput = {
-          placeholder: "Type your response here",
-        };
-        placeholderNumberInput = {
-          placeholder: "Enter a number",
-        };
-      }
-      await Notifications.setNotificationCategoryAsync("number", [
-        {
-          identifier: "number",
-          buttonTitle: "Respond",
-          textInput: {
-            submitButtonTitle: "Log",
-            ...placeholderNumberInput,
-          },
-          options: {
-            opensAppToForeground: false,
-          },
-        },
-      ]);
-      await Notifications.setNotificationCategoryAsync("text", [
-        {
-          identifier: "text",
-          buttonTitle: "Respond",
-          textInput: {
-            submitButtonTitle: "Log",
-            ...placeholderTextInput,
-          },
-          options: {
-            opensAppToForeground: false,
-          },
-        },
-      ]);
+      await notificationService.registerForPushNotificationsAsync();
+      await notificationService.setUpNotificationCategories();
+
       // set notification handlers
       // what happens when a user responds to notification
       // even in background
