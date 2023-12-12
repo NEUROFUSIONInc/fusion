@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Linking } from "react-native";
 import {
   ScrollView,
@@ -11,22 +11,21 @@ import {
 } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
-import { PromptResponse } from "~/@types";
+import { Prompt, PromptResponse } from "~/@types";
 import {
   Screen,
   Button,
-  ChevronLeft,
-  ChevronRight,
   Reload,
   ThumbsUp,
   ThumbsDown,
   ChatBubble,
+  Modal,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { promptService } from "~/services";
-import { appInsights } from "~/utils";
+import { appInsights, connectAppleHealth, getTimeOfDay } from "~/utils";
 
 export function HomeScreen() {
   const { data: savedPrompts } = usePromptsQuery();
@@ -34,8 +33,15 @@ export function HomeScreen() {
   const navigation = useNavigation();
   const accountContext = React.useContext(AccountContext);
 
-  // get all the categories
+  const [missedPrompts, setMissedPrompts] = useState<Prompt[]>();
+
   const [activeCategoryIndex, setActiveCategoryIndex] = React.useState(0);
+  const [categoryInsightSummaries, setCategoryInsightSummaries] =
+    React.useState<{ [key: string]: string }>({});
+
+  const [summaryText, setSummaryText] = React.useState("Loading summary...");
+
+  const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -45,6 +51,56 @@ export function HomeScreen() {
       },
     });
   }, []);
+
+  React.useEffect(() => {
+    if (!savedPrompts) return;
+    if (savedPrompts.length === 0) {
+      // redirect to prompts page
+      navigation.navigate("PromptNavigator", {
+        screen: "Prompts",
+        params: {
+          selectedCategory: categories[activeCategoryIndex].name,
+        },
+      });
+    }
+    if (accountContext?.userLoading) return;
+    (async () => {
+      setSummaryText("Loading summary...");
+      // make a batch request for summary of each category
+      categories.forEach(async (category) => {
+        const ai_summary = await getInsightSummary(category.name);
+        setCategoryInsightSummaries((prev) => ({
+          ...prev,
+          [category.name]: ai_summary,
+        }));
+      });
+
+      // check if user has missed any prompts
+      const res = await promptService.getMissedPromptsToday();
+      if (res) {
+        setMissedPrompts(res);
+        appInsights.trackEvent({
+          name: "show_missed_prompts",
+          properties: {
+            userNpub: accountContext?.userNpub,
+            missedPrompts: res?.length,
+          },
+        });
+      }
+    })();
+  }, [
+    savedPrompts,
+    accountContext?.userLoading,
+    accountContext?.userPreferences.enableCopilot,
+    timePeriod,
+  ]);
+
+  // get the summary for the active category
+  React.useEffect(() => {
+    if (!categoryInsightSummaries) return;
+    const selectedCategory = categories[activeCategoryIndex].name;
+    setSummaryText(categoryInsightSummaries[selectedCategory]);
+  }, [categoryInsightSummaries, activeCategoryIndex]);
 
   const panActiveInsightCategory = (direction: "left" | "right") => {
     if (direction === "left") {
@@ -62,22 +118,18 @@ export function HomeScreen() {
     }
   };
 
-  const [summaryText, setSummaryText] = React.useState("Loading summary...");
-
-  const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
-
   const getInsightSummary = async (category: string) => {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "Use Fusion Copilot to see get summaries and personalized recommendations based on your responses.";
+      return "Use Fusion Copilot to see get summaries and personalized recommendations.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
     );
 
     if (filteredPrompts.length === 0) {
-      return "You need to add prompts to this category to get summaries and personalized recommendations.";
+      return "Add prompts to this category to get summaries and personalized recommendations.";
     }
 
     const categoryPromptResponses: PromptResponse[] = [];
@@ -148,11 +200,6 @@ export function HomeScreen() {
     }
   };
 
-  // order by categories by prompts with responses
-
-  const [categoryInsightSummaries, setCategoryInsightSummaries] =
-    React.useState<{ [key: string]: string }>({});
-
   const onHandlerStateChange = (event: {
     nativeEvent: { state: number; translationX: number };
   }) => {
@@ -171,65 +218,26 @@ export function HomeScreen() {
     }
   };
 
-  React.useEffect(() => {
-    if (!savedPrompts) return;
-    if (savedPrompts.length === 0) {
-      // redirect to prompts page
-      navigation.navigate("PromptNavigator", {
-        screen: "Prompts",
-        params: {
-          selectedCategory: categories[activeCategoryIndex].name,
-        },
-      });
-    }
-    if (accountContext?.userLoading) return;
-    (async () => {
-      setSummaryText("Loading summary...");
-      // make a batch request for summary of each category
-      categories.forEach(async (category) => {
-        const ai_summary = await getInsightSummary(category.name);
-        setCategoryInsightSummaries((prev) => ({
-          ...prev,
-          [category.name]: ai_summary,
-        }));
-      });
-    })();
-  }, [
-    savedPrompts,
-    accountContext?.userLoading,
-    accountContext?.userPreferences.enableCopilot,
-    timePeriod,
-  ]);
-
-  // get the summary for the active category
-  React.useEffect(() => {
-    if (!categoryInsightSummaries) return;
-    const selectedCategory = categories[activeCategoryIndex].name;
-    setSummaryText(categoryInsightSummaries[selectedCategory]);
-  }, [categoryInsightSummaries, activeCategoryIndex]);
-  // now that we have all the summaries, set the summary text
-
   // Fetch what's top of mind
-  const [topOfMind, setTopOfMind] = React.useState<string[]>([]);
-  React.useEffect(() => {
-    if (!savedPrompts) return;
-    if (savedPrompts.length === 0) return;
-    (async () => {
-      // get the top 3 prompts with most responses
-      const topOfMindPrompts = savedPrompts
-        .sort((a, b) => b.responses.length - a.responses.length)
-        .slice(0, 3);
-      setTopOfMind(topOfMindPrompts.map((prompt) => prompt.prompt));
-    })();
-  }, [savedPrompts]);
-
-  // TODO: remove "All" from copilot categories
+  // const [topOfMind, setTopOfMind] = React.useState<string[]>([]);
+  // React.useEffect(() => {
+  //   if (!savedPrompts) return;
+  //   if (savedPrompts.length === 0) return;
+  //   (async () => {
+  //     // get the top 3 prompts with most responses
+  //     const topOfMindPrompts = savedPrompts
+  //       .sort((a, b) => b.responses.length - a.responses.length)
+  //       .slice(0, 3);
+  //     setTopOfMind(topOfMindPrompts.map((prompt) => prompt.prompt));
+  //   })();
+  // }, [savedPrompts]);
 
   return (
     <Screen>
       <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
         <View className="flex-1">
           <ScrollView>
+            {/* Fusion Copilot Card */}
             <>
               <View className="flex flex-row w-full justify-between p-5">
                 <Text className="text-base font-sans-bold text-white">
@@ -252,7 +260,7 @@ export function HomeScreen() {
               {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
               <ScrollView nestedScrollEnabled>
                 <View className="flex flex-col w-full bg-secondary-900 rounded">
-                  <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
+                  {/* <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -271,7 +279,7 @@ export function HomeScreen() {
                       leftIcon={<ChevronRight />}
                       onPress={() => panActiveInsightCategory("right")}
                     />
-                  </View>
+                  </View> */}
 
                   <View>
                     <Text
@@ -371,21 +379,103 @@ export function HomeScreen() {
                     variant="secondary"
                   />
                 )}
+
+              {/* Contextual action buttons */}
+              <View>
+                {!savedPrompts?.find(
+                  (prompt) =>
+                    prompt.additionalMeta?.category ===
+                    categories[activeCategoryIndex].name
+                ) ? (
+                  <Button
+                    onPress={async () => {
+                      const val = categories[activeCategoryIndex].name;
+                      navigation.navigate("PromptNavigator", {
+                        screen: "Prompts",
+                        params: {
+                          selectedCategory: val,
+                        },
+                      });
+                    }}
+                    title="Add Prompt"
+                    fullWidth
+                    className="bg-secondary-900 my-5"
+                    variant="secondary"
+                  />
+                ) : (
+                  <>
+                    {/* Connect with data source */}
+                    <>
+                      <Button
+                        title="View Responses"
+                        fullWidth
+                        onPress={async () => {
+                          const val = categories[activeCategoryIndex].name;
+                          navigation.navigate("InsightsNavigator", {
+                            screen: "InsightsPage",
+                            params: {
+                              promptUuid: savedPrompts?.find(
+                                (prompt) =>
+                                  prompt.additionalMeta?.category ===
+                                  categories[activeCategoryIndex].name
+                              )?.uuid,
+                            },
+                          });
+                        }}
+                        className="bg-secondary-900"
+                        variant="secondary"
+                      />
+                    </>
+
+                    {/* Display Related Resources */}
+                    <>
+                      {categories[activeCategoryIndex].name ===
+                        "Mental Health" && (
+                        <Button
+                          onPress={async () => {
+                            await Linking.openURL(
+                              "https://cmha.ca/find-info/mental-health/general-info/"
+                            );
+                          }}
+                          title="Mental Health Resources"
+                          fullWidth
+                          className=" bg-secondary-900 my-5"
+                          variant="secondary"
+                        />
+                      )}
+                      {categories[activeCategoryIndex].name ===
+                        "Health and Fitness" && (
+                        <Button
+                          onPress={async () => {
+                            await Linking.openURL(
+                              "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
+                            );
+                          }}
+                          title="Learn more about physical activity"
+                          fullWidth
+                          className=" bg-secondary-900 my-5"
+                          variant="secondary"
+                        />
+                      )}
+                    </>
+                  </>
+                )}
+              </View>
             </>
 
             {/* TODO: display sleep activity & heart rate */}
             {!accountContext?.userLoading &&
-            accountContext?.userPreferences["healthConnect"] === true ? (
+            accountContext?.userPreferences["enableHealthConnect"] === true ? (
               <View className="">
                 <View className="flex flex-row w-full justify-between p-5">
                   <Text className="text-base font-sans-bold text-white">
-                    Your sleep, activity & heart rate
+                    Health & Activity
                   </Text>
                 </View>
 
                 <View className="flex flex-col w-full bg-secondary-900 rounded">
                   <Text className="text-base font-sans text-white p-5">
-                    I want to be better at talking about my work
+                    Sleep Heart Rate Activity
                   </Text>
                 </View>
               </View>
@@ -396,96 +486,29 @@ export function HomeScreen() {
                   fullWidth
                   onPress={async () => {
                     // reuse functions from settings page
+                    await connectAppleHealth();
                   }}
                   className="bg-secondary-900 my-4"
                   variant="secondary"
                 />
               </>
             )}
-
-            {/* Contextual action buttons */}
-            <View>
-              {!savedPrompts?.find(
-                (prompt) =>
-                  prompt.additionalMeta?.category ===
-                  categories[activeCategoryIndex].name
-              ) ? (
-                <Button
-                  onPress={async () => {
-                    const val = categories[activeCategoryIndex].name;
-                    navigation.navigate("PromptNavigator", {
-                      screen: "Prompts",
-                      params: {
-                        selectedCategory: val,
-                      },
-                    });
-                  }}
-                  title="Add Prompt"
-                  fullWidth
-                  className="bg-secondary-900 my-5"
-                  variant="secondary"
-                />
-              ) : (
-                <>
-                  {/* Connect with data source */}
-                  <>
-                    <Button
-                      title="View Responses"
-                      fullWidth
-                      onPress={async () => {
-                        const val = categories[activeCategoryIndex].name;
-                        navigation.navigate("InsightsNavigator", {
-                          screen: "InsightsPage",
-                          params: {
-                            promptUuid: savedPrompts?.find(
-                              (prompt) =>
-                                prompt.additionalMeta?.category ===
-                                categories[activeCategoryIndex].name
-                            )?.uuid,
-                          },
-                        });
-                      }}
-                      className="bg-secondary-900"
-                      variant="secondary"
-                    />
-                  </>
-
-                  {/* Display Related Resources */}
-                  <>
-                    {categories[activeCategoryIndex].name ===
-                      "Mental Health" && (
-                      <Button
-                        onPress={async () => {
-                          await Linking.openURL(
-                            "https://cmha.ca/find-info/mental-health/general-info/"
-                          );
-                        }}
-                        title="Mental Health Resources"
-                        fullWidth
-                        className=" bg-secondary-900 my-5"
-                        variant="secondary"
-                      />
-                    )}
-                    {categories[activeCategoryIndex].name ===
-                      "Health and Fitness" && (
-                      <Button
-                        onPress={async () => {
-                          await Linking.openURL(
-                            "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
-                          );
-                        }}
-                        title="Learn more about physical activity"
-                        fullWidth
-                        className=" bg-secondary-900 my-5"
-                        variant="secondary"
-                      />
-                    )}
-                  </>
-                </>
-              )}
-            </View>
           </ScrollView>
           <ChatBubble />
+
+          {missedPrompts && missedPrompts.length > 0 && (
+            <Modal
+              message={`👋🏾  Good ${getTimeOfDay(
+                dayjs(),
+                false
+              )}, \n Let's catch up on prompts you missed!`}
+              clickText="Check in ✨"
+              clickAction={() => {
+                // send them to the prompt entry page
+                // there may be multiple prompt
+              }}
+            />
+          )}
         </View>
       </PanGestureHandler>
     </Screen>

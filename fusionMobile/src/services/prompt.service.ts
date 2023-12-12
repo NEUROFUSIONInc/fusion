@@ -515,8 +515,11 @@ class PromptService {
         missedPrompts.push(prompt);
       }
 
-      return missedPrompts;
+      // TODO:one more case to handle
+      // if the user recently responded to notification & still has less responses
+      // don't show it again.. just wait for the next response
     }
+    return missedPrompts;
   };
 
   public processPromptResponses = async (
