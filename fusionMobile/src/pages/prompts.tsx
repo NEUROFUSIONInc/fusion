@@ -48,6 +48,16 @@ export const PromptsScreen = () => {
     }
   }, [savedPrompts, selectedCategory]);
 
+  const categoryPillsToDisplay = useMemo(() => {
+    const categoriesToDisplay = categories.filter(
+      (category) =>
+        savedPrompts?.filter(
+          (prompt) => prompt.additionalMeta?.category === category.name
+        )?.length! > 0
+    );
+    return categoriesToDisplay;
+  }, [savedPrompts]);
+
   useEffect(() => {
     appInsights.trackPageView({
       name: "Prompts",
@@ -123,7 +133,7 @@ export const PromptsScreen = () => {
             className="flex gap-x-3 gap-y-3 pl-2"
             showsHorizontalScrollIndicator={false}
           >
-            {categories.map((category) => {
+            {categoryPillsToDisplay.map((category) => {
               const name = category.name;
               return (
                 <CategoryTag
@@ -150,23 +160,6 @@ export const PromptsScreen = () => {
           </ScrollView>
         </View>
       )}
-      {filteredPrompts?.length === 0 &&
-        selectedCategory &&
-        selectedCategory !== "All" && (
-          <View className="flex flex-1 flex-col gap-7 items-center justify-center">
-            <Image source={require("../../assets/sticky-note.png")} />
-            <Text className="font-sans-light max-w-xs text-center text-white text-base">
-              Looks like you don't have any prompt in '{selectedCategory}'{" "}
-              category.
-            </Text>
-            <Button
-              title={"Add prompt for '" + selectedCategory + "'"}
-              leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-              onPress={handleExpandSheet}
-              className="self-center"
-            />
-          </View>
-        )}
 
       <Portal>
         <AddPromptSheet

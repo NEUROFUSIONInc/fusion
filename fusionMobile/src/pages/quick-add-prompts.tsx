@@ -221,6 +221,7 @@ export const QuickAddPromptsScreen = () => {
                           <PromptDetails
                             prompt={prompt}
                             variant="add"
+                            displayFrequency={false}
                             onClick={() =>
                               navigation.navigate("EditPrompt", {
                                 prompt,

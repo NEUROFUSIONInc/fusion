@@ -41,20 +41,18 @@ export const PromptDetails: FC<PromptDetailsProps> = ({
         >
           {prompt.promptText}
         </Text>
-        {displayFrequency ? (
-          <View className="flex flex-row gap-x-2 items-center">
-            <Text className="font-sans text-sm text-white opacity-60">
-              {interpretDaySelection(days)}
-            </Text>
-
-            {prompt.additionalMeta?.isNotificationActive === false ? (
-              <View className="flex flex-row items-center">
-                <View className="w-1 h-1 bg-white opacity-60" />
-                <Text className="font-sans text-sm text-white opacity-60 pl-2">
-                  Paused
-                </Text>
-              </View>
-            ) : (
+        {displayFrequency &&
+          (prompt.additionalMeta?.isNotificationActive === false ? (
+            <View className="flex flex-row items-center">
+              <Text className="font-sans text-sm text-white opacity-60">
+                Paused
+              </Text>
+            </View>
+          ) : (
+            <View className="flex flex-row gap-x-2 items-center">
+              <Text className="font-sans text-sm text-white opacity-60">
+                {interpretDaySelection(days)}
+              </Text>
               <View className="flex flex-row items-center">
                 <View className="w-1 h-1 bg-white opacity-60" />
                 {frequencyLabel === "Once" ? (
@@ -71,9 +69,8 @@ export const PromptDetails: FC<PromptDetailsProps> = ({
                   </Text>
                 )}
               </View>
-            )}
-          </View>
-        ) : null}
+            </View>
+          ))}
       </View>
       {variant === "add" ? (
         <Button
