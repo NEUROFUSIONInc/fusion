@@ -45,9 +45,9 @@ export const OnboardingScreen = () => {
 
   const slides = [
     {
-      title: "Engaging Personalized Prompts",
+      title: "Stay on top of what matters to you",
       description:
-        "Manage and improve your wellbeing with customized prompts. You’ll get notified to respond to them based on times you set.",
+        "Use personalized prompts to manage and improve your wellbeing. You’ll get notified to respond to them based on times you set.",
       image: require("../../assets/onboarding/engaging-prompts.png"),
     },
     {
