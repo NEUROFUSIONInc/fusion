@@ -4,13 +4,13 @@ export const navigationLinks = [
     href: "/",
     persona: "default",
   },
+  // {
+  //   title: "Coaches & Health Professionals",
+  //   href: "/?persona=coaches_health_professionals",
+  //   persona: "coaches_health_professionals",
+  // },
   {
-    title: "Coaches & Health Professionals",
-    href: "/?persona=coaches_health_professionals",
-    persona: "coaches_health_professionals",
-  },
-  {
-    title: "Explorers & Researchers",
+    title: "Research",
     href: "/?persona=explorers_researchers",
     persona: "explorers_researchers",
   },
