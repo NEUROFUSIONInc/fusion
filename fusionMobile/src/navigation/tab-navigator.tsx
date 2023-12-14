@@ -7,7 +7,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
 import type { SvgProps } from "react-native-svg";
 
-import { CommunityStack } from "./community-navigator";
 import { HomeStack } from "./home-navigator";
 import { InsightsStack } from "./insights-navigator";
 import { PromptStack } from "./prompt-navigator";
@@ -74,11 +73,11 @@ const tabs: TabType[] = [
   //   component: QuestStack,
   //   label: "Quests",
   // },
-  {
-    name: "Community",
-    component: CommunityStack,
-    label: "Community",
-  },
+  // {
+  //   name: "Community",
+  //   component: CommunityStack,
+  //   label: "Community",
+  // },
 ];
 
 type BarIconType = {

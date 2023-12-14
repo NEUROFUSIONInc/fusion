@@ -525,7 +525,14 @@ class PromptService {
             responses[responses.length - 1].responseTimestamp;
 
           const interval = dayjs().diff(dayjs(lastResponseTimestamp), "minute");
-          if (interval < 30) {
+
+          // the threshold is based on the interval of the prompt times
+          const threshold = dayjs(triggeredNotificationTimes[1]).diff(
+            dayjs(triggeredNotificationTimes[0]),
+            "minute"
+          );
+
+          if (interval < threshold) {
             console.log("skipping prompt because it's not been long enough");
             continue;
           }

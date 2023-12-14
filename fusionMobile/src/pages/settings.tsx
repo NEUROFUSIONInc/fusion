@@ -6,7 +6,6 @@ import Constants from "expo-constants";
 import React, { useCallback } from "react";
 import { View, Text, Pressable, Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { requestPurchase, useIAP } from "react-native-iap";
 
 import { Screen, ChevronRightSmall, SubscriptionSheet } from "~/components";
 import { AccountContext, OnboardingContext } from "~/contexts";
@@ -73,23 +72,18 @@ export function SettingsScreen() {
     itemList.push({
       text: "Manage Subscription",
       onPress: async () => {
-        console.log("display subscription sheet");
-        setShowSubscriptionSheet(true);
         subscriptionSheetRef.current?.expand();
       },
     });
   }
 
   // add data export
-  itemList.push({
-    text: "Export Data",
-    onPress: async () => {
-      // TODO: move functions from settings page
-    },
-  });
-
-  const [showSubscriptionSheet, setShowSubscriptionSheet] =
-    React.useState<boolean>(false);
+  // itemList.push({
+  //   text: "Export Data",
+  //   onPress: async () => {
+  //     // TODO: move functions from settings page
+  //   },
+  // });
 
   const handleSubscriptionSheetClose = useCallback(() => {
     subscriptionSheetRef.current?.close();

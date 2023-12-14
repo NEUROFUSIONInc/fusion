@@ -1,9 +1,10 @@
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
 import React, { useMemo, useState } from "react";
-import { View, Text, Linking } from "react-native";
+import { View, Text, Linking, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 
@@ -14,7 +15,6 @@ import {
   Reload,
   ThumbsUp,
   ThumbsDown,
-  ChatBubble,
   Modal,
   CategoryTag,
   ChevronRight,
@@ -40,6 +40,7 @@ export function HomeScreen() {
   const [summaryText, setSummaryText] = React.useState("Loading summary...");
 
   const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const categoryPillsToDisplay = useMemo(() => {
     const categoriesToDisplay = categories.filter(
@@ -48,12 +49,10 @@ export function HomeScreen() {
           (prompt) => prompt.additionalMeta?.category === category.name
         )?.length! > 0
     );
+
+    setActiveCategory(categoriesToDisplay![0]);
     return categoriesToDisplay;
   }, [savedPrompts]);
-
-  const activeCategory = useMemo(() => {
-    return categoryPillsToDisplay[0];
-  }, [categoryPillsToDisplay]);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -65,6 +64,7 @@ export function HomeScreen() {
   }, []);
 
   React.useEffect(() => {
+    console.log("activeCategory", activeCategory);
     if (!savedPrompts) return;
     if (savedPrompts.length === 0) {
       // redirect to prompts page
@@ -73,6 +73,7 @@ export function HomeScreen() {
       });
     }
     if (accountContext?.userLoading) return;
+    if (!activeCategory) return;
     (async () => {
       setSummaryText("Loading summary...");
       // make a batch request for summary of each category
@@ -102,6 +103,7 @@ export function HomeScreen() {
     accountContext?.userLoading,
     accountContext?.userPreferences.enableCopilot,
     timePeriod,
+    activeCategory,
   ]);
 
   // get the summary for the active category
@@ -204,13 +206,32 @@ export function HomeScreen() {
                 Fusion Copilot
               </Text>
 
-              {categoryPillsToDisplay.length > 0 && (
-                <CategoryTag
-                  key={categoryPillsToDisplay[0].name}
-                  title={categoryPillsToDisplay[0].name}
-                  // isActive
-                  icon={categoryPillsToDisplay[0].icon}
-                />
+              {activeCategory && categoryPillsToDisplay.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    // show an alert with all the active categories
+                    // when they click on one, set it as the active category
+                    // and close the alert
+                    Alert.alert(
+                      "Recommendation Category",
+                      "Select a category to see insights for",
+                      categoryPillsToDisplay.map((category) => ({
+                        text: category.name,
+                        onPress: () => {
+                          setActiveCategory(category);
+                        },
+                      }))
+                    );
+                  }}
+                >
+                  <CategoryTag
+                    key={activeCategory.name}
+                    title={activeCategory.name}
+                    isActive
+                    disabled
+                    icon={activeCategory.icon}
+                  />
+                </TouchableOpacity>
               )}
             </View>
 
@@ -236,7 +257,7 @@ export function HomeScreen() {
                       appInsights.trackEvent({
                         name: "fusion_copilot_reload_summary",
                         properties: {
-                          category: activeCategory.name,
+                          category: activeCategory?.name,
                           userNpub: accountContext?.userNpub,
                         },
                       });
@@ -416,7 +437,7 @@ export function HomeScreen() {
             </View>
           </>
         </ScrollView>
-        <ChatBubble />
+        {/* <ChatBubble /> */}
 
         {missedPrompts && missedPrompts.length > 0 && (
           <Modal
