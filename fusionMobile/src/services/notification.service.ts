@@ -191,6 +191,16 @@ export class NotificationService {
     }
   };
 
+  public removeNotificationsForPromptFromTray = async (promptUuid: string) => {
+    const notificationIds =
+      await notificationService.getNotificationIdsForPrompt(promptUuid);
+    if (notificationIds) {
+      await Promise.all(
+        notificationIds.map((id) => Notifications.dismissNotificationAsync(id))
+      );
+    }
+  };
+
   public getNotificationIdsForPrompt = async (promptId: string) => {
     try {
       const getNotificationIdsFromDb = () => {

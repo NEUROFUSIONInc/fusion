@@ -23,7 +23,7 @@ import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { promptService } from "~/services";
-import { appInsights, connectAppleHealth, getTimeOfDay } from "~/utils";
+import { appInsights, getTimeOfDay } from "~/utils";
 import { requestCopilotConsent } from "~/utils/consent";
 
 export function HomeScreen() {
@@ -382,7 +382,7 @@ export function HomeScreen() {
                 )}
 
               {/* TODO: display sleep activity & heart rate */}
-              {!accountContext?.userLoading &&
+              {/* {!accountContext?.userLoading &&
               accountContext?.userPreferences["enableHealthConnect"] ===
                 true ? (
                 <View className="">
@@ -412,7 +412,7 @@ export function HomeScreen() {
                     rightIcon={<ChevronRight />}
                   />
                 </>
-              )}
+              )} */}
             </View>
           </>
         </ScrollView>
@@ -432,6 +432,8 @@ export function HomeScreen() {
                 screen: "PromptEntry",
                 params: {
                   promptUuid: missedPrompts[0].uuid,
+                  prompts: missedPrompts,
+                  index: 0,
                 },
               });
             }}

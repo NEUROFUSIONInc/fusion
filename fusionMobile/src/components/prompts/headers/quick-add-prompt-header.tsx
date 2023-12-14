@@ -13,7 +13,9 @@ export const QuickAddPromptsHeader = () => {
   const bottomSheetRef = useRef<RNBottomSheet>(null);
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate("PromptNavigator", {
+      screen: "Prompts",
+    });
   };
 
   const handleExpandSheet = useCallback(

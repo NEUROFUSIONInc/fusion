@@ -20,7 +20,7 @@ import { Button, Input, Tag } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
-import { promptService } from "~/services";
+import { notificationService, promptService } from "~/services";
 import { maskPromptId, appInsights } from "~/utils";
 
 const yesNoOptions = [
@@ -97,28 +97,65 @@ export function PromptEntryScreen() {
           userNpub: accountContext?.userNpub,
         }
       );
-      // navigate to prompt responses screen
-      // clear stack history first
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: "InsightsNavigator",
-              state: {
-                routes: [
-                  {
-                    name: "InsightsPage",
-                    params: {
-                      promptUuid: prompt.uuid,
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        })
+
+      // clear the notification tray for this prompt
+      await notificationService.removeNotificationsForPromptFromTray(
+        prompt.uuid as unknown as string
       );
+      // navigate to prompt responses screen or the next prompt
+      if (
+        route.params.prompts &&
+        route.params.index !== undefined &&
+        route.params.index + 1 < route.params.prompts.length
+      ) {
+        // console.log("showing the next prompt");
+        // clear stack history first
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "PromptNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "PromptEntry",
+                      params: {
+                        promptUuid:
+                          route.params.prompts[route.params.index + 1].uuid,
+                        prompts: route.params.prompts,
+                        index: route.params.index + 1,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      } else {
+        // clear stack history first
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "InsightsNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "InsightsPage",
+                      params: {
+                        promptUuid: prompt.uuid,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      }
     }
   };
 
