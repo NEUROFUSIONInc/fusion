@@ -1,6 +1,5 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useNavigation } from "@react-navigation/native";
 import { useCallback, useRef, FC, RefObject } from "react";
 import { View } from "react-native";
 
@@ -14,12 +13,7 @@ interface AddPromptSheetProps {
   selectedCategory?: string;
 }
 
-export const AddPromptSheet: FC<AddPromptSheetProps> = ({
-  bottomSheetRef,
-  selectedCategory,
-}) => {
-  const navigation = useNavigation<any>();
-
+export const AddPromptSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
   const createPromptSheetRef = useRef<RNBottomSheet>(null);
 
   const handleBottomSheetClose = useCallback(() => {
@@ -31,22 +25,13 @@ export const AddPromptSheet: FC<AddPromptSheetProps> = ({
     createPromptSheetRef.current?.expand();
   }, []);
 
-  const handleQuickAddPrompt = useCallback(() => {
-    bottomSheetRef.current?.close();
-    navigation.navigate("QuickAddPrompts", { selectedCategory });
-  }, [selectedCategory]);
-
   return (
     <Portal>
       <BottomSheet ref={bottomSheetRef} snapPoints={["42.5%"]}>
         <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
           <View className="flex flex-col gap-y-2.5 items-center">
             <PromptOption
-              text="Choose from example prompts"
-              onPress={handleQuickAddPrompt}
-            />
-            <PromptOption
-              text="Create new prompt"
+              text="Add a prompt manually"
               onPress={handleCreatePromptSheetOpen}
             />
           </View>

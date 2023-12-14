@@ -164,12 +164,6 @@ function App() {
     );
   }, []);
 
-  React.useEffect(() => {
-    // check is showOnboarding is false & if user has completed onboarding
-    // if user has completed onboarding, take to home page
-    // if user hasn't completed onboarding, take to quick add prompts page
-  }, [onboardingContext?.showOnboarding]);
-
   return (
     <GestureHandlerRootView className="flex flex-1 flex-grow-1">
       <FontLoader>

@@ -15,7 +15,14 @@ export const Modal: React.FC<ModalProps> = ({
   clickAction,
 }) => {
   return (
-    <View className="flex flex-1 w-full h-full bg-secondary-900 absolute justify-center p-5 b">
+    <View className="flex flex-1 w-full h-full bg-secondary-900 absolute justify-center p-5 rounded items-center">
+      {/* <View className="flex justify-center items-center mb-10 rounded-full">
+        <Image
+          source={require("../../assets/icon.png")}
+          className="w-12 h-12"
+        />
+      </View> */}
+
       <Text className="font-sans text-base text-white text-center mb-10">
         {message}
       </Text>

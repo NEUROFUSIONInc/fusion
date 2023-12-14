@@ -137,7 +137,7 @@ export const QuickAddPromptsScreen = () => {
         <ScrollView>
           <View className="flex justify-center items-center w-full">
             <Text className="font-sans-bold text-center text-white text-base pb-2">
-              What’s been on your mind lately
+              What’s been on your mind lately?
             </Text>
             <Text className="font-sans-light max-w-xs text-center text-white text-base">
               We will use this to suggest you prompts

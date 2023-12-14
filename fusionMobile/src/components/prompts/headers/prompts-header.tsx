@@ -1,18 +1,12 @@
-import RNBottomSheet from "@gorhom/bottom-sheet";
-import React, { useCallback, useRef } from "react";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
 import { Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { Plus } from "../../icons";
-import { AddPromptSheet } from "../create-prompt-sheet/add-prompt-sheet";
 
 export const PromptsHeader = () => {
-  const bottomSheetRef = useRef<RNBottomSheet>(null);
-
-  const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
-    []
-  );
+  const navigation = useNavigation();
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
@@ -20,11 +14,13 @@ export const PromptsHeader = () => {
       <Button
         variant="ghost"
         size="icon"
+        rounded
+        className="bg-white/10"
         leftIcon={<Plus />}
-        onPress={handleExpandSheet}
+        onPress={() => {
+          navigation.navigate("QuickAddPrompts");
+        }}
       />
-
-      <AddPromptSheet bottomSheetRef={bottomSheetRef} />
     </View>
   );
 };

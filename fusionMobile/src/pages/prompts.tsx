@@ -1,5 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
+import { useNavigation } from "@react-navigation/native";
 import {
   useCallback,
   useContext,
@@ -28,6 +29,8 @@ import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
 
 export const PromptsScreen = () => {
+  const navigation = useNavigation();
+
   const { data: savedPrompts, isLoading } = usePromptsQuery();
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
@@ -104,24 +107,20 @@ export const PromptsScreen = () => {
   // Bottom sheets for adding new prompts
   const bottomSheetRef = useRef<RNBottomSheet>(null);
 
-  const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
-    []
-  );
-
   return (
     <Screen>
       {(!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
-            Looks like you haven’t created any prompt. Click the button below to
-            get started.
+            Hello, let's get you started
           </Text>
           <Button
             title="Add your first prompt"
             leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={handleExpandSheet}
+            onPress={() => {
+              navigation.navigate("QuickAddPrompts");
+            }}
             className="self-center"
           />
         </View>
@@ -154,6 +153,7 @@ export const PromptsScreen = () => {
                 <PromptDetails
                   prompt={prompt}
                   onClick={() => handlePromptExpandSheet(prompt)}
+                  // displayFrequency={false}
                 />
               </View>
             ))}
@@ -176,6 +176,8 @@ export const PromptsScreen = () => {
           />
         )}
       </Portal>
+
+      {/* <ChatBubble /> */}
     </Screen>
   );
 };

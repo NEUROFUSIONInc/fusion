@@ -1,5 +1,5 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { View, Text, Image } from "react-native";
@@ -26,6 +26,7 @@ import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
   const route = useRoute<RouteProp<"InsightsPage">>();
+  const navigation = useNavigation();
 
   const insightContext = useContext(InsightContext);
   let routePromptUuid = route.params?.promptUuid;
@@ -141,7 +142,9 @@ export function InsightsScreen() {
           <Button
             title="Add your first prompt"
             leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={handleExpandSheet}
+            onPress={() => {
+              navigation.navigate("QuickAddPrompts");
+            }}
             className="self-center"
           />
         </View>

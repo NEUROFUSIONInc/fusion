@@ -510,14 +510,29 @@ class PromptService {
         }
       }
 
-      // if triggeredTimes < responseTimes, add to missedPrompts
+      // if triggeredTimes < responseTimes, and the person has
+      // not responded "lately" then add to missedPrompts
       if (triggeredNotificationTimes.length > responses.length) {
+        /**
+         * If the gap in responses is more than 1 missed prompt,
+         * - find interval between
+         * - the client time & the last response
+         * If the interval is greater than min. prompt interval then show it.. if not, skip
+         * currently the min.prompt interval is 30 minutes
+         */
+        if (responses.length > 0) {
+          const lastResponseTimestamp =
+            responses[responses.length - 1].responseTimestamp;
+
+          const interval = dayjs().diff(dayjs(lastResponseTimestamp), "minute");
+          if (interval < 30) {
+            console.log("skipping prompt because it's not been long enough");
+            continue;
+          }
+        }
+
         missedPrompts.push(prompt);
       }
-
-      // TODO:one more case to handle
-      // if the user recently responded to notification & still has less responses
-      // don't show it again.. just wait for the next response
     }
     return missedPrompts;
   };
