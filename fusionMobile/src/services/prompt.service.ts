@@ -533,7 +533,20 @@ class PromptService {
           );
 
           if (interval < threshold) {
-            console.log("skipping prompt because it's not been long enough");
+            console.log(
+              "skipping prompt because it's not been long enough since last response"
+            );
+            continue;
+          }
+
+          if (
+            triggeredNotificationTimes.length ===
+            prompt.notificationConfig_countPerDay
+          ) {
+            // if all notifications have been triggered, skip
+            console.log(
+              "skipping prompt because all notifications have been triggered"
+            );
             continue;
           }
         }
