@@ -85,7 +85,7 @@ export const FeatureSection: FC = () => {
             </div>
 
             <Image
-              src="/images/features/phone_action.png"
+              src="/images/features/neurofusion_experiment.png"
               alt="User using fusion app"
               width={609}
               height={914}
