@@ -60,6 +60,22 @@ export const integrations = [
       "A digital streaming service that gives you access to millions of songs and content from all over the world.",
     active: false,
   },
+  {
+    slug: "twitter",
+    title: "X (Twitter)",
+    href: "https://x.com",
+    imageUrl: "/images/integrations/X_logo.png",
+    description: "Socia media platform that allows users to post and interact with messages known as tweets.",
+    active: false,
+  },
+  {
+    slug: "gcalendar",
+    title: "Google Calendar (Meetings & Events)",
+    href: "https://calendar.google.com",
+    imageUrl: "/images/integrations/google_calendar.png",
+    description: "Time-management and scheduling calendar service developed by Google.",
+    active: false,
+  },
 ] as const;
 
 export const magicFlowSteps = [
