@@ -7,7 +7,7 @@ import { MobileStoreLink } from "~/components/ui";
 export const OfferingSection = () => {
   return (
     <section title="offering-and-disclaimers-section" className="w-full p-4">
-      <div className="relative mb-28 mt-20 flex h-auto w-full max-w-4xl items-stretch justify-around rounded-2xl bg-indigo-300/20 bg-offering-pattern md:mx-auto md:max-h-[468px]">
+      <div className="relative mb-5 mt-5 flex h-auto w-full max-w-4xl items-stretch justify-around rounded-2xl bg-indigo-300/20 bg-offering-pattern md:mx-auto md:max-h-[468px]">
         <Image
           src="/images/fusion-app-home-2.svg"
           width={320}

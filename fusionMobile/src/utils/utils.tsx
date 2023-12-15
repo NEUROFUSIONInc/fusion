@@ -237,6 +237,23 @@ export function getFrequencyFromCount(
   return closestFrequency;
 }
 
+export function getTimeOfDay(
+  timestamp: dayjs.Dayjs,
+  capitalize: boolean = true
+) {
+  const hour = timestamp.hour();
+
+  if (hour < 12) {
+    return capitalize ? "Morning" : "morning";
+  }
+
+  if (hour < 18) {
+    return capitalize ? "Afternoon" : "afternoon";
+  }
+
+  return capitalize ? "Evening" : "evening";
+}
+
 /**
  * End of time related functions
  */

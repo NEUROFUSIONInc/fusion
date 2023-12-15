@@ -25,16 +25,16 @@ export const FeatureSection: FC = () => {
             </div>
             <div className="relative w-auto h-auto">
               <Image
-                src="/images/features/iphone-mockup.png"
+                src="/images/features/womanphone2.png"
                 alt="User using fusion app"
                 width={609}
                 height={914}
                 className="rounded-2xl"
               />
               <PromptExample
-                title="Have you taken a 5 minute walk?"
+                title="What's top of mind for you today?"
                 leftSubtitle="Mo, Tu, We, Th, Fr"
-                rightSubtitle="Every 5 hrs"
+                rightSubtitle="Once"
                 className="hidden md:block absolute top-4 right-1/2 md:transform md:-translate-x-2 lg:-translate-x-1/2"
               />
             </div>
@@ -79,18 +79,13 @@ export const FeatureSection: FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-y-6">
             <div>
               <FusionFeature feature={fusionFeatures[2]} />
-              <ButtonLink
-                intent="filled"
-                href="https://usefusion.app/playground"
-                size="xl"
-                className="mt-4 w-full md:w-11/12"
-              >
+              <ButtonLink intent="filled" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
                 Use Fusion Explorer!
               </ButtonLink>
             </div>
 
             <Image
-              src="/images/features/phone_action.png"
+              src="/images/features/neurofusion_experiment.png"
               alt="User using fusion app"
               width={609}
               height={914}

@@ -11639,6 +11639,11 @@ react-native-codegen@^0.71.6:
     jscodeshift "^0.14.0"
     nullthrows "^1.1.1"
 
+react-native-context-menu-view@^1.14.1:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/react-native-context-menu-view/-/react-native-context-menu-view-1.14.1.tgz#ce8465534a8a7556de3abf0fb8092f3ebbb7a333"
+  integrity sha512-rPtC6RCbEVismTQ6M7WSt1HisNvgbS9bWqWX4RQXNXHKOKsVvXpI+bWRypFAjeBN/P+winn6Dxn1+meLBMrjmQ==
+
 react-native-csv@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/react-native-csv/-/react-native-csv-0.2.0.tgz"

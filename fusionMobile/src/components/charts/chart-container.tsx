@@ -267,7 +267,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         <View className="flex flex-col w-full p-5">
           {chartData.map((entry) => {
             return (
-              <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
+              <ResponseTextItem
+                key={Math.random()}
+                timestamp={entry[0]}
+                textValue={entry[1]}
+              />
             );
           })}
         </View>
@@ -288,7 +292,11 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
             <>
               {additionalNotes.map((entry) => {
                 return (
-                  <ResponseTextItem timestamp={entry[0]} textValue={entry[1]} />
+                  <ResponseTextItem
+                    key={Math.random()}
+                    timestamp={entry[0]}
+                    textValue={entry[1]}
+                  />
                 );
               })}
             </>

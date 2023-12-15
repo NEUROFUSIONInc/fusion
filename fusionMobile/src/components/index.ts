@@ -15,3 +15,4 @@ export * from "./response-text-item";
 export * from "./subscription";
 export * from "./chat-bubble";
 export * from "./headers";
+export * from "./modal";

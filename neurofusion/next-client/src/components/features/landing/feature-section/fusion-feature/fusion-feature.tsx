@@ -10,7 +10,8 @@ export const FusionFeature: FC<FusionFeatureProps> = ({ feature }) => {
   return (
     <div className="mx-0 max-w-lg p-4 md:mx-auto" key={feature.id}>
       <h2 className="text-4xl font-semibold leading-10 md:text-5xl lg:text-6xl">
-        Fusion for <span className="text-primary-gradient">{feature.title}</span>
+        {feature.pretitle ? feature.pretitle + " " : "Fusion for "}
+        <span className="text-primary-gradient">{feature.title}</span>
       </h2>
       <ul className="mt-7 flex flex-col items-start justify-start gap-5 md:mt-11">
         {feature.featuresList.map((feature) => (

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { View } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
 
 type Props = {
   children: ReactNode;
@@ -7,8 +7,11 @@ type Props = {
 
 export const Screen = ({ children }: Props) => {
   return (
-    <View className="flex flex-1 flex-col w-full h-full bg-dark px-2">
+    <KeyboardAvoidingView
+      behavior="padding"
+      className="flex flex-1 flex-col w-full h-full bg-dark px-2"
+    >
       {children}
-    </View>
+    </KeyboardAvoidingView>
   );
 };

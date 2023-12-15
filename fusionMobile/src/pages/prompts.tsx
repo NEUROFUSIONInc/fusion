@@ -1,5 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
+import { useNavigation } from "@react-navigation/native";
 import {
   useCallback,
   useContext,
@@ -28,32 +29,20 @@ import colors from "~/theme/colors";
 import { appInsights } from "~/utils";
 
 export const PromptsScreen = () => {
+  const navigation = useNavigation();
+
   const { data: savedPrompts, isLoading } = usePromptsQuery();
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    "All"
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    string | undefined
+  >();
   const accountContext = useContext(AccountContext);
 
   const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "All" || selectedCategory === "") {
-      // Remove "All" category from the list of categories
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index !== -1) {
-        categories.splice(index, 1);
-      }
+    if (selectedCategory === "") {
       return savedPrompts;
     } else {
-      // Add "All" category to the list of categories if it doesn't exist
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index === -1) {
-        categories.unshift({
-          name: "All",
-          color: "#FFC0CB",
-          icon: "💫",
-        });
-      }
       return selectedCategory
         ? savedPrompts?.filter(
             (prompt) => prompt.additionalMeta?.category === selectedCategory
@@ -61,6 +50,16 @@ export const PromptsScreen = () => {
         : savedPrompts;
     }
   }, [savedPrompts, selectedCategory]);
+
+  const categoryPillsToDisplay = useMemo(() => {
+    const categoriesToDisplay = categories.filter(
+      (category) =>
+        savedPrompts?.filter(
+          (prompt) => prompt.additionalMeta?.category === category.name
+        )?.length! > 0
+    );
+    return categoriesToDisplay;
+  }, [savedPrompts]);
 
   useEffect(() => {
     appInsights.trackPageView({
@@ -108,24 +107,20 @@ export const PromptsScreen = () => {
   // Bottom sheets for adding new prompts
   const bottomSheetRef = useRef<RNBottomSheet>(null);
 
-  const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
-    []
-  );
-
   return (
     <Screen>
       {(!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/sticky-note.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
-            Looks like you haven’t created any prompt. Click the button below to
-            get started.
+            Hello, let's get you started
           </Text>
           <Button
             title="Add your first prompt"
             leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={handleExpandSheet}
+            onPress={() => {
+              navigation.navigate("QuickAddPrompts");
+            }}
             className="self-center"
           />
         </View>
@@ -137,7 +132,7 @@ export const PromptsScreen = () => {
             className="flex gap-x-3 gap-y-3 pl-2"
             showsHorizontalScrollIndicator={false}
           >
-            {categories.map((category) => {
+            {categoryPillsToDisplay.map((category) => {
               const name = category.name;
               return (
                 <CategoryTag
@@ -158,29 +153,13 @@ export const PromptsScreen = () => {
                 <PromptDetails
                   prompt={prompt}
                   onClick={() => handlePromptExpandSheet(prompt)}
+                  // displayFrequency={false}
                 />
               </View>
             ))}
           </ScrollView>
         </View>
       )}
-      {filteredPrompts?.length === 0 &&
-        selectedCategory &&
-        selectedCategory !== "All" && (
-          <View className="flex flex-1 flex-col gap-7 items-center justify-center">
-            <Image source={require("../../assets/sticky-note.png")} />
-            <Text className="font-sans-light max-w-xs text-center text-white text-base">
-              Looks like you don't have any prompt in '{selectedCategory}'{" "}
-              category.
-            </Text>
-            <Button
-              title={"Add prompt for '" + selectedCategory + "'"}
-              leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-              onPress={handleExpandSheet}
-              className="self-center"
-            />
-          </View>
-        )}
 
       <Portal>
         <AddPromptSheet
@@ -197,6 +176,8 @@ export const PromptsScreen = () => {
           />
         )}
       </Portal>
+
+      {/* <ChatBubble /> */}
     </Screen>
   );
 };

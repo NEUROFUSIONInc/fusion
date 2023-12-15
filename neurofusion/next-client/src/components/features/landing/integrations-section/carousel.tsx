@@ -22,7 +22,7 @@ export const IntegrationsCarousel: FC<PropType> = (props) => {
             );
           })}
         </div>
-        <div className="absolute top-1/4 animate-marquee2 whitespace-nowrap ">
+        <div className="absolute top-1/4 animate-marquee2 whitespace-nowrap">
           {integrations.map((integration) => {
             return (
               <span key={integration} className={cn("mx-8 inline-flex items-center space-x-16")}>

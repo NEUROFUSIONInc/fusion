@@ -2,8 +2,11 @@ import { Star } from "lucide-react";
 
 import { testimonials } from "./data";
 import { TestimonialComponent } from "./testimonial/testimonial";
+import { useSearchParams } from "next/navigation";
 
 export const TestimonialSection = () => {
+  const searchParams = useSearchParams();
+
   return (
     <section
       title="Testimonials"
@@ -11,9 +14,16 @@ export const TestimonialSection = () => {
       className="relative mb-20 mt-28 flex w-full flex-col items-start space-y-4 md:mb-36"
     >
       <div className="md:mp-16 max-w-5xl px-4 lg:mx-auto">
-        <h2 className="w-11/12 text-left text-3xl font-semibold md:text-5xl lg:text-6xl">
-          Helping hundreds of people <span className="text-primary-gradient"> navigate their days</span>
-        </h2>
+        {searchParams.get("persona") == "explorers_researchers" ? (
+          <h2 className="w-11/12 text-left text-3xl font-semibold md:text-5xl lg:text-6xl">
+            We're building a community for <span className="text-primary-gradient">open self-experimentation</span>
+          </h2>
+        ) : (
+          <h2 className="w-11/12 text-left text-3xl font-semibold md:text-5xl lg:text-6xl">
+            Navigate your days with{" "}
+            <span className="text-primary-gradient"> more agency, awareness & less guesswork</span>
+          </h2>
+        )}
       </div>
 
       <div className="h-24 w-screen bg-stripe-pattern bg-cover bg-center bg-no-repeat py-8 md:h-60" />

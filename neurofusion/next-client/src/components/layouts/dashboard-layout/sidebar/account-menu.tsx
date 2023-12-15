@@ -54,9 +54,9 @@ export const AccountMenu: FC<IAccountMenuProps> = ({ user }) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href="https://discord.gg/jaKG9KAG" target="_blank" className="inline-flex w-full items-center">
+          <Link href="https://discord.gg/hzt6cAtwGE" target="_blank" className="inline-flex w-full items-center">
             <Users2 className="mr-2 h-4 w-4" />
-            <span>Join Fusion Community</span>
+            <span>Community</span>
           </Link>
         </DropdownMenuItem>
 

@@ -2,10 +2,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import Constants from "expo-constants";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CategoryTag, PromptDetails, Screen, Input } from "~/components";
+import { CategoryTag, PromptDetails, Screen } from "~/components";
 import { categories, quickAddPrompts } from "~/config";
 import { AccountContext } from "~/contexts/account.context";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
@@ -15,26 +15,12 @@ export const QuickAddPromptsScreen = () => {
   const route = useRoute<RouteProp<"QuickAddPrompts">>();
   const navigation = useNavigation<PromptScreenNavigationProp>();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    route.params?.selectedCategory ?? "All"
+    route.params?.selectedCategory ?? ""
   );
   const filteredPrompts = useMemo(() => {
-    if (selectedCategory === "All" || selectedCategory === "") {
-      // Remove "All" category from the list of categories
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index !== -1) {
-        categories.splice(index, 1);
-      }
+    if (selectedCategory === "") {
       return quickAddPrompts;
     } else {
-      // Add "All" category to the list of categories if it doesn't exist
-      const index = categories.findIndex((category) => category.name === "All");
-      if (index === -1) {
-        categories.unshift({
-          name: "All",
-          color: "#FFC0CB",
-          icon: "💫",
-        });
-      }
       return selectedCategory
         ? quickAddPrompts?.filter(
             (prompt) => prompt.additionalMeta?.category === selectedCategory
@@ -57,19 +43,26 @@ export const QuickAddPromptsScreen = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestedPrompts, setSuggestedPrompts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const generatePrompts = async () => {
     if (!searchTerm) {
       setSuggestedPrompts([]);
       return;
     }
-    console.log("API call with:", searchTerm);
     (async () => {
+      setLoading(true);
       try {
         let fusionBackendUrl;
         if (Constants.expoConfig?.extra) {
           fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
         }
+        appInsights.trackEvent({
+          name: "prompt_suggestion_init",
+          properties: {
+            userNpub: accountContext?.userNpub,
+          },
+        });
         const response = await axios.post(
           `${fusionBackendUrl}/api/getpromptsuggestions`,
           {
@@ -84,7 +77,6 @@ export const QuickAddPromptsScreen = () => {
 
         console.log("response", response.data);
         const apiSuggestions = JSON.parse(response.data.suggestions);
-        console.log("promptSuggestions", apiSuggestions);
 
         // now build the list of suggested prompts the fit schema
         const formattedResponse = apiSuggestions.prompts.map((prompt: any) => {
@@ -111,18 +103,33 @@ export const QuickAddPromptsScreen = () => {
           };
         });
 
-        console.log("formattedResponse", formattedResponse);
+        appInsights.trackEvent({
+          name: "prompt_suggestion_complete",
+          properties: {
+            userNpub: accountContext?.userNpub,
+            prompt_count: formattedResponse ? formattedResponse.length : 0,
+          },
+        });
 
+        setLoading(false);
         setSuggestedPrompts(formattedResponse);
       } catch (e) {
-        console.log("error", e);
+        appInsights.trackException({
+          exception: new Error("CORE_API_ERROR"),
+          properties: {
+            message: "Error generating prompt suggestions",
+            userNpub: accountContext?.userNpub,
+          },
+        });
+        setSuggestedPrompts([]);
+        setLoading(false);
+        Alert.alert(
+          "Error",
+          "Something went wrong & we've notified the team. Please try again later"
+        );
       }
     })();
   };
-
-  useEffect(() => {
-    console.log("Search text", searchTerm);
-  }, [searchTerm]);
 
   return (
     <Screen>
@@ -130,90 +137,103 @@ export const QuickAddPromptsScreen = () => {
         <ScrollView>
           <View className="flex justify-center items-center w-full">
             <Text className="font-sans-bold text-center text-white text-base pb-2">
-              What’s been top of mind for you lately
+              What’s been on your mind lately?
             </Text>
             <Text className="font-sans-light max-w-xs text-center text-white text-base">
               We will use this to suggest you prompts
             </Text>
           </View>
-          <View className="flex flex-10 flex-row justify-between items-center w-full">
-            <View className="w-[80%] mb-3">
-              <Input
-                inputMode="text"
-                value={searchTerm}
-                onChangeText={setSearchTerm}
-                className="mt-3"
-                placeholder="I want to be more energetic about work"
-              />
-            </View>
-
-            <Text
-              className="font-sans text-base text-lime m-auto self-center underline"
+          <View
+            className="
+          flex-row items-center p-4 bg-secondary-900 rounded-md
+          m-0.5 my-2 mb-5"
+          >
+            <TextInput
+              placeholder="Type in your response..."
+              placeholderTextColor="#9ca3af"
+              className="flex-1 text-white rounded-md font-sans"
+              multiline
+              value={searchTerm}
+              onChangeText={setSearchTerm}
+            />
+            <TouchableOpacity
+              className="ml-4 rounded-md"
               onPress={async () => {
-                console.log("searchTerm", searchTerm);
-                console.log("making api call");
                 await generatePrompts();
               }}
             >
-              Suggest{" "}
-            </Text>
+              <Text className="text-lime font-sans">Suggest</Text>
+            </TouchableOpacity>
           </View>
+
           <View className="mb-10">
-            {suggestedPrompts?.length > 0 ? (
-              <ScrollView className="flex mt-4 mx-1 flex-col">
-                {suggestedPrompts.map((prompt) => (
-                  <View key={prompt.uuid ?? Math.random()} className="my-2">
-                    <PromptDetails
-                      prompt={prompt}
-                      variant="add"
-                      onClick={() =>
-                        navigation.navigate("EditPrompt", {
-                          prompt,
-                          type: "add",
-                        })
-                      }
-                    />
-                  </View>
-                ))}
-              </ScrollView>
+            {loading ? (
+              <View className="flex justify-center items-center w-full">
+                <Text className="font-sans-bold text-center text-white text-base pb-2">
+                  Loading...
+                </Text>
+              </View>
             ) : (
               <>
-                <ScrollView
-                  horizontal
-                  className="flex gap-x-3 gap-y-3 pl-2"
-                  showsHorizontalScrollIndicator={false}
-                >
-                  {categories.map((category) => {
-                    const name = category.name;
-                    return (
-                      <CategoryTag
-                        key={name}
-                        title={name}
-                        icon={category.icon}
-                        isActive={name === selectedCategory}
-                        handleValueChange={(checked) =>
-                          setSelectedCategory(checked ? name : "")
-                        }
-                      />
-                    );
-                  })}
-                </ScrollView>
-                <ScrollView className="flex mt-4 mx-1 flex-col">
-                  {filteredPrompts.map((prompt) => (
-                    <View key={prompt.uuid} className="my-2">
-                      <PromptDetails
-                        prompt={prompt}
-                        variant="add"
-                        onClick={() =>
-                          navigation.navigate("EditPrompt", {
-                            prompt,
-                            type: "add",
-                          })
-                        }
-                      />
-                    </View>
-                  ))}
-                </ScrollView>
+                {suggestedPrompts?.length > 0 ? (
+                  <ScrollView className="flex mt-4 mx-1 flex-col">
+                    {suggestedPrompts.map((prompt) => (
+                      <View key={prompt.uuid ?? Math.random()} className="my-2">
+                        <PromptDetails
+                          prompt={prompt}
+                          variant="add"
+                          displayFrequency={false}
+                          onClick={() =>
+                            navigation.navigate("EditPrompt", {
+                              prompt,
+                              type: "add",
+                            })
+                          }
+                        />
+                      </View>
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <>
+                    <ScrollView
+                      horizontal
+                      className="flex gap-x-3 gap-y-3 pl-2"
+                      showsHorizontalScrollIndicator={false}
+                    >
+                      {categories.map((category) => {
+                        const name = category.name;
+                        return (
+                          <CategoryTag
+                            key={name}
+                            title={name}
+                            icon={category.icon}
+                            isActive={name === selectedCategory}
+                            handleValueChange={(checked) =>
+                              setSelectedCategory(checked ? name : "")
+                            }
+                          />
+                        );
+                      })}
+                    </ScrollView>
+                    <ScrollView className="flex mt-4 mx-1 flex-col">
+                      {filteredPrompts.map((prompt) => (
+                        <View key={prompt.uuid} className="my-2">
+                          <PromptDetails
+                            prompt={prompt}
+                            variant="add"
+                            displayFrequency={false}
+                            onClick={() =>
+                              navigation.navigate("EditPrompt", {
+                                prompt,
+                                type: "add",
+                              })
+                            }
+                          />
+                        </View>
+                      ))}
+                    </ScrollView>
+                  </>
+                )}
               </>
             )}
           </View>

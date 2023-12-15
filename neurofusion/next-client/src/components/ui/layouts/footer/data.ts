@@ -13,6 +13,10 @@ export const footerLinks = [
     href: "/privacy",
   },
   {
+    title: "Terms of Service",
+    href: "/termsofservice",
+  },
+  {
     title: "Contact",
     href: "mailto:ore@usefusion.app",
   },
