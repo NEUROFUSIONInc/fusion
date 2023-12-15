@@ -112,27 +112,27 @@ export const disconnectFromMuse = () => museClient.disconnect();
 // };
 
 // Creates an observable that will epoch, filter, and add signal quality to EEG stream
-export const createMuseSignalQualityObservable = (rawObservable: Observable<EEGData>, deviceInfo: DeviceInfo) => {
-  const { samplingRate, channels: channelNames } = deviceInfo;
-  const intervalSamples = (PLOTTING_INTERVAL * samplingRate) / 1000;
-  return rawObservable.pipe(
-    addInfo({
-      samplingRate,
-      channelNames,
-    }),
-    epoch({
-      duration: intervalSamples,
-      interval: intervalSamples,
-    }),
-    bandpassFilter({
-      nbChannels: channelNames.length,
-      lowCutoff: 1,
-      highCutoff: 50,
-    }),
-    addSignalQuality(),
-    parseMuseSignalQuality()
-  );
-};
+// export const createMuseSignalQualityObservable = (rawObservable: Observable<EEGData>, deviceInfo: DeviceInfo) => {
+//   const { samplingRate, channels: channelNames } = deviceInfo;
+//   const intervalSamples = (PLOTTING_INTERVAL * samplingRate) / 1000;
+//   return rawObservable.pipe(
+//     addInfo({
+//       samplingRate,
+//       channelNames,
+//     }),
+//     epoch({
+//       duration: intervalSamples,
+//       interval: intervalSamples,
+//     }),
+//     bandpassFilter({
+//       nbChannels: channelNames.length,
+//       lowCutoff: 1,
+//       highCutoff: 50,
+//     }),
+//     addSignalQuality(),
+//     parseMuseSignalQuality()
+//   );
+// };
 
 export const parseMuseSignalQuality = () =>
   pipe(
@@ -164,9 +164,9 @@ export const injectMuseMarker = (value: string, time: number) => {
 // ---------------------------------------------------------------------
 // Helpers
 
-const synchronizeTimestamp = (eegSample, marker) => {
-  if (eegSample.timestamp - marker.timestamp < 0 && eegSample.timestamp - marker.timestamp >= INTER_SAMPLE_INTERVAL) {
-    return { ...eegSample, marker: marker.value };
-  }
-  return eegSample;
-};
+// const synchronizeTimestamp = (eegSample, marker) => {
+//   if (eegSample.timestamp - marker.timestamp < 0 && eegSample.timestamp - marker.timestamp >= INTER_SAMPLE_INTERVAL) {
+//     return { ...eegSample, marker: marker.value };
+//   }
+//   return eegSample;
+// };
