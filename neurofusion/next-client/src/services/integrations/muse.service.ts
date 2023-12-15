@@ -94,22 +94,22 @@ export const connectToMuse = async (device: Device | null = null) => {
 export const disconnectFromMuse = () => museClient.disconnect();
 
 // Awaits Muse connectivity before sending an observable rep. EEG stream
-export const createRawMuseObservable = async () => {
-  await museClient.start();
-  const eegStream = await museClient.eegReadings;
-  const ppgStream = await museClient.ppgReadings;
-  // const markers = await client.eventMarkers.pipe(startWith({ timestamp: 0 }));
-  return from(zipSamples(eegStream)).pipe(
-    // Remove nans if present (muse 2)
-    map<EEGSample, EEGSample>((sample) => ({
-      ...sample,
-      data: sample.data.filter((val) => !isNaN(val)),
-    })),
-    filter((sample) => sample.data.length >= 4),
-    // withLatestFrom(markers, synchronizeTimestamp),
-    share()
-  );
-};
+// export const createRawMuseObservable = async () => {
+//   await museClient.start();
+//   const eegStream = await museClient.eegReadings;
+//   const ppgStream = await museClient.ppgReadings;
+//   // const markers = await client.eventMarkers.pipe(startWith({ timestamp: 0 }));
+//   return from(zipSamples(eegStream)).pipe(
+//     // Remove nans if present (muse 2)
+//     map<EEGSample, EEGSample>((sample) => ({
+//       ...sample,
+//       data: sample.data.filter((val) => !isNaN(val)),
+//     })),
+//     filter((sample) => sample.data.length >= 4),
+//     // withLatestFrom(markers, synchronizeTimestamp),
+//     share()
+//   );
+// };
 
 // Creates an observable that will epoch, filter, and add signal quality to EEG stream
 export const createMuseSignalQualityObservable = (rawObservable: Observable<EEGData>, deviceInfo: DeviceInfo) => {
