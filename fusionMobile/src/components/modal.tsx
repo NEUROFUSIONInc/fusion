@@ -7,12 +7,14 @@ interface ModalProps {
   message: string;
   clickText: string;
   clickAction: () => void;
+  dismissAction: () => void;
 }
 
 export const Modal: React.FC<ModalProps> = ({
   message,
   clickText,
   clickAction,
+  dismissAction,
 }) => {
   return (
     <View className="flex flex-1 w-full h-full bg-secondary-900 absolute justify-center p-5 rounded items-center">
@@ -31,6 +33,13 @@ export const Modal: React.FC<ModalProps> = ({
         onPress={clickAction}
         fullWidth
         title={clickText}
+      />
+      <Button
+        className="rounded flex items-center justify-center"
+        onPress={dismissAction}
+        fullWidth
+        variant="ghost"
+        title="Dismiss"
       />
     </View>
   );

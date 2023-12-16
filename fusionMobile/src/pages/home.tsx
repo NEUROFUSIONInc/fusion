@@ -18,6 +18,7 @@ import {
   Modal,
   CategoryTag,
   ChevronRight,
+  ChatBubble,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
@@ -437,7 +438,7 @@ export function HomeScreen() {
             </View>
           </>
         </ScrollView>
-        {/* <ChatBubble /> */}
+        <ChatBubble />
 
         {missedPrompts && missedPrompts.length > 0 && (
           <Modal
@@ -457,6 +458,16 @@ export function HomeScreen() {
                   index: 0,
                 },
               });
+            }}
+            dismissAction={() => {
+              // dismiss the modal
+              appInsights.trackEvent({
+                name: "dismiss_missed_prompt_modal",
+                properties: {
+                  userNpub: accountContext?.userNpub,
+                },
+              });
+              setMissedPrompts([]);
             }}
           />
         )}
