@@ -57,5 +57,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // ["expo-notifications", { icon: "./assets/notification-icon.png" }],
     "react-native-iap",
   ],
+  userInterfaceStyle: "automatic",
   owner: "oreogundipe",
 });

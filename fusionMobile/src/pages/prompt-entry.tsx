@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useNavigation,
   useRoute,
@@ -13,10 +14,13 @@ import {
   Alert,
   ScrollView,
   Pressable,
+  TouchableHighlight,
 } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Tooltip from "react-native-walkthrough-tooltip";
 
 import { PromptResponse } from "~/@types";
-import { Button, Input, Tag } from "~/components";
+import { Button, Calendar, Input, Tag } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
@@ -74,7 +78,7 @@ export function PromptEntryScreen() {
     const promptResponse: PromptResponse = {
       promptUuid: route.params.promptUuid,
       triggerTimestamp: notificationTriggerTimestamp,
-      responseTimestamp: Math.floor(dayjs().unix()),
+      responseTimestamp: Math.floor(promptResponseTimeObj.unix()),
       value: formattedResponse,
       additionalMeta: {
         note: additonalNotes,
@@ -182,6 +186,33 @@ export function PromptEntryScreen() {
     });
   };
 
+  const [promptResponseTimeObj, setPromptResponseTimeObj] = React.useState(
+    dayjs()
+  );
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+  const handleDatePickerConfimm = (date: Date) => {
+    setPromptResponseTimeObj(dayjs(date));
+    hideDatePicker();
+  };
+  const [toolTipVisible, setToolTipVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    (async () => {
+      const seenPromptTooltip = await AsyncStorage.getItem("seenPromptTooltip");
+      if (seenPromptTooltip !== "true") {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setToolTipVisible(true);
+        await AsyncStorage.setItem("seenPromptTooltip", "true");
+      }
+    })();
+  }, []);
+
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -198,6 +229,39 @@ export function PromptEntryScreen() {
         >
           {prompt && (
             <View>
+              <Tooltip
+                isVisible={toolTipVisible}
+                content={
+                  <Text className="text-base font-sans">
+                    NEW: Tap to change response time.
+                  </Text>
+                }
+                placement="top"
+                onClose={() => setToolTipVisible(false)}
+              >
+                <TouchableHighlight
+                  className="flex flex-row justify-center items-end mb-10"
+                  onPress={showDatePicker}
+                >
+                  <>
+                    <View className="mr-2">
+                      <Calendar width={20} height={20} />
+                    </View>
+                    <Text className="font-sans text-center text-white">
+                      {promptResponseTimeObj.format("ddd, MMMM D, h:mm A")}
+                    </Text>
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="datetime"
+                      maximumDate={dayjs().toDate()}
+                      minuteInterval={5}
+                      date={promptResponseTimeObj.toDate()}
+                      onConfirm={handleDatePickerConfimm}
+                      onCancel={hideDatePicker}
+                    />
+                  </>
+                </TouchableHighlight>
+              </Tooltip>
               <View className="mb-5">
                 <Text className="font-sans-bold text-center text-lg text-white">
                   {prompt.promptText}
