@@ -11788,7 +11788,7 @@ react-native-screens@~3.20.0:
 
 react-native-siren@^0.0.5:
   version "0.0.5"
-  resolved "https://registry.npmjs.org/react-native-siren/-/react-native-siren-0.0.5.tgz"
+  resolved "https://registry.yarnpkg.com/react-native-siren/-/react-native-siren-0.0.5.tgz#cc32e62eda163d3ae28bb2cb1b342eb859c3bd1c"
   integrity sha512-mOzjFpm8ASNI/vnc+uWcj4ogboRrzfzmueCMYavLvyz5QbLyDem2LI9vtsz7t9fxzw2tZzc8XPfRb0IjUJXfZw==
   dependencies:
     apisauce "^2.1.1"
