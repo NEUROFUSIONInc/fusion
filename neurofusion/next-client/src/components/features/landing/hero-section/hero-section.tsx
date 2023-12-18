@@ -47,12 +47,7 @@ export const HeroSection = () => {
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
             {/* <MobileStoreLink store="apple" className="w-full md:w-auto" />
             <MobileStoreLink store="google" className="w-full md:w-auto" /> */}
-            <ButtonLink
-              intent="outlined"
-              href="https://usefusion.app/playground"
-              size="xl"
-              className="mt-4 w-full md:w-11/12"
-            >
+            <ButtonLink intent="outlined" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
               Use Fusion Explorer!
             </ButtonLink>
           </div>
