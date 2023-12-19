@@ -60,8 +60,8 @@ jobs:
         with:
           name: python-app
 
-      # - name: Unzip artifact for deployment
-      #   run: unzip release.zip
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
 
       - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v2
@@ -69,5 +69,4 @@ jobs:
         with:
           app-name: "nfanalysis"
           slot-name: "Production"
-          package: ./release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA8C5543E7DA49CB837315DDCEFB1549 }}
