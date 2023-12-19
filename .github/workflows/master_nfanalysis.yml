@@ -69,4 +69,5 @@ jobs:
         with:
           app-name: "nfanalysis"
           slot-name: "Production"
+          package: ./release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA8C5543E7DA49CB837315DDCEFB1549 }}
