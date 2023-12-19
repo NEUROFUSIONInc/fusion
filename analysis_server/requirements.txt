@@ -4,4 +4,3 @@ matplotlib
 flask
 flask_cors
 pillow
-
