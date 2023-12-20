@@ -88,7 +88,7 @@ export function AccountScreen() {
   const importData = async () => {
     //  read the prompt.csv file & sequentially call save prompts
     const promptFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionPrompts_1696834800.csv";
+      RNFS.DocumentDirectoryPath + "/fusionPrompts_1697180400.csv";
 
     RNFS.readFile(promptFilePath, "utf8")
       .then((content) => {
@@ -124,7 +124,7 @@ export function AccountScreen() {
 
     //  read the responses.csv file & sequentially call save responses
     const responseFilePath =
-      RNFS.DocumentDirectoryPath + "/fusionResponses_1696834800.csv";
+      RNFS.DocumentDirectoryPath + "/fusionResponses_1697180400.csv";
 
     RNFS.readFile(responseFilePath, "utf8")
       .then((content) => {
@@ -171,8 +171,8 @@ export function AccountScreen() {
               <Text className="font-sans text-center text-base text-white">
                 We value your privacy and data security.{"\n"}Your prompts and
                 responses are stored solely on your device, not our servers.
-                {"\n\n"}Rest assured, your entries remain private and
-                inaccessible to anyone else unless you decide to share them.
+                They are private and inaccessible to anyone else unless you
+                decide to share them.
               </Text>
             </View>
 
@@ -219,6 +219,8 @@ export function AccountScreen() {
                   );
                 }}
                 fullWidth
+                className=" bg-secondary-900"
+                variant="secondary"
               />
             </View>
 
@@ -230,7 +232,8 @@ export function AccountScreen() {
                 );
               }}
               fullWidth
-              className="mt-5"
+              className="mt-5 bg-secondary-900 my-5"
+              variant="secondary"
             />
 
             {/* Export Data */}

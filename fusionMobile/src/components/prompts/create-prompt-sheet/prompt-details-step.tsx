@@ -57,7 +57,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
         </Text>
       )}
 
-      <View>
+      <View className="-z-200">
         {!isCreating && setCategory && (
           <Select
             label="Category"
@@ -77,7 +77,7 @@ export const PromptDetailsStep: FC<PromptDetailsStepProps> = ({
           />
         )}
 
-        <View className="-z-30">
+        <View className="-z-100">
           <Input
             value={promptText}
             onChangeText={setPromptText}

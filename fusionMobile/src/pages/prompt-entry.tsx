@@ -1,7 +1,7 @@
 import {
-  StackActions,
   useNavigation,
   useRoute,
+  CommonActions,
 } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
@@ -20,7 +20,7 @@ import { Button, Input, Tag } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
-import { promptService } from "~/services";
+import { notificationService, promptService } from "~/services";
 import { maskPromptId, appInsights } from "~/utils";
 
 const yesNoOptions = [
@@ -97,15 +97,65 @@ export function PromptEntryScreen() {
           userNpub: accountContext?.userNpub,
         }
       );
-      // navigate to prompt responses screen
-      // clear stack history first
-      navigation.dispatch(StackActions.popToTop());
-      navigation.navigate("InsightsNavigator", {
-        screen: "InsightsPage",
-        params: {
-          promptUuid: prompt.uuid,
-        },
-      });
+
+      // clear the notification tray for this prompt
+      await notificationService.removeNotificationsForPromptFromTray(
+        prompt.uuid as unknown as string
+      );
+      // navigate to prompt responses screen or the next prompt
+      if (
+        route.params.prompts &&
+        route.params.index !== undefined &&
+        route.params.index + 1 < route.params.prompts.length
+      ) {
+        // console.log("showing the next prompt");
+        // clear stack history first
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "PromptNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "PromptEntry",
+                      params: {
+                        promptUuid:
+                          route.params.prompts[route.params.index + 1].uuid,
+                        prompts: route.params.prompts,
+                        index: route.params.index + 1,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      } else {
+        // clear stack history first
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "InsightsNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "InsightsPage",
+                      params: {
+                        promptUuid: prompt.uuid,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      }
     }
   };
 
@@ -151,9 +201,6 @@ export function PromptEntryScreen() {
               <View className="mb-5">
                 <Text className="font-sans-bold text-center text-lg text-white">
                   {prompt.promptText}
-                </Text>
-                <Text className="font-sans text-center text-base text-white/50">
-                  Log this prompt to record a response
                 </Text>
               </View>
 
@@ -206,23 +253,34 @@ export function PromptEntryScreen() {
                 /* if the prompt is a custom prompt, show the custom options */
                 prompt.responseType === "customOptions" &&
                   customOptions.length > 0 && (
-                    <View className="flex flex-row gap-x-2 gap-y-3 mt-3 flex-wrap mx-4 justify-center">
-                      {customOptions.map((option) => (
-                        <Tag
-                          key={option}
-                          title={option}
-                          isActive={
-                            Array.isArray(userResponse) &&
-                            userResponse.includes(option)
-                          }
-                          handleValueChange={() =>
-                            handleCustomOptionChange(option)
-                          }
-                        />
-                      ))}
-                    </View>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    >
+                      <View className="flex-1 w-full h-20 flex-row gap-x-2 gap-y-3 mt-2">
+                        {customOptions.map((option) => (
+                          <Tag
+                            key={option}
+                            title={option}
+                            isActive={
+                              Array.isArray(userResponse) &&
+                              userResponse.includes(option)
+                            }
+                            handleValueChange={() =>
+                              handleCustomOptionChange(option)
+                            }
+                          />
+                        ))}
+                      </View>
+                    </ScrollView>
                   )
               }
+
+              {
+                // TODO: Add a photo
+              }
+
+              {/* Add additional notes */}
               <View
                 className={`${
                   prompt?.responseType !== "text" ? "mt-10" : "mt-0"
@@ -246,7 +304,7 @@ export function PromptEntryScreen() {
       </ScrollView>
       <View className="w-full flex flex-col gap-y-3 mb-3">
         <Button
-          title="Log prompt response"
+          title="Save response"
           fullWidth
           onPress={handleSavePromptResponse}
           disabled={

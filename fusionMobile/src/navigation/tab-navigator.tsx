@@ -7,7 +7,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ComponentType } from "react";
 import type { SvgProps } from "react-native-svg";
 
-import { AccountStack } from "./account-navigator";
 import { HomeStack } from "./home-navigator";
 import { InsightsStack } from "./insights-navigator";
 import { PromptStack } from "./prompt-navigator";
@@ -21,7 +20,7 @@ import {
 } from "~/components";
 
 type TabParamList = {
-  Home: undefined;
+  HomeNavigator: undefined;
   PromptNavigator: undefined;
   InsightsNavigator: undefined;
   QuestNavigator: undefined;
@@ -41,7 +40,7 @@ type TabIconsType = {
 const CustomTab = createBottomTabNavigator<TabParamList>();
 
 const tabsIcons: TabIconsType = {
-  Home: (props: SvgProps) => <HomeIcon {...props} />,
+  HomeNavigator: (props: SvgProps) => <HomeIcon {...props} />,
   PromptNavigator: (props: SvgProps) => <BulbIcon {...props} />,
   InsightsNavigator: (props: SvgProps) => <ChartArcsIcon {...props} />,
   QuestNavigator: (props: SvgProps) => <HeartHandShakeIcon {...props} />,
@@ -55,7 +54,7 @@ export type TabList<T extends keyof TabParamList> = {
 
 const tabs: TabType[] = [
   {
-    name: "Home",
+    name: "HomeNavigator",
     component: HomeStack,
     label: "Home",
   },
@@ -74,11 +73,11 @@ const tabs: TabType[] = [
   //   component: QuestStack,
   //   label: "Quests",
   // },
-  {
-    name: "Community",
-    component: AccountStack,
-    label: "Account",
-  },
+  // {
+  //   name: "Community",
+  //   component: CommunityStack,
+  //   label: "Community",
+  // },
 ];
 
 type BarIconType = {
@@ -111,7 +110,7 @@ export const CustomNavigation = () => {
             paddingHorizontal: 10,
             borderTopWidth: 1,
             borderTopColor: "rgba(255, 255, 255, 0.15)",
-            // display: routeName === "PromptEntry" ? "none" : "flex",
+            // display: routeName === "ChatPage" ? "none" : "flex",
             display: "flex",
           },
           tabBarIcon: ({ color }) => (

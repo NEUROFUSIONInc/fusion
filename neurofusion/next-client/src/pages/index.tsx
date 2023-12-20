@@ -18,15 +18,16 @@ const Home: NextPage = () => {
     <MainLayout>
       <Meta
         meta={{
-          title: "Fusion | Improve your well-being, productivity & health",
+          // todo: this should change based on the persona
+          title: "Fusion - Personal Insights from Your Daily Habits and Actions",
         }}
       />
       <HeroSection />
       <FeatureSection />
-      {/* <IntegrationsSection /> */}
+      <IntegrationsSection />
+      <OfferingSection />
       {/* <TeamSection /> */}
       <TestimonialSection />
-      <OfferingSection />
       <FaqSection />
     </MainLayout>
   );

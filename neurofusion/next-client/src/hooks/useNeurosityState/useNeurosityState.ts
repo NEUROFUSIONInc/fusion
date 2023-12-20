@@ -113,8 +113,6 @@ function getOAuthParams() {
     const state = params.get("state");
     const error = params.get("error");
 
-    console.log("access_token", accessToken);
-
     window.localStorage.setItem("neurosityCustomToken", accessToken || "");
     window.localStorage.setItem("error", error || "");
 
@@ -141,7 +139,6 @@ export function getNeurositySelectedDevice() {
 export function updateNeurositySelectedDevice(event: React.ChangeEvent<HTMLSelectElement>) {
   const deviceId = event.target.value;
   if (deviceId.length > 0) {
-    localStorage.setItem("neurositySelectedDevice", deviceId);
     connectToNeurosityDevice(deviceId);
   }
 }
@@ -150,7 +147,10 @@ export async function connectToNeurosityDevice(deviceId: string) {
   const device = await neurosity.selectDevice((devices) => {
     return devices.find((device) => device.deviceId === deviceId) as DeviceInfo;
   });
-  console.log("connecting to device", device);
+  if (!device) {
+    return;
+  }
+  localStorage.setItem("neurositySelectedDevice", deviceId);
   return device;
 }
 

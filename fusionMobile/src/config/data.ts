@@ -296,9 +296,8 @@ export const quickAddPrompts: Prompt[] = [
   },
   {
     uuid: uuidv4(),
-    promptText:
-      "How many servings of fruits and vegetables did you consume today?",
-    responseType: "number",
+    promptText: "Did you have any fruits/vegetables today?",
+    responseType: "yesno",
     notificationConfig_days: {
       sunday: false,
       monday: false,
@@ -428,7 +427,7 @@ export const quickAddPrompts: Prompt[] = [
   {
     uuid: uuidv4(),
     promptText: "What are you grateful for today?",
-    responseType: "yesno",
+    responseType: "text",
     notificationConfig_days: {
       sunday: false,
       monday: true,

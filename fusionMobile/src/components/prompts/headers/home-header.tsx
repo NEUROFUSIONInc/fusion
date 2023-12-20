@@ -19,7 +19,7 @@ export const HomeHeader = () => {
         size="icon"
         leftIcon={<Person />}
         onPress={() => {
-          navigation.navigate("SettingsPage");
+          navigation.navigate("AccountPage");
         }}
       />
 

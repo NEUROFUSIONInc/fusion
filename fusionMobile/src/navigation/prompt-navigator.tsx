@@ -33,6 +33,8 @@ export type PromptStackParamList = {
   PromptEntry: {
     promptUuid: string;
     triggerTimestamp: number | null;
+    prompts?: Prompt[];
+    index?: number;
   };
 };
 

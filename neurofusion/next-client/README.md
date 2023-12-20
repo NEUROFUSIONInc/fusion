@@ -1,34 +1,26 @@
-# Next.js + Tailwind CSS Example
+# Fusion Explorer (Web) Client
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.2)](https://tailwindcss.com/blog/tailwindcss-v3-2) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+Code for what powers https://usefusion.app
 
-## Deploy your own
+## How we do anonymous auth
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+- Auth is done using [Nostr](https://nostr.com)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+- Client & Fusion server are connected to Fusion's relay endpoint ws://relay.usefusion.ai
+- Client makes a request to Fusion server with it's pubic key
+- Fusion server
+  - receives request,
+  - creates/validates account,
+  - sends signs a nip04 encrpyted message containing authToken, with Client as receiver
+  - drops message on Fusion relay
+- Client listens for message, decrypts message using nip04
+- Client stores authToken and uses it for future api requests to server
 
-## How to use
+See [auth.service.ts](src/services/auth) for implementation details
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+## Running Locally
 
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-```
-
-```bash
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-```
-
-```bash
-pnpm create next-app --example with-tailwindcss with-tailwindcss-app
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
-
-{Adding extra changes...}
-
-## Getting your localhost to run https
+### Getting your localhost to run https
 
 - Install the mkcert utility by running
   `brew install mkcert` (if you're using macOS) or
@@ -49,24 +41,16 @@ mkcert localhost
 npm install -g local-ssl-proxy
 ```
 
-- To run the following commands in different terminals
+### Running the client
 
-  - Start your Next.JS server (First Step)
-
-  ```
-  npm run dev
-  ```
-
-  - Run the proxy to target port 3000,
-
-  ```
-  local-ssl-proxy --source 3000 --target 3001 --cert localhost.pem --key localhost-key.pem
-  ```
-
-- Start the local server using
+- Install dependencies
 
 ```
-node server.js
+npm install
 ```
 
-trigger
+- Use the npm command
+
+```
+npm run dev
+```

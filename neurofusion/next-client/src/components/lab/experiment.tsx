@@ -91,6 +91,10 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       // IMPORTANT: Check the origin of the data!
       // You should probably not use '*', but restrict it to certain domains:
       if (event.origin.startsWith("https://localhost:") || event.origin.startsWith("https://usefusion.app")) {
+        console.log("event", event);
+        if (typeof event.data === "string") {
+          return;
+        }
         // The data sent from the iframe
         setSandboxData(event.data);
 
@@ -101,51 +105,29 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     });
   }
 
+  useEffect(() => {
+    if (sandboxData !== "") {
+      console.log("sandbox data obtained", sandboxData);
+      (async () => {
+        await downloadSandboxData(sandboxData, experiment.name, dayjs().unix());
+      })();
+    }
+  }, [sandboxData]);
+
+  // download the data
+  async function downloadSandboxData(sandboxData: any, dataName: string, fileTimestamp: number) {
+    const fileName = `${dataName}_${fileTimestamp}.json`;
+
+    const hiddenElement = document.createElement("a");
+    hiddenElement.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sandboxData));
+    hiddenElement.target = "_blank";
+    hiddenElement.download = fileName;
+    hiddenElement.click();
+  }
+
   return (
     <div>
       {/* this needs to move to it's own component */}
-      {!connectedDevice && (
-        <>
-          <p>Head over to the integrations page to connect a Neurosity Device</p>
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={() => {
-              location.href = "/integrations";
-            }}
-          >
-            Connect EEG device
-          </Button>
-        </>
-      )}
-      {connectedDevice && (
-        <>
-          <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
-          <p>Device Status: {deviceStatus}</p>
-        </>
-      )}
-
-      {deviceStatus === "online" && connectedDevice?.channelNames && (
-        <div className="flex flex-col justify-between">
-          <div className="my-5">
-            {showSignalQuality && (
-              <>
-                <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
-              </>
-            )}
-            <Button
-              onClick={() => {
-                setShowSignalQuality(!showSignalQuality);
-              }}
-            >
-              {showSignalQuality ? "Hide" : "Show"} Signal Quality
-            </Button>
-          </div>
-
-          <div className="my-5"></div>
-        </div>
-      )}
 
       {/* {add live brain wave} */}
 
@@ -200,16 +182,16 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         <>
           {sandboxData !== "" && (
             // TODO: this should be stored a fusion event data
+            // download
             <p>
-              Event data obtained:
-              {JSON.stringify(sandboxData)}
-              {/* ideally we want to include this in the same zip for recordings */}
+              Event data obtained
+              {/* TODO: include this in the same zip for recordings */}
             </p>
           )}
 
           {/* TODO: we need a section that throws an error if the eeg device isn't active */}
           {deviceStatus === "online" && (
-            <div className="mt-10">
+            <div className="my-10">
               {isRecording ? (
                 <Button
                   onClick={() => {
@@ -239,6 +221,49 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           )}
         </>
       </div>
+
+      {!connectedDevice && (
+        <>
+          <p>Head over to the integrations page to connect your brain computer interface</p>
+          <Button
+            intent={"dark"}
+            className="ml-auto"
+            leftIcon={<PlugZap className="fill-current" />}
+            onClick={() => {
+              location.href = "/integrations";
+            }}
+          >
+            Connect EEG device
+          </Button>
+        </>
+      )}
+      {connectedDevice && (
+        <>
+          <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
+          <p>Device Status: {deviceStatus}</p>
+        </>
+      )}
+
+      {deviceStatus === "online" && connectedDevice?.channelNames && (
+        <div className="flex flex-col justify-between">
+          <div className="my-5">
+            {showSignalQuality && (
+              <>
+                <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
+              </>
+            )}
+            <Button
+              onClick={() => {
+                setShowSignalQuality(!showSignalQuality);
+              }}
+            >
+              {showSignalQuality ? "Hide" : "Show"} Signal Quality
+            </Button>
+          </div>
+
+          <div className="my-5"></div>
+        </div>
+      )}
     </div>
   );
 };

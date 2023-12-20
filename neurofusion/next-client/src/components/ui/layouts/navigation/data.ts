@@ -5,14 +5,13 @@ export const navigationLinks = [
     persona: "default",
     external: false,
   },
+  // {
+  //   title: "Coaches & Health Professionals",
+  //   href: "/?persona=coaches_health_professionals",
+  //   persona: "coaches_health_professionals",
+  // },
   {
-    title: "Coaches & Health Professionals",
-    href: "/?persona=coaches_health_professionals",
-    persona: "coaches_health_professionals",
-    external: false,
-  },
-  {
-    title: "Explorers & Researchers",
+    title: "Research",
     href: "/?persona=explorers_researchers",
     persona: "explorers_researchers",
     external: false,

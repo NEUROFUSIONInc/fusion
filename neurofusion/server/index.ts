@@ -105,6 +105,12 @@ app.post("/api/getpromptsummary", insightController.getPromptSummary);
 
 app.post("/api/getpromptsummary/v2", insightController.getPromptSummaryV2);
 
+app.post("/api/getpromptsuggestions", insightController.getPromptSuggestions);
+
+/**
+ * Get the latest version
+ */
+
 /**
  * Start server
  */

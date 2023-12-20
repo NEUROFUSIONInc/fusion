@@ -66,14 +66,14 @@ class NeurosityService {
     // call the download data as zip function
     const datasetExport: DatasetExport = {
       fileNames: [
-        "rawBrainwaves.csv",
-        "powerByBand.csv",
-        "signalQuality.csv",
-        "psd.csv",
-        "accelerometer.csv",
-        "focus.csv",
-        "calm.csv",
-        "events.csv",
+        `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+        `powerByBand_${this.recordingStartTimestamp}.csv`,
+        `signalQuality_${this.recordingStartTimestamp}.csv`,
+        `psd_${this.recordingStartTimestamp}.csv`,
+        `accelerometer_${this.recordingStartTimestamp}.csv`,
+        `focus_${this.recordingStartTimestamp}.csv`,
+        `calm_${this.recordingStartTimestamp}.csv`,
+        `events_${this.recordingStartTimestamp}.csv`,
       ],
       dataSets: [
         this.rawBrainwavesSeries,
@@ -88,7 +88,6 @@ class NeurosityService {
     };
 
     try {
-      console.log("exporting");
       await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
     } catch (e) {
       console.log(e);
@@ -259,7 +258,7 @@ export interface DatasetExport {
 }
 
 async function downloadDataAsZip(datasetExport: DatasetExport, zipFileName: string, unixTimestamp: dayjs.Dayjs) {
-  const filePath = `${unixTimestamp.unix()}_${zipFileName}.zip`;
+  const filePath = `${zipFileName}_${unixTimestamp.unix()}.zip`;
 
   let zip = new JSZip();
   for (let i = 0; i < datasetExport.dataSets.length; i++) {

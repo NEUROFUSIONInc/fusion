@@ -1,7 +1,6 @@
-import RNBottomSheet from "@gorhom/bottom-sheet";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { View, Text, Image } from "react-native";
 import {
   State,
@@ -10,14 +9,7 @@ import {
 } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
-import {
-  Screen,
-  ChartContainer,
-  Select,
-  Button,
-  Plus,
-  AddPromptSheet,
-} from "~/components";
+import { Screen, ChartContainer, Select, Button, Plus } from "~/components";
 import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
@@ -26,6 +18,7 @@ import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
   const route = useRoute<RouteProp<"InsightsPage">>();
+  const navigation = useNavigation();
 
   const insightContext = useContext(InsightContext);
   let routePromptUuid = route.params?.promptUuid;
@@ -105,13 +98,6 @@ export function InsightsScreen() {
     }
   };
 
-  // Bottom sheets for adding new prompts
-  const bottomSheetRef = useRef<RNBottomSheet>(null);
-  const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
-    []
-  );
-
   /**
    * Ugly work around because react native fails to re-render the dropdown
    * when saved prompt is updated.
@@ -132,7 +118,7 @@ export function InsightsScreen() {
 
   return (
     <Screen>
-      {(!savedPrompts || savedPrompts?.length === 0) && (
+      {!isLoading && (!savedPrompts || savedPrompts?.length === 0) && (
         <View className="flex flex-1 flex-col gap-7 items-center justify-center">
           <Image source={require("../../assets/pie-chart.png")} />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
@@ -141,7 +127,9 @@ export function InsightsScreen() {
           <Button
             title="Add your first prompt"
             leftIcon={<Plus color={colors.dark} width={16} height={16} />}
-            onPress={handleExpandSheet}
+            onPress={() => {
+              navigation.navigate("QuickAddPrompts");
+            }}
             className="self-center"
           />
         </View>
@@ -218,8 +206,6 @@ export function InsightsScreen() {
           </ScrollView>
         </PanGestureHandler>
       )}
-
-      <AddPromptSheet bottomSheetRef={bottomSheetRef} />
     </Screen>
   );
 }

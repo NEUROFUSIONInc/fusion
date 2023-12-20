@@ -226,52 +226,50 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
           : handleClose
       }
     >
-      <View className="flex-1">
-        <ScrollView
-          nestedScrollEnabled
-          horizontal={false}
-          indicatorStyle="white"
-          className="flex-1 flex-col mt-5 overflow-y-auto px-4"
-          contentContainerStyle={{
-            paddingBottom,
-            flexGrow: 1,
-          }}
-        >
-          {success ? (
-            <Success text="Way to go! Your prompt has been created successfully!" />
-          ) : activeStep === 0 ? (
-            <CategorySelectionStep
-              selectedCategory={category}
-              setSelectedCategory={setCategory}
+      <ScrollView
+        nestedScrollEnabled
+        horizontal={false}
+        indicatorStyle="white"
+        className="flex-1 flex-col mt-5 overflow-y-auto px-4"
+        contentContainerStyle={{
+          paddingBottom,
+          flexGrow: 1,
+        }}
+      >
+        {success ? (
+          <Success text="Way to go! Your prompt has been created successfully!" />
+        ) : activeStep === 0 ? (
+          <CategorySelectionStep
+            selectedCategory={category}
+            setSelectedCategory={setCategory}
+          />
+        ) : activeStep === 1 ? (
+          <PromptDetailsStep
+            promptText={promptText}
+            setPromptText={setPromptText}
+            responseType={responseType}
+            setResponseType={setResponseType}
+            customOptions={customOptions}
+            category={category}
+            setCustomOptions={setCustomOptions}
+          />
+        ) : activeStep === 2 ? (
+          <View className="flex flex-col">
+            <Text className="text-white text-xl font-sans-bold mb-4">
+              Set time and frequency
+            </Text>
+            <TimePicker
+              start={start}
+              end={end}
+              setEnd={setEnd}
+              setStart={setStart}
+              days={days}
+              setDays={setDays}
+              setPromptCount={setPromptCount}
             />
-          ) : activeStep === 1 ? (
-            <PromptDetailsStep
-              promptText={promptText}
-              setPromptText={setPromptText}
-              responseType={responseType}
-              setResponseType={setResponseType}
-              customOptions={customOptions}
-              category={category}
-              setCustomOptions={setCustomOptions}
-            />
-          ) : activeStep === 2 ? (
-            <View className="flex flex-col">
-              <Text className="text-white text-xl font-sans-bold mb-4">
-                Set time and frequency
-              </Text>
-              <TimePicker
-                start={start}
-                end={end}
-                setEnd={setEnd}
-                setStart={setStart}
-                days={days}
-                setDays={setDays}
-                setPromptCount={setPromptCount}
-              />
-            </View>
-          ) : null}
-        </ScrollView>
-      </View>
+          </View>
+        ) : null}
+      </ScrollView>
     </BottomSheet>
   );
 };
