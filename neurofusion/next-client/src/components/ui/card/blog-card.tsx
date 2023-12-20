@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { formatDate } from "~/utils/format-date";
+import dayjs from "dayjs";
 
 const BlogCard = ({ posts }: any) => {
   return (
@@ -19,7 +18,7 @@ const BlogCard = ({ posts }: any) => {
                     <div className="flex flex-col mr-8 gap-y-4">
                       <h2>{post.frontMatter.title}</h2>
                       <p>{post.frontMatter.description}</p>
-                      <p>{formatDate(post.frontMatter.publishedDate)}</p>
+                      <p>{dayjs(post.frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
                     </div>
                   </article>
                 </Link>
