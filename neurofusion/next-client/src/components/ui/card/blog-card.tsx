@@ -12,7 +12,7 @@ const BlogCard = ({ posts }: any) => {
             .sort((a: any, b: any) => {
               return new Date(b.frontMatter.publishedDate).getTime() - new Date(a.frontMatter.publishedDate).getTime();
             })
-            .map((post) => {
+            .map((post: any) => {
               return (
                 <Link href={{ pathname: `/blog/${post.slug}` }} key={post.slug}>
                   <article key={post.slug} className="flex justify-between p-2">

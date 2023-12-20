@@ -1,4 +1,3 @@
-import ReactMarkdown from "react-markdown";
 import { getFiles, getPostBySlug } from "~/utils/blog";
 import md from "markdown-it";
 import { MainLayout } from "~/components/layouts";

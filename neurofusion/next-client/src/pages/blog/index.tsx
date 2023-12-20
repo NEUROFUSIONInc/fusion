@@ -15,7 +15,7 @@ export async function getStaticProps() {
   };
 }
 
-function Blog({ posts }) {
+function Blog({ posts }: any) {
   const containerStyles = {
     maxWidth: "65ch", // Adjust the max-width according to your needs
     margin: "48px auto",
