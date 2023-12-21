@@ -3,6 +3,7 @@ export const navigationLinks = [
     title: "Home",
     href: "/",
     persona: "default",
+    external: false,
   },
   // {
   //   title: "Coaches & Health Professionals",
@@ -13,12 +14,19 @@ export const navigationLinks = [
     title: "Research",
     href: "/?persona=explorers_researchers",
     persona: "explorers_researchers",
+    external: false,
   },
   {
     title: "Blog",
-    href: "https://neurofusion.substack.com/",
-    external: true,
+    href: "/blog",
+    persona: "default",
+    external: false,
   },
+  // {
+  //   title: "Blog",
+  //   href: "https://neurofusion.substack.com/",
+  //   external: true,
+  // },
   // {
   //   title: "Contact",
   //   href: "mailto:ore@usefusion.app",

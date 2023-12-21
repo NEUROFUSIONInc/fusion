@@ -19,10 +19,10 @@ export const Navbar: FC = () => {
   const pagePersona = searchParams.get("persona") ?? "default";
 
   return (
-    <header className="sticky left-0 right-0 top-0 z-10 flex h-16 w-full items-center border-b border-b-gray-50/20 bg-white/50 shadow-sm dark:bg-transparent backdrop-blur-lg dark:border-b-gray-800 dark:border-opacity-50">
-      <nav className="container mx-auto flex items-center justify-between px-6 py-7 md:px-4">
+    <header className="sticky top-0 left-0 right-0 z-10 flex items-center w-full h-16 border-b shadow-sm border-b-gray-50/20 bg-white/50 dark:bg-transparent backdrop-blur-lg dark:border-b-gray-800 dark:border-opacity-50">
+      <nav className="container flex items-center justify-between px-6 mx-auto py-7 md:px-4">
         <Logo withText />
-        <div className="hidden items-center justify-between md:flex">
+        <div className="items-center justify-between hidden md:flex">
           <div className="flex items-center">
             {navigationLinks.map((link) => {
               const active = link.persona === pagePersona;
@@ -37,7 +37,7 @@ export const Navbar: FC = () => {
                       "font-medium text-gray-950 opacity-100 hover:text-gray-950": active,
                     }
                   )}
-                  target={link.external ? "_blank" : undefined}
+                  target={link?.external ? "_blank" : undefined}
                 >
                   {link.title}
                 </Link>

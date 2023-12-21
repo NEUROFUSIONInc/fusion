@@ -1,0 +1,78 @@
+---
+title: "Entry #00: Risking it all for the sake of my passion"
+description: I’ve only scratched the surface of neurotechnology and I’m convinced this is where I want to spend the bulk of my creative energy.
+publishedDate: 2022/12/20
+coverImage: /images/fusion_banner.jpg
+tags:
+  - fusion
+---
+
+I’ve only scratched the surface of neurotechnology and I’m convinced this is where I want to spend the bulk of my creative energy. I believe doing this puts me on track for what I want to do with the rest of my life, so I’ve resigned from my role at Microsoft to do this full time.
+
+## Research Interest
+
+The "quantified self" is a term used for people who track and share data about their own health and productivity. This can be anything from manually writing down what they eat every day, to wearing a fitness tracker that records their steps and heart rate, to software programs that people can use to track how much time they spend working, and how productive they are during that time. What hasn't been done yet is to correlate all of this data with brain activity. I want to bring together data from different sources to get a better understanding of how we spend our days, and how we can get the most from them.1
+
+Improvements in neuroscience have resulted in the development of low-cost BCIs (brain-computer interfaces) that can record EEG (electroencephalogram) activity. However, adoption of BCIs has been limited to niche applications leaving hobbyists without specific domain knowledge waiting for scenarios where BCIs could provide value to them.
+
+I believe that enabling people collect brain activity over periods of time while doing different things in an intuitive way, will get us closer to probing across these themes:
+
+- Can we figure out how much work a person can handle by measuring their cognitive workload? It’s been shown that “theta” frequency power is an indicator of when a person is in a high-workload or low-workload condition2. Can we then match recorded data with the activity a person is doing to suggest when they should take a break or do something else?
+
+- Can we create a standard of what a person's brain activity should be after we have recorded it multiple times? We can only notice differences if we have a clear standard to compare it to. This can be used to help us understand how different choices affect the brain, and maybe even help figure out how changes in the brain relate to neurological conditions.
+
+One thought at the back of my mind going into this:
+
+- I have the most experience with EEG, but it is not the only option and there may be other methods that are more effective. However, allowing anyone with a consumer EEG headset to successfully conduct experiments and explore their data is a win for all of us.
+
+---
+
+## _The unexamined life is not worth living - Socrates_
+
+## What’s the plan?
+
+Short answer - I’m still figuring it out.
+
+Longer answer - For better or worse, I have enough skills that allow me to build & conduct experiments myself. I really value freedom of inquiry and I don’t want to get caught up playing the academia game; that said, I’m still going to follow open science practices3 as I approach this.
+
+I’m also on the look out for labs in Canada, so if you’re working on problems in this area, please reach out, I’d love to talk to you!
+
+---
+
+Q: Is this enough for me to leave the stability & comfort I already had in a period of economic uncertainty?
+
+A: I’ve gone on different side quests and that only led me back here. I also realized that to get the kind of results I’m aiming for, I need to commit all of myself to this. I’ve spent years building data infrastructure & tooling at the highest level and now I’m excited to do it for an area that I’m most passionate about. Call me crazy, but I look forward to this time next year and seeing where the winds have taken me.
+
+---
+
+Staying productive can be challenging when there are still many uncertainties to be resolved. However, I've found that following the strategies outlined in Andy's essay on "satisfaction & progress in open-ended work"4 has helped me to remain focused and effective.
+
+Specifically, I've divided my work days into two parts:
+
+- the first is dedicated to reading and writing - which helps me to generate new insights and ideas.
+
+- the second is focused on coding and experimentation - which allows me to put those ideas into action.
+
+This approach has proven to be an effective way to stay motivated and productive in the face of open-ended work but I’ll keep tweaking as I go along.
+
+## Sharing early work
+
+One of the challenges I’ve faced is sharing early work. Working with friends with similar interest has helped but now that I’m going all in, it’s time to work with my doors open. My intent is:
+
+- to get early feedback & thoughts from people with experience in this space
+
+- convince researchers exploring this area to come on board as advisors :p
+
+I’m going to share what’s working, what isn’t and semi-concrete thoughts through newsletter entries as I explore more intentionally. I think ideas are free and execution is what sets things apart.
+
+If anything peaks your fancy and you’d like to join me on this quest, shoot me an email - ore@usefusion.app
+
+Thanks for reading Fusion Newsletter!! Subscribe for free to receive new posts and join me on the journey.
+
+1. How Self-tracking and the Quantified Self Promote Health and Well-being: Systematic Review https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8493454/
+
+1. EEG power spectral measures of cognitive workload: A meta-analysis https://onlinelibrary.wiley.com/doi/10.1111/psyp.14009
+
+1. Easing Into Open Science: A Guide for Graduate Students and Their Advisors https://online.ucpress.edu/collabra/article/7/1/18684/115927/Easing-Into-Open-Science-A-Guide-for-Graduate
+
+1. Square Signals : Satisfaction and progress in open-ended work https://blog.andymatuschak.org/post/159979927467/satisfaction-and-progress-in-open-ended-work
