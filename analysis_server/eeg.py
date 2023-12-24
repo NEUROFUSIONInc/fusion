@@ -299,7 +299,7 @@ def load_session_epochs(files: dict, _on: set, _channels: list = [],qualityCutof
         
     return on
 
-def load_session_summery(files: dict, _channels: list = [], qualityCutoffFilter: int = 0, epochSize: int = -1, returnEpoched = False, debug=False) -> dict:
+def load_session_summary(files: dict, _channels: list = [], qualityCutoffFilter: int = 0, epochSize: int = -1, returnEpoched = False, debug=False) -> dict:
     """
     Takes a session of EEG data, computes some metrics, and returns them.
     
@@ -457,10 +457,10 @@ class analysisEngine():
             if bundleType == "tags": # this means it's a dict of datasets based on tags
                 # this means it's an array of datasets based on tags
                 for y in self.fileBundles[x]:
-                    self.fileBundleSummeries[x].append(load_session_summery(self.fileBundles[x][y],qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize,returnEpoched=True,debug=debug))
+                    self.fileBundleSummeries[x].append(load_session_summary(self.fileBundles[x][y],qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize,returnEpoched=True,debug=debug))
                     sum += len(self.fileBundleSummeries[x][-1])
             elif bundleType == "ids":
-                self.fileBundleSummeries[x].append(load_session_summery(self.fileBundles[x],qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize,returnEpoched=True,debug=debug))
+                self.fileBundleSummeries[x].append(load_session_summary(self.fileBundles[x],qualityCutoffFilter=qualityCutoffFilter,epochSize=epochSize,returnEpoched=True,debug=debug))
                 sum += len(self.fileBundleSummeries[x])
             else:
                 raise Exception("Invalid bundleType")
@@ -737,9 +737,3 @@ def load_fileset(
         *type, session = f.stem.split("_")
         sessions[session]["_".join(type)] = str(f)
     return sessions
-
-
-if __name__ == "__main__":
-    df = load_data()
-    print(df)
-    print(df.describe())

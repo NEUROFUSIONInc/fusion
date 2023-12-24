@@ -7,7 +7,7 @@ import { MobileStoreLink } from "~/components/ui";
 export const OfferingSection = () => {
   return (
     <section title="offering-and-disclaimers-section" className="w-full p-4">
-      <div className="relative mb-5 mt-5 flex h-auto w-full max-w-4xl items-stretch justify-around rounded-2xl bg-indigo-300/20 bg-offering-pattern md:mx-auto md:max-h-[468px]">
+      <div className="relative mb-5 mt-5 flex h-auto w-full max-w-4xl items-stretch justify-around rounded-2xl bg-indigo-300/20 bg-offering-pattern md:mx-auto">
         <Image
           src="/images/fusion-app-home-2.svg"
           width={320}
@@ -15,11 +15,11 @@ export const OfferingSection = () => {
           alt="Fusion App Screenshot"
           className="mt-24 hidden overflow-hidden object-contain md:block"
         />
-        <div className="flex flex-col items-start space-y-8 p-8 text-center md:text-left">
+        <div className="flex flex-col items-start space-y-8 p-8 text-center md:text-left justify-between">
           <h2 className="text-3xl font-semibold text-gray-900 md:text-4xl">
             <span className="text-primary-gradient">Fusion</span> offers you
           </h2>
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-8">
             {fusionOfferingFeatures.map((feature) => (
               <dl className="flex max-w-xs flex-col items-center md:flex-row md:items-start" key={feature.title}>
                 <div className="mb-4 rounded-md bg-indigo-200 p-3 md:mb-0">

@@ -7,11 +7,18 @@ import matplotlib.pyplot as plt
 import time
 from PIL import Image
 from flask_cors import CORS
+import base64
 
 import eeg
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+    return encoded_string
 
 # TODO: handle multiple files
 @app.route('/api/v1/process_eeg', methods=['POST'])
@@ -66,14 +73,24 @@ def process():
             powerComparisonImage = Image.fromarray(powerComparisonData)
             powerComparisonImage.save("powerComparisons.png")
 
+            powerDistributionBase64= encode_image_to_base64("powerDistributions.png")
+            powerComparisonBase64 = encode_image_to_base64("powerComparisons.png")
             
-            # remember to delete folder after processing
-            return jsonify({"files": os.listdir(temp_dir)}), 200
+            # do foof analysis and display that
+
+            # # remember to delete folder after processing
+            return jsonify({"images": {
+                "powerDistribution": powerDistributionBase64,
+                "powerComparison": powerComparisonBase64
+            }, "summary": "Steady State Frequency Averages from Recordings"}), 200
 
     except Exception as e:
         print("error", e)
         return jsonify({'error': str(e)}), 500
 
+# TODO: endpoint for ERP analysis
+
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
+    print("running")

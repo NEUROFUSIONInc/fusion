@@ -24,3 +24,4 @@ export * from "./thumbsdown";
 export * from "./thumbsup";
 export * from "./chat";
 export * from "./info-circle";
+export * from "./calendar";

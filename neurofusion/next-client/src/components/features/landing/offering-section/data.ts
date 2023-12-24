@@ -1,14 +1,15 @@
-import { Hand, Lock } from "lucide-react";
+import { Hand, Lock, Users } from "lucide-react";
 
 export const fusionOfferingFeatures = [
   {
     icon: Lock,
-    title: "Data privacy",
-    description: "Prompts & responses are stored only your device. No one can see them unless you chose to share them.",
+    title: "Data Sovereignty",
+    description: "You're anonymous by default. Prompts & responses are stored only your device.",
   },
   {
-    icon: Hand,
-    title: "No spam",
-    description: "We don't sell your data, and we don't spam you.",
+    icon: Users,
+    title: "Group Activities",
+    description:
+      "Perform group activities with your friends, family, or colleagues. See how your responses compare to others.",
   },
 ];

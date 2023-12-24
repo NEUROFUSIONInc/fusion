@@ -120,7 +120,7 @@ missingDimensionStrategy "store", "play"
         applicationId 'com.neurofusion.fusion'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 61
+        versionCode 62
         versionName "1.4.0"
         missingDimensionStrategy 'store', 'play'
     }
