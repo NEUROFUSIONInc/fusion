@@ -14,13 +14,20 @@ const BlogCard = ({ posts }: any) => {
             .map((post: any) => {
               return (
                 <Link href={{ pathname: `/blog/${post.slug}` }} key={post.slug}>
-                  <article key={post.slug} className="flex justify-between p-2">
-                    <div className="flex flex-col mr-8 gap-y-4">
-                      <h2>{post.frontMatter.title}</h2>
-                      <p>{post.frontMatter.description}</p>
-                      <p>{dayjs(post.frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
-                    </div>
-                  </article>
+                  <div className="flex flex-row justify-between mb-5">
+                    <article key={post.slug} className="flex justify-between p-2">
+                      <div className="flex flex-col mr-8 gap-y-4">
+                        <h2>{post.frontMatter.title}</h2>
+                        <p>{post.frontMatter.description}</p>
+                        <p>{dayjs(post.frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+                      </div>
+                    </article>
+                    <img
+                      src={post.frontMatter.coverImage}
+                      alt={post.frontMatter.title}
+                      className="w-1/3 object-contain ml-3 br-10"
+                    />
+                  </div>
                 </Link>
               );
             })}

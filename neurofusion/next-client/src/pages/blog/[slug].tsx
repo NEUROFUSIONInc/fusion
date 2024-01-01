@@ -1,15 +1,20 @@
-import { getFiles, getPostBySlug } from "~/utils/blog";
-import md from "markdown-it";
+import { getAllPostsWithFrontMatter, getFiles, getPostBySlug } from "~/utils/blog";
+import MarkdownIt from "markdown-it";
 import { MainLayout } from "~/components/layouts";
+import dayjs from "dayjs";
+
+const md = new MarkdownIt({ html: true });
 
 export async function getStaticPaths() {
-  const posts = await getFiles();
+  const posts = await getAllPostsWithFrontMatter();
 
-  const paths = posts.map((filename: string) => ({
-    params: {
-      slug: filename.replace(/\.md/, ""),
-    },
-  }));
+  const paths = Array.isArray(posts)
+    ? posts.map((post: any) => ({
+        params: {
+          slug: post.frontMatter.slug,
+        },
+      }))
+    : [];
 
   return {
     paths,
@@ -33,9 +38,10 @@ function BlogPost({ frontMatter, markdownBody }: any) {
 
   return (
     <MainLayout>
-      <div className="container px-4 mx-auto mt-8 prose md:px-0">
+      <div className="container px-4 mx-auto mt-10 prose md:px-0 mb-10">
         <h1>{frontMatter.title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: md().render(markdownBody) }} />
+        <p>{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+        <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} />
       </div>
     </MainLayout>
   );

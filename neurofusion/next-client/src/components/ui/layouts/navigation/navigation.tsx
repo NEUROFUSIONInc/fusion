@@ -25,7 +25,7 @@ export const Navbar: FC = () => {
         <div className="items-center justify-between hidden md:flex">
           <div className="flex items-center">
             {navigationLinks.map((link) => {
-              const active = link.persona === pagePersona;
+              const active = false;
 
               return (
                 <Link

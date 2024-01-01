@@ -9,8 +9,8 @@ export async function getStaticProps() {
   return {
     props: {
       posts,
-      title: "Blog",
-      description: "Posts on software engineering",
+      title: "NeuroFusion Blog",
+      description: "Updates on our products & research.",
     },
   };
 }
@@ -20,9 +20,6 @@ function Blog({ posts }: any) {
     maxWidth: "65ch", // Adjust the max-width according to your needs
     margin: "48px auto",
     overflow: "hidden",
-    // backgroundColor: "white",
-    // borderRadius: "0.375rem", // Adjust the border-radius according to your needs
-    // boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   };
 
   return (
