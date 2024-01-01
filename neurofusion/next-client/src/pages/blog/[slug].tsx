@@ -1,6 +1,6 @@
 import { getAllPostsWithFrontMatter, getFiles, getPostBySlug } from "~/utils/blog";
 import MarkdownIt from "markdown-it";
-import { MainLayout } from "~/components/layouts";
+import { MainLayout, Meta } from "~/components/layouts";
 import dayjs from "dayjs";
 
 const md = new MarkdownIt({ html: true });
@@ -38,6 +38,13 @@ function BlogPost({ frontMatter, markdownBody }: any) {
 
   return (
     <MainLayout>
+      <Meta
+        meta={{
+          title: `${frontMatter.title} | Fusion Blog`,
+          description: frontMatter.description,
+          image: frontMatter.coverImage,
+        }}
+      />
       <div className="container px-4 mx-auto mt-10 prose md:px-0 mb-10">
         <h1>{frontMatter.title}</h1>
         <p>{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>

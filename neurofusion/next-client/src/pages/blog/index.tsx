@@ -1,4 +1,4 @@
-import { MainLayout } from "~/components/layouts";
+import { MainLayout, Meta } from "~/components/layouts";
 import BlogCard from "~/components/ui/card/blog-card";
 
 import { getAllPostsWithFrontMatter } from "~/utils/blog";
@@ -24,6 +24,11 @@ function Blog({ posts }: any) {
 
   return (
     <MainLayout>
+      <Meta
+        meta={{
+          title: "Blog | Fusion - Personal Insights from your daily habits and actions",
+        }}
+      />
       <div style={containerStyles}>
         <BlogCard posts={posts} />
       </div>
