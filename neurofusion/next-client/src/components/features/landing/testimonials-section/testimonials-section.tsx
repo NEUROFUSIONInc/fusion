@@ -20,8 +20,7 @@ export const TestimonialSection = () => {
           </h2>
         ) : (
           <h2 className="w-11/12 text-left text-3xl font-semibold md:text-5xl lg:text-6xl">
-            Navigate your days with{" "}
-            <span className="text-primary-gradient"> more agency, awareness & less guesswork</span>
+            Live with <span className="text-primary-gradient"> more agency and awareness</span>
           </h2>
         )}
       </div>

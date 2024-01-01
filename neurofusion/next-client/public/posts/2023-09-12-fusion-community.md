@@ -2,9 +2,12 @@
 title: Can't light a fire without a spark 🔥
 description: Recap of our Lagos Community Event
 publishedDate: 2023/09/12
-coverImage: ""
+coverImage: /images/blog/lagos-community.webp
 tags:
   - fusion
+slug: fusion-community-lagos
+authors:
+  - Ore Ogundipe
 ---
 
 We hosted our first community event, in Lagos! Although, a heavy rain tried to stop our fun, we experienced a fantastic turnout. We were so excited to finally connect with users who want to take control of their health, productivity, well-being.

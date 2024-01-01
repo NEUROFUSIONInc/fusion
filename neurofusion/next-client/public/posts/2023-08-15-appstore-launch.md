@@ -1,10 +1,13 @@
 ---
 title: We launched!
-description: sort of...
+description: Fusion is now available on App Stores!
 publishedDate: 2023/08/15
-coverImage: ""
+coverImage: /images/blog/fusion-app-stores.webp
 tags:
   - fusion
+slug: fusion-launch
+authors:
+  - Ore Ogundipe
 ---
 
 Over the weekend, we released the Fusion app on the iOS app store! Pretty exciting right?

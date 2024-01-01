@@ -13,8 +13,15 @@ export const testimonials: Testimonial[] = [
     id: 2,
     name: "Sabby A.",
     location: "Vancouver, BC",
-    highlight:
-      "It's helped me track my eating habits, exercise routine, and progress towards my personal goals 💪🏽",
+    highlight: "It's helped me track my eating habits, exercise routine, and progress towards my personal goals 💪🏽",
     image: "/images/testimonials/sabby.jpeg",
+  },
+  {
+    id: 3,
+    name: "Gabriel P.",
+    location: "Ann Arbor, MI",
+    highlight:
+      "Fusion revealed to me patterns in my behavior I did not know were there, and enabled me to implement beneficial changes in my life I would not have been able to come up with on my own",
+    image: "/images/team/gabriel.png",
   },
 ];

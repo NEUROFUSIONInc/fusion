@@ -2,9 +2,12 @@
 title: "User Story: How Fusion Reshaped my Health Journey"
 description: Understanding the relationship between my diet & well-being
 publishedDate: 2023/08/29
-coverImage: ""
+coverImage: /images/blog/user-story-health.webp
 tags:
   - fusion
+slug: how-fusion-reshaped-my-health-journey
+authors:
+  - Gabriel Price
 ---
 
 Navigating the complexities of celiac disease - a reaction to eating gluten - and an unpredictable immune system has been my journey for years. Due to my genetic makeup, my health struggles are complicated which means my symptoms are in subtle hints rather than glaring signals. It took almost two decades and consistent talks with my doctor to find some clarity.

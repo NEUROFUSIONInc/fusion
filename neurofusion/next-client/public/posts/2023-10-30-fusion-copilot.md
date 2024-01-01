@@ -2,9 +2,12 @@
 title: Introducing Fusion Copilot
 description: Personalized recommendations just for you.
 publishedDate: 2023/10/30
-coverImage: ""
+coverImage: /images/blog/fusion-copilot.webp
 tags:
   - fusion
+slug: fusion-copilot
+authors:
+  - Ore Ogundipe
 ---
 
 Since our launch, Fusion has helped you manage and improve your productivity, health and wellbeing. In the past, we took your responses and showed you how they changed over time using visuals. Now, with Fusion Copilot, you receive summaries and recommendations to act on based on your personalized context.
