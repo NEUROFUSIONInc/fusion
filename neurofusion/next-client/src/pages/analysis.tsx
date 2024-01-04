@@ -13,15 +13,17 @@ interface ResponseImage {
 }
 
 const AnalysisPage: NextPage = () => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const [images, setImages] = useState<ResponseImage[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleFileChange = (e: { target: { files: React.SetStateAction<null>[] } }) => {
-    setFile(e.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setFile(files[0]);
+    }
   };
-
   const handleUpload = async () => {
     // TODO: support multiple file uploads for comparison
     if (file) {
