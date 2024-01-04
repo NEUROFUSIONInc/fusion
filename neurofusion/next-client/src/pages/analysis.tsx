@@ -29,13 +29,15 @@ const AnalysisPage: NextPage = () => {
       formData.append("file", file);
 
       // we need to extract from the file url the exact timestamp
-      const fileTimestamp = file.name.match(/(\d+)/)[0];
-      if (!fileTimestamp) {
+      const fileMatch = (file as File).name.match(/(\d+)/);
+      if (!fileMatch || !(fileMatch?.length > 0)) {
         alert(
           "File name does not contain a timestamp. Make sure you're uploading a dataset recorded on the playground."
         );
         return;
       }
+
+      const fileTimestamp = fileMatch[0];
       formData.append("fileTimestamp", fileTimestamp);
       console.log(file);
 
