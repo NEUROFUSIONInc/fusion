@@ -11,6 +11,11 @@ export const sidebarLinks = [
     title: "Lab",
     href: "/playground",
   },
+  {
+    icon: SignalHigh,
+    title: "Analysis",
+    href: "/analysis",
+  },
   // {
   //   icon: HardDrive,
   //   title: "Datasets",
@@ -26,11 +31,6 @@ export const sidebarLinks = [
     title: "Integrations",
     href: "/integrations",
   },
-  // {
-  //   icon: SignalHigh,
-  //   title: "Analysis",
-  //   href: "#",
-  // },
 ];
 
 export const appearanceModes = [
