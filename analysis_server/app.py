@@ -79,10 +79,14 @@ def process():
             # do foof analysis and display that
 
             # # remember to delete folder after processing
-            return jsonify({"images": {
-                "powerDistribution": powerDistributionBase64,
-                "powerComparison": powerComparisonBase64
-            }, "summary": "Steady State Frequency Averages from Recordings"}), 200
+            return jsonify({"images": [
+            {
+                "key": "Average Power Across Bands",
+                "value": "data:image/png;base64," + powerComparisonBase64
+            },{
+                "key": "Power Distributions Across Bands Per Epoch",
+                "value": "data:image/png;base64," + powerDistributionBase64,
+            }], "summary": "Steady State Frequency Averages from Recordings"}), 200
 
     except Exception as e:
         print("error", e)
