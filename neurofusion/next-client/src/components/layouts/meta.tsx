@@ -64,11 +64,15 @@ export const Meta = ({ meta: pageMeta }: { meta?: Partial<MetaSeo> }) => {
       <meta property="og:image:height" content="628" />
       {/** End OpenGraph Metadata */}
       {/** Twitter Metadata */}
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:card" content="app" />
       <meta name="twitter:site" content="@usefusionapp" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
       <meta name="twitter:image" content={meta.image} />
+      <meta name="twitter:app:name:iphone" content="Fusion Copilot" />
+      <meta name="twitter:app:id:iphone" content="6445860500" />
+      <meta name="twitter:app:name:googleplay" content="Fusion Copilot" />
+      <meta name="twitter:app:id:googleplay" content="com.neurofusion.fusion" />
       {/** End Twitter Metadata */}
     </Head>
   );

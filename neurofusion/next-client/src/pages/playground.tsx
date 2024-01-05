@@ -5,7 +5,7 @@ import React, { use, useEffect } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 import { Experiment } from "~/components/lab";
-import { DashboardLayout } from "~/components/layouts";
+import { DashboardLayout, Meta } from "~/components/layouts";
 import { IExperiment } from "~/@types";
 
 const PlaygroundPage: NextPage = () => {
@@ -90,11 +90,16 @@ const PlaygroundPage: NextPage = () => {
 
   return (
     <DashboardLayout>
+      <Meta
+        meta={{
+          title: "Playground | Fusion Explorer",
+        }}
+      />
       <h1 className="text-4xl">Playground</h1>
-      <label htmlFor="countries" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
+      <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
         Select activity:
         <select
-          id="countries"
+          id="activity"
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
           onChange={handleExperimentSelect}
           value={activeExperiment.name}
