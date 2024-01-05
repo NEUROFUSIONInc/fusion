@@ -4,11 +4,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 import { IntegrationsContainer } from "~/components/features/integrations";
-import { DashboardLayout } from "~/components/layouts";
+import { DashboardLayout, Meta } from "~/components/layouts";
 
 const IntegrationsPage: NextPage = () => {
   return (
     <DashboardLayout>
+      <Meta
+        meta={{
+          title: "Integrations | Fusion - Personal Insights from your daily habits and actions",
+        }}
+      />
       <IntegrationsContainer />
     </DashboardLayout>
   );
