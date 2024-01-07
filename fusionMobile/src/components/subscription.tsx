@@ -162,8 +162,7 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
         onLayout={handleContentLayout}
       >
         <Text className="font-sans text-base text-white ">
-          Fusion Premium gives you access Fusion Copilot with personalized
-          recommendations on how to navigate your day based on your responses.
+          Get personalized recommendations on how to navigate your days.
           {"\n\n"}In future releases, you'd be able to:{"\n"}- Edit responses
           and share custom reports.{"\n"}- Pair Fusion with your sleep, activity
           trackers, music listening history and screen time.
