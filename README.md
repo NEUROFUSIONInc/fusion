@@ -1,13 +1,24 @@
 # Fusion by NEUROFUSION Research Inc.
 
-<img width="100%" alt="Screenshot 2023-11-24 at 8 33 30 AM" src="https://github.com/NEUROFUSIONInc/fusion/assets/13490968/f2911042-bc4d-41d4-a94b-0cde99209f78">
+We build tools to accelerate the adoption of neurotechnology and behavior research in every day life. We've built:
 
-We need an open platform for self experimentation that is secure, easy to use and doesn't sacrifice user privacy. We've built:
+- Fusion Copilot [iOS](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone), [Android](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1) that helps you manage & improve your wellbeing with personalized prompts and AI coaching.
+- [Fusion Explorer](https://usefusion.app/playground) for conducting and participating in distributed neurotechnology & behavior research.
 
-- A mobile application [iOS](https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone), [Android](https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1) that helps you manage & improve your wellbeing with personalized prompts and AI coaching.
-- A [web platform](https://usefusion.app/playground) for conducting and participating in distributed neurotechnology & behavior research.
+With these tools, you can:
 
-All of this is to get us closer of our vision for a future where we live our days with more agency, awareness and less guesswork.
+- [x] Record EEG while performing various activities using [Neurosity Crown](https://neurosity.co) and [Muse](https://choosemuse.com)
+      Supported activities:
+
+  - [x] Open Ended Brain Recording
+  - [x] Resting state (Eyes Closed/Eyes Open)
+  - [x] Stroop Task
+  - [x] Auditory Oddball
+  - [x] Flappy Bird game (Detecting intent & frustration)
+
+- [ ] Connect your screentime data using [ActivityWatch](https://activitywatch.net) and [Magicflow](https://magicflow.com)
+- [ ] Conduct research experiments securely with groups
+- [ ] Query your data with natural language
 
 ## Links
 
@@ -20,15 +31,3 @@ All of this is to get us closer of our vision for a future where we live our day
 See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
 
 [Join the Fusion Community](https://discord.gg/3wCNJ6X4RF)
-
-Over time, I've had wonderful people devote their time & energy to Fusion in different ways. To them I'm eternally grateful.
-
-- AdA
-- MiJ
-- AyM
-- JoG
-- YeO
-- EmA
-- ErB
-- KeO
-- (You?)
