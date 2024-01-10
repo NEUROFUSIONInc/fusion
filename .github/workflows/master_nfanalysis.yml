@@ -10,7 +10,7 @@ on:
       - master
       - "feat/**"
     paths:
-      - "analysis_server/**"
+      - "analysis_api/**"
   workflow_dispatch:
 
 jobs:
@@ -32,12 +32,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd analysis_server
+          cd analysis_api
           pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       - name: Zip artifact for deployment
-        run: zip release.zip ./analysis_server/* -r
+        run: zip release.zip ./analysis_api/* -r
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
@@ -70,4 +70,4 @@ jobs:
           app-name: "nfanalysis"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CA8C5543E7DA49CB837315DDCEFB1549 }}
-          package: ./analysis_server
+          package: ./analysis_api
