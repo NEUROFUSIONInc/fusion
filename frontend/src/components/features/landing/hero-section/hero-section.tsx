@@ -33,7 +33,7 @@ export const HeroSection = () => {
         )}
         {searchParams.get("persona") == "explorers_researchers" && (
           <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-            Perform behavior and neurotech <span className="text-primary-gradient">research seamlessly</span>{" "}
+            The simplest way to do brain and behavior <span className="text-primary-gradient">research at scale</span>{" "}
           </h1>
         )}
 
