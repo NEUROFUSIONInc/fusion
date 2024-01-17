@@ -38,7 +38,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     (async () => {
-      relay.connect();
+      await relay.connect();
     })();
   }, []);
 
