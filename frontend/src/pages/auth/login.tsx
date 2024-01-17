@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
 import { getPublicKey } from "nostr-tools";
 
-import { authService, relay } from "~/services";
+import { authService } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
 import { PRIVATE_KEY, getPrivateKey } from "~/utils/auth";
@@ -33,12 +33,6 @@ const LoginPage = () => {
       } catch (error) {
         console.error(error);
       }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      await relay.connect();
     })();
   }, []);
 

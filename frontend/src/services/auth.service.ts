@@ -3,14 +3,6 @@ import { nip19, nip04, relayInit } from "nostr-tools";
 
 import { api } from "~/config";
 
-export const relay = relayInit(process.env.NEXT_PUBLIC_FUSION_RELAY_URL!);
-relay.on("connect", () => {
-  console.log(`connected to ${relay.url}`);
-});
-relay.on("error", () => {
-  console.log(`failed to connect to ${relay.url}`);
-});
-
 interface AuthResponse {
   userNpub: string;
   authToken: string;
@@ -21,6 +13,15 @@ class AuthService {
     const serverPublicKey = process.env.NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY;
 
     try {
+      export const relay = relayInit(process.env.NEXT_PUBLIC_FUSION_RELAY_URL!);
+      relay.on("connect", () => {
+        console.log(`connected to ${relay.url}`);
+      });
+      relay.on("error", () => {
+        console.log(`failed to connect to ${relay.url}`);
+      });
+      await relay.connect();
+      
       const loginTimestamp = dayjs().unix();
       let sub = relay.sub([
         {
