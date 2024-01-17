@@ -8,7 +8,7 @@ import { getPublicKey } from "nostr-tools";
 import { authService, relay } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
-import { getPrivateKey } from "~/utils/auth";
+import { PRIVATE_KEY, getPrivateKey } from "~/utils/auth";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
@@ -16,6 +16,7 @@ const LoginPage = () => {
   const router = useRouter();
   const [publicKey, setPublicKey] = useState("");
   const [privateKey, setPrivateKey] = useState("");
+  const [showInput, setShowInput] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -41,6 +42,7 @@ const LoginPage = () => {
 
   const updateKeys = (privateKey: string) => {
     if (privateKey && privateKey.length === 64) {
+      localStorage.setItem(PRIVATE_KEY, privateKey);
       setPrivateKey(privateKey);
       const publicKey = getPublicKey(privateKey);
       setPublicKey(publicKey);
@@ -75,14 +77,14 @@ const LoginPage = () => {
         }}
       />
       <div className="mx-auto mt-16 flex w-full justify-center">
-        <div className="m-4 flex w-96 max-w-sm flex-col items-center space-y-6 rounded-md border bg-white py-12 px-4 shadow-md dark:border-secondary-400 dark:border-opacity-50 dark:bg-transparent dark:shadow-sm dark:shadow-gray-700">
+        <div className="m-4 flex w-96 max-w-sm flex-col items-center space-y-6 rounded-md border bg-white pt-12 pb-8 px-4 shadow-md dark:border-secondary-400 dark:border-opacity-50 dark:bg-transparent dark:shadow-sm dark:shadow-gray-700">
           <Logo className="w-16" />
           <h1 className="text-2xl font-bold">Login to Fusion</h1>
           {privateKey && (
             <div className="w-full">
               <p className="w-full text-center mb-1">We're private by design. Get started with an anonymous account!</p>
               <Input
-                type="hidden"
+                type={showInput ? "" : "hidden"}
                 size="lg"
                 fullWidth
                 placeholder="Enter Private Key"
@@ -92,8 +94,11 @@ const LoginPage = () => {
             </div>
           )}
           <Button type="button" onClick={() => onSubmit(publicKey, privateKey)} size="lg" fullWidth className="mt-4">
-            Login
+            Get Started
           </Button>
+          <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
+            use existing account key
+          </a>
         </div>
       </div>
     </MainLayout>
