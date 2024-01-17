@@ -21,8 +21,10 @@ const LoginPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (window.nostr) {
-          const publicKey = await window.nostr.getPublicKey();
+        // @ts-ignore
+        const nostr = window.nostr;
+        if (nostr) {
+          const publicKey = await nostr.getPublicKey();
           setPublicKey(publicKey);
         } else {
           const privateKey = getPrivateKey();
