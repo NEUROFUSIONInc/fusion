@@ -1,8 +1,9 @@
 import { DefaultSession, DefaultUser } from "next-auth";
 
-import { UserCompleteLoginResponse } from "~/services/auth/types";
-
-type IUser = DefaultUser & UserCompleteLoginResponse["body"];
+type IUser = DefaultUser & {
+  authToken: string;
+  privateKey?: string;
+};
 
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
@@ -12,7 +13,7 @@ declare module "next-auth/jwt" {
 }
 
 declare module "next-auth" {
-  interface User extends IUser {}
+  interface User extends IUser { }
   interface Session extends DefaultSession {
     user?: User;
   }

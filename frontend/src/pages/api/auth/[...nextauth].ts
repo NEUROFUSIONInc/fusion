@@ -7,8 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { randomBytes } from "crypto";
 
-import { authService } from "~/services";
-
 const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
 export const authOptions: NextAuthOptions = {
@@ -29,33 +27,35 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.authToken = user.authToken;
+        token.privateKey = user.privateKey;
       }
       return token;
     },
-    // @ts-ignore
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.authToken = token.authToken;
+        session.user.privateKey = token.privateKey as string;
       }
-      if (session.user) return session;
+      return session;
     },
   },
   providers: [
     CredentialsProvider({
       name: "Nostr",
       credentials: {
+        userNpub: { label: "userNpub", type: "text" },
+        authToken: { label: "authToken", type: "text" },
         privateKey: { label: "privateKey", type: "password" },
       },
       async authorize(credentials, req) {
-        const authObject = await authService.completeNostrLogin(credentials!.privateKey);
-
-        if (authObject) {
+        if (credentials && (credentials.userNpub && credentials.authToken)) {
           const resObject: User = {
             id: randomBytes(4).toString("hex"),
-            name: authObject?.userNpub,
+            name: credentials.userNpub,
             email: "",
             image: "/images/avatar.png",
-            authToken: authObject?.authToken,
+            authToken: credentials.authToken,
+            privateKey: credentials.privateKey,
           };
 
           return resObject;
