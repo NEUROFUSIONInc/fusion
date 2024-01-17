@@ -1,2 +1,2 @@
 export * from "./integrations";
-export * from "./auth";
+export * from "./auth.service";

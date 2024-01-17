@@ -1,22 +1,21 @@
+import React from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import React from "react";
+import { useSession } from "next-auth/react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
-import { DashboardLayout, Meta } from "~/components/layouts";
-import { Button, Input } from "~/components/ui";
-import { useSession } from "next-auth/react";
+import { DashboardLayout } from "~/components/layouts";
 
 const AccountPage: NextPage = () => {
   const { data: session } = useSession();
+
   return (
     <DashboardLayout>
       <h1 className="text-4xl">Profile</h1>
       <p className="mb-10 mt-2 text-lg dark:text-slate-400">You have been assigned an anonymous account</p>
 
       <p>Public Key : {session?.user?.name}</p>
-
-      <p>Private Key</p>
+      <p>Private Key: {session?.user?.privateKey} </p>
 
       <div>
         <p className="mt-5">You're on the Fusion Free Plan.</p>
