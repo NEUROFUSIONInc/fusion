@@ -279,8 +279,8 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 
       {additionalNotes.length > 0 && (
         // if there are additional options, display them here
-        <View className="border-t-2 border-tint p-5">
-          <View className="flex flex-row justify-end border-b-2 mb-3 pb-1 border-tint w-full">
+        <View className="p-5">
+          <View className="flex flex-row justify-end border-b-[1px] mb-3 pb-1 border-tint w-full">
             <Pressable onPress={toggleAdditionalNotes}>
               <Text className="text-base text-lime font-sans">
                 {showAdditionalNotes ? "Hide" : "Show"} Additional Notes

@@ -10027,12 +10027,28 @@ react-typist-component@^1.0.5:
   resolved "https://registry.npmjs.org/react-typist-component/-/react-typist-component-1.0.5.tgz"
   integrity sha512-UMMwkHFU7qiBA+w/knNMdNZ5lR184pb2cKOjBH7qZpW7ZVWxFZ+iwXXDwz+JpvO/iyGbMnfS8l643LDmcnE37Q==
 
+react-use-form@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-use-form/-/react-use-form-0.1.0.tgz#7c13b53cc3346fa2b5c68b6bcc86e689d4f87c2b"
+  integrity sha512-Is95GBTp/dtWpLUWluTMr48tTrld6CoVW6I4Nlxgt16mQmhJINGZBX41xyLiDazAqw6rcDk4M8ym1yyeqAn4kQ==
+  dependencies:
+    react "^16.7.0-alpha.0"
+
 react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
+
+react@^16.7.0-alpha.0:
+  version "16.14.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
+  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
 
 read-cache@^1.0.0:
   version "1.0.0"
