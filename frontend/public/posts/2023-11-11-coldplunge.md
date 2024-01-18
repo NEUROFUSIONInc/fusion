@@ -1,8 +1,8 @@
 ---
 title: Investigating the Impact of Cold Plunges on Brain Activity
-description: Personalized recommendations just for you.
-publishedDate: 2023/10/30
-coverImage: /images/blog/fusion-copilot.webp
+description: Are there changes in attention & stress response after cold water immersion?
+publishedDate: 2023/11/11
+coverImage: /images/blog/coldplunge/doing_experiment.png
 tags:
   - fusion
   - neurotech
@@ -11,13 +11,9 @@ authors:
   - Ore Ogundipe
 ---
 
-# Investigating the Impact of Cold Plunges on Brain Activity
-
 During [ZuConnect](https://zuzalu.city/), we were curious about the impact of cold plunges on peoples brain activity & overall wellbeing. Are there changes in attention & stress response?
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/d305d1ae-5e87-4655-b705-64e3b093236f/Untitled.jpeg)
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/51408dea-2fb1-4138-8575-dd17c05edc17/Untitled.jpeg)
+![Picture of Water Temperature](/images/blog/coldplunge/water_temperature.png)
 
 **Average water temperature 5-10 degrees celsius**
 
@@ -27,18 +23,20 @@ For the experiment, each person wore:
 
 - An 8 channel EEG headset ([Neurosity Crown](https://neurosity.co)) and performed recordings using the [Fusion Explorer](https://usefusion.app/playground)
 
+![Picture of Participant in Water](/images/blog/coldplunge/participant_in_water.png)
+
 ### Flow
 
 Total time: 25mins
 
-- Resting state (5mins)
-- Stroop task (5mins)
+- Resting state (eyes closed & eyes open in alternating 15 seconds) (5mins)
+- Stroop task (matching the color of a word & the text) (5mins)
 - Water Immersion (3mins)
 - Get dry (2mins)
 - Stroop task (5mins)
 - Resting state (5mins)
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/38da21f4-1d67-4b0f-b5a0-1181f25daa80/Untitled.jpeg)
+![Picture of Participant in Doing Cognitive Task](/images/blog/coldplunge/doing_experiment.png)
 
 ## What did we observe?
 
@@ -47,22 +45,24 @@ Total time: 25mins
 Key observations:
 
 - **Delta Band (Deep Relaxation or Stress):** Changes in the delta band could indicate varying levels of deep relaxation or stress. During the cold plunge ('plunge_open_ended'), some participants show an increase in delta power, which might suggest a relaxation response or a dissociative state in response to extreme cold. Others may show a decrease, indicating a stress response.
-  ![Screenshot 2023-11-15 at 1.56.43 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/32a09e8a-1442-423c-97f2-6a01c6c6bc5a/Screenshot_2023-11-15_at_1.56.43_PM.png)
+  ![Relative Delta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_delta_across.png)
 - **Theta Band (Emotional Response):** The theta band, often associated with emotional experiences, shows varied responses during the experiment. Increases in theta power, particularly during the plunge, could reflect an emotional or meditative response. It's also worth noting how participants' theta activity changes during the cognitive tasks ('pre_plunge_stroop' and 'post_plunge_stroop'), as this might reflect emotional reactions to cognitive stress.
 
-  - more
-    Theta is often linked to drowsiness, creativity, and emotional experiences. Fluctuations might reflect emotional responses or relaxed states.
+  - Theta is often linked to drowsiness, creativity, and emotional experiences. Fluctuations might reflect emotional responses or relaxed states.
 
-  ![Screenshot 2023-11-15 at 1.57.17 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/66b4763e-12f1-400c-8f1a-a45e8eb8d202/Screenshot_2023-11-15_at_1.57.17_PM.png)
+  ![Relative Theta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_theta_across.png)
 
 - **Alpha Band (Relaxation and Alertness):** The alpha band is typically linked to states of relaxation and calmness. Higher, more relaxation. Lower, more alertness. Fluctuations in this band, especially in the post-plunge phases, could be indicative of changes in relaxation or alertness levels as the participants recover from the stress of the plunge.
-  ![Screenshot 2023-11-15 at 1.58.59 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/a7554c2c-4d8b-4af8-8db4-4dbe62511c9e/Screenshot_2023-11-15_at_1.58.59_PM.png)
+
+  ![Relative Alpha Power Across Sessions & Partipants](/images/blog/coldplunge/relative_alpha_across.png)
+
 - **Beta Band (Active Thinking and Focus):** The beta band is related to active thinking and focus. Variations here during the 'stroop' tasks suggest differences in cognitive processing and stress response. An increase in beta power might indicate heightened alertness and cognitive engagement, while a decrease could suggest fatigue or decreased focus.
 
-  ![Screenshot 2023-11-15 at 1.59.21 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/22596e69-1a56-4271-aaf9-3292955f2495/Screenshot_2023-11-15_at_1.59.21_PM.png)
+  ![Relative Beta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_beta_across.png)
 
 - **Gamma Band (Cognitive Functioning):** Lastly, the gamma band is associated with higher cognitive processing tasks. Changes in this band could reflect how different individuals' cognitive functions are affected by the stress and recovery phases of the experiment.
-  ![Screenshot 2023-11-15 at 1.59.44 PM.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/023492c1-b916-4ca1-a08c-613333bcd608/71342b87-3133-49aa-b7db-7cf362be06de/Screenshot_2023-11-15_at_1.59.44_PM.png)
+
+  ![Relative Gamma Power Across Sessions & Partipants](/images/blog/coldplunge/relative_gamma_across.png)
 
 **Contextual Adaptation:** The progression from a resting state, through a cognitive task, into the stressor (cold plunge), and back through cognitive tasks and resting state, shows how the brain adapts to changing contexts. The variations in brain activity across these stages reflect the dynamic nature of brain responses to both cognitive and physical stressors.
 
@@ -79,13 +79,22 @@ In summary, these visualizations provide valuable insights into the dynamic and 
 
 - [Join our community discord!](https://discord.gg/PCjdaJuySU)
 - [Reach out contact@usefusion.app](mailto:contact@usefusion.app)
-- [Download the Fusion app to start self experimenting - starting with understanding changes in behavior over time / impact of lifestyle choices!](https://usefusion.app)
+- [Download the Fusion app to monitor and understanding changes in behavior over time the impact of lifestyle choices!](https://usefusion.app)
 </aside>
+
+## Acknoledgements
+
+Thank you to all our participants for their patience and enthusiasm exploring the unknown together. Our goal at Neurofusion is to accelerate the adoption of neurotechnology as a tool for proving the credence of interventions in everyday life and this experiment got us one step closer to doing so.
+
+### Notes on Analysis
+
+- After each recording, we get a zip dataset that is saved locally.
+- We used our processing script to filter our epochs that did not have good signal 90% of the time. The length of each epoch is 5 seconds.
+- After getting the frequency power averages for each trail per participant, we created a single dataset that contained the frequency power summary across trials.
+- For comparison across subjects, we chose relative power because absolute power values can be skewed based on size of head & differences in individual fit of EEG headset.
+
+[Our work is open source on Github](https://github.com/NEUROFUSIONInc/fusion)
 
 Thanks,
 
 Ore from NEUROFUSION Research Inc.
-
----
-
-- Notes on analysis

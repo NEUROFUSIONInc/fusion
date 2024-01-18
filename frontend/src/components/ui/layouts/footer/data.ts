@@ -1,23 +1,22 @@
 export const footerLinks = [
   {
-    title: "Team",
-    href: "/team",
-  },
-  {
     title: "Blog",
-    href: "https://neurofusion.substack.com/",
-    external: true,
+    href: "/blog",
+    external: false,
   },
   {
     title: "Privacy Policy",
     href: "/privacy",
+    external: false,
   },
   {
     title: "Terms of Service",
     href: "/termsofservice",
+    external: false,
   },
   {
     title: "Contact",
-    href: "mailto:ore@usefusion.app",
+    href: "mailto:contact@usefusion.app",
+    external: true,
   },
 ];

@@ -1,6 +1,12 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useContext, useEffect } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { View, Text, Image } from "react-native";
 import {
   State,
@@ -9,11 +15,20 @@ import {
 } from "react-native-gesture-handler";
 
 import { Prompt } from "~/@types";
-import { Screen, ChartContainer, Select, Button, Plus } from "~/components";
+import {
+  Screen,
+  ChartContainer,
+  Select,
+  Button,
+  Plus,
+  CategoryTag,
+} from "~/components";
 import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { colors } from "~/theme";
+import { categories } from "~/config";
+
 import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
@@ -53,6 +68,34 @@ export function InsightsScreen() {
     const prompt = savedPrompts?.find((p) => p.uuid === promptUuid);
     setActiveChartPrompt(prompt);
   };
+
+  const [selectedCategory, setSelectedCategory] = useState<
+    string | undefined
+  >();
+  const categoryPillsToDisplay = useMemo(() => {
+    const categoriesToDisplay = categories.filter(
+      (category) =>
+        savedPrompts?.filter(
+          (prompt) => prompt.additionalMeta?.category === category.name
+        )?.length! > 0
+    );
+    return categoriesToDisplay;
+  }, [savedPrompts]);
+  const handleCategorySelection = useCallback((category: string) => {
+    setSelectedCategory(category);
+  }, []);
+
+  const filteredPrompts = useMemo(() => {
+    if (selectedCategory === "") {
+      return savedPrompts;
+    } else {
+      return selectedCategory
+        ? savedPrompts?.filter(
+            (prompt) => prompt.additionalMeta?.category === selectedCategory
+          )
+        : savedPrompts;
+    }
+  }, [savedPrompts, selectedCategory]);
 
   useEffect(() => {
     setChartStartDate(dayjs().startOf(insightContext!.insightPeriod));
@@ -138,69 +181,63 @@ export function InsightsScreen() {
       {savedPrompts && savedPrompts.length > 0 && (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView nestedScrollEnabled>
-            <View className="flex flex-row w-full justify-between p-5">
-              {insightContext!.insightPeriod === "week" ? (
-                <Text className="text-base font-sans-bold text-white">
-                  {chartStartDate.format("MMM D") +
-                    " - " +
-                    chartStartDate
-                      .add(1, insightContext!.insightPeriod)
-                      .format("MMM D")}
-                </Text>
-              ) : (
-                <Text className="text-base font-sans-bold text-white">
-                  {chartStartDate.format("MMMM YYYY")}
+            <ScrollView
+              horizontal
+              className="flex gap-x-3 gap-y-3 pl-2"
+              showsHorizontalScrollIndicator={false}
+            >
+              {categoryPillsToDisplay.map((category) => {
+                const name = category.name;
+                return (
+                  <CategoryTag
+                    key={name}
+                    title={name}
+                    isActive={selectedCategory === name}
+                    icon={category.icon}
+                    handleValueChange={(checked) =>
+                      handleCategorySelection(checked ? name : "")
+                    }
+                  />
+                );
+              })}
+            </ScrollView>
+
+            {/* now add the date selectors */}
+            <ScrollView className="flex flex-row border-b-[1px] mt-5 mb-5 m-2 border-tint">
+              {insightContext!.insightPeriod === "month" && (
+                // list all the months in the year
+                <Text className="text-base text-white p-2">
+                  {chartStartDate.format("MMM YYYY")}
                 </Text>
               )}
-
-              {chartStartDate <
-              dayjs().startOf(insightContext!.insightPeriod) ? (
-                <Text
-                  className="text-base font-sans text-lime"
-                  onPress={() =>
-                    setChartStartDate(
-                      dayjs().startOf(insightContext!.insightPeriod)
-                    )
-                  }
-                >
-                  View current {insightContext!.insightPeriod}
-                </Text>
-              ) : null}
-            </View>
+            </ScrollView>
 
             {/* select the first available prompt */}
-            <View className="flex flex-col w-full bg-secondary-900">
-              <View className="flex flex-row w-full h-auto justify-between p-3 border-b-2 border-tint rounded-t">
-                {renderDropdown && (
-                  <Select
-                    items={savedPrompts.map((prompt) => ({
-                      label: prompt.promptText,
-                      value: prompt.uuid,
-                    }))}
-                    value={selectedPromptUuid!}
-                    placeholder="Select prompt"
-                    setValue={setSelectedPromptUuid}
-                    dropDownDirection="BOTTOM"
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                      nestedScrollEnabled: true,
-                      indicatorStyle: "white",
-                    }}
-                  />
-                )}
-              </View>
+            <View className="flex flex-col w-full">
+              <View className="flex flex-col w-full h-auto justify-between rounded-lg bg-secondary-900">
+                {filteredPrompts?.map((prompt) => (
+                  <View key={prompt.uuid}>
+                    <View className="border-b-[1px] border-tint p-5">
+                      <Text
+                        className="text-base font-sans text-white"
+                        onPress={() => setSelectedPromptUuid(prompt.uuid)}
+                      >
+                        {prompt.promptText}
+                      </Text>
+                    </View>
 
-              <View className="-z-30">
-                <View>
-                  {/* this is where the chart is */}
-                  {activeChartPrompt && (
-                    <ChartContainer
-                      prompt={activeChartPrompt}
-                      startDate={chartStartDate}
-                      timePeriod={insightContext!.insightPeriod}
-                    />
-                  )}
-                </View>
+                    <View>
+                      {/* this is where the chart is */}
+                      {activeChartPrompt && (
+                        <ChartContainer
+                          prompt={activeChartPrompt}
+                          startDate={chartStartDate}
+                          timePeriod={insightContext!.insightPeriod}
+                        />
+                      )}
+                    </View>
+                  </View>
+                ))}
               </View>
             </View>
           </ScrollView>

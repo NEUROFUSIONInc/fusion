@@ -4,7 +4,7 @@ import React, { useCallback, useRef } from "react";
 import { View } from "react-native";
 
 import { Button } from "../../button";
-import { LeftArrow, VerticalMenu } from "../../icons";
+import { LeftArrow, Pencil, VerticalMenu } from "../../icons";
 import { AddPromptSheet } from "../create-prompt-sheet/add-prompt-sheet";
 
 export const QuickAddPromptsHeader = () => {
@@ -28,13 +28,13 @@ export const QuickAddPromptsHeader = () => {
       <Button
         variant="ghost"
         size="icon"
-        leftIcon={<LeftArrow width={32} height={32} />}
+        leftIcon={<LeftArrow width={25} height={25} />}
         onPress={handleGoBack}
       />
       <Button
         variant="ghost"
         size="icon"
-        leftIcon={<VerticalMenu />}
+        leftIcon={<Pencil width={25} height={25} />}
         onPress={handleExpandSheet}
       />
 

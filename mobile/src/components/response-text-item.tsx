@@ -20,7 +20,7 @@ export const ResponseTextItem: React.FC<ResponseTextItemProps> = ({
   return (
     <View
       key={Math.random() * 1000}
-      className="pb-3 mb-3 border-b-2 border-tint"
+      className="pb-3 mb-3 border-b-[1px] border-tint"
     >
       <Pressable onPress={toggleExpand}>
         {expandText ? (
