@@ -15,6 +15,20 @@ The mobile application has the following features:
 
 Data is stored on the phone using SQLite.
 
+## Getting set up for development
+
+- Install dependencies
+
+```
+npm install
+```
+
+- Start the app
+
+```
+npx expo run:ios
+```
+
 ## Prompt Structure
 
 ```json

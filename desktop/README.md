@@ -1,10 +1,12 @@
 # Fusion Explorer Client
 
-## Contribute
+(Still in development...)
+
+## Running Locally
 
 To get started
 
-- Install requirements
+## Getting Started
 
 ```
 npm install
