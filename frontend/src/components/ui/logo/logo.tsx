@@ -22,9 +22,10 @@ const logoStyles = cva("w-5", {
 interface LinkProps extends VariantProps<typeof logoStyles> {
   withText?: boolean;
   className?: string;
+  neuro?: boolean;
 }
 
-export const Logo: FC<LinkProps> = ({ withText, size, className }) => {
+export const Logo: FC<LinkProps> = ({ withText, size, className, neuro }) => {
   return (
     <Link href="/" className="inline-flex items-center">
       <Image
@@ -36,7 +37,9 @@ export const Logo: FC<LinkProps> = ({ withText, size, className }) => {
         className={logoStyles({ size, className })}
       />
       {withText && (
-        <h2 className="ml-2 font-heading text-2xl font-medium leading-10 text-primary-900 dark:text-white">FUSION</h2>
+        <h2 className="ml-2 font-heading text-2xl font-medium leading-10 text-primary-900 dark:text-white">
+          {neuro ? "NEUROFUSION" : "FUSION"}
+        </h2>
       )}
     </Link>
   );

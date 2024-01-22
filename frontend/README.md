@@ -16,21 +16,30 @@ npm install
 npm run dev
 ```
 
-## How we do anonymous auth
+## How Fusion allows people create anonymous accounts without providing email
 
 - Auth is done using [Nostr](https://nostr.com)
-
-- Client & Fusion server are connected to Fusion's relay endpoint ws://relay.usefusion.ai
+- Client & Fusion server are connected to Fusion's relay endpoint `ws://relay.usefusion.ai`
 - Client makes a request to Fusion server with it's public key
 - Fusion server
   - receives request,
   - creates/validates account,
   - sends signs a nip04 encrpyted message containing authToken, with Client as receiver
   - drops message on Fusion relay
-- Client listens for message, decrypts message using nip04 (If the client has nos2x extension, we use window.nostr!)
-- Client stores authToken and uses it for future api requests to server
+- Client listens for message, decrypts message using nip04 (If the client has [nos2x extension on their browser](https://chromewebstore.google.com/detail/nos2x/kpgefcfmnafjgpblomihpgmejjdanjjp), we use window.nostr!)
 
-See [auth.service.ts](src/services/auth.service.ts) for implementation details
+- Client stores
+  - authToken (session storage)
+  - NostrPrivateKey (local storage)
+
+and uses it for future api requests to server
+
+See the following files for implementation details
+
+- React Component [login.tsx](src/pages/auth/login.tsx)
+- Nostr Auth Implementation [auth.service.ts](src/services/auth.service.ts)
+  - nip04
+  - nip07
 
 ## (For maintainers only) To update the certs used for localhost to run https
 
