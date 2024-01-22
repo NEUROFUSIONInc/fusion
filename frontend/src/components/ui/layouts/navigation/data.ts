@@ -12,7 +12,7 @@ export const navigationLinks = [
   // },
   {
     title: "Research",
-    href: "/?persona=explorers_researchers",
+    href: "/research",
     persona: "explorers_researchers",
     external: false,
   },

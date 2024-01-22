@@ -4,9 +4,7 @@ import { Plus } from "lucide-react";
 import { faqsExplorersResearchers, frequentlyAskedQuestions } from "./data";
 import { useSearchParams } from "next/navigation";
 
-export const FaqSection = () => {
-  const searchParams = useSearchParams();
-  const persona = searchParams.get("persona");
+export const FaqSection = ({ isResearch = false }) => {
   return (
     <section
       title="Frequently Asked Questions"
@@ -17,7 +15,7 @@ export const FaqSection = () => {
         You might be wondering...
       </h2>
       <Accordion.Root type="single" collapsible className="w-full lg:w-auto">
-        {persona === "explorers_researchers"
+        {isResearch
           ? faqsExplorersResearchers.map((item) => (
               <Accordion.Item key={item.id} value={`step-${item.id}`} className="lg:w-[600px]">
                 <Accordion.Trigger className="my-3 flex w-full items-center justify-between rounded-sm bg-gray-100 p-4 transition-all [&[data-state=open]>svg]:rotate-45">

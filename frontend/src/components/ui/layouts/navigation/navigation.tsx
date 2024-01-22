@@ -12,20 +12,18 @@ import { MobileMenu } from "./mobile-menu";
 import { cn } from "~/utils";
 import { useSearchParams } from "next/navigation";
 
-export const Navbar: FC = () => {
+export const Navbar = ({ isResearch = false }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pagePersona = searchParams.get("persona") ?? "default";
 
   return (
     <header className="sticky top-0 left-0 right-0 z-10 flex items-center w-full h-16 border-b shadow-sm border-b-gray-50/20 bg-white/50 dark:bg-transparent backdrop-blur-lg dark:border-b-gray-800 dark:border-opacity-50">
       <nav className="container flex items-center justify-between px-6 mx-auto py-7 md:px-4">
-        <Logo withText />
+        {isResearch ? <Logo withText neuro /> : <Logo withText />}
         <div className="items-center justify-between hidden md:flex">
           <div className="flex items-center">
             {navigationLinks.map((link) => {
-              const active = false;
+              const active = router.pathname === link.href;
 
               return (
                 <Link
