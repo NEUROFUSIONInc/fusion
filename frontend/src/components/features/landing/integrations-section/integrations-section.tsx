@@ -6,7 +6,7 @@ export const IntegrationsSection = () => {
     <section
       title="Integrations"
       aria-labelledby="integrations"
-      className="relative mb-32 mt-28 flex flex-col items-center space-y-4 text-center md:mb-48"
+      className="relative flex flex-col items-center space-y-4 text-center md:mb-20"
     >
       {/* <h2 className="mx-4 max-w-2xl text-4xl font-semibold md:text-5xl lg:text-6xl">
         Personal Insights from Your <span className="text-primary-gradient">Daily Habits and Actions </span>

@@ -24,6 +24,12 @@ Fusion's gentle prompts help me see these patterns in my daily life, focusing on
 
 I concentrated on prompts related to autoimmunity and connected matters. I chose the following prompts:
 
+![User Prompts for Managing Health](/images/blog/user_prompts_for_health.webp)
+
+<button><a href="https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone">Download Fusion on your iPhone/iPad</a></button>
+<br>
+<button><a href="https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1">Download Fusion on your Android Phone/Tablet</a></button>
+
 ---
 
 The results from Fusion's analysis were enlightening. The standout discovery? A direct link between my mental state and my diet.
@@ -35,3 +41,5 @@ At first, I dismissed it because I thought this was something everyone knows. Bu
 > Recognizing this pattern where high energy led to eating less healthy helped me take control and avoid negative effects.
 
 Fusion has already changed things for me in just a few weeks. It's shown me a way to understand health issues without doubting everything. With Fusion's help, I'm excited to see others find their own path to wellness.
+
+- [Gabriel Price (Fusion User)](https://www.linkedin.com/in/gabriel-price-781b97b8/)
