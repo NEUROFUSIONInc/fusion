@@ -2,7 +2,7 @@
 title: Can't light a fire without a spark 🔥
 description: Recap of our Lagos Community Event
 publishedDate: 2023/09/12
-coverImage: /images/blog/lagos-community.webp
+coverImage: /images/blog/communityevent/lagos-community.webp
 tags:
   - fusion
 slug: fusion-community-lagos
@@ -14,15 +14,27 @@ We hosted our first community event, in Lagos! Although, a heavy rain tried to s
 
 > I love how the personalized prompts push me to be more productive and understand myself better. - Grace (Fusion user)
 
+<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/tC-qBco_N1k" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Event Highlights
 
-We kicked it off with a presentation from our founder, Oreoluwa Ogundipe. He shared with us his vision for Fusion and what we have planned in the coming months especially intelligent recommendations based on users' entries within the app and our plans for connecting health professionals and researchers with Fusion users. Users also met with our team, which spans both locally in Lagos and across other countries.
+![Ore speaking](/images/blog/communityevent/ore_speaking.png)
+
+We kicked it off with a presentation from our founder, [Oreoluwa Ogundipe](https://www.linkedin.com/in/ogundipeore/). He shared with us his vision for Fusion and what we have planned in the coming months especially intelligent recommendations based on users' entries within the app and our plans for connecting health professionals and researchers with Fusion users. Users also met with our team, which spans both locally in Lagos and across other countries.
+
+![CSO Address](/images/blog/communityevent/johns_address.webp)
 
 ## Designing Fusion with Privacy in mind
 
 We expressed our commitment to safeguarding user data and how we’ve designed Fusion with privacy in mind. We store prompts and responses on the users' mobile phones allowing them to be as personal as they desire to be. No one else can see inputted data unless the user chooses to share - even us at Fusion. This sets us apart in a world where personal data is often access and sale often raise concerns.
 
+<button><a href="https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone">Download Fusion on your iPhone/iPad</a></button>
+<br>
+<button><a href="https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1">Download Fusion on your Android Phone/Tablet</a></button>
+
 ## Famasi x Fusion
+
+![Fusion and Famasi founders speaking](/images/blog/communityevent/fusion_famasi.png)
 
 We had a fireside chat between our founder and Adeola Ayoola, Famasi Africa’s co-founder, on their journey of providing care & medication delivery to anyone in need. We also touched on how Fusion can help them personalize care at scale. We will share more on how this evolves in the future but, we are optimistic that Fusion will provide a window for healthcare organizations like Famasi into the daily lives of their customers & help them trial interventions.
 
@@ -30,13 +42,17 @@ We had a fireside chat between our founder and Adeola Ayoola, Famasi Africa’s 
 
 ## Brain Recordings on Fusion
 
+![NeuroFusion explorer demo](/images/blog/communityevent/neurofusion_explorer_demo.jpg)
+
 And who doesn’t love trying new things? We wrapped up Demo Day by having a participant perform a brain recording on the Fusion platform. Our users saw firsthand what raw brain data looked like and how wearable devices can track brain activity to provide objective insights into a person’s mental state.
 
 Feedback from the event was great! So we’re taking this as a sign to host more :)
 
 Finally, we would like to extend our gratitude to all our users. We remain committed to enabling you manage & improve your health, productivity & wellbeing.
 
-Follow us on Twitter/X, Instagram & LinkedIn to stay up to date with our progress!
+![Group Photo with Attendees](/images/blog/communityevent/group_photo.png)
+
+Follow us on [Twitter/X](https://x.com/usefusionapp), [Instagram](https://instagram.com/usefusionapp) & [LinkedIn](https://www.linkedin.com/company/neurofusion-research-inc/) to stay up to date with our progress!
 
 With love,
 

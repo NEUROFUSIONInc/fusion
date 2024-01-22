@@ -19,7 +19,7 @@ export const Sidebar: FC = () => {
       aria-label="Sidebar"
     >
       <div className="flex h-full flex-col overflow-y-auto">
-        <Logo withText size="md" />
+        <Logo withText size="md" neuro />
         <nav className="mt-6 flex flex-grow">
           {" "}
           <ul className="w-full space-y-2">

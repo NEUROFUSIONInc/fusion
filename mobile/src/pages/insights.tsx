@@ -22,6 +22,7 @@ import {
   Button,
   Plus,
   CategoryTag,
+  Pencil,
 } from "~/components";
 import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
@@ -52,22 +53,9 @@ export function InsightsScreen() {
 
   const { data: savedPrompts, isLoading } = usePromptsQuery();
 
-  const [activeChartPrompt, setActiveChartPrompt] = React.useState<
-    Prompt | undefined
-  >();
-
   const [chartStartDate, setChartStartDate] = React.useState<dayjs.Dayjs>(
     dayjs().startOf(insightContext!.insightPeriod)
   );
-
-  const [selectedPromptUuid, setSelectedPromptUuid] = React.useState<
-    string | undefined
-  >(routePromptUuid ? routePromptUuid : savedPrompts?.[0]?.uuid);
-
-  const handleActivePromptSelect = (promptUuid: string) => {
-    const prompt = savedPrompts?.find((p) => p.uuid === promptUuid);
-    setActiveChartPrompt(prompt);
-  };
 
   const [selectedCategory, setSelectedCategory] = useState<
     string | undefined
@@ -100,20 +88,6 @@ export function InsightsScreen() {
   useEffect(() => {
     setChartStartDate(dayjs().startOf(insightContext!.insightPeriod));
   }, [insightContext!.insightPeriod]);
-
-  useEffect(() => {
-    // we set this once and destroy afterwards
-    if (routePromptUuid) {
-      setSelectedPromptUuid(routePromptUuid);
-      routePromptUuid = null;
-    }
-  }, [routePromptUuid]);
-
-  useEffect(() => {
-    if (selectedPromptUuid) {
-      handleActivePromptSelect(selectedPromptUuid);
-    }
-  }, [selectedPromptUuid]);
 
   const onHandlerStateChange = (event: {
     nativeEvent: { state: number; translationX: number };
@@ -178,67 +152,67 @@ export function InsightsScreen() {
         </View>
       )}
 
+      <ScrollView
+        horizontal
+        className="flex gap-x-3 gap-y-3 pl-2"
+        showsHorizontalScrollIndicator={false}
+      >
+        {categoryPillsToDisplay.map((category) => {
+          const name = category.name;
+          return (
+            <CategoryTag
+              key={name}
+              title={name}
+              isActive={selectedCategory === name}
+              icon={category.icon}
+              handleValueChange={(checked) =>
+                handleCategorySelection(checked ? name : "")
+              }
+            />
+          );
+        })}
+      </ScrollView>
       {savedPrompts && savedPrompts.length > 0 && (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView nestedScrollEnabled>
-            <ScrollView
-              horizontal
-              className="flex gap-x-3 gap-y-3 pl-2"
-              showsHorizontalScrollIndicator={false}
-            >
-              {categoryPillsToDisplay.map((category) => {
-                const name = category.name;
-                return (
-                  <CategoryTag
-                    key={name}
-                    title={name}
-                    isActive={selectedCategory === name}
-                    icon={category.icon}
-                    handleValueChange={(checked) =>
-                      handleCategorySelection(checked ? name : "")
-                    }
-                  />
-                );
-              })}
-            </ScrollView>
-
             {/* now add the date selectors */}
-            <ScrollView className="flex flex-row border-b-[1px] mt-5 mb-5 m-2 border-tint">
+            <View className="flex flex-1 flex-row border-b-[1px] mt-5 mb-5 m-2 border-tint">
               {insightContext!.insightPeriod === "month" && (
                 // list all the months in the year
                 <Text className="text-base text-white p-2">
                   {chartStartDate.format("MMM YYYY")}
                 </Text>
               )}
-            </ScrollView>
+            </View>
 
             {/* select the first available prompt */}
-            <View className="flex flex-col w-full">
-              <View className="flex flex-col w-full h-auto justify-between rounded-lg bg-secondary-900">
-                {filteredPrompts?.map((prompt) => (
-                  <View key={prompt.uuid}>
-                    <View className="border-b-[1px] border-tint p-5">
-                      <Text
-                        className="text-base font-sans text-white"
-                        onPress={() => setSelectedPromptUuid(prompt.uuid)}
-                      >
-                        {prompt.promptText}
-                      </Text>
-                    </View>
-
-                    <View>
-                      {/* this is where the chart is */}
-                      {activeChartPrompt && (
-                        <ChartContainer
-                          prompt={activeChartPrompt}
-                          startDate={chartStartDate}
-                          timePeriod={insightContext!.insightPeriod}
-                        />
-                      )}
-                    </View>
+            <View className="flex flex-1 flex-col w-full h-auto justify-between">
+              {filteredPrompts?.map((prompt) => (
+                <View
+                  key={prompt.uuid}
+                  className="rounded-lg bg-secondary-900 mb-10"
+                >
+                  <View className="flex flex-row border-b-[1px] border-tint p-5 justify-between">
+                    <Text className="text-base font-sans text-white leading-10 max-w-[90%]">
+                      {prompt.promptText}
+                    </Text>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      leftIcon={<Pencil width={20} height={20} />}
+                      onPress={() => {}}
+                    />
                   </View>
-                ))}
-              </View>
+
+                  <View>
+                    <ChartContainer
+                      prompt={prompt}
+                      startDate={chartStartDate}
+                      timePeriod={insightContext!.insightPeriod}
+                    />
+                  </View>
+                </View>
+              ))}
             </View>
           </ScrollView>
         </PanGestureHandler>

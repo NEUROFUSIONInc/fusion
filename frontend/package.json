@@ -49,7 +49,6 @@
     "react-hook-form": "^7.45.2",
     "react-notifications": "^1.7.4",
     "react-typist-component": "^1.0.5",
-    "react-use-form": "^0.1.0",
     "rooks": "^7.14.1",
     "rxjs": "^7.8.1",
     "surrealdb.js": "^0.9.1",

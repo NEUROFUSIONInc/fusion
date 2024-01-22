@@ -51,7 +51,7 @@ export const ChatScreen = () => {
   };
 
   return (
-    <Screen>
+    <View className="flex flex-grow flex-col h-full w-full items-stretch justify-center bg-dark px-5">
       {/* Chat Messages */}
       <ScrollView
         className="flex-1 bg-black"
@@ -93,8 +93,7 @@ export const ChatScreen = () => {
         behavior="position"
         className="
            flex-1 flex-row items-center bg-secondary-900 rounded-md
-          my-2 max-h-[10%] pl-4 pr-4"
-        // {...(Platform.OS === "ios" ? { keyboardVerticalOffset: 100 } : {})
+          my-2 max-h-[10%] p-4 "
       >
         <TextInput
           placeholder="Message..."
@@ -108,6 +107,6 @@ export const ChatScreen = () => {
           <Text className="text-lime font-sans">Send</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
-    </Screen>
+    </View>
   );
 };
