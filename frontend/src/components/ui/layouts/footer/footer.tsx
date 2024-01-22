@@ -7,14 +7,14 @@ import { footerLinks } from "./data";
 import { MsPartner } from "./ms-partner";
 import { Newsletter } from "./newsletter/newsletter";
 
-export const Footer = () => {
+export const Footer = ({ isResearch = false }) => {
   return (
     <footer className="border-t border-t-gray-200 bg-gray-100/90 dark:border-t-gray-800 dark:bg-dark/10">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
       <div className="container mx-auto flex flex-col items-center space-y-6 overflow-hidden px-4 pt-16 sm:px-6 lg:px-8">
-        <Logo withText />
+        {isResearch ? <Logo withText neuro /> : <Logo withText />}
         <Newsletter />
         <MsPartner />
 

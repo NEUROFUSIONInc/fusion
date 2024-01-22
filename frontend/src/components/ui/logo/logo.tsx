@@ -27,7 +27,7 @@ interface LinkProps extends VariantProps<typeof logoStyles> {
 
 export const Logo: FC<LinkProps> = ({ withText, size, className, neuro }) => {
   return (
-    <Link href="/" className="inline-flex items-center">
+    <Link href={neuro ? "/playground" : "/"} className="inline-flex items-center">
       <Image
         src="/images/logo.png"
         alt="Neurofusion Logo"

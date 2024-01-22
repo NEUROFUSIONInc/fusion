@@ -21,7 +21,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           className="sticky left-0 right-0 top-0 z-10 flex h-16 w-full items-center
       justify-between space-x-3 bg-opacity-50 p-4 backdrop-blur-lg md:hidden"
         >
-          <Logo className="w-8" />
+          <Logo className="w-8" neuro />
           <Button rightIcon={<Menu />} size="icon" intent="ghost" onClick={() => setMobileMenuOpen(true)} />
         </div>
         <div className="hidden md:flex md:flex-shrink-0">
