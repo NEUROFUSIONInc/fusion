@@ -203,7 +203,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   }, [prompt, startDate, timePeriod]);
 
   return (
-    <View className="flex-1">
+    <View>
       {chartData.length === 0 && (
         <View className="flex flex-col items-center justify-center h-52">
           <Text className="font-sans text-white text-base align-middle">
@@ -264,7 +264,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       )}
 
       {prompt.responseType === "text" && chartData.length > 0 && (
-        <View className="flex flex-col w-full p-5">
+        <View className="flex flex-grow flex-col w-full p-5">
           {chartData.map((entry) => {
             return (
               <ResponseTextItem
