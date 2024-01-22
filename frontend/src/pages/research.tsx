@@ -15,7 +15,7 @@ const HeroSection = dynamic(() => import("~/components/features/landing").then((
 
 const Research: NextPage = () => {
   return (
-    <MainLayout>
+    <MainLayout isResearch>
       <Meta
         meta={{
           // todo: this should change based on the persona
