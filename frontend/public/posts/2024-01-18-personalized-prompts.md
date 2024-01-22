@@ -26,9 +26,7 @@ With this in mind, Fusion takes advantage of the notification system on your pho
 
 **Guiding Your Next Steps**: Personalized prompts go beyond reflection. They provide insights on when to take action for your well-being, whether it's recognizing the need for a break, seeking therapy, or identifying areas where you need to improve.
 
-## Walkthrough Video for Setting up Prompts
-
-<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/OzhOQWUiZcM?si=qQ5YwRiwZKKA30zP" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+![Suggested Prompts](/images/blog/personalizedprompts/suggested_prompts.png)
 
 ## Creating Personalized Prompts with Fusion
 
@@ -47,6 +45,10 @@ Custom Options: You can set up your specific type of response with our custom fo
 With this you can choose the format that best suits the nature of your prompt.
 
 **Set Frequency**: Determine how often you want to receive prompts. The frequency depends on the context of your prompt, with 6-8 hours being a recommended sweet spot for covering morning, afternoon, and evening periods.
+
+## Walkthrough Video for Setting up Prompts
+
+<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/OzhOQWUiZcM?si=qQ5YwRiwZKKA30zP" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Responding to Prompts with Fusion.
 
