@@ -26,7 +26,7 @@ With this in mind, Fusion takes advantage of the notification system on your pho
 
 **Guiding Your Next Steps**: Personalized prompts go beyond reflection. They provide insights on when to take action for your well-being, whether it's recognizing the need for a break, seeking therapy, or identifying areas where you need to improve.
 
-![Suggested Prompts](/images/blog/personalizedprompts/suggested_prompts.png)
+![Suggested Prompts](/images/blog/personalizedprompts/prompt_suggestions.png)
 
 ## Creating Personalized Prompts with Fusion
 
