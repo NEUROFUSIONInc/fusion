@@ -31,6 +31,10 @@ export const HeroSection = ({ isResearch = false }) => {
               Use Fusion to understand changes in your behavior and improve your quality of life.
             </p>
           </div>
+          <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
+            <MobileStoreLink store="apple" className="w-full md:w-auto" />
+            <MobileStoreLink store="google" className="w-full md:w-auto" />
+          </div>
           <div className="relative pb-[56.25%] h-0 w-full">
             <iframe
               title="Neurofusion Demo Video"
