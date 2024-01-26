@@ -222,89 +222,96 @@ export function InsightsScreen() {
         </View>
       )}
 
-      <ScrollView
-        horizontal
-        className="flex gap-x-3 flex-shrink-0 gap-y-3 pl-2 max-h-[100%]"
-        showsHorizontalScrollIndicator={false}
-      >
-        {categoryPillsToDisplay.map((category) => {
-          const name = category.name;
-          return (
-            <CategoryTag
-              key={name}
-              title={name}
-              isActive={selectedCategory === name}
-              icon={category.icon}
-              handleValueChange={(checked) =>
-                handleCategorySelection(checked ? name : "")
-              }
+      {savedPrompts && savedPrompts.length > 0 && (
+        <>
+          <ScrollView
+            horizontal
+            className="flex gap-x-3 flex-shrink-0 gap-y-3 pl-2 max-h-[100%]"
+            showsHorizontalScrollIndicator={false}
+          >
+            {categoryPillsToDisplay.map((category) => {
+              const name = category.name;
+              return (
+                <CategoryTag
+                  key={name}
+                  title={name}
+                  isActive={selectedCategory === name}
+                  icon={category.icon}
+                  handleValueChange={(checked) =>
+                    handleCategorySelection(checked ? name : "")
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+          <View className="flex flex-row border-b-[1px] my-5 border-tint">
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              maximumDate={dayjs().toDate()}
+              minuteInterval={5}
+              date={chartStartDate.toDate()} // TODO: revisit this
+              onConfirm={handleDatePickerConfimm}
+              onCancel={hideDatePicker}
             />
-          );
-        })}
-      </ScrollView>
-
-      <View className="flex flex-row border-b-[1px] my-5 border-tint">
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="date"
-          maximumDate={dayjs().toDate()}
-          minuteInterval={5}
-          date={chartStartDate.toDate()} // TODO: revisit this
-          onConfirm={handleDatePickerConfimm}
-          onCancel={hideDatePicker}
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          leftIcon={<Calendar width={20} height={20} />}
-          onPress={showDatePicker}
-        />
-        <ScrollView
-          horizontal
-          className="flex flex-1 flex-row"
-          showsHorizontalScrollIndicator={false}
-        >
-          {displayedDates.map((date, index) => (
-            <Pressable
-              onPress={() => {
-                setChartStartDate(date.startOf(insightContext!.insightPeriod));
-              }}
+            <Button
+              variant="ghost"
+              size="icon"
+              leftIcon={<Calendar width={20} height={20} />}
+              onPress={showDatePicker}
+            />
+            <ScrollView
+              horizontal
+              className="flex flex-1 flex-row"
+              showsHorizontalScrollIndicator={false}
             >
-              <Text
-                key={index}
-                className={dateTextStyle(
-                  date
-                    .startOf(insightContext!.insightPeriod)
-                    .isSame(
-                      chartStartDate.startOf(insightContext!.insightPeriod)
-                    )
-                    ? { active: true }
-                    : {}
-                )}
-              >
-                {insightContext!.insightPeriod === "week" && (
-                  <>
-                    {date.get("month") !== date.endOf("week").get("month") ? (
+              {displayedDates.map((date, index) => (
+                <Pressable
+                  onPress={() => {
+                    setChartStartDate(
+                      date.startOf(insightContext!.insightPeriod)
+                    );
+                  }}
+                >
+                  <Text
+                    key={index}
+                    className={dateTextStyle(
+                      date
+                        .startOf(insightContext!.insightPeriod)
+                        .isSame(
+                          chartStartDate.startOf(insightContext!.insightPeriod)
+                        )
+                        ? { active: true }
+                        : {}
+                    )}
+                  >
+                    {insightContext!.insightPeriod === "week" && (
                       <>
-                        {date.format("MMM D")}-
-                        {date.endOf("week").format("MMM D")}
-                      </>
-                    ) : (
-                      <>
-                        {date.format("MMM D")}-{date.endOf("week").format("D")}
+                        {date.get("month") !==
+                        date.endOf("week").get("month") ? (
+                          <>
+                            {date.format("MMM D")}-
+                            {date.endOf("week").format("MMM D")}
+                          </>
+                        ) : (
+                          <>
+                            {date.format("MMM D")}-
+                            {date.endOf("week").format("D")}
+                          </>
+                        )}
                       </>
                     )}
-                  </>
-                )}
 
-                {insightContext!.insightPeriod === "month" && (
-                  <>{date.format("MMM YYYY")}</>
-                )}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
+                    {insightContext!.insightPeriod === "month" && (
+                      <>{date.format("MMM YYYY")}</>
+                    )}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        </>
+      )}
 
       {savedPrompts && savedPrompts.length > 0 && (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
