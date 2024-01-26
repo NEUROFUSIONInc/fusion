@@ -4,7 +4,7 @@ import { AnchorHTMLAttributes, FC } from "react";
 
 import { cn } from "~/utils";
 
-const mobileLinkStyles = cva(
+const customLinkStyles = cva(
   "inline-flex items-center justify-center gap-1 font-normal relative rounded px-5 py-4 transition-colors focus:outline-none focus:ring-2 disabled:cursor-not-allowed min-w-max focus:ring-offset-2",
   {
     variants: {
@@ -20,16 +20,16 @@ const mobileLinkStyles = cva(
   }
 );
 
-interface MobileStoreLinkProps
+interface CustomLinkProps
   extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">,
     Omit<LinkProps, "href">,
-    VariantProps<typeof mobileLinkStyles> {
-  store?: "apple" | "google";
+    VariantProps<typeof customLinkStyles> {
+  store?: "apple" | "google" | "github" | "discord";
 }
 
-export const MobileStoreLink: FC<MobileStoreLinkProps> = ({ variant, store = "apple", className, ...props }) => {
+export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", className, ...props }) => {
   const strokeColor = variant === "filled" ? "white" : "currentColor";
-  function getStoreInfo(store: "apple" | "google") {
+  function getStoreInfo(store: "apple" | "google" | "github" | "discord") {
     switch (store) {
       case "apple":
         return {
@@ -116,6 +116,40 @@ export const MobileStoreLink: FC<MobileStoreLinkProps> = ({ variant, store = "ap
           ),
           label: "Get on Playstore",
         };
+      case "github":
+        return {
+          href: "https://github.com/neurofusioninc",
+          icon: (
+            <svg width="20" height="20" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                fill={strokeColor}
+              />
+            </svg>
+          ),
+          label: "View Github Repos",
+        };
+      case "discord":
+        return {
+          href: "https://discord.gg/hzt6cAtwGE",
+          icon: (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 256 293"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid"
+            >
+              <path
+                d="M226.011 0H29.99C13.459 0 0 13.458 0 30.135v197.778c0 16.677 13.458 30.135 29.989 30.135h165.888l-7.754-27.063 18.725 17.408 17.7 16.384L256 292.571V30.135C256 13.458 242.542 0 226.011 0zm-56.466 191.05s-5.266-6.291-9.655-11.85c19.164-5.413 26.478-17.408 26.478-17.408-5.998 3.95-11.703 6.73-16.823 8.63-7.314 3.073-14.336 5.12-21.211 6.291-14.044 2.633-26.917 1.902-37.888-.146-8.339-1.61-15.507-3.95-21.504-6.29-3.365-1.317-7.022-2.926-10.68-4.974-.438-.293-.877-.439-1.316-.732-.292-.146-.439-.292-.585-.438-2.633-1.463-4.096-2.487-4.096-2.487s7.022 11.703 25.6 17.261c-4.388 5.56-9.801 12.142-9.801 12.142-32.33-1.024-44.617-22.235-44.617-22.235 0-47.104 21.065-85.285 21.065-85.285 21.065-15.799 41.106-15.36 41.106-15.36l1.463 1.756C80.75 77.53 68.608 89.088 68.608 89.088s3.218-1.755 8.63-4.242c15.653-6.876 28.088-8.777 33.208-9.216.877-.147 1.609-.293 2.487-.293a123.776 123.776 0 0 1 29.55-.292c13.896 1.609 28.818 5.705 44.031 14.043 0 0-11.556-10.971-36.425-18.578l2.048-2.34s20.041-.44 41.106 15.36c0 0 21.066 38.18 21.066 85.284 0 0-12.435 21.211-44.764 22.235zm-68.023-68.316c-8.338 0-14.92 7.314-14.92 16.237 0 8.924 6.728 16.238 14.92 16.238 8.339 0 14.921-7.314 14.921-16.238.147-8.923-6.582-16.237-14.92-16.237m53.394 0c-8.339 0-14.922 7.314-14.922 16.237 0 8.924 6.73 16.238 14.922 16.238 8.338 0 14.92-7.314 14.92-16.238 0-8.923-6.582-16.237-14.92-16.237"
+                fill={strokeColor}
+              />
+            </svg>
+          ),
+          label: "Join our Discord",
+        };
     }
   }
 
@@ -123,7 +157,7 @@ export const MobileStoreLink: FC<MobileStoreLinkProps> = ({ variant, store = "ap
   return (
     <Link
       className={cn(
-        mobileLinkStyles({
+        customLinkStyles({
           variant,
           className,
         }),

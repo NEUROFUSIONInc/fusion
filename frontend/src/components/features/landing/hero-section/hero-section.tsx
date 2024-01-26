@@ -1,7 +1,4 @@
-import Typist from "react-typist-component";
-
-import { ButtonLink, MobileStoreLink } from "~/components/ui";
-import { useSearchParams } from "next/navigation";
+import { ButtonLink, CustomLink } from "~/components/ui";
 
 export const HeroSection = ({ isResearch = false }) => {
   return (
@@ -30,6 +27,10 @@ export const HeroSection = ({ isResearch = false }) => {
             <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
               Use Fusion to understand changes in your behavior and improve your quality of life.
             </p>
+          </div>
+          <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
+            <CustomLink store="apple" className="w-full md:w-auto" />
+            <CustomLink store="google" className="w-full md:w-auto" />
           </div>
           <div className="relative pb-[56.25%] h-0 w-full">
             <iframe

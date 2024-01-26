@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { teamMembers } from "./data";
 import { TeamMember } from "./team-member/team-member";
+import { CustomLink } from "~/components/ui";
 
 export const TeamSection = () => {
   const [selectedMemberIndex, setSelectedMemberIndex] = useState(0);
@@ -29,17 +30,11 @@ export const TeamSection = () => {
         <p className="max-w-xl text-center text-lg text-gray-600 dark:text-gray-400 md:text-xl">
           We believe in working with our doors open.
         </p>
-        <p className="max-w-xl text-center text-lg text-gray-600 dark:text-gray-400 md:text-xl">
-          Join our community of contributors on{" "}
-          <a href="https://github.com/neurofusioninc/fusion" className="underline">
-            Github
-          </a>{" "}
-          &{" "}
-          <a href="https://discord.gg/hzt6cAtwGE" className="underline">
-            Discord
-          </a>
-          !
-        </p>
+
+        <div className="flex w-full flex-col items-center justify-center gap-x-6 gap-y-2 pt-6 md:flex-row md:pt-0">
+          <CustomLink store="github" className="w-full md:w-auto" />
+          <CustomLink store="discord" className="w-full md:w-auto" />
+        </div>
       </div>
     </section>
   );

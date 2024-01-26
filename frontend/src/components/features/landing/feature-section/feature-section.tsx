@@ -4,7 +4,7 @@ import { FC } from "react";
 import { fusionFeatures } from "./data";
 import { FusionFeature } from "./fusion-feature/fusion-feature";
 import { PromptExample } from "./prompt-example/prompt-example";
-import { ButtonLink, MobileStoreLink } from "~/components/ui";
+import { ButtonLink, CustomLink } from "~/components/ui";
 
 export const FeatureSection = ({ isResearch = false }) => {
   return (
@@ -15,7 +15,7 @@ export const FeatureSection = ({ isResearch = false }) => {
             <div>
               <FusionFeature feature={fusionFeatures[2]} />
               <ButtonLink intent="outlined" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
-                Use Fusion Explorer!
+                Use NeuroFusion Explorer!
               </ButtonLink>
             </div>
 
@@ -33,8 +33,8 @@ export const FeatureSection = ({ isResearch = false }) => {
               <div>
                 <FusionFeature feature={fusionFeatures[0]} />
                 <div className="mt-10 flex flex-col gap-x-6 gap-y-2 md:flex-row w-full px-2">
-                  <MobileStoreLink store="apple" className="w-full md:w-auto" />
-                  <MobileStoreLink store="google" className="w-full md:w-auto" />
+                  <CustomLink store="apple" className="w-full md:w-auto" />
+                  <CustomLink store="google" className="w-full md:w-auto" />
                 </div>
               </div>
               <div className="relative w-auto h-auto">
