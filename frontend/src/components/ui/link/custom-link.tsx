@@ -148,7 +148,7 @@ export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", clas
               />
             </svg>
           ),
-          label: "Join our Discord",
+          label: "Join Discord Community",
         };
     }
   }

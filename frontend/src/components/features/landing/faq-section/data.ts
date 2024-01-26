@@ -16,18 +16,18 @@ export const frequentlyAskedQuestions = [
     question: "I only have a smartphone. Can I use Fusion?",
     answer: "Yes, you can! Fusion is available for download on the iOS and Google Playstore for free.",
   },
-  {
-    id: 4,
-    question: "How much does fusion cost?",
-    answer:
-      "You can access Fusion for free to get personalized prompts and insights. Our premium features such as summaries of your insights and recommendations are available for just $9.99/month.",
-  },
-  {
-    id: 5,
-    question: "Is there a free trial?",
-    answer:
-      "Setting and responding to prompts will always be free. We offer a 3 day trial of Fusion Premium for intelligent recommendations and more exciting features.",
-  },
+  // {
+  //   id: 4,
+  //   question: "How much does fusion cost?",
+  //   answer:
+  //     "You can access Fusion for free to get personalized prompts and insights. Our premium features such as summaries of your insights and recommendations are available for just $9.99/month.",
+  // },
+  // {
+  //   id: 5,
+  //   question: "Is there a free trial?",
+  //   answer:
+  //     "Setting and responding to prompts will always be free. We offer a 3 day trial of Fusion Premium for intelligent recommendations and more exciting features.",
+  // },
   {
     id: 6,
     question: "Can I collaborate with healthcare providers or researchers using Fusion?",
@@ -67,12 +67,12 @@ export const faqsExplorersResearchers = [
     answer:
       "No there is no limit, you can deploy your research to any number of participants anywhere in the world with an internet connection.",
   },
-  {
-    id: 5,
-    question: "How much does Fusion cost?",
-    answer:
-      "You can purchase research credits do deploy studies starting at $9.99. We charge $1 for each participant reached.",
-  },
+  // {
+  //   id: 5,
+  //   question: "How much does Fusion cost?",
+  //   answer:
+  //     "You can purchase research credits do deploy studies starting at $9.99. We charge $1 for each participant reached.",
+  // },
   {
     id: 6,
     question: "How secure is my research data?",
