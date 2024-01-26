@@ -6,7 +6,7 @@ import { Streak } from "./icons";
 
 export const Streaks: FC = () => {
   return (
-    <View>
+    <View className="mr-3">
       <Button
         variant="ghost"
         size="icon"
