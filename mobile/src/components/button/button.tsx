@@ -95,7 +95,9 @@ export const Button: FC<ButtonProps> = ({
   >
     {loading && <ActivityIndicator size="small" className="mr-2" />}
     {!loading && leftIcon && (
-      <View className={buttonTextStyles({ variant, textColor })}>
+      <View
+        className={buttonTextStyles({ variant, textColor, className: "mr-1" })}
+      >
         {leftIcon}
       </View>
     )}

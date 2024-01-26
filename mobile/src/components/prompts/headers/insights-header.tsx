@@ -2,8 +2,9 @@ import React, { useContext } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 
 import { Button } from "../../button";
-import { ChevronDown, Help } from "../../icons";
+import { ChevronDown } from "../../icons";
 
+import { Streaks } from "~/components/streaks";
 import { InsightContext } from "~/contexts";
 
 export const InsightsHeader = () => {
@@ -36,17 +37,7 @@ export const InsightsHeader = () => {
         <Button variant="ghost" size="icon" leftIcon={<ChevronDown />} />
       </Pressable>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<Help />}
-        onPress={() =>
-          Alert.alert(
-            "Want to change the dates for the chart?",
-            "Swipe left or right on the chart to view insights across periods."
-          )
-        }
-      />
+      <Streaks />
     </View>
   );
 };
