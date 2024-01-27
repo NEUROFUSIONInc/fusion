@@ -52,6 +52,9 @@ const buttonTextStyles = cva("font-sans text-base", {
       white: "text-white",
       black: "text-secondary-900",
     },
+    textSize: {
+      bold: "font-sans-bold text-[26px]",
+    },
   },
   defaultVariants: {
     variant: "primary",
@@ -65,6 +68,7 @@ export type ButtonProps = TouchableOpacityProps &
     rightIcon?: JSX.Element;
     loading?: boolean;
     textColor?: "white" | "black";
+    textSize?: "bold";
   };
 
 export const Button: FC<ButtonProps> = ({
@@ -79,6 +83,7 @@ export const Button: FC<ButtonProps> = ({
   rightIcon,
   className,
   textColor,
+  textSize,
   ...props
 }) => (
   <Pressable
@@ -102,10 +107,14 @@ export const Button: FC<ButtonProps> = ({
       </View>
     )}
     {title && (
-      <Text className={buttonTextStyles({ variant, textColor })}>{title}</Text>
+      <Text className={buttonTextStyles({ variant, textColor, textSize })}>
+        {title}
+      </Text>
     )}
     {rightIcon && (
-      <View className={buttonTextStyles({ variant, className: "ml-2" })}>
+      <View
+        className={buttonTextStyles({ variant, textColor, className: "ml-1" })}
+      >
         {rightIcon}
       </View>
     )}

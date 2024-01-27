@@ -129,7 +129,7 @@ export const PromptsScreen = () => {
         <View className="mb-10">
           <ScrollView
             horizontal
-            className="flex gap-x-3 gap-y-3 pl-2"
+            className="gap-x-3 gap-y-3 pl-2"
             showsHorizontalScrollIndicator={false}
           >
             {categoryPillsToDisplay.map((category) => {

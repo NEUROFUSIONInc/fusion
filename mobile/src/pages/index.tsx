@@ -8,3 +8,4 @@ export * from "./quick-add-prompts";
 export * from "./settings";
 export * from "./chat";
 export * from "./community";
+export * from "./prompt-responses";
