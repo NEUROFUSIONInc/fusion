@@ -29,6 +29,8 @@ npm install
 npx expo run:ios
 ```
 
+If you don't have simulator, please follow these steps to create one - https://developer.apple.com/documentation/safari-developer-tools/adding-additional-simulators
+
 ## Prompt Structure
 
 ```json
