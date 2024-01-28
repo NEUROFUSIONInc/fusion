@@ -3,19 +3,13 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
-import { getPublicKey } from "nostr-tools";
 
 import { authService } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
-import { PRIVATE_KEY, getPrivateKey } from "~/utils/auth";
+import { getPrivateKey, persistPrivateKey } from "~/utils/auth";
 
 import { authOptions } from "../api/auth/[...nextauth]";
-
-interface KeyPair {
-  publicKey: string;
-  privateKey: string;
-}
 
 const LoginPage = React.memo(() => {
   const router = useRouter();
@@ -23,16 +17,8 @@ const LoginPage = React.memo(() => {
   const [privateKey, setPrivateKey] = useState("");
   const [showInput, setShowInput] = useState(false);
 
-  const persistPrivateKey = (privateKey: string): Promise<KeyPair> => {
-    if (privateKey && privateKey.length === 64) {
-      localStorage.setItem(PRIVATE_KEY, privateKey);
-      const publicKey = getPublicKey(privateKey);
-      return Promise.resolve({ publicKey, privateKey });
-    } else {
-      // TODO: render error message
-      return Promise.reject("Invalid private key");
-    }
-  };
+  // @ts-ignore
+  const showNostrEtxensionLogin = global.window && global.window.nostr;
 
   const useGuestAccount = async () => {
     try {
@@ -47,7 +33,7 @@ const LoginPage = React.memo(() => {
   const useExtension = async () => {
     try {
       // @ts-ignore
-      const nostr = window.nostr;
+      const nostr = global.window.nostr;
       if (nostr) {
         const publicKey = await nostr.getPublicKey();
         completeNostrLogin(publicKey, privateKey);
@@ -108,9 +94,11 @@ const LoginPage = React.memo(() => {
           <Button type="button" onClick={useGuestAccount} size="lg" fullWidth className="mt-4">
             Continue as Guest
           </Button>
-          <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
-            Use Nostr Extension
-          </Button>
+          {showNostrEtxensionLogin && (
+            <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
+              Use Nostr Extension
+            </Button>
+          )}
           <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
             Use Existing Account
           </a>
