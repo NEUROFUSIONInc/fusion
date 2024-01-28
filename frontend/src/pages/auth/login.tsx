@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
@@ -16,9 +16,12 @@ const LoginPage = React.memo(() => {
   const [publicKey, setPublicKey] = useState("");
   const [privateKey, setPrivateKey] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const [showNostrExtensionLogin, setShowNostrExtensionLogin] = useState(false);
 
-  // @ts-ignore
-  const showNostrEtxensionLogin = global.window && global.window.nostr;
+  useEffect(() => {
+    // @ts-ignore
+    setShowNostrExtensionLogin(global.window && global.window.nostr);
+  }, []);
 
   const useGuestAccount = async () => {
     try {
@@ -94,7 +97,7 @@ const LoginPage = React.memo(() => {
           <Button type="button" onClick={useGuestAccount} size="lg" fullWidth className="mt-4">
             Continue as Guest
           </Button>
-          {showNostrEtxensionLogin && (
+          {showNostrExtensionLogin && (
             <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
               Use Nostr Extension
             </Button>
