@@ -1,19 +1,13 @@
+import { FC, useState, useEffect } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-
-import { IntegrationsContainer } from "~/components/features/integrations";
-import { DashboardLayout } from "~/components/layouts";
-
-import axios from "axios";
-import { FC, useState, useEffect } from "react";
-
-import { authOptions } from "./api/auth/[...nextauth]";
-
 import dayjs from "dayjs";
 
-import { Button } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
+import { getDatasets, downloadDatasets } from "../utils/azure";
+import { authOptions } from "./api/auth/[...nextauth]";
 
-import { getDatasets, downloadDatasets } from "~/lib";
+import { DashboardLayout } from "~/components/layouts";
+import { Button } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
 
 const dataSetParser = (data: Array<string>) => {
   var recordings: { [key: number]: any } = {};
