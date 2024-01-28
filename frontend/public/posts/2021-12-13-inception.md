@@ -11,7 +11,7 @@ authors:
   - Adaobi Adibe
 ---
 
-> In 2021, my friend & I (Ore) did some analysis on my data and birth the initial version of Fusion. Here's a summary of what we learnt and what we envisioned Fusion to evolve to. Fusion has evolved a lot since then but the essence is still the same.
+> In 2021, my friend & I (Ore) did some analysis on my data and birth the initial version of Fusion. Here's a summary of what we learnt and what we envisioned Fusion to evolve to. My friend has moved on to biology research & Fusion has evolved a lot since then but the essence is still the same. Helping you understand yourself better :)
 
 <video class="fusion-video" width="100%" autoplay muted>
     <source src="/images/blog/fusion-demo-final.mp4" type="video/mp4">
