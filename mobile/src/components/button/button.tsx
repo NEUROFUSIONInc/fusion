@@ -51,6 +51,10 @@ const buttonTextStyles = cva("font-sans text-base", {
     textColor: {
       white: "text-white",
       black: "text-secondary-900",
+      red: "text-red-500",
+    },
+    textSize: {
+      bold: "font-sans-bold text-[26px]",
     },
   },
   defaultVariants: {
@@ -64,7 +68,8 @@ export type ButtonProps = TouchableOpacityProps &
     leftIcon?: JSX.Element;
     rightIcon?: JSX.Element;
     loading?: boolean;
-    textColor?: "white" | "black";
+    textColor?: "white" | "black" | "red";
+    textSize?: "bold";
   };
 
 export const Button: FC<ButtonProps> = ({
@@ -79,6 +84,7 @@ export const Button: FC<ButtonProps> = ({
   rightIcon,
   className,
   textColor,
+  textSize,
   ...props
 }) => (
   <Pressable
@@ -95,15 +101,21 @@ export const Button: FC<ButtonProps> = ({
   >
     {loading && <ActivityIndicator size="small" className="mr-2" />}
     {!loading && leftIcon && (
-      <View className={buttonTextStyles({ variant, textColor })}>
+      <View
+        className={buttonTextStyles({ variant, textColor, className: "mr-1" })}
+      >
         {leftIcon}
       </View>
     )}
     {title && (
-      <Text className={buttonTextStyles({ variant, textColor })}>{title}</Text>
+      <Text className={buttonTextStyles({ variant, textColor, textSize })}>
+        {title}
+      </Text>
     )}
     {rightIcon && (
-      <View className={buttonTextStyles({ variant, className: "ml-2" })}>
+      <View
+        className={buttonTextStyles({ variant, textColor, className: "ml-1" })}
+      >
         {rightIcon}
       </View>
     )}

@@ -35,6 +35,12 @@ export const integrations = [
     active: true,
   },
   // {
+  //   slug: "keyboard",
+  //   title: "Keyboard (Keyboard Activity)",
+  //   description: "Track your keyboard activity to learn from how you type. You can always use this during Fusion experiments. You can have this running in the background also.",
+  //   active: false,
+  // }
+  // {
   //   slug: "magicflow",
   //   title: "MagicFlow (Productivity)",
   //   href: "https://magicflow.com",

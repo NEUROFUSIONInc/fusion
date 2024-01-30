@@ -1,15 +1,16 @@
 import dayjs from "dayjs";
 import React, { useRef } from "react";
 import {
-  View,
+  KeyboardAvoidingView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 
-import { Screen } from "~/components";
+import { IS_IOS } from "~/config";
 import { buildHealthDataset } from "~/utils";
 
 interface ChatMessageProps {
@@ -51,61 +52,64 @@ export const ChatScreen = () => {
   };
 
   return (
-    <View className="flex flex-grow flex-col h-full w-full items-stretch justify-center bg-dark px-5">
-      {/* Chat Messages */}
-      <ScrollView
-        className="flex-1 bg-black"
-        ref={scrollViewRef}
-        onContentSizeChange={() => {
-          scrollViewRef.current?.scrollToEnd({ animated: true });
-        }}
-      >
-        {/* Messages will go here */}
-        {messages.map((message) => (
-          <View key={Math.random()}>
-            <View
-              className={`flex-row items-center p-4 rounded-md m-0.5 my-2 w-3/4
-            ${message.isUser ? "ml-auto bg-secondary" : "bg-secondary-900"}`}
-            >
-              <Text className="text-white font-sans">{message.message}</Text>
-            </View>
-            <Text
-              className={`text-white/50 font-sans ${
-                message.isUser ? "ml-auto" : ""
-              }`}
-            >
-              {dayjs(message.timestamp).format("h:mma")}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Suggestions for conversation, based on what we know */}
-      {messages.length === 0 && (
-        <>
-          {/* we make a call based on the data we have and come up with question cards */}
-          {/* if the user has no prompts/responses then ask what's top of mind */}
-        </>
-      )}
-
-      {/* Input Area */}
+    <View className="h-full w-full bg-dark px-5">
       <KeyboardAvoidingView
-        behavior="position"
-        className="
-           flex-1 flex-row items-center bg-secondary-900 rounded-md
-          my-2 max-h-[10%] p-4 "
+        behavior="height"
+        keyboardVerticalOffset={IS_IOS ? 130 : 0}
+        className="h-full bg-dark"
       >
-        <TextInput
-          placeholder="Message..."
-          placeholderTextColor="#9ca3af"
-          className="flex-1 text-white rounded-md font-sans"
-          multiline
-          value={input}
-          onChangeText={(text) => setInput(text)}
-        />
-        <TouchableOpacity onPress={handleMessageSubmit}>
-          <Text className="text-lime font-sans">Send</Text>
-        </TouchableOpacity>
+        <TouchableWithoutFeedback className="flex-[0.7]">
+          {/* Chat Messages */}
+          <ScrollView
+            className="flex-1"
+            ref={scrollViewRef}
+            onContentSizeChange={() => {
+              scrollViewRef.current?.scrollToEnd({ animated: true });
+            }}
+          >
+            {/* Messages will go here */}
+            {messages.map((message) => (
+              <View key={Math.random()}>
+                <View
+                  className={`flex-row items-center p-4 rounded-md m-0.5 my-2 w-3/4
+            ${message.isUser ? "ml-auto bg-secondary" : "bg-secondary-900"}`}
+                >
+                  <Text className="text-white font-sans">
+                    {message.message}
+                  </Text>
+                </View>
+                <Text
+                  className={`text-white/50 font-sans ${
+                    message.isUser ? "ml-auto" : ""
+                  }`}
+                >
+                  {dayjs(message.timestamp).format("h:mma")}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+        {/* Suggestions for conversation, based on what we know */}
+        {/* {messages.length === 0 && (
+          <> */}
+        {/* we make a call based on the data we have and come up with question cards */}
+        {/* if the user has no prompts/responses then ask what's top of mind */}
+        {/* </>
+        )} */}
+        {/* Input Area */}
+        <View className="flex flex-row items-center bg-secondary-900 rounded-md mt-auto mb-2 p-4 gap-x-2">
+          <TextInput
+            placeholder="Message..."
+            placeholderTextColor="#9ca3af"
+            className="flex-1 text-white font-sans h-full"
+            multiline
+            value={input}
+            onChangeText={(text) => setInput(text)}
+          />
+          <TouchableOpacity onPress={handleMessageSubmit}>
+            <Text className="text-lime font-sans">Send</Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );

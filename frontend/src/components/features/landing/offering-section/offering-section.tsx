@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { fusionOfferingFeatures } from "./data";
 
-import { MobileStoreLink } from "~/components/ui";
+import { CustomLink } from "~/components/ui";
 
 export const OfferingSection = () => {
   return (
@@ -33,8 +33,8 @@ export const OfferingSection = () => {
             ))}
           </div>
           <div className="flex w-full flex-col items-center justify-center gap-x-6 gap-y-2 pt-6 md:flex-row md:pt-0">
-            <MobileStoreLink store="apple" className="w-full md:w-auto" />
-            <MobileStoreLink store="google" className="w-full md:w-auto" />
+            <CustomLink store="apple" className="w-full md:w-auto" />
+            <CustomLink store="google" className="w-full md:w-auto" />
           </div>
         </div>
       </div>

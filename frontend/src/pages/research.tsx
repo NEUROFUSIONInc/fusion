@@ -18,7 +18,6 @@ const Research: NextPage = () => {
     <MainLayout isResearch>
       <Meta
         meta={{
-          // todo: this should change based on the persona
           title: "Fusion - The simplest way to do brain and behavior research",
         }}
       />

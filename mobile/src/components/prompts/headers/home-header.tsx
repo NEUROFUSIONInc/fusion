@@ -5,6 +5,7 @@ import { View } from "react-native";
 import { Button } from "../../button";
 import { Person, Settings } from "../../icons";
 
+import { Streaks } from "~/components/streaks";
 import { AccountContext } from "~/contexts";
 
 export const HomeHeader = () => {
@@ -23,14 +24,17 @@ export const HomeHeader = () => {
         }}
       />
 
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<Settings />}
-        onPress={() => {
-          navigation.navigate("SettingsPage");
-        }}
-      />
+      <View className="flex flex-row justify-around">
+        <Streaks />
+        <Button
+          variant="ghost"
+          size="icon"
+          leftIcon={<Settings />}
+          onPress={() => {
+            navigation.navigate("SettingsPage");
+          }}
+        />
+      </View>
     </View>
   );
 };

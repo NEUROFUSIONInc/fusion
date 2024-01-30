@@ -14,22 +14,20 @@ import {
   ScrollView,
 } from "react-native-gesture-handler";
 
-import { Prompt } from "~/@types";
 import {
   Screen,
   ChartContainer,
-  Select,
   Button,
   Plus,
   CategoryTag,
+  CalendarPicker,
   Pencil,
 } from "~/components";
+import { categories } from "~/config";
 import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { colors } from "~/theme";
-import { categories } from "~/config";
-
 import { appInsights, maskPromptId } from "~/utils";
 
 export function InsightsScreen() {
@@ -37,7 +35,7 @@ export function InsightsScreen() {
   const navigation = useNavigation();
 
   const insightContext = useContext(InsightContext);
-  let routePromptUuid = route.params?.promptUuid;
+  const routePromptUuid = route.params?.promptUuid;
 
   const accountContext = React.useContext(AccountContext);
 
@@ -115,24 +113,6 @@ export function InsightsScreen() {
     }
   };
 
-  /**
-   * Ugly work around because react native fails to re-render the dropdown
-   * when saved prompt is updated.
-   *
-   * Tried different approaches open to something better :)
-   */
-  const [renderDropdown, setRenderDropdown] = React.useState<boolean>(false);
-  useEffect(() => {
-    if (savedPrompts) {
-      setRenderDropdown(false);
-    }
-  }, [savedPrompts]);
-  useEffect(() => {
-    if (renderDropdown === false) {
-      setRenderDropdown(true);
-    }
-  }, [renderDropdown]);
-
   return (
     <Screen>
       {!isLoading && (!savedPrompts || savedPrompts?.length === 0) && (
@@ -152,66 +132,74 @@ export function InsightsScreen() {
         </View>
       )}
 
-      <ScrollView
-        horizontal
-        className="flex gap-x-3 gap-y-3 pl-2"
-        showsHorizontalScrollIndicator={false}
-      >
-        {categoryPillsToDisplay.map((category) => {
-          const name = category.name;
-          return (
-            <CategoryTag
-              key={name}
-              title={name}
-              isActive={selectedCategory === name}
-              icon={category.icon}
-              handleValueChange={(checked) =>
-                handleCategorySelection(checked ? name : "")
-              }
-            />
-          );
-        })}
-      </ScrollView>
+      {savedPrompts && savedPrompts.length > 0 && (
+        <>
+          <ScrollView
+            horizontal
+            className="gap-x-3 gap-y-3 pl-2 min-h-[9%] max-h-[9%]"
+            showsHorizontalScrollIndicator={false}
+          >
+            {categoryPillsToDisplay.map((category) => {
+              const name = category.name;
+              return (
+                <CategoryTag
+                  key={name}
+                  title={name}
+                  isActive={selectedCategory === name}
+                  icon={category.icon}
+                  handleValueChange={(checked) =>
+                    handleCategorySelection(checked ? name : "")
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+
+          <CalendarPicker
+            selectedDate={chartStartDate}
+            setSelectedDate={setChartStartDate}
+          />
+        </>
+      )}
+
       {savedPrompts && savedPrompts.length > 0 && (
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
-          <ScrollView nestedScrollEnabled>
-            {/* now add the date selectors */}
-            <View className="flex flex-1 flex-row border-b-[1px] mt-5 mb-5 m-2 border-tint">
-              {insightContext!.insightPeriod === "month" && (
-                // list all the months in the year
-                <Text className="text-base text-white p-2">
-                  {chartStartDate.format("MMM YYYY")}
-                </Text>
-              )}
-            </View>
-
-            {/* select the first available prompt */}
+          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
             <View className="flex flex-1 flex-col w-full h-auto justify-between">
               {filteredPrompts?.map((prompt) => (
-                <View
-                  key={prompt.uuid}
-                  className="rounded-lg bg-secondary-900 mb-10"
-                >
-                  <View className="flex flex-row border-b-[1px] border-tint p-5 justify-between">
-                    <Text className="text-base font-sans text-white leading-10 max-w-[90%]">
-                      {prompt.promptText}
-                    </Text>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      leftIcon={<Pencil width={20} height={20} />}
-                      onPress={() => {}}
-                    />
-                  </View>
+                <>
+                  <View
+                    key={prompt.uuid}
+                    className="rounded-lg bg-secondary-900 mb-10"
+                  >
+                    <View className="flex flex-row border-b-[1px] border-tint p-5 justify-between">
+                      <Text className="text-lg font-sans text-white max-w-[90%]">
+                        {prompt.promptText}
+                      </Text>
+                      <View className="self-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          leftIcon={<Pencil width={25} height={30} />}
+                          onPress={() => {
+                            navigation.navigate("PromptResponsesPage", {
+                              prompt,
+                              selectedDate: chartStartDate.format("YYYY-MM-DD"),
+                            });
+                          }}
+                        />
+                      </View>
+                    </View>
 
-                  <View>
-                    <ChartContainer
-                      prompt={prompt}
-                      startDate={chartStartDate}
-                      timePeriod={insightContext!.insightPeriod}
-                    />
+                    <View>
+                      <ChartContainer
+                        prompt={prompt}
+                        startDate={chartStartDate}
+                        timePeriod={insightContext!.insightPeriod}
+                      />
+                    </View>
                   </View>
-                </View>
+                </>
               ))}
             </View>
           </ScrollView>

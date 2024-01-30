@@ -3,14 +3,20 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 
+import { Prompt } from "~/@types";
 import { InsightsHeader } from "~/components";
 import { InsightContextProvider } from "~/contexts";
+import { PromptResponsesScreen } from "~/pages";
 import { InsightsScreen } from "~/pages/insights";
 
 export type InsightsStackParamList = {
   InsightsPage: {
     chartPeriod?: "day" | "week" | "month" | "year";
     promptUuid?: string;
+  };
+  PromptResponsesPage: {
+    prompt: Prompt;
+    selectedDate: string;
   };
 };
 
@@ -28,6 +34,10 @@ export const InsightsStack = () => {
         }}
       >
         <Stack.Screen name="InsightsPage" component={InsightsScreen} />
+        <Stack.Screen
+          name="PromptResponsesPage"
+          component={PromptResponsesScreen}
+        />
       </Stack.Navigator>
     </InsightContextProvider>
   );

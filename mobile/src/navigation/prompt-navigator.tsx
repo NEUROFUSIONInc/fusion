@@ -3,7 +3,7 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 
-import { Prompt } from "~/@types";
+import { Prompt, PromptResponse } from "~/@types";
 import {
   EditPromptHeader,
   PromptsHeader,
@@ -35,6 +35,7 @@ export type PromptStackParamList = {
     triggerTimestamp: number | null;
     prompts?: Prompt[];
     index?: number;
+    previousPromptResponse?: PromptResponse; // used for editing
   };
 };
 

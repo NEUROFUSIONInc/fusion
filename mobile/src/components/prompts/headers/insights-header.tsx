@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, View } from "react-native";
 
 import { Button } from "../../button";
-import { ChevronDown, Help } from "../../icons";
+import { ChevronDown } from "../../icons";
 
+import { Streaks } from "~/components/streaks";
 import { InsightContext } from "~/contexts";
 
 export const InsightsHeader = () => {
@@ -11,8 +12,12 @@ export const InsightsHeader = () => {
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <Pressable
-        className="flex flex-row"
+      <Button
+        variant="ghost"
+        size="icon"
+        rightIcon={<ChevronDown />}
+        title={insightContext?.insightPeriod === "week" ? "Weekly" : "Monthly"}
+        textSize="bold"
         onPress={() => {
           Alert.alert(
             "Set Insights Period",
@@ -29,24 +34,8 @@ export const InsightsHeader = () => {
             ]
           );
         }}
-      >
-        <Text className="font-sans-bold text-[26px] text-white">
-          {insightContext?.insightPeriod === "week" ? "Weekly" : "Monthly"}
-        </Text>
-        <Button variant="ghost" size="icon" leftIcon={<ChevronDown />} />
-      </Pressable>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<Help />}
-        onPress={() =>
-          Alert.alert(
-            "Want to change the dates for the chart?",
-            "Swipe left or right on the chart to view insights across periods."
-          )
-        }
       />
+      <Streaks />
     </View>
   );
 };

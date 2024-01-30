@@ -17,6 +17,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Toast from "react-native-toast-message";
 import Tooltip from "react-native-walkthrough-tooltip";
 
 import { PromptResponse } from "~/@types";
@@ -37,18 +38,23 @@ export function PromptEntryScreen() {
   const route = useRoute<RouteProp<"PromptEntry">>();
   const navigation = useNavigation<any>();
   const { data: prompt } = usePrompt(route.params.promptUuid);
-  const [userResponse, setUserResponse] = React.useState("");
-  const [additonalNotes, setAdditionalNotes] = React.useState("");
-  const [customOptions, setCustomOptions] = React.useState<string[]>([]);
+  const [userResponse, setUserResponse] = React.useState(
+    route.params.previousPromptResponse?.value ?? ""
+  );
+  const [additonalNotes, setAdditionalNotes] = React.useState(
+    route.params.previousPromptResponse?.additionalMeta?.note ?? ""
+  );
   const notificationTriggerTimestamp = route.params.triggerTimestamp
     ? route.params.triggerTimestamp
     : Math.floor(dayjs().unix());
+  const [promptResponseTimeObj, setPromptResponseTimeObj] = React.useState(
+    route.params.previousPromptResponse
+      ? dayjs(route.params.previousPromptResponse.responseTimestamp)
+      : dayjs()
+  );
+  const [customOptions, setCustomOptions] = React.useState<string[]>([]);
 
   const accountContext = React.useContext(AccountContext);
-
-  React.useEffect(() => {
-    navigation.setOptions({});
-  }, []);
 
   React.useEffect(() => {
     const customOptions = prompt?.additionalMeta?.customOptionText;
@@ -56,6 +62,52 @@ export function PromptEntryScreen() {
       setCustomOptions(customOptions.split(";"));
     }
   }, [prompt]);
+
+  const handleCustomOptionChange = (option: string) => {
+    if (typeof userResponse === "string" && userResponse === "") {
+      setUserResponse([option].toString());
+      return;
+    }
+
+    setUserResponse((prevResponse) => {
+      const parsedResponse = prevResponse.split(";");
+      if (parsedResponse.includes(option)) {
+        // Remove the option if it already exists
+        return parsedResponse
+          .filter((item: string) => item !== option)
+          .join(";");
+      } else {
+        // Add the option to the array
+        return [...parsedResponse, option].join(";");
+      }
+    });
+  };
+
+  // TODO: move date picker logic to it's own component
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+  const handleDatePickerConfimm = (date: Date) => {
+    setPromptResponseTimeObj(dayjs(date));
+    hideDatePicker();
+  };
+  const [toolTipVisible, setToolTipVisible] = React.useState(false);
+
+  // logic to display tooltip for the first time
+  React.useEffect(() => {
+    (async () => {
+      const seenPromptTooltip = await AsyncStorage.getItem("seenPromptTooltip");
+      if (seenPromptTooltip !== "true") {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setToolTipVisible(true);
+        await AsyncStorage.setItem("seenPromptTooltip", "true");
+      }
+    })();
+  }, []);
 
   const handleSavePromptResponse = async () => {
     if (!prompt) {
@@ -66,24 +118,20 @@ export function PromptEntryScreen() {
       Alert.alert("Error", "Please enter a response");
       return;
     }
-    let formattedResponse = userResponse;
-
-    if (prompt.responseType === "customOptions") {
-      // Check if the response is an array and convert it to a comma-separated string
-      if (Array.isArray(JSON.parse(userResponse))) {
-        formattedResponse = JSON.parse(userResponse).join(";");
-      }
-    }
 
     const promptResponse: PromptResponse = {
       promptUuid: route.params.promptUuid,
       triggerTimestamp: notificationTriggerTimestamp,
       responseTimestamp: Math.floor(promptResponseTimeObj.unix()),
-      value: formattedResponse,
+      value: userResponse,
       additionalMeta: {
         note: additonalNotes,
       },
     };
+
+    if (route.params.previousPromptResponse) {
+      promptResponse.id = route.params.previousPromptResponse.id;
+    }
 
     // save the prompt entry
     const res = await promptService.savePromptResponse(promptResponse);
@@ -163,55 +211,80 @@ export function PromptEntryScreen() {
     }
   };
 
-  const handleCustomOptionChange = (option: string) => {
-    if (typeof userResponse === "string" && userResponse === "") {
-      setUserResponse(JSON.stringify([option]));
-      return;
+  const handleNavigation = (action: string) => {
+    if (action === "Cancel") {
+      // clear stack history first
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: "InsightsNavigator",
+              state: {
+                routes: [
+                  {
+                    name: "InsightsPage",
+                    params: {
+                      promptUuid: prompt!.uuid,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        })
+      );
+    } else if (action === "Delete") {
+      Alert.alert(
+        "Delete Response",
+        "Are you sure you want to delete this response? You won't be able to recover it in the future.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: async () => {
+              if (route.params.previousPromptResponse) {
+                const res = await promptService.deletePromptResponse(
+                  route.params.previousPromptResponse.id!
+                );
+                if (res) {
+                  Toast.show({
+                    type: "success",
+                    text1: "Prompt Response Deleted",
+                    text2: "Your prompt response has been deleted successfully",
+                  });
+                  // clear stack history first
+                  navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [
+                        {
+                          name: "InsightsNavigator",
+                          state: {
+                            routes: [
+                              {
+                                name: "InsightsPage",
+                                params: {
+                                  promptUuid: prompt!.uuid,
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    })
+                  );
+                }
+              }
+            },
+          },
+        ]
+      );
     }
-
-    setUserResponse((prevResponse) => {
-      const parsedResponse = JSON.parse(prevResponse) || [];
-      if (Array.isArray(parsedResponse)) {
-        if (parsedResponse.includes(option)) {
-          // Remove the option if it already exists
-          return JSON.stringify(
-            parsedResponse.filter((item: string) => item !== option)
-          );
-        } else {
-          // Add the option to the array
-          return JSON.stringify([...parsedResponse, option]);
-        }
-      }
-      return prevResponse;
-    });
   };
-
-  const [promptResponseTimeObj, setPromptResponseTimeObj] = React.useState(
-    dayjs()
-  );
-  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-  const handleDatePickerConfimm = (date: Date) => {
-    setPromptResponseTimeObj(dayjs(date));
-    hideDatePicker();
-  };
-  const [toolTipVisible, setToolTipVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    (async () => {
-      const seenPromptTooltip = await AsyncStorage.getItem("seenPromptTooltip");
-      if (seenPromptTooltip !== "true") {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setToolTipVisible(true);
-        await AsyncStorage.setItem("seenPromptTooltip", "true");
-      }
-    })();
-  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -313,32 +386,24 @@ export function PromptEntryScreen() {
                 </View>
               )}
 
-              {
-                /* if the prompt is a custom prompt, show the custom options */
-                prompt.responseType === "customOptions" &&
-                  customOptions.length > 0 && (
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                    >
-                      <View className="flex-1 w-full h-20 flex-row gap-x-2 gap-y-3 mt-2">
-                        {customOptions.map((option) => (
-                          <Tag
-                            key={option}
-                            title={option}
-                            isActive={
-                              Array.isArray(userResponse) &&
-                              userResponse.includes(option)
-                            }
-                            handleValueChange={() =>
-                              handleCustomOptionChange(option)
-                            }
-                          />
-                        ))}
-                      </View>
-                    </ScrollView>
-                  )
-              }
+              {/* if the prompt is a custom prompt, show the custom options */}
+              {prompt.responseType === "customOptions" &&
+                customOptions.length > 0 && (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View className="flex-1 w-full h-20 flex-row gap-x-2 gap-y-3 mt-2">
+                      {customOptions.map((option) => (
+                        <Tag
+                          key={option}
+                          title={option}
+                          isActive={userResponse.split(";").includes(option)}
+                          handleValueChange={() =>
+                            handleCustomOptionChange(option)
+                          }
+                        />
+                      ))}
+                    </View>
+                  </ScrollView>
+                )}
 
               {
                 // TODO: Add a photo
@@ -371,17 +436,25 @@ export function PromptEntryScreen() {
           title="Save response"
           fullWidth
           onPress={handleSavePromptResponse}
-          disabled={
-            userResponse === "" ||
-            (prompt?.responseType === "customOptions" &&
-              JSON.parse(userResponse).length === 0)
-          }
+          disabled={userResponse === ""}
         />
+        {route.params.previousPromptResponse && (
+          <Button
+            title="Delete Response"
+            fullWidth
+            textColor="red"
+            onPress={() => {
+              handleNavigation("Delete");
+            }}
+          />
+        )}
         <Button
           title="Cancel"
           variant="ghost"
           fullWidth
-          onPress={() => navigation.navigate("Prompts")}
+          onPress={() => {
+            handleNavigation("Cancel");
+          }}
         />
       </View>
     </KeyboardAvoidingView>

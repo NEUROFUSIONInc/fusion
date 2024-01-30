@@ -312,7 +312,7 @@ class PromptService {
     }
   };
 
-  savePromptResponse = async (responseObj: PromptResponse) => {
+  public savePromptResponse = async (responseObj: PromptResponse) => {
     // ensure timestamp columns are in unixTime milliseconds
     responseObj["triggerTimestamp"] = updateTimestampToMs(
       responseObj["triggerTimestamp"]
@@ -321,22 +321,32 @@ class PromptService {
       responseObj["responseTimestamp"]
     );
 
+    let query =
+      "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?)";
+    const queryParams = [
+      responseObj["promptUuid"],
+      responseObj["value"],
+      responseObj["triggerTimestamp"],
+      responseObj["responseTimestamp"],
+      JSON.stringify(responseObj.additionalMeta ?? {}),
+    ];
+
+    if (responseObj.id) {
+      query =
+        "UPDATE prompt_responses SET promptUuid = ?, value = ?, triggerTimestamp = ?, responseTimestamp = ?, additionalMeta = ? WHERE id = ?";
+
+      queryParams.push(responseObj.id);
+    }
+
     // write to sqlite
     try {
       const storeDetailsInDb = () => {
         return new Promise<boolean>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
-              "INSERT INTO prompt_responses (promptUuid, value, triggerTimestamp, responseTimestamp, additionalMeta) VALUES (?, ?, ?, ?, ?);",
-              [
-                responseObj["promptUuid"],
-                responseObj["value"],
-                responseObj["triggerTimestamp"],
-                responseObj["responseTimestamp"],
-                JSON.stringify(responseObj.additionalMeta ?? {}),
-              ],
+              query,
+              queryParams,
               () => {
-                //
                 resolve(true);
               },
               (_, error) => {
@@ -351,6 +361,34 @@ class PromptService {
 
       await storeDetailsInDb();
       return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  public deletePromptResponse = async (responseId: string) => {
+    try {
+      const deleteFromDb = () =>
+        new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              `DELETE FROM prompt_responses WHERE id = ?`,
+              [responseId],
+              () => {
+                resolve(true);
+              },
+              (_, error) => {
+                console.log("error deleting response from db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+
+      const deleteStatus = await deleteFromDb();
+      return deleteStatus;
     } catch (error) {
       console.log(error);
       return false;
@@ -382,6 +420,7 @@ class PromptService {
               (_, { rows }) => {
                 const responses = rows._array.map((row) => {
                   return {
+                    id: row.id,
                     promptUuid: row.promptUuid,
                     value: row.value,
                     triggerTimestamp: row.triggerTimestamp,
