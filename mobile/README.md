@@ -31,6 +31,14 @@ npx expo run:ios
 
 If you don't have simulator, please follow these steps to create one - https://developer.apple.com/documentation/safari-developer-tools/adding-additional-simulators
 
+## Deployment
+
+- Generate ios build : `eas build --platform ios`
+  - to build android locally `eas build --local --platform=android`
+- Submit build - eas submit --platform ios
+
+Before submission, we need to run `npx expo prebuild`
+
 ## Prompt Structure
 
 ```json
@@ -76,14 +84,6 @@ Mapping Fusion event schema to prompt_response
 
 - startTimestamp: `triggerTimestamp` when the prompt was sent
 - endTimestamp: `responseTimestamp` when the prompt was responded to
-
-## Deployment
-
-- Generate ios build : eas build --platform ios
-  - to build android locally `eas build --local --platform=android`
-- Submit build - eas submit --platform ios
-
-Before submission, we need to run `npx expo prebuild`
 
 ## Prompts
 

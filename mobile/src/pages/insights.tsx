@@ -20,8 +20,8 @@ import {
   Button,
   Plus,
   CategoryTag,
-  Pencil,
   CalendarPicker,
+  Pencil,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext, InsightContext } from "~/contexts";
@@ -136,7 +136,7 @@ export function InsightsScreen() {
         <>
           <ScrollView
             horizontal
-            className="gap-x-3 gap-y-3 pl-2 min-h-[9%]"
+            className="gap-x-3 gap-y-3 pl-2 min-h-[9%] max-h-[9%]"
             showsHorizontalScrollIndicator={false}
           >
             {categoryPillsToDisplay.map((category) => {

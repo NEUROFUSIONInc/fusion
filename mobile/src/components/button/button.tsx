@@ -51,6 +51,7 @@ const buttonTextStyles = cva("font-sans text-base", {
     textColor: {
       white: "text-white",
       black: "text-secondary-900",
+      red: "text-red-500",
     },
     textSize: {
       bold: "font-sans-bold text-[26px]",
@@ -67,7 +68,7 @@ export type ButtonProps = TouchableOpacityProps &
     leftIcon?: JSX.Element;
     rightIcon?: JSX.Element;
     loading?: boolean;
-    textColor?: "white" | "black";
+    textColor?: "white" | "black" | "red";
     textSize?: "bold";
   };
 

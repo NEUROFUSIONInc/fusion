@@ -37,7 +37,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({
         <Text
           numberOfLines={2}
           ellipsizeMode="tail"
-          className="font-sans flex flex-wrap text-white text-base"
+          className="font-sans flex flex-wrap text-white text-base mr-2"
         >
           {prompt.promptText}
         </Text>

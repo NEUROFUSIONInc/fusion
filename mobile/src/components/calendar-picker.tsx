@@ -28,7 +28,7 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
      * of each week in the month
      */
     return new Promise<dayjs.Dayjs[]>((resolve) => {
-      const firstDay = selectedDate.endOf("week").startOf("month");
+      const firstDay = selectedDate.startOf("week").startOf("month");
       // if the selected date is in the past, then the last day is the end of the month
 
       // have to check if it's the current month... then don't
