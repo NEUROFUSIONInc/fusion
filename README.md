@@ -24,7 +24,7 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
 
 - [ ] Connect your screentime events & productivity metrics using [ActivityWatch](https://activitywatch.net)
 - [ ] Connect screentime events & productivity metrics from [Magicflow](https://magicflow.com)
-- [ ] Read
+
 - [ ] Deploy quests to people devices - a quest is a protocol person is to follow for data collection.
   - [ ] It can involve prompts, recording, brain activity
 - [ ] Query your data with natural language
@@ -52,6 +52,7 @@ See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features w
   - Ask questions! Tell us why you're interested in technology like Fusion
   - [Join an open data recording/curation effort](https://discord.gg/zeEspvz8jw)
   - Data Science & Machine Learning
+    - Have our first EEG model hosted as an api - EEGFormer / DreamDiffusion ..
   - Contributing to Fusion's design. [See Figma](https://www.figma.com/file/jGgUXb08g5wudV6ey9bG89/%F0%9F%9B%B8-Fusion?type=design&node-id=0%3A1&mode=design&t=J5iWqbK6FfqInnl7-1)
 
 ## Links
