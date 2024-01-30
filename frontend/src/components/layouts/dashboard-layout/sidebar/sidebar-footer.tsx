@@ -2,10 +2,10 @@ import { User } from "next-auth";
 import { useTheme } from "next-themes";
 import { FC, useEffect, useState } from "react";
 
-import { AccountMenu } from "./account-menu";
 import { appearanceModes } from "./data";
 
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import { Avatar, AvatarFallback, AvatarImage, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import Link from "next/link";
 
 interface ISidebarFooterProps {
   user?: User;
@@ -22,7 +22,19 @@ export const SidebarFooter: FC<ISidebarFooterProps> = ({ user }) => {
 
   return (
     <div className="mx-auto flex w-full flex-col items-stretch space-y-5 rounded-none md:w-64 lg:w-72">
-      <AccountMenu user={user} />
+      <Link href="/profile">
+        <div className="dark:border-slate-700/60 group relative flex w-full items-center justify-between rounded-md border p-2 hover:cursor-pointer hover:bg-slate-50 dark:hover:border-transparent dark:hover:bg-slate-800">
+          <div className="flex items-center space-x-4">
+            <Avatar>
+              {user?.image && <AvatarImage src={user?.image} alt={user?.name || "User Avatar"} />}
+              <AvatarFallback>{user?.name?.substring(0, 1).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex-flex-col">
+              <p className="w-[90%] text-[14px] font-medium">{user?.name?.slice(0, 8) + ":" + user?.name?.slice(-8)}</p>
+            </div>
+          </div>
+        </div>
+      </Link>
       <Tabs defaultValue={theme} className="w-full">
         <TabsList className="w-full">
           {appearanceModes.map((mode) => (

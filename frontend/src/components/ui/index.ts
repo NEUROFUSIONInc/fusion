@@ -1,5 +1,4 @@
 export * from "./button/button";
-export * from "./button/logout.button";
 export * from "./logo/logo";
 export * from "./layouts";
 export * from "./link/button-link";

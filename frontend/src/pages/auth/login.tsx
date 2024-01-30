@@ -1,54 +1,67 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
-import { getPublicKey } from "nostr-tools";
 
 import { authService } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
-import { PRIVATE_KEY, getPrivateKey } from "~/utils/auth";
+import { getPrivateKey, persistPrivateKey } from "~/utils/auth";
 
 import { authOptions } from "../api/auth/[...nextauth]";
 
-const LoginPage = () => {
+const LoginPage = React.memo(() => {
   const router = useRouter();
   const [publicKey, setPublicKey] = useState("");
   const [privateKey, setPrivateKey] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const [showNostrExtensionLogin, setShowNostrExtensionLogin] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        // @ts-ignore
-        const nostr = window.nostr;
-        if (nostr) {
-          const publicKey = await nostr.getPublicKey();
-          setPublicKey(publicKey);
-        } else {
-          const privateKey = getPrivateKey();
-          updateKeys(privateKey);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+    // @ts-ignore
+    setShowNostrExtensionLogin(global.window && global.window.nostr);
   }, []);
 
-  const updateKeys = (privateKey: string) => {
-    if (privateKey && privateKey.length === 64) {
-      localStorage.setItem(PRIVATE_KEY, privateKey);
-      setPrivateKey(privateKey);
-      const publicKey = getPublicKey(privateKey);
-      setPublicKey(publicKey);
-    } else {
-      // TODO: render error message
-      alert("Invalid private key");
+  const useGuestAccount = async () => {
+    try {
+      const privateKey = getPrivateKey();
+      const { publicKey } = await persistPrivateKey(privateKey);
+      completeNostrLogin(publicKey, privateKey);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const onSubmit = async (publicKey: string, privateKey?: string) => {
+  const useExtension = async () => {
+    try {
+      // @ts-ignore
+      const nostr = global.window.nostr;
+      if (nostr) {
+        const publicKey = await nostr.getPublicKey();
+        completeNostrLogin(publicKey, privateKey);
+      } else {
+        console.error("Nostr extension not installed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const useExistingAccount = async (privateKey: string) => {
+    try {
+      if (privateKey.length !== 64) {
+        return;
+      }
+      setPrivateKey(privateKey);
+      const { publicKey } = await persistPrivateKey(privateKey);
+      setPublicKey(publicKey);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const completeNostrLogin = async (publicKey: string, privateKey?: string) => {
     const authObject = await authService.completeNostrLogin(publicKey, privateKey);
 
     console.log(authObject);
@@ -61,7 +74,7 @@ const LoginPage = () => {
       });
     } else {
       // TODO: render error message
-      alert("Error logging in");
+      console.error("Error logging in");
     }
   };
 
@@ -76,30 +89,49 @@ const LoginPage = () => {
         <div className="m-4 flex w-96 max-w-sm flex-col items-center space-y-6 rounded-md border bg-white pt-12 pb-8 px-4 shadow-md dark:border-secondary-400 dark:border-opacity-50 dark:bg-transparent dark:shadow-sm dark:shadow-gray-700">
           <Logo className="w-16" />
           <h1 className="text-2xl font-bold">Login to Fusion</h1>
-          {privateKey && (
-            <div className="w-full">
-              <p className="w-full text-center mb-1">We're private by design. Get started with an anonymous account!</p>
+          <p className="w-full text-center mb-1">
+            We're private by design
+            <br />
+            Get started with an anonymous account
+          </p>
+          <Button type="button" onClick={useGuestAccount} size="lg" fullWidth className="mt-4">
+            Continue as Guest
+          </Button>
+          {showNostrExtensionLogin && (
+            <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
+              Use Nostr Extension
+            </Button>
+          )}
+          <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
+            Use Existing Account
+          </a>
+          {showInput && (
+            <div className="w-full flex flex-row self-center">
               <Input
-                type={showInput ? "" : "hidden"}
+                // className="text-center"
                 size="lg"
                 fullWidth
-                placeholder="Enter Private Key"
-                onChange={(e) => updateKeys(e.target.value)}
+                placeholder="Paste Nostr Private Key"
+                onChange={(e) => useExistingAccount(e.target.value)}
                 value={privateKey}
               />
+              <Button
+                type="button"
+                disabled={privateKey.length !== 64}
+                onClick={() => completeNostrLogin(publicKey, privateKey)}
+                size="lg"
+                fullWidth
+                className="w-[30%] ml-2 h-full"
+              >
+                Continue
+              </Button>
             </div>
           )}
-          <Button type="button" onClick={() => onSubmit(publicKey, privateKey)} size="lg" fullWidth className="mt-4">
-            Get Started
-          </Button>
-          <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
-            use existing account key
-          </a>
         </div>
       </div>
     </MainLayout>
   );
-};
+});
 
 export default LoginPage;
 
