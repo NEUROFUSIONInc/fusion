@@ -7,10 +7,11 @@ import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
-import { StatusBar } from "react-native";
+import { Alert, Linking, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { withIAPContext } from "react-native-iap";
 import Toast from "react-native-toast-message";
+import VersionCheck from "react-native-version-check";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
@@ -160,6 +161,23 @@ function App() {
       { name: "app_started" },
       {
         userNpub: accountContext?.userNpub,
+      }
+    );
+
+    VersionCheck.needUpdate().then(
+      async (res: { isNeeded: boolean; storeUrl: string }) => {
+        if (res.isNeeded) {
+          Alert.alert(
+            "Update Available",
+            "A new version of Fusion is available. Please update to get the best experience :)",
+            [
+              {
+                text: "Update",
+                onPress: () => Linking.openURL(res.storeUrl),
+              },
+            ]
+          );
+        }
       }
     );
   }, []);
