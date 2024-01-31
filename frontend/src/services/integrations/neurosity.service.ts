@@ -104,10 +104,13 @@ class NeurosityService {
     }
   }
 
-  // todo: log event to app insights
-  async startRecording(experiment: IExperiment, channelNames: string[]) {
-    console.log("starting recording");
-
+  /**
+   * Reads data from Neurosity to memory
+   * @param experiment
+   * @param channelNames
+   * @param duration
+   */
+  async startRecording(experiment: IExperiment, channelNames: string[], duration: number = 0) {
     this.recordingStartTimestamp = dayjs().unix();
     this.recordingStatus = "started";
 

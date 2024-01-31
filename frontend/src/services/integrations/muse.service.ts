@@ -6,6 +6,8 @@ import { MUSE_SERVICE, MuseClient, zipSamples, EEGSample } from "muse-js";
 import { from, Observable } from "rxjs";
 import { isNaN } from "lodash";
 import { pipe } from "rxjs";
+import { IExperiment } from "~/@types";
+import { EventData } from "./neurosity.service";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -53,45 +55,29 @@ if (process.platform === "win32" && parseInt(release().split(".")[0], 10) < 10) 
   console.error("Muse EEG not available in Windows 7");
 }
 
-export const museClient = new MuseClient();
-// museClient.enableAux = true;
-// museClient.enablePpg = true;
+class MuseEEGService {
+  museClient: MuseClient;
+  dataStorageMode: "local" | "remote" = "local";
+  recordingStatus: "not-started" | "started" | "stopped" = "not-started";
+  recordingStartTimestamp = 0;
 
-// Gets an available Muse device
-export const getMuse = async () => {
-  const deviceInstance = await navigator.bluetooth.requestDevice({
-    filters: [{ services: [MUSE_SERVICE] }],
-  });
-  return [{ id: deviceInstance.id, name: deviceInstance.name }];
-};
+  rawBrainwaveSeries: any = [];
+  powerByBandSeries: any = [];
+  signalQualitySeries: any = [];
+  accelerometerSeries: any = [];
 
-interface DeviceInfo {
-  name: string;
-  samplingRate: number;
-  channels: string[];
+  eventSeries: EventData[] = [];
+
+  constructor(museClient: MuseClient) {
+    this.museClient = museClient;
+  }
+
+  async startRecording(experiment: IExperiment, channelName: string[], duration: number = 0) {
+    // build the dataset streams
+  }
+
+  async stopReecording(eventData?: EventData) {}
 }
-
-export const connectMuse = async () => {
-  await museClient.connect();
-  return museClient;
-};
-
-// Attempts to connect to a muse device. If successful, returns a device info object
-export const connectToMuse = async (device: Device | null = null) => {
-  const deviceInstance = await navigator.bluetooth.requestDevice({
-    filters: [{ services: [MUSE_SERVICE] }],
-  });
-  const gatt = await deviceInstance.gatt?.connect();
-  await museClient.connect(gatt);
-
-  return {
-    name: museClient.deviceName,
-    samplingRate: MUSE_SAMPLING_RATE,
-    channels: MUSE_CHANNELS,
-  };
-};
-
-export const disconnectFromMuse = () => museClient.disconnect();
 
 // Awaits Muse connectivity before sending an observable rep. EEG stream
 // export const createRawMuseObservable = async () => {
@@ -157,9 +143,9 @@ export const parseMuseSignalQuality = () =>
   );
 
 // Injects an event marker that will be included in muse-js's data stream through
-export const injectMuseMarker = (value: string, time: number) => {
-  museClient.injectMarker(value, time);
-};
+// export const injectMuseMarker = (value: string, time: number) => {
+//   museClient.injectMarker(value, time);
+// };
 
 // ---------------------------------------------------------------------
 // Helpers
