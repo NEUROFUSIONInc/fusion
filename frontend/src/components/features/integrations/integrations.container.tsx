@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { integrations } from "./data";
 import { Integration } from "./integration/integration";
@@ -102,6 +102,20 @@ export const IntegrationsContainer = () => {
     }
   };
 
+  // check if the referrer
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const ref = url.searchParams.get("ref");
+    if (ref && !neurosityLoading && user) {
+      setModalOpen("neurosity");
+    }
+  }, [neurosityLoading, user]);
+
+  // useEffect(() => {
+  //   if (!museContext.museClient) {
+  //     museContext.connectMuse();
+  //   }
+  // }, [user]);
   return (
     <section>
       <h1 className="text-4xl">Integrations and all connected apps</h1>

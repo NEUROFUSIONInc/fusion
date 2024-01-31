@@ -16,11 +16,11 @@ export default function NeurosityCallback() {
         method: "POST",
         body: JSON.stringify(oauthResult),
       });
-      // alert("user is logged in successfully");
-      window.location.href = "/integrations";
+      console.log("neurosity user logged in ");
     }
 
-    window.location.href = "/integrations";
+    console.log("no refererr");
+    window.location.href = "/integrations?ref=neurosity";
   }, [loading, user, oauthResult]);
 
   return <></>;
