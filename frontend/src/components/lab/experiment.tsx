@@ -6,10 +6,10 @@ import { FC, useState, useEffect, use, useContext } from "react";
 import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
-import { neurosityService, neurosity, EventData } from "~/services";
+import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
 
-import { IExperiment } from "~/@types";
+import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
 import dayjs from "dayjs";

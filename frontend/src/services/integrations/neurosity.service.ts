@@ -8,7 +8,7 @@ import * as path from "path";
 import * as Papa from "papaparse";
 import { promises as fsPromises } from "fs";
 import JSZip, { JSZipFileOptions } from "jszip";
-import { DatasetExport, IExperiment } from "~/@types";
+import { DatasetExport, EventData, IExperiment } from "~/@types";
 import { downloadDataAsZip } from "../storage.service";
 
 export declare enum STREAMING_MODE {
@@ -23,12 +23,6 @@ export const neurosity = new Neurosity({
   // bluetoothTransport: new WebBluetoothTransport(),
   // streamingMode: STREAMING_MODE.BLUETOOTH_WITH_WIFI_FALLBACK,
 });
-
-export interface EventData {
-  startTimestamp: number;
-  duration: number;
-  data: string;
-}
 
 export interface PowerByBand {
   data: {

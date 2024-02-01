@@ -1,8 +1,7 @@
 // import "hazardous";
 import { release } from "os";
 import { MuseClient } from "muse-js";
-import { IExperiment } from "~/@types";
-import { DatasetExport, EventData } from "./neurosity.service";
+import { IExperiment, DatasetExport, EventData } from "~/@types";
 import dayjs from "dayjs";
 import { downloadDataAsZip } from "../storage.service";
 

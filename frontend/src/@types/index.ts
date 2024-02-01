@@ -19,6 +19,12 @@ export interface IExperiment {
   duration?: number;
 }
 
+export interface EventData {
+  startTimestamp: number;
+  duration: number;
+  data: string;
+}
+
 export interface PowerByBand {
   data: {
     gamma: number[];
