@@ -1,19 +1,22 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/self-closing-comp */
 import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
-import { FC, useState, useEffect, use } from "react";
+import { FC, useState, useEffect, use, useContext } from "react";
 
 import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
-import { neurosityService, neurosity, EventData } from "~/services";
+import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
 
-import { IExperiment } from "~/@types";
+import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
 import dayjs from "dayjs";
 import exp from "constants";
+import { MuseContext } from "~/hooks/muse.context";
+import { MuseEEGService, NeuroFusionParsedEEG } from "~/services/integrations/muse.service";
+import { SignalViewer } from "./signalviewer";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -26,7 +29,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   const [sandboxData, setSandboxData] = useState("");
 
-  // const { activeMuseDevice } = useMuseState();
+  const museContext = useContext(MuseContext);
 
   const [duration, setDuration] = useState(0);
   const [tags, setTags] = useState<string[]>([]);
@@ -40,12 +43,34 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function startNeurosityRecording() {
     if (connectedDevice) {
       console.log(experimentInfo);
-      neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames);
+      neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames, duration);
     }
   }
 
   async function stopNeurosityRecording() {
     neurosityService.stopRecording();
+  }
+
+  const [museEEGService, setMuseEEGService] = useState<MuseEEGService>();
+  useEffect(() => {
+    console.log("is recording", isRecording);
+    if (museContext?.museClient && museContext?.museService) {
+      setMuseEEGService(museContext?.museService!);
+    }
+  }, [museContext?.museClient]);
+
+  async function startMuseRecording() {
+    if (museEEGService) {
+      setIsRecording(true);
+      await museEEGService.startRecording();
+    }
+  }
+
+  async function stopMuseRecording() {
+    if (museEEGService) {
+      setIsRecording(false);
+      await museEEGService.stopRecording();
+    }
   }
 
   useEffect(() => {
@@ -107,6 +132,26 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     hiddenElement.click();
   }
 
+  const [rawBrainwaves, setRawBrainwaves] = useState<NeuroFusionParsedEEG[]>();
+
+  useEffect(() => {
+    // Subscribe to updates
+    if (!isRecording) return;
+    if (!museContext?.museService) return;
+    const unsubscribe = museContext?.museService?.onUpdate((data) => {
+      // Handle the new data
+      const last1000Brainwaves = data.slice(-2500);
+      setRawBrainwaves(last1000Brainwaves);
+    });
+
+    // Unsubscribe on component unmount or when dependencies change
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [isRecording, museContext?.museService]);
+
   return (
     <div>
       {/* this needs to move to it's own component */}
@@ -121,35 +166,34 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           </div>
         )}
 
-        {!experiment.url && (
-          <div className="mt-5">
-            {/* <div className="my-5">
-              <p>
-                Duration <em>(optional)</em> :
-              </p>
-              <Input
-                type="number"
-                placeholder="Duration"
-                onChange={(e) => setDuration(e.target.valueAsNumber)}
-                value={duration ?? 0}
-              />
-            </div> */}
-            <div className="my-5">
-              <p>
-                Tags <em>(optional)</em> :
-              </p>
-              <Input
-                type="text"
-                placeholder="Tags"
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setTags(e.target.value.split(","));
-                }}
-                value={tags.join(",")}
-              />
-            </div>
+        <div className="mt-5">
+          <div className="my-5">
+            <p>
+              Duration<em>(optional)</em> :
+            </p>
+            <Input
+              type="number"
+              placeholder="Duration (seconds)"
+              onChange={(e) => setDuration(e.target.valueAsNumber)}
+              value={duration ?? 0}
+            />
           </div>
-        )}
+          <div className="my-5">
+            <p>
+              Tags <em>(optional)</em> :
+            </p>
+            <Input
+              type="text"
+              placeholder="Tags"
+              onChange={(e) => {
+                console.log(e.target.value);
+                setTags(e.target.value.split(","));
+              }}
+              value={tags.join(",")}
+            />
+          </div>
+        </div>
+
         {experiment.url && (
           <div className="m-3">
             <iframe
@@ -202,6 +246,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         </>
       </div>
 
+      {/* Neurosity methods */}
       {!connectedDevice && (
         <>
           <Button
@@ -212,27 +257,10 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               location.href = "/integrations";
             }}
           >
-            Connect EEG device
+            Connect Neurosity Crown
           </Button>
         </>
       )}
-      {/* {activeMuseDevice ? (
-        <>
-          <p>Active Muse Device: {activeMuseDevice?.deviceNickname}</p>
-          <p>Device Status: {deviceStatus}</p>
-        </>
-      ) : (
-        <>
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={() => {}}
-          >
-            Connect Muse device
-          </Button>
-        </>
-      )} */}
 
       {connectedDevice && (
         <>
@@ -259,6 +287,61 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           </div>
 
           <div className="my-5"></div>
+        </div>
+      )}
+
+      {/* Muse Methods */}
+      {!museContext?.museClient && (
+        <>
+          <Button
+            intent={"dark"}
+            className="ml-auto"
+            leftIcon={<PlugZap className="fill-current" />}
+            onClick={async () => {
+              museContext?.getMuseClient();
+            }}
+          >
+            Connect Muse EEG data
+          </Button>
+        </>
+      )}
+
+      {museContext?.museClient && (
+        <div className="mt-4">
+          <p>Active Muse Device: {museContext?.museClient?.deviceName}</p>
+
+          {/* display live eeg */}
+          <div className="flex gap-x-5 mt-3">
+            {!isRecording ? (
+              <>
+                <Button
+                  onClick={() => {
+                    startMuseRecording();
+                  }}
+                >
+                  Start Muse EEG
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={async () => {
+                    stopMuseRecording();
+                  }}
+                >
+                  Stop Muse EEG
+                </Button>
+              </>
+            )}
+
+            <div>
+              {rawBrainwaves && (
+                <>
+                  <SignalViewer rawBrainwaves={rawBrainwaves} channelNames={museContext.museService?.channelNames!} />
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

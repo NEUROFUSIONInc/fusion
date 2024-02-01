@@ -1,4 +1,7 @@
 import axios from "axios";
+import dayjs from "dayjs";
+import JSZip from "jszip";
+import { DatasetExport } from "~/@types";
 
 export function convertToCSV(arr: any[]) {
   const array = [Object.keys(arr[0])].concat(arr);
@@ -44,4 +47,22 @@ export async function writeDataToStore(dataName: string, data: any, fileTimestam
       }
     })();
   }
+}
+
+export async function downloadDataAsZip(datasetExport: DatasetExport, zipFileName: string, unixTimestamp: dayjs.Dayjs) {
+  const filePath = `${zipFileName}_${unixTimestamp.unix()}.zip`;
+
+  let zip = new JSZip();
+  for (let i = 0; i < datasetExport.dataSets.length; i++) {
+    const dataSet = datasetExport.dataSets[i];
+    const content = convertToCSV(dataSet); // convert to csv format
+    zip.file(datasetExport.fileNames[i], content);
+  }
+
+  // download the zip file
+  const downloadLink = document.createElement("a");
+  const blob = await zip.generateAsync({ type: "blob" });
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `${filePath}`;
+  downloadLink.click();
 }

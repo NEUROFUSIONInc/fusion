@@ -129,7 +129,7 @@ export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", clas
               />
             </svg>
           ),
-          label: "View Github Repos",
+          label: "Contribute on Github",
         };
       case "discord":
         return {
@@ -148,7 +148,7 @@ export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", clas
               />
             </svg>
           ),
-          label: "Join Discord Community",
+          label: "Chat on Discord",
         };
     }
   }

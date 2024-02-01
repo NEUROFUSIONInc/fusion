@@ -18,3 +18,31 @@ export interface IExperiment {
   tags?: string[];
   duration?: number;
 }
+
+export interface EventData {
+  startTimestamp: number;
+  duration: number;
+  data: string;
+}
+
+export interface PowerByBand {
+  data: {
+    gamma: number[];
+    beta: number[];
+    alpha: number[];
+    theta: number[];
+    delta: number[];
+  };
+}
+
+interface DeviceInfo {
+  name: string;
+  samplingRate: number;
+  channels: string[];
+  manufacturer?: string;
+}
+
+export interface DatasetExport {
+  fileNames: string[];
+  dataSets: Array<any>;
+}
