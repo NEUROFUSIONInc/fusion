@@ -60,6 +60,9 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
     xAxis: {
       type: "time",
       boundaryGap: false,
+      axisLabel: {
+        show: false, // This will hide the x-axis labels
+      },
     },
     yAxis: {
       type: "value",

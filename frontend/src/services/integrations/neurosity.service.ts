@@ -50,6 +50,7 @@ class NeurosityService {
   recordingStatus: "not-started" | "started" | "stopped" = "not-started";
 
   recordingStartTimestamp = 0;
+  private subscribers: Array<(data: any) => void> = [];
 
   async stopRecording(eventData?: EventData) {
     this.recordingStatus = "stopped";
@@ -99,6 +100,21 @@ class NeurosityService {
     }
   }
 
+  // Notify all subscribers with the new data
+  private notifySubscribers(data: any): void {
+    this.subscribers.forEach((callback) => callback(data));
+  }
+
+  // Method for components to call to subscribe to new data updates
+  public onUpdate(callback: (data: any) => void): () => void {
+    this.subscribers.push(callback);
+
+    // Return an unsubscribe function that removes the callback from the subscribers list
+    return () => {
+      this.subscribers = this.subscribers.filter((sub) => sub !== callback);
+    };
+  }
+
   /**
    * Reads data from Neurosity to memory
    * @param experiment
@@ -133,7 +149,7 @@ class NeurosityService {
         for (index; index < samples; index++) {
           const brainwaveEntry: any = {};
           brainwaveEntry.index = index;
-          brainwaveEntry.unixTimestamp = epochData.info.startTime;
+          brainwaveEntry.unixTimestamp = epochData.info.startTime + index + (1 / epochData.info.samplingRate) * 1000;
 
           let chIndex = 0;
           for (chIndex; chIndex < channelNames.length; chIndex++) {
@@ -142,6 +158,9 @@ class NeurosityService {
             brainwaveEntry[chName] = epochData.data[chIndex][index];
           }
           this.rawBrainwavesSeries.push(brainwaveEntry);
+
+          // notify subscribers
+          this.notifySubscribers(this.rawBrainwavesSeries);
         }
       });
 
