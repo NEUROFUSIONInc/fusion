@@ -13,12 +13,14 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
   const echartsRefs = useRef<any>([]);
 
   useEffect(() => {
+    console.log("re-render");
     const syncZoom = (param: { chartId: string; batch: { start: any; end: any }[] }) => {
       if (!param.batch || param.batch.length === 0) return;
 
       const zoomedChart = echarts.getInstanceById(param.chartId);
       const { start, end } = param.batch[0];
 
+      //@ts-ignore
       echartsRefs.current.forEach((echartRef) => {
         if (echartRef && echartRef.getEchartsInstance() !== zoomedChart) {
           echartRef.getEchartsInstance().dispatchAction({
@@ -31,6 +33,7 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
       });
     };
 
+    //@ts-ignore
     echartsRefs.current.forEach((echartRef) => {
       if (echartRef) {
         echartRef.getEchartsInstance().on("dataZoom", syncZoom);
@@ -38,6 +41,7 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
     });
 
     return () => {
+      //@ts-ignore
       echartsRefs.current.forEach((echartRef) => {
         if (echartRef) {
           echartRef.getEchartsInstance().off("dataZoom", syncZoom);
@@ -69,13 +73,6 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
           .sort((a, b) => a.unixTimestamp - b.unixTimestamp)
           .map((item) => [item.unixTimestamp, item[channelName]]),
         showSymbol: false,
-      },
-    ],
-    dataZoom: [
-      {
-        type: "slider",
-        xAxisIndex: [0],
-        filterMode: "filter",
       },
     ],
   });

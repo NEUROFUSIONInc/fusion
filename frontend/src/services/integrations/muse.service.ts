@@ -2,8 +2,9 @@
 import { release } from "os";
 import { MuseClient } from "muse-js";
 import { IExperiment } from "~/@types";
-import { EventData } from "./neurosity.service";
+import { DatasetExport, EventData } from "./neurosity.service";
 import dayjs from "dayjs";
+import { downloadDataAsZip } from "../storage.service";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -171,9 +172,26 @@ export class MuseEEGService {
     this.museClient.start();
   }
 
-  async stopRecording() {
-    this.recordingStartTimestamp = 0;
-    this.recordingStatus = "stopped";
+  async stopRecording(withDownload = false) {
     this.museClient.pause();
+
+    // call the download data as zip function
+    try {
+      if (withDownload) {
+        const datasetExport: DatasetExport = {
+          fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`],
+          dataSets: [this.rawBrainwavesParsed],
+        };
+        console.log("downloading data as zip");
+        await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      // empty series
+      this.rawBrainwavesParsed = [];
+      this.recordingStartTimestamp = 0;
+      this.recordingStatus = "stopped";
+    }
   }
 }

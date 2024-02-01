@@ -133,11 +133,15 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   }
 
   const [rawBrainwaves, setRawBrainwaves] = useState<NeuroFusionParsedEEG[]>();
+
   useEffect(() => {
     // Subscribe to updates
+    if (!isRecording) return;
+    if (!museContext?.museService) return;
     const unsubscribe = museContext?.museService?.onUpdate((data) => {
       // Handle the new data
-      setRawBrainwaves(data);
+      const last1000Brainwaves = data.slice(-2500);
+      setRawBrainwaves(last1000Brainwaves);
     });
 
     // Unsubscribe on component unmount or when dependencies change
@@ -146,7 +150,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         unsubscribe();
       }
     };
-  }, [museContext?.museService]);
+  }, [isRecording, museContext?.museService]);
 
   return (
     <div>

@@ -35,3 +35,8 @@ interface DeviceInfo {
   channels: string[];
   manufacturer?: string;
 }
+
+export interface DatasetExport {
+  fileNames: string[];
+  dataSets: Array<any>;
+}
