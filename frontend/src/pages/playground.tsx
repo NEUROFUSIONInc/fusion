@@ -49,11 +49,18 @@ const PlaygroundPage: NextPage = () => {
       url: "/experiments/stroop_task.html",
     },
     // {
+    //   id: 6,
+    //   name: "Neuro Art - Generating Images from EEG",
+    //   description:
+    //     "Generate images from your brain waves. View some images and then see if you can think of the same image. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with images.",
+    //   url: "/experiments/eeg_image.html",
+    // },
+    // {
     //   id: 7,
     //   name: "N-Back Task - Memory Test",
     //   description:
     //     "See if you remember the sequence or word patterns. You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
-    //   url: "/experiments/thought_to_text.html",
+    //   url: "/experiments/memory_test.html",
     // },
     // {
     //   id: 6,
@@ -67,13 +74,6 @@ const PlaygroundPage: NextPage = () => {
     //   name: "N-Back Task - Cognitive Test",
     //   description:
     //     "See if you remember the sequence or word patterns. You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
-    //   url: "/experiments/thought_to_text.html",
-    // },
-    // {
-    //   id: 6,
-    //   name: "Neuro Game - Thought to text",
-    //   description:
-    //     "You play a game where you type the words displayed to you on the screen. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with typing words.",
     //   url: "/experiments/thought_to_text.html",
     // },
   ];
@@ -93,6 +93,9 @@ const PlaygroundPage: NextPage = () => {
       <Meta
         meta={{
           title: "Playground | Fusion Explorer",
+          description:
+            "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
+          image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
       <h1 className="text-4xl">Playground</h1>
