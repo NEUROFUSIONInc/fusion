@@ -1,13 +1,9 @@
 // import "hazardous";
-import { withLatestFrom, share, startWith, filter, tap, map } from "rxjs/operators";
-import { addInfo, epoch, bandpassFilter, addSignalQuality } from "@neurosity/pipes";
 import { release } from "os";
-import { MUSE_SERVICE, MuseClient, zipSamples, EEGSample } from "muse-js";
-import { from, Observable } from "rxjs";
-import { isNaN } from "lodash";
-import { pipe } from "rxjs";
+import { MuseClient } from "muse-js";
 import { IExperiment } from "~/@types";
 import { EventData } from "./neurosity.service";
+import dayjs from "dayjs";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -55,104 +51,129 @@ if (process.platform === "win32" && parseInt(release().split(".")[0], 10) < 10) 
   console.error("Muse EEG not available in Windows 7");
 }
 
-class MuseEEGService {
+interface MuseEEGReadings {
+  index: number;
+  electrode: number;
+  samples: number[];
+  timestamp: number;
+}
+
+export interface NeuroFusionParsedEEG {
+  index: number;
+  unixTimestamp: number;
+  [channelName: string]: number;
+}
+
+interface MusePPGReadings {
+  index: number;
+  ppgChannel: number;
+  samples: number[];
+  timestamp: number;
+}
+
+interface accelerometerEntry {
+  x: number;
+  y: number;
+  z: number;
+}
+interface MuseAccelerometerData {
+  samples: accelerometerEntry[];
+}
+
+export class MuseEEGService {
   museClient: MuseClient;
   dataStorageMode: "local" | "remote" = "local";
   recordingStatus: "not-started" | "started" | "stopped" = "not-started";
   recordingStartTimestamp = 0;
 
-  rawBrainwaveSeries: any = [];
-  powerByBandSeries: any = [];
-  signalQualitySeries: any = [];
-  accelerometerSeries: any = [];
+  ppgSeries: any = [];
+  rawBrainwaveSeries: any = {};
+  rawBrainwavesParsed: NeuroFusionParsedEEG[] = [];
 
   eventSeries: EventData[] = [];
 
+  channelNames: string[] = ["TP9", "AF7", "AF8", "TP10"];
+
+  private subscribers: Array<(data: any) => void> = [];
+
   constructor(museClient: MuseClient) {
     this.museClient = museClient;
+
+    this.museClient.eegReadings.subscribe((eegReadings: MuseEEGReadings) => {
+      if (!this.rawBrainwaveSeries[eegReadings.timestamp]) {
+        this.rawBrainwaveSeries[eegReadings.timestamp] = {
+          0: [],
+          1: [],
+          2: [],
+          3: [],
+        };
+      }
+
+      // Update the samples for the specific electrode at this timestamp
+      this.rawBrainwaveSeries[eegReadings.timestamp][eegReadings.electrode] = eegReadings.samples;
+
+      // first check that all the data for timestamp exists..
+      if (
+        this.rawBrainwaveSeries[eegReadings.timestamp][0].length == eegReadings.samples.length &&
+        this.rawBrainwaveSeries[eegReadings.timestamp][1].length == eegReadings.samples.length &&
+        this.rawBrainwaveSeries[eegReadings.timestamp][2].length == eegReadings.samples.length &&
+        this.rawBrainwaveSeries[eegReadings.timestamp][3].length == eegReadings.samples.length
+      ) {
+        // Iterate over each electrode key in the timestamp
+        let sampleIndex = 0;
+        for (sampleIndex; sampleIndex < this.rawBrainwaveSeries[eegReadings.timestamp][0].length; sampleIndex++) {
+          let brainwaveEntry: any = {};
+          brainwaveEntry["index"] = sampleIndex;
+          brainwaveEntry["unixTimestamp"] = eegReadings.timestamp + sampleIndex * INTER_SAMPLE_INTERVAL;
+
+          let chIndex = 0;
+          for (chIndex; chIndex < this.channelNames.length; chIndex++) {
+            brainwaveEntry[this.channelNames[chIndex]] =
+              this.rawBrainwaveSeries[eegReadings.timestamp][chIndex][sampleIndex];
+          }
+          this.rawBrainwavesParsed.push(brainwaveEntry);
+        }
+        // drop the entry from the rawBrainwaveSeries
+        delete this.rawBrainwaveSeries[eegReadings.timestamp];
+        this.notifySubscribers(this.rawBrainwavesParsed);
+      }
+    });
+
+    // this.museClient.ppgReadings.subscribe((ppgReadings: MusePPGReadings) => {
+    //   console.log(ppgReadings);
+    // });
+
+    // this.museClient.accelerometerData.subscribe((accelerometerData) => {
+    //   console.log(accelerometerData);
+    // });
   }
 
-  async startRecording(experiment: IExperiment, channelName: string[], duration: number = 0) {
+  // Notify all subscribers with the new data
+  private notifySubscribers(data: any): void {
+    this.subscribers.forEach((callback) => callback(data));
+  }
+
+  // Method for components to call to subscribe to new data updates
+  public onUpdate(callback: (data: any) => void): () => void {
+    this.subscribers.push(callback);
+
+    // Return an unsubscribe function that removes the callback from the subscribers list
+    return () => {
+      this.subscribers = this.subscribers.filter((sub) => sub !== callback);
+    };
+  }
+
+  async startRecording(duration: number = 0, experiment?: IExperiment) {
     // build the dataset streams
+    // @ts-ignore
+    this.recordingStartTimestamp = dayjs().valueOf();
+    this.recordingStatus = "started";
+    this.museClient.start();
   }
 
-  async stopReecording(eventData?: EventData) {}
+  async stopRecording() {
+    this.recordingStartTimestamp = 0;
+    this.recordingStatus = "stopped";
+    this.museClient.pause();
+  }
 }
-
-// Awaits Muse connectivity before sending an observable rep. EEG stream
-// export const createRawMuseObservable = async () => {
-//   await museClient.start();
-//   const eegStream = await museClient.eegReadings;
-//   const ppgStream = await museClient.ppgReadings;
-//   // const markers = await client.eventMarkers.pipe(startWith({ timestamp: 0 }));
-//   return from(zipSamples(eegStream)).pipe(
-//     // Remove nans if present (muse 2)
-//     map<EEGSample, EEGSample>((sample) => ({
-//       ...sample,
-//       data: sample.data.filter((val) => !isNaN(val)),
-//     })),
-//     filter((sample) => sample.data.length >= 4),
-//     // withLatestFrom(markers, synchronizeTimestamp),
-//     share()
-//   );
-// };
-
-// Creates an observable that will epoch, filter, and add signal quality to EEG stream
-// export const createMuseSignalQualityObservable = (rawObservable: Observable<EEGData>, deviceInfo: DeviceInfo) => {
-//   const { samplingRate, channels: channelNames } = deviceInfo;
-//   const intervalSamples = (PLOTTING_INTERVAL * samplingRate) / 1000;
-//   return rawObservable.pipe(
-//     addInfo({
-//       samplingRate,
-//       channelNames,
-//     }),
-//     epoch({
-//       duration: intervalSamples,
-//       interval: intervalSamples,
-//     }),
-//     bandpassFilter({
-//       nbChannels: channelNames.length,
-//       lowCutoff: 1,
-//       highCutoff: 50,
-//     }),
-//     addSignalQuality(),
-//     parseMuseSignalQuality()
-//   );
-// };
-
-export const parseMuseSignalQuality = () =>
-  pipe(
-    map((epoch: PipesEpoch) => ({
-      ...epoch,
-      signalQuality: Object.assign(
-        {},
-        ...Object.entries(epoch.signalQuality).map(([channelName, signalQuality]) => {
-          if (signalQuality >= SIGNAL_QUALITY_THRESHOLDS.BAD) {
-            return { [channelName]: SIGNAL_QUALITY.BAD };
-          }
-          if (signalQuality >= SIGNAL_QUALITY_THRESHOLDS.OK) {
-            return { [channelName]: SIGNAL_QUALITY.OK };
-          }
-          if (signalQuality >= SIGNAL_QUALITY_THRESHOLDS.GREAT) {
-            return { [channelName]: SIGNAL_QUALITY.GREAT };
-          }
-          return { [channelName]: SIGNAL_QUALITY.DISCONNECTED };
-        })
-      ),
-    }))
-  );
-
-// Injects an event marker that will be included in muse-js's data stream through
-// export const injectMuseMarker = (value: string, time: number) => {
-//   museClient.injectMarker(value, time);
-// };
-
-// ---------------------------------------------------------------------
-// Helpers
-
-// const synchronizeTimestamp = (eegSample, marker) => {
-//   if (eegSample.timestamp - marker.timestamp < 0 && eegSample.timestamp - marker.timestamp >= INTER_SAMPLE_INTERVAL) {
-//     return { ...eegSample, marker: marker.value };
-//   }
-//   return eegSample;
-// };

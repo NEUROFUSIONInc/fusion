@@ -15,6 +15,8 @@ import { Input } from "../ui";
 import dayjs from "dayjs";
 import exp from "constants";
 import { MuseContext } from "~/hooks/muse.context";
+import { MuseEEGService, NeuroFusionParsedEEG } from "~/services/integrations/muse.service";
+import { SignalViewer } from "./signalviewer";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -47,6 +49,28 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   async function stopNeurosityRecording() {
     neurosityService.stopRecording();
+  }
+
+  const [museEEGService, setMuseEEGService] = useState<MuseEEGService>();
+  useEffect(() => {
+    console.log("is recording", isRecording);
+    if (museContext?.museClient && museContext?.museService) {
+      setMuseEEGService(museContext?.museService!);
+    }
+  }, [museContext?.museClient]);
+
+  async function startMuseRecording() {
+    if (museEEGService) {
+      setIsRecording(true);
+      await museEEGService.startRecording();
+    }
+  }
+
+  async function stopMuseRecording() {
+    if (museEEGService) {
+      setIsRecording(false);
+      await museEEGService.stopRecording();
+    }
   }
 
   useEffect(() => {
@@ -108,16 +132,21 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     hiddenElement.click();
   }
 
-  const [eegStream, setEegStream] = useState<any>(null);
-
+  const [rawBrainwaves, setRawBrainwaves] = useState<NeuroFusionParsedEEG[]>();
   useEffect(() => {
-    if (museContext?.museClient) {
-      console.log("subscribing to stream");
-      museContext?.museClient?.eegReadings.subscribe((eeg) => {
-        setEegStream(eeg);
-      });
-    }
-  }, [museContext?.museClient]);
+    // Subscribe to updates
+    const unsubscribe = museContext?.museService?.onUpdate((data) => {
+      // Handle the new data
+      setRawBrainwaves(data);
+    });
+
+    // Unsubscribe on component unmount or when dependencies change
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [museContext?.museService]);
 
   return (
     <div>
@@ -213,6 +242,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         </>
       </div>
 
+      {/* Neurosity methods */}
       {!connectedDevice && (
         <>
           <Button
@@ -224,21 +254,6 @@ export const Experiment: FC<IExperiment> = (experiment) => {
             }}
           >
             Connect Neurosity Crown
-          </Button>
-        </>
-      )}
-
-      {!museContext?.museClient && (
-        <>
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={async () => {
-              museContext?.getMuseClient();
-            }}
-          >
-            Connect Muse EEG data
           </Button>
         </>
       )}
@@ -271,32 +286,54 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         </div>
       )}
 
+      {/* Muse Methods */}
+      {!museContext?.museClient && (
+        <>
+          <Button
+            intent={"dark"}
+            className="ml-auto"
+            leftIcon={<PlugZap className="fill-current" />}
+            onClick={async () => {
+              museContext?.getMuseClient();
+            }}
+          >
+            Connect Muse EEG data
+          </Button>
+        </>
+      )}
+
       {museContext?.museClient && (
         <div className="mt-4">
           <p>Active Muse Device: {museContext?.museClient?.deviceName}</p>
 
           {/* display live eeg */}
           <div className="flex gap-x-5 mt-3">
-            <Button
-              onClick={() => {
-                museContext?.museClient?.start();
-              }}
-            >
-              Start Muse EEG
-            </Button>
-            <Button
-              onClick={() => {
-                museContext?.museClient?.pause();
-              }}
-            >
-              Stop Muse EEG
-            </Button>
+            {!isRecording ? (
+              <>
+                <Button
+                  onClick={() => {
+                    startMuseRecording();
+                  }}
+                >
+                  Start Muse EEG
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={async () => {
+                    stopMuseRecording();
+                  }}
+                >
+                  Stop Muse EEG
+                </Button>
+              </>
+            )}
 
             <div>
-              {eegStream && (
+              {rawBrainwaves && (
                 <>
-                  <p>Live EEG Stream</p>
-                  <p>{JSON.stringify(eegStream)}</p>
+                  <SignalViewer rawBrainwaves={rawBrainwaves} channelNames={museContext.museService?.channelNames!} />
                 </>
               )}
             </div>
