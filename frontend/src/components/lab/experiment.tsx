@@ -105,15 +105,25 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         if (typeof event.data === "string") {
           return;
         }
-        // The data sent from the iframe
-        setSandboxData(event.data);
+
+        try {
+          if (typeof event.data === "object") {
+            if (event.data["trials"]) {
+              // jspsych events contain trials key...
+              setSandboxData(event.data);
+            } else {
+              console.log("rejected non experiment data");
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
       }
     });
   }
 
   useEffect(() => {
     if (sandboxData !== "") {
-      console.log("sandbox data obtained", sandboxData);
       (async () => {
         await downloadSandboxData(sandboxData, experiment.name, dayjs().unix());
       })();
