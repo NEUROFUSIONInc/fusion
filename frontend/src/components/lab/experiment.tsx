@@ -247,20 +247,36 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       </div>
 
       {/* Neurosity methods */}
-      {!connectedDevice && (
-        <>
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={() => {
-              location.href = "/integrations";
-            }}
-          >
-            Connect Neurosity Crown
-          </Button>
-        </>
-      )}
+      <div className="flex flex-row gap-x-3">
+        {!connectedDevice && (
+          <>
+            <Button
+              intent={"dark"}
+              className="ml-auto"
+              leftIcon={<PlugZap className="fill-current" />}
+              onClick={() => {
+                location.href = "/integrations";
+              }}
+            >
+              Connect Neurosity Crown
+            </Button>
+          </>
+        )}
+        {!museContext?.museClient && (
+          <>
+            <Button
+              intent={"dark"}
+              className="ml-auto"
+              leftIcon={<PlugZap className="fill-current" />}
+              onClick={async () => {
+                museContext?.getMuseClient();
+              }}
+            >
+              Connect Muse Headset
+            </Button>
+          </>
+        )}
+      </div>
 
       {connectedDevice && (
         <>
@@ -291,20 +307,6 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       )}
 
       {/* Muse Methods */}
-      {!museContext?.museClient && (
-        <>
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={async () => {
-              museContext?.getMuseClient();
-            }}
-          >
-            Connect Muse EEG data
-          </Button>
-        </>
-      )}
 
       {museContext?.museClient && (
         <div className="mt-4">
@@ -319,7 +321,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                     startMuseRecording();
                   }}
                 >
-                  Start Muse EEG
+                  Start Muse EEG Recording
                 </Button>
               </>
             ) : (
@@ -329,7 +331,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                     stopMuseRecording();
                   }}
                 >
-                  Stop Muse EEG
+                  Stop Muse EEG Recording
                 </Button>
               </>
             )}
