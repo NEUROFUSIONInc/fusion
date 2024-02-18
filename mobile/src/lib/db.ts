@@ -179,6 +179,23 @@ export const createBaseTables = () => {
           return Boolean(error);
         }
       );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS streaks (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          score INTEGER NOT NULL,
+          timestamp INTEGER NOT NULL
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
     });
   });
 };

@@ -76,4 +76,10 @@ export interface UserAccount {
 export interface UserPreferences {
   enableCopilot: boolean;
   enableHealthConnect: boolean;
+  lastActiveCategory: string;
+}
+
+export interface StreakEntry {
+  timestamp: number;
+  score: number;
 }

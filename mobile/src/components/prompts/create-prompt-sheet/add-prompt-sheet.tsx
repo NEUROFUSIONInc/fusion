@@ -5,8 +5,9 @@ import { View } from "react-native";
 
 import { BottomSheet } from "../../bottom-sheet/bottom-sheet";
 import { Button } from "../../button";
-import { CreatePromptSheet } from "./create-prompt-sheet";
 import { PromptOption } from "../prompt-option/prompt-option";
+
+import { CreatePromptSheet } from "./create-prompt-sheet";
 
 interface AddPromptSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;
