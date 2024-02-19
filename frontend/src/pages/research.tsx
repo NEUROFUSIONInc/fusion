@@ -18,7 +18,7 @@ const Research: NextPage = () => {
     <MainLayout isResearch>
       <Meta
         meta={{
-          title: "Fusion - The simplest way to do brain and behavior research",
+          title: "NeuroFusion - The simplest way to do brain and behavior research",
         }}
       />
       <HeroSection isResearch />
