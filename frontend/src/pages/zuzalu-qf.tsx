@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Meta } from "~/components/layouts";
 
 export default function ZuzaluQF() {
   useEffect(() => {
