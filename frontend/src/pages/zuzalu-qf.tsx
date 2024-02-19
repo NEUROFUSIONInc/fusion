@@ -10,6 +10,8 @@ export default function ZuzaluQF() {
     <Meta
         meta={{
           title: "NeuroFusion - The simplest way to do brain and behavior research",
+          description: "Record brain activity from your home while doing cognitive experiments and get instant results",
+          image: "https://usefusion.app/images/features/neurofusion_experiment.png"
         }}
       />
   </>);
