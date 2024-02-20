@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 
 import { UserPreferences } from "~/@types";
 import { categories } from "~/config";
@@ -27,8 +27,14 @@ export const AccountContextProvider = ({
     lastActiveCategory: "",
   });
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
-    console.log("userPreferences", userPreferences);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     SecureStore.setItemAsync(
       "copilot_consent",
       userPreferences.enableCopilot.toString()
