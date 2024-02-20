@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
+import ContextMenu from "react-native-context-menu-view";
 
-import { Button } from "../../button";
-import { ChevronDown } from "../../icons";
-
+import { Button } from "~/components/button";
+import { ChevronDown } from "~/components/icons";
 import { Streaks } from "~/components/streaks";
 import { InsightContext } from "~/contexts";
 
@@ -12,29 +12,30 @@ export const InsightsHeader = () => {
 
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <Button
-        variant="ghost"
-        size="icon"
-        rightIcon={<ChevronDown />}
-        title={insightContext?.insightPeriod === "week" ? "Weekly" : "Monthly"}
-        textSize="bold"
-        onPress={() => {
-          Alert.alert(
-            "Set Insights Period",
-            "How will you like to view your responses over time?",
-            [
-              {
-                text: "Weekly",
-                onPress: () => insightContext?.setInsightPeriod("week"),
-              },
-              {
-                text: "Monthly",
-                onPress: () => insightContext?.setInsightPeriod("month"),
-              },
-            ]
-          );
+      <ContextMenu
+        actions={[{ title: "Weekly" }, { title: "Monthly" }]}
+        onPress={(e) => {
+          if (e.nativeEvent.index === 0) {
+            insightContext?.setInsightPeriod("week");
+          } else if (e.nativeEvent.index === 1) {
+            insightContext?.setInsightPeriod("month");
+          }
         }}
-      />
+        dropdownMenuMode
+        title="Choose Insights Period"
+      >
+        {/* <View style={styles.yourOwnStyles} /> */}
+        {/* <Text>Press me</Text> */}
+        <Button
+          variant="ghost"
+          size="icon"
+          rightIcon={<ChevronDown />}
+          title={
+            insightContext?.insightPeriod === "week" ? "Weekly" : "Monthly"
+          }
+          textSize="bold"
+        />
+      </ContextMenu>
       <Streaks />
     </View>
   );

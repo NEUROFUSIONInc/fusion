@@ -37,6 +37,7 @@
     "echarts": "^5.4.2",
     "expo": "~48.0.21",
     "expo-asset": "~8.9.1",
+    "expo-background-fetch": "~11.1.1",
     "expo-checkbox": "~2.3.1",
     "expo-crypto": "^12.6.0",
     "expo-dev-client": "~2.2.1",
@@ -87,8 +88,7 @@
     "react-native-zip-archive": "^6.0.9",
     "text-encoding": "^0.7.0",
     "uuid": "^9.0.0",
-    "wrn-echarts": "^0.1.5",
-    "expo-background-fetch": "~11.1.1"
+    "wrn-echarts": "^0.1.5"
   },
   "reactNativePermissionsIOS": [
     "Notifications",
