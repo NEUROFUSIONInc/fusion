@@ -115,11 +115,17 @@ class StreakService {
         await this.setStreakScore(dayjs().startOf("day").valueOf(), 0);
       }
 
-      Toast.show({
-        type: "success",
-        text1: "You just extended your streak 🎉",
-        text2: "Keep responding to your prompts for better insights!",
-      });
+      try {
+        Toast.show({
+          type: "success",
+          text1: "You just extended your streak 🎉",
+          text2: "Keep responding to your prompts for better insights!",
+        });
+      } catch (error) {
+        // unsure if this will error out when user just responds from the notification
+        console.log("error showing toast", error);
+      }
+
       return true;
     } else {
       // don't do anything since the streak has already been updated for the day

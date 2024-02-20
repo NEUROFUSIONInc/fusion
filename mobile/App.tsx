@@ -47,6 +47,10 @@ const queryClient = new QueryClient({
   defaultOptions: QUERY_OPTIONS_DEFAULT,
 });
 
+// const BACKGROUND_NOTIFICATION_TASK = 'background-notification-task';
+
+// TaskManager.defin
+
 function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
@@ -129,7 +133,7 @@ function App() {
               value: response_value ?? "",
             };
             // save the prompt response
-            await promptService.savePromptResponse(promptResponse);
+            await promptService.savePromptResponse(promptResponse, queryClient);
             // track event
             appInsights.trackEvent(
               {
