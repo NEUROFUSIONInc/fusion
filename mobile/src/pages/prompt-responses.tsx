@@ -1,10 +1,10 @@
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import { Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CalendarPicker, ResponseTextItem } from "~/components";
+import { Button, CalendarPicker, ResponseTextItem } from "~/components";
 import { Screen } from "~/components/screen";
 import { InsightContext } from "~/contexts";
 import { InsightsStackParamList } from "~/navigation/insights-navigator";
@@ -21,6 +21,8 @@ export function PromptResponsesScreen() {
   );
 
   const insightContext = React.useContext(InsightContext);
+
+  const navigation = useNavigation();
 
   const [promptResponses, setPromptResponses] = React.useState<any[]>([]);
   useEffect(() => {
@@ -68,6 +70,19 @@ export function PromptResponsesScreen() {
           </Text>
         )}
       </ScrollView>
+      <Button
+        title="Add Response"
+        fullWidth
+        className="rounded flex items-center justify-center mb-3 mt-3"
+        onPress={() => {
+          navigation.navigate("PromptNavigator", {
+            screen: "PromptEntry",
+            params: {
+              promptUuid: routePrompt.uuid,
+            },
+          });
+        }}
+      />
     </Screen>
   );
 }
