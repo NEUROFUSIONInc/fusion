@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { View, Text, Pressable } from "react-native";
@@ -5,6 +6,8 @@ import { View, Text, Pressable } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import Animated from "react-native-reanimated";
 
+import { Button } from "../button";
+import { Notebook } from "../icons";
 import { ResponseTextItem } from "../response-text-item";
 
 import { FusionBarChart } from "./bar-chart";
@@ -42,6 +45,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   };
   const accountContext = useContext(AccountContext);
 
+  const navigation = useNavigation();
   useEffect(() => {
     // get the prompt responses
     // filter by time period
@@ -209,6 +213,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
           <Text className="font-sans text-white text-base align-middle">
             No responses in this time period
           </Text>
+
+          <View>
+            <Button
+              title="Add Response"
+              // fullWidth
+              leftIcon={<Notebook color="#333" />}
+              className="rounded flex items-center justify-center mb-3 mt-3"
+              onPress={() => {
+                navigation.navigate("PromptNavigator", {
+                  screen: "PromptEntry",
+                  params: {
+                    promptUuid: prompt.uuid,
+                  },
+                });
+              }}
+            />
+          </View>
         </View>
       )}
 
