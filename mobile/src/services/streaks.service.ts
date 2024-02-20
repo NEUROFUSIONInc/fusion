@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import { StreakEntry } from "~/@types";
 import { db } from "~/lib";
@@ -113,6 +114,12 @@ class StreakService {
       } else {
         await this.setStreakScore(dayjs().startOf("day").valueOf(), 0);
       }
+
+      Toast.show({
+        type: "success",
+        text1: "You just extended your streak 🎉",
+        text2: "Keep responding to your prompts for better insights!",
+      });
       return true;
     } else {
       // don't do anything since the streak has already been updated for the day

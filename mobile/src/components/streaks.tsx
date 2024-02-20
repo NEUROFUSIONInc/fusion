@@ -17,7 +17,8 @@ import { Streak } from "./icons";
 
 import { Prompt } from "~/@types";
 import { AccountContext } from "~/contexts";
-import { promptService, streakService } from "~/services";
+import { useStreaksQuery } from "~/hooks/useStreaks";
+import { promptService } from "~/services";
 
 export const Streaks: FC = () => {
   const accountContext = useContext(AccountContext);
@@ -27,7 +28,8 @@ export const Streaks: FC = () => {
     streakSheetRef.current?.expand();
   }, []);
 
-  const [streakScore, setStreakScore] = useState(0);
+  const { data: latestStreak } = useStreaksQuery();
+
   const [activePrompts, setActivePrompts] = useState<Prompt[]>([]);
 
   useEffect(() => {
@@ -35,14 +37,6 @@ export const Streaks: FC = () => {
       const res = await promptService.getActivePromptsToday();
       if (res) {
         setActivePrompts(res);
-      }
-
-      // get streak value
-      const streakScoreResponse = await streakService.getStreakScore(
-        dayjs().startOf("day").valueOf()
-      );
-      if (streakScoreResponse) {
-        setStreakScore(streakScoreResponse.score);
       }
     })();
   }, []);
@@ -73,7 +67,7 @@ export const Streaks: FC = () => {
         size="icon"
         leftIcon={<Streak />}
         onPress={handleStreakSheetOpen}
-        title={streakScore.toString()}
+        title={latestStreak?.score.toString() ?? "0"}
       />
 
       <Portal>
@@ -87,7 +81,7 @@ export const Streaks: FC = () => {
               <View className="flex flex-row justify-around self-center">
                 <Streak />
                 <Text className="text-white text-base font-sans ml-1">
-                  {streakScore}
+                  {latestStreak?.score.toString() ?? "0"}
                 </Text>
               </View>
               <Text className="text-white text-base font-sans">
@@ -98,21 +92,21 @@ export const Streaks: FC = () => {
             activePrompts.length === responsesForActivePrompts ? (
               <Text className="text-white text-base font-sans text-center">
                 You've responded to all prompts for today and earned a streak.
+                {"\n"}
                 Keep it up 🎉
+              </Text>
+            ) : responsesForActivePrompts > 0 ? (
+              <Text className="text-white text-base font-sans text-center">
+                You've responded to {responsesForActivePrompts} out of{" "}
+                {activePrompts.length} prompts today.{"\n"}Keep it up 🎉
               </Text>
             ) : (
               <Text className="text-white text-base font-sans text-center">
-                You've responded to {responsesForActivePrompts} out of{" "}
-                {activePrompts.length} prompts today. Keep it up 🎉
+                Respond to at least one prompt today to earn a Fusion streak!
               </Text>
             )}
 
             {/* TODO: If you don't have a prompt active for today, that's okay you don't lose it, you just get any... */}
-            {responsesForActivePrompts < 1 ? (
-              <Text className="text-white text-base font-sans text-center">
-                Respond to at least one prompt today to earn a Fusion streak!
-              </Text>
-            ) : null}
           </View>
         </BottomSheet>
       </Portal>

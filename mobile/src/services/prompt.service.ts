@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
@@ -313,7 +314,10 @@ class PromptService {
     }
   };
 
-  public savePromptResponse = async (responseObj: PromptResponse) => {
+  public savePromptResponse = async (
+    responseObj: PromptResponse,
+    queryClient: QueryClient | null = null
+  ) => {
     // ensure timestamp columns are in unixTime milliseconds
     responseObj["triggerTimestamp"] = updateTimestampToMs(
       responseObj["triggerTimestamp"]
@@ -363,6 +367,10 @@ class PromptService {
       await storeDetailsInDb();
 
       await streakService.updateStreakScore("increment");
+
+      if (queryClient) {
+        await queryClient.invalidateQueries({ queryKey: ["streaks", -1] });
+      }
       return true;
     } catch (error) {
       console.log(error);

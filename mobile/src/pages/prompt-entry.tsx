@@ -4,6 +4,7 @@ import {
   useRoute,
   CommonActions,
 } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import React from "react";
 import {
@@ -83,6 +84,8 @@ export function PromptEntryScreen() {
     });
   };
 
+  const queryClient = useQueryClient();
+
   // TODO: move date picker logic to it's own component
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
   const showDatePicker = () => {
@@ -134,7 +137,10 @@ export function PromptEntryScreen() {
     }
 
     // save the prompt entry
-    const res = await promptService.savePromptResponse(promptResponse);
+    const res = await promptService.savePromptResponse(
+      promptResponse,
+      queryClient
+    );
 
     if (res) {
       // track event
