@@ -36,7 +36,7 @@ export const HeroSection = ({ isResearch = false }) => {
             <iframe
               title="Neurofusion Demo Video"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              src="https://www.loom.com/embed/dac59af6c00442c995f0235bccefc481?sid=8444f557-a841-4d0a-9682-455a6cc7b827?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
+              src="https://www.loom.com/embed/013db5f1fb3f44f49693ab59cb3e36f4?sid=ae15a47c-8d9d-4529-9ca2-13ec6e19e1ad?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
               allowFullScreen
               className="absolute top-0 left-0 w-full h-full rounded-3xl"
             />
