@@ -83,7 +83,7 @@ export const OnboardingScreen = () => {
     {
       title: "Stay in the loop",
       description:
-        "Get updates from the team, on features, experiments and more. This is not linked to your fusion account, it’s only to send you mail.",
+        "Get updates from the team, on features, experiments and more. Your email is not linked to your fusion account, it’s only to send you updates.",
       image: require("../../assets/onboarding/fusion-newsletter.png"),
       hasInput: true,
       onclick: async () => {

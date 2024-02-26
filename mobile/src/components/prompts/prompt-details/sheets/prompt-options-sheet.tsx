@@ -130,7 +130,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
-      option: "View Insights",
+      option: "Previous Responses",
       icon: <FontAwesome5 name="history" size={18} color="white" />,
       onPress: () => {
         onBottomSheetClose?.();

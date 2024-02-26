@@ -1,7 +1,8 @@
 import * as SecureStore from "expo-secure-store";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 
 import { UserPreferences } from "~/@types";
+import { categories } from "~/config";
 import { nostrService } from "~/services/nostr.service";
 
 export const AccountContext = createContext<null | {
@@ -23,7 +24,30 @@ export const AccountContextProvider = ({
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     enableCopilot: false,
     enableHealthConnect: false,
+    lastActiveCategory: "",
   });
+
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    SecureStore.setItemAsync(
+      "copilot_consent",
+      userPreferences.enableCopilot.toString()
+    );
+    SecureStore.setItemAsync(
+      "health_connect",
+      userPreferences.enableHealthConnect.toString()
+    );
+    SecureStore.setItemAsync(
+      "last_active_category",
+      userPreferences.lastActiveCategory ?? categories[0].name
+    );
+  }, [userPreferences]);
 
   useEffect(() => {
     (async () => {
@@ -41,9 +65,14 @@ export const AccountContextProvider = ({
       const healthConnect =
         (await SecureStore.getItemAsync("health_connect")) === "true";
 
+      const lastActiveCategory = await SecureStore.getItemAsync(
+        "last_active_category"
+      );
+
       setUserPreferences({
         enableCopilot: copilotConsent,
         enableHealthConnect: healthConnect,
+        lastActiveCategory: lastActiveCategory ?? categories[0].name,
       });
 
       setUserLoading(false);

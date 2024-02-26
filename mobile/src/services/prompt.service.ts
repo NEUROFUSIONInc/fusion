@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
@@ -5,6 +6,7 @@ import {
   NotificationService,
   notificationService,
 } from "./notification.service";
+import { streakService } from "./streaks.service";
 
 import {
   CreatePrompt,
@@ -312,7 +314,10 @@ class PromptService {
     }
   };
 
-  public savePromptResponse = async (responseObj: PromptResponse) => {
+  public savePromptResponse = async (
+    responseObj: PromptResponse,
+    queryClient: QueryClient | null = null
+  ) => {
     // ensure timestamp columns are in unixTime milliseconds
     responseObj["triggerTimestamp"] = updateTimestampToMs(
       responseObj["triggerTimestamp"]
@@ -360,6 +365,12 @@ class PromptService {
       };
 
       await storeDetailsInDb();
+
+      await streakService.updateStreakScore("increment");
+
+      if (queryClient) {
+        await queryClient.invalidateQueries({ queryKey: ["streaks", -1] });
+      }
       return true;
     } catch (error) {
       console.log(error);
@@ -448,6 +459,63 @@ class PromptService {
     }
   };
 
+  public getPromptResponsesFromPromptIds = async (
+    promptUuids: string[],
+    startTimestamp: number = -1,
+    endTimestamp: number = -1
+  ) => {
+    try {
+      const placeholders = promptUuids.map(() => "?").join(", ");
+      let queryString = `SELECT * FROM prompt_responses WHERE promptUuid IN (${placeholders})`;
+      const queryParams: (string | number)[] = promptUuids;
+      if (startTimestamp > 0) {
+        queryString += " AND responseTimestamp >= ?";
+        queryParams.push(startTimestamp);
+      }
+      if (endTimestamp > 0) {
+        queryString += " AND responseTimestamp <= ?";
+        queryParams.push(endTimestamp);
+      }
+
+      /** SELECT * FROM  */
+      const getFromDb = () => {
+        return new Promise<PromptResponse[]>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              queryString,
+              queryParams,
+              (_, { rows }) => {
+                const responses = rows._array.map((row) => {
+                  return {
+                    id: row.id,
+                    promptUuid: row.promptUuid,
+                    value: row.value,
+                    triggerTimestamp: row.triggerTimestamp,
+                    responseTimestamp: row.responseTimestamp,
+                    additionalMeta: JSON.parse(row.additionalMeta ?? "{}"),
+                  } as PromptResponse;
+                });
+                resolve(responses);
+              },
+              (_, error) => {
+                console.log("error getting responses from db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      };
+
+      const responses = await getFromDb();
+      console.log("responses", responses);
+      return responses;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
   private promptExists = async (uuid: string) => {
     try {
       const promptExists = () =>
@@ -472,6 +540,42 @@ class PromptService {
     }
   };
 
+  public getActivePromptsToday = async () => {
+    const prompts = await this.readSavedPrompts();
+    const activePrompts = prompts.filter((prompt) => {
+      // if notification is not active, skip
+      if (
+        !prompt.additionalMeta ||
+        prompt.additionalMeta?.isNotificationActive === false
+      ) {
+        return false;
+      }
+
+      // if notification is not supposed to come up on the current day, skip
+      const daysObject =
+        typeof prompt.notificationConfig_days === "string"
+          ? (JSON.parse(
+              prompt.notificationConfig_days
+            ) as NotificationConfigDays)
+          : prompt.notificationConfig_days;
+      const activeDays = Object.entries(daysObject)
+        .filter(([day, value]) => value)
+        .map(([day, value]) => day);
+
+      console.log("active days", activeDays);
+      if (
+        !activeDays.includes(
+          dayjs().startOf("day").format("dddd").toLowerCase()
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return activePrompts;
+  };
   /**
    * This is the hackiest function in the codebase & it's held
    * together by duct tape and prayers. We will deprecte it once we
