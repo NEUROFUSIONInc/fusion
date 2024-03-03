@@ -2,6 +2,7 @@ import RNBottomSheet, {
   BottomSheetHandle,
   BottomSheetHandleProps,
 } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import { FC, RefObject, useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
@@ -59,6 +60,8 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
     }
   };
 
+  const navigation = useNavigation();
+
   const handleClose = () => {
     setActiveStep(0);
     setCategory("");
@@ -69,8 +72,12 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
     setEnd(endDate);
     setDays(promptSelectionDays);
     setPromptCount(0);
+    const redirectToHome = !!success;
     setSuccess(false);
     promptSheetRef.current?.close();
+    if (redirectToHome) {
+      navigation.navigate("PromptNavigator", { screen: "Prompts" });
+    }
   };
 
   const paddingBottom = useMemo(
