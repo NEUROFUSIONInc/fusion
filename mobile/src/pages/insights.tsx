@@ -36,6 +36,7 @@ export function InsightsScreen() {
 
   const insightContext = useContext(InsightContext);
   const routePromptUuid = route.params?.promptUuid;
+  const routeChartPeriod = route.params?.chartPeriod;
 
   const accountContext = React.useContext(AccountContext);
 
@@ -47,6 +48,9 @@ export function InsightsScreen() {
         userNpub: accountContext?.userNpub,
       },
     });
+    if (routeChartPeriod) {
+      insightContext?.setInsightPeriod(routeChartPeriod);
+    }
   }, []);
 
   const { data: savedPrompts, isLoading } = usePromptsQuery();

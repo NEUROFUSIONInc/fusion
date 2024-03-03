@@ -1,10 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import {
   NotificationContentInput,
   NotificationTriggerInput,
 } from "expo-notifications";
 import * as Notifications from "expo-notifications";
 import "react-native-get-random-values";
-import * as Crypto from "expo-crypto";
 import { Alert, Linking, Platform } from "react-native";
 
 import { Days, NotificationConfigDays, Prompt } from "~/@types";
@@ -356,6 +357,140 @@ export class NotificationService {
     ]);
   };
 
+  public saveCutomNotificationToDb = async (
+    notificationId: string,
+    title: string
+  ) => {
+    try {
+      const storeDetailsInDb = () => {
+        return new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              "INSERT INTO custom_notifications (notificationId, title) VALUES (?, ?)",
+              [notificationId, title],
+              () => {
+                console.log("notificationId saved in db");
+                resolve(true);
+              },
+              (_, error) => {
+                console.log("error saving in db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      };
+
+      await storeDetailsInDb();
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  public scheduleInsightNotifications = async () => {
+    /**
+     * Schedules notification for fusion insights
+     * - weekly on sunday
+     * - monthly on the first of every month
+     *
+     * flag for when it's set `insightNotificationsScheduled`
+     */
+    const isScheduled = await AsyncStorage.getItem(
+      "insightNotificationsScheduled"
+    );
+    if (isScheduled === "true") {
+      console.log("insight notifications already scheduled");
+      return;
+    }
+    const triggerObject: NotificationTriggerInput = {};
+    const contentObject: NotificationContentInput = {};
+
+    // if platform is android assign channel
+    if (Platform.OS === "android") {
+      triggerObject["channelId"] = "default";
+    }
+
+    contentObject["title"] = `Your weekly insights are ready ✨`;
+    contentObject["categoryIdentifier"] = "insight_weekly";
+    if (Platform.OS === "ios") {
+      // apply notification instruction
+      contentObject["body"] = `Reflect on last week and plan ahead`;
+    }
+
+    await Notifications.setNotificationCategoryAsync(
+      contentObject["categoryIdentifier"],
+      [
+        {
+          identifier: contentObject["categoryIdentifier"],
+          buttonTitle: "View",
+          options: {
+            opensAppToForeground: true,
+          },
+        },
+      ]
+    );
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: contentObject,
+      trigger: {
+        ...triggerObject,
+        hour: 12,
+        minute: 0,
+        weekday: 1,
+        repeats: true,
+      },
+    });
+    await this.saveCutomNotificationToDb(
+      notificationId,
+      contentObject["categoryIdentifier"]
+    );
+
+    // monthly insights
+    for (let i = 0; i <= 11; i++) {
+      // apply notification instruction
+      contentObject["title"] = `Your monthly insights are ready ✨`;
+      contentObject["categoryIdentifier"] = `insight_monthly_${i}`;
+      if (Platform.OS === "ios") {
+        // apply notification instruction
+        contentObject["body"] = `Reflect on last month and plan ahead`;
+      }
+
+      await Notifications.setNotificationCategoryAsync(
+        contentObject["categoryIdentifier"],
+        [
+          {
+            identifier: contentObject["categoryIdentifier"],
+            buttonTitle: "View",
+            options: {
+              opensAppToForeground: true,
+            },
+          },
+        ]
+      );
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: contentObject,
+        trigger: {
+          ...triggerObject,
+          hour: 12,
+          minute: 0,
+          month: i,
+          day: 1,
+          repeats: true,
+        },
+      });
+      await this.saveCutomNotificationToDb(
+        notificationId,
+        contentObject["categoryIdentifier"]
+      );
+    }
+
+    // write a flag to the localstorage
+    await AsyncStorage.setItem("insightNotificationsScheduled", "true");
+  };
+
   /**
    * Create prompt_notifications entry in sqlite
    */
@@ -437,6 +572,11 @@ export class NotificationService {
               "SELECT promptUuid FROM prompt_notifications WHERE notificationId = ? LIMIT 1",
               [notificationId],
               (_, { rows }) => {
+                if (rows.length < 1) {
+                  // eslint-disable-next-line prefer-promise-reject-errors
+                  reject("no prompt found for notificationId");
+                  return false;
+                }
                 const promptUuid = rows._array[0].promptUuid;
                 resolve(promptUuid);
               },

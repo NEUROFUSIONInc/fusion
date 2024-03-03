@@ -508,7 +508,6 @@ class PromptService {
       };
 
       const responses = await getFromDb();
-      console.log("responses", responses);
       return responses;
     } catch (error) {
       console.log(error);

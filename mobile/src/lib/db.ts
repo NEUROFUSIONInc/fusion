@@ -196,6 +196,23 @@ export const createBaseTables = () => {
           return Boolean(error);
         }
       );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS custom_notifications (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          notificationId TEXT NOT NULL,
+          title TEXT NOT NULL
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
     });
   });
 };

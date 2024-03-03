@@ -1,5 +1,4 @@
 import { PortalProvider } from "@gorhom/portal";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -39,17 +38,10 @@ Notifications.setNotificationHandler({
   },
 });
 
-// - temp remove since asking for notification permission on first load causes hiding splash screen to fail
-// SplashScreen.preventAutoHideAsync();
-
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: QUERY_OPTIONS_DEFAULT,
 });
-
-// const BACKGROUND_NOTIFICATION_TASK = 'background-notification-task';
-
-// TaskManager.defin
 
 function App() {
   const responseListener = React.useRef<
@@ -64,6 +56,7 @@ function App() {
     (async () => {
       await notificationService.registerForPushNotificationsAsync();
       await notificationService.setUpNotificationCategories();
+      await notificationService.scheduleInsightNotifications();
 
       // set notification handlers
       // what happens when a user responds to notification
@@ -80,7 +73,47 @@ function App() {
                 response.notification.request.identifier
               );
             if (!promptUuid) {
-              console.log("unable to fetch prompt uuid for notification id");
+              console.log(
+                "unable to fetch prompt uuid for notification id so we're assuming it's a custom notification"
+              );
+
+              // this will mean that it is custom notification...
+              // get the `insight_` notification categories,
+              let notificationCategory: string | null = "";
+              if (
+                "categoryIdentifier" in response.notification.request.content
+              ) {
+                notificationCategory =
+                  response.notification.request.content.categoryIdentifier;
+              }
+              if (!notificationCategory) {
+                return;
+              }
+
+              appInsights.trackEvent(
+                {
+                  name: "insight_notification_clicked",
+                },
+                {
+                  triggerTimestamp: Math.floor(response.notification.date),
+                  clickTimestamp: dayjs().valueOf(),
+                  userNpub: accountContext?.userNpub,
+                }
+              );
+
+              const chartPeriod = notificationCategory.startsWith(
+                "insight_weekly"
+              )
+                ? "week"
+                : "month";
+
+              navigation.navigate("InsightsNavigator", {
+                screen: "InsightsPage",
+                params: {
+                  chartPeriod,
+                },
+              });
+
               return;
             }
             // dismiss all other notifications for this prompt
@@ -148,15 +181,6 @@ function App() {
             );
           }
         );
-
-      const notificationResetStatus = await AsyncStorage.getItem(
-        "notification_reset_aug_16"
-      );
-      if (notificationResetStatus !== "true") {
-        console.log("Resetting all device notifications");
-        await promptService.resetNotificationsForActivePrompts();
-        await AsyncStorage.setItem("notification_reset_aug_16", "true");
-      }
     })();
   }, []);
 
