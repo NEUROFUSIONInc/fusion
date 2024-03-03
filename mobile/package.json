@@ -54,7 +54,6 @@
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
     "expo-task-manager": "~11.1.1",
-    "expo-updates": "~0.16.4",
     "nativewind": "^2.0.11",
     "nostr-tools": "1.11.1",
     "papaparse": "^5.4.1",
