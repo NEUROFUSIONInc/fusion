@@ -18,7 +18,6 @@ import {
   Modal,
   CategoryTag,
   ChevronRight,
-  ChatBubble,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
@@ -38,7 +37,7 @@ export function HomeScreen() {
   const [categoryInsightSummaries, setCategoryInsightSummaries] =
     React.useState<{ [key: string]: string }>({});
 
-  const [summaryText, setSummaryText] = React.useState("Loading summary...");
+  const [summaryText, setSummaryText] = React.useState("");
 
   const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
   const [activeCategory, setActiveCategory] = useState(categories[0]);
@@ -65,15 +64,25 @@ export function HomeScreen() {
   }, []);
 
   React.useEffect(() => {
+    if (accountContext?.userLoading === false) {
+      // set the active category to the last active category
+      accountContext?.setUserPreferences({
+        ...accountContext.userPreferences,
+        lastActiveCategory: activeCategory?.name,
+      });
+    }
+  }, [activeCategory]);
+
+  React.useEffect(() => {
     console.log("activeCategory", activeCategory);
-    if (!savedPrompts) return;
-    if (savedPrompts.length === 0) {
+    if (!savedPrompts || savedPrompts.length === 0) {
+      setSummaryText("Head over to the Prompts page to get started.");
       // redirect to prompts page
       navigation.navigate("PromptNavigator", {
         screen: "QuickAddPrompts",
       });
     }
-    if (accountContext?.userLoading) return;
+
     if (!activeCategory) return;
     (async () => {
       setSummaryText("Loading summary...");
@@ -115,10 +124,11 @@ export function HomeScreen() {
   }, [categoryInsightSummaries, activeCategory]);
 
   const getInsightSummary = async (category: string) => {
+    if (accountContext?.userLoading) return "Loading summary...";
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "Use Fusion Copilot to see get summaries and personalized recommendations.";
+      return "Use Fusion Copilot to get summaries and personalized recommendations.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
@@ -141,6 +151,7 @@ export function HomeScreen() {
       })
     );
 
+    // TODO: if they haven't responded recently, pass the last 10 responses
     if (categoryPromptResponses.length === 0) {
       return `You haven't responsed any prompts in this category recently. Add responses to your '${category}' prompts in order to see insights.`;
     }
@@ -183,16 +194,22 @@ export function HomeScreen() {
         return res.data.summary;
       }
     } catch (err: any) {
-      console.log("error", JSON.stringify(err));
+      let apiErrorMessage = "";
+      try {
+        console.log("api error:", err.message);
+        apiErrorMessage = err.message;
+      } catch (e) {}
+
       appInsights.trackEvent({
         name: "fusion_copilot_trigger",
         properties: {
           category,
           userNpub: accountContext?.userNpub,
           status: "failed",
+          apiErrorMessage,
         },
       });
-      return "Sorry we ran into an error loading summary. Please contact support.";
+      return "Sorry we ran into an error. Our team has been notified. Please try reloading or check back again.";
     }
   };
 
@@ -275,6 +292,10 @@ export function HomeScreen() {
                         }));
                       })();
                     }}
+                    disabled={
+                      !accountContext?.userPreferences.enableCopilot ||
+                      !activeCategory
+                    }
                   />
 
                   <View className="flex flex-row gap-x-1">
@@ -282,6 +303,10 @@ export function HomeScreen() {
                       variant="ghost"
                       size="icon"
                       leftIcon={<ThumbsUp />}
+                      disabled={
+                        !accountContext?.userPreferences.enableCopilot ||
+                        !activeCategory
+                      }
                       onPress={() => {
                         appInsights.trackEvent({
                           name: "fusion_copilot_feedback",
@@ -303,6 +328,10 @@ export function HomeScreen() {
                       variant="ghost"
                       size="icon"
                       leftIcon={<ThumbsDown />}
+                      disabled={
+                        !accountContext?.userPreferences.enableCopilot ||
+                        !activeCategory
+                      }
                       onPress={() => {
                         appInsights.trackEvent({
                           name: "fusion_copilot_feedback",
@@ -344,8 +373,9 @@ export function HomeScreen() {
                     }}
                     title="Enable Fusion Copilot"
                     fullWidth
-                    className="bg-secondary-900 mb-2"
+                    className="bg-secondary-900 mb-2 flex justify-between"
                     variant="secondary"
+                    rightIcon={<ChevronRight />}
                   />
                 )}
 
@@ -383,26 +413,28 @@ export function HomeScreen() {
               )}
 
               {/* Connect with data source */}
-              <Button
-                title="View Responses"
-                fullWidth
-                onPress={async () => {
-                  const val = activeCategory.name;
-                  navigation.navigate("InsightsNavigator", {
-                    screen: "InsightsPage",
-                    params: {
-                      promptUuid: savedPrompts?.find(
-                        (prompt) =>
-                          prompt.additionalMeta?.category ===
-                          activeCategory.name
-                      )?.uuid,
-                    },
-                  });
-                }}
-                className="bg-secondary-900 flex justify-between mb-2"
-                variant="secondary"
-                rightIcon={<ChevronRight />}
-              />
+              {savedPrompts && savedPrompts.length > 0 && (
+                <Button
+                  title="View Responses"
+                  fullWidth
+                  onPress={async () => {
+                    const val = activeCategory.name;
+                    navigation.navigate("InsightsNavigator", {
+                      screen: "InsightsPage",
+                      params: {
+                        promptUuid: savedPrompts?.find(
+                          (prompt) =>
+                            prompt.additionalMeta?.category ===
+                            activeCategory.name
+                        )?.uuid,
+                      },
+                    });
+                  }}
+                  className="bg-secondary-900 flex justify-between mb-2"
+                  variant="secondary"
+                  rightIcon={<ChevronRight />}
+                />
+              )}
 
               {/* Display Related Resources */}
               {activeCategory && activeCategory.name === "Mental Health" && (
@@ -438,7 +470,7 @@ export function HomeScreen() {
             </View>
           </>
         </ScrollView>
-        <ChatBubble />
+        {/* <ChatBubble /> */}
 
         {missedPrompts && missedPrompts.length > 0 && (
           <Modal
