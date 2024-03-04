@@ -90,8 +90,8 @@ export const Streaks: FC = () => {
         <BottomSheet ref={streakSheetRef} snapPoints={["42.5%"]}>
           <View className="flex flex-1 w-full justify-between flex-col p-5 items-center mb-10">
             <Text className="text-white text-lg font-sans-bold text-center">
-              Build your streaks for {"\n"} better{" "}
-              {accountContext?.userPreferences.lastActiveCategory} Insights
+              Build your streak for {"\n"} better{" "}
+              {accountContext?.userPreferences.lastActiveCategory} insights
             </Text>
             <View>
               <View className="flex flex-row justify-around self-center">
