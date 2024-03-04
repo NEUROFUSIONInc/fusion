@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import PapaParse from "papaparse";
 import React from "react";
@@ -31,6 +32,7 @@ export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
 
   const accountContext = React.useContext(AccountContext);
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -243,11 +245,11 @@ export function AccountScreen() {
             </View>
 
             <Button
-              title="Join a user testing session!"
+              title="Book a call with us"
               onPress={async () => {
-                Linking.openURL(
-                  "https://calendly.com/oreogundipe/chat-about-fusion"
-                );
+                navigation.navigate("HomeNavigator", {
+                  screen: "BookingPage",
+                });
               }}
               fullWidth
               className="mt-5 bg-secondary-900 my-5"
@@ -255,7 +257,7 @@ export function AccountScreen() {
             />
 
             {/* Export Data */}
-            <View className="mt-10">
+            <View className="mt-5">
               <Button
                 title="Export Prompts"
                 variant="ghost"
