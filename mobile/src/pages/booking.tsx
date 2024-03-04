@@ -5,6 +5,8 @@ import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import { WebView } from "react-native-webview";
 
+import { Screen } from "~/components";
+import { CloseBubble } from "~/components/close-bubble";
 import { AccountContext } from "~/contexts";
 import { notificationService } from "~/services";
 import { appInsights } from "~/utils";
@@ -78,13 +80,16 @@ export const BookingScreen = () => {
       : { uri: "file:///android_asset/calendly.html" };
 
   return (
-    <WebView
-      source={source}
-      style={{ flex: 1, margin: 0, padding: 0 }}
-      originWhitelist={["*"]}
-      javaScriptEnabled
-      domStorageEnabled
-      onMessage={handleCalendlyEvent}
-    />
+    <Screen>
+      <WebView
+        source={source}
+        style={{ flex: 1, margin: 0, padding: 0 }}
+        originWhitelist={["*"]}
+        javaScriptEnabled
+        domStorageEnabled
+        onMessage={handleCalendlyEvent}
+      />
+      <CloseBubble />
+    </Screen>
   );
 };
