@@ -82,7 +82,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-version-check": "^3.4.7",
     "react-native-walkthrough-tooltip": "^1.5.0",
-    "react-native-webview": "^13.6.0",
+    "react-native-webview": "11.26.0",
     "react-native-webview-crypto": "^0.0.25",
     "react-native-zip-archive": "^6.0.9",
     "text-encoding": "^0.7.0",
