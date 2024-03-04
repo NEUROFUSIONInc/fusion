@@ -508,7 +508,6 @@ class PromptService {
       };
 
       const responses = await getFromDb();
-      console.log("responses", responses);
       return responses;
     } catch (error) {
       console.log(error);
@@ -562,7 +561,7 @@ class PromptService {
         .filter(([day, value]) => value)
         .map(([day, value]) => day);
 
-      console.log("active days", activeDays);
+      // console.log("active days", activeDays);
       if (
         !activeDays.includes(
           dayjs().startOf("day").format("dddd").toLowerCase()
@@ -614,7 +613,7 @@ class PromptService {
           dayjs().startOf("day").format("dddd").toLowerCase()
         )
       ) {
-        console.log("skipping prompt because it's not active today");
+        // console.log("skipping prompt because it's not active today");
         continue;
       }
 
@@ -624,11 +623,11 @@ class PromptService {
       );
 
       if (responses.length === prompt.notificationConfig_countPerDay) {
-        console.log("skipping prompt because it's already been answered today");
+        // console.log("skipping prompt because it's already been answered today");
         continue;
       }
 
-      console.log("prompt is active today, fetching missed times");
+      // console.log("prompt is active today, fetching missed times");
 
       // check the times we expected notifications to be triggered
       const notificationTimes = getEvenlySpacedTimes(
@@ -676,9 +675,9 @@ class PromptService {
           );
 
           if (interval < threshold) {
-            console.log(
-              "skipping prompt because it's not been long enough since last response"
-            );
+            // console.log(
+            //   "skipping prompt because it's not been long enough since last response"
+            // );
             continue;
           }
 
@@ -687,9 +686,9 @@ class PromptService {
             prompt.notificationConfig_countPerDay
           ) {
             // if all notifications have been triggered, skip
-            console.log(
-              "skipping prompt because all notifications have been triggered"
-            );
+            // console.log(
+            //   "skipping prompt because all notifications have been triggered"
+            // );
             continue;
           }
         }

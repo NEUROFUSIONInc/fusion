@@ -1,5 +1,4 @@
 import { PortalProvider } from "@gorhom/portal";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -17,7 +16,7 @@ import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
 import { appInsights, maskPromptId } from "./src/utils";
 
-import { QUERY_OPTIONS_DEFAULT } from "~/config";
+import { QUERY_OPTIONS_DEFAULT, top_responders } from "~/config";
 import {
   PromptContextProvider,
   AccountContext,
@@ -39,17 +38,10 @@ Notifications.setNotificationHandler({
   },
 });
 
-// - temp remove since asking for notification permission on first load causes hiding splash screen to fail
-// SplashScreen.preventAutoHideAsync();
-
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: QUERY_OPTIONS_DEFAULT,
 });
-
-// const BACKGROUND_NOTIFICATION_TASK = 'background-notification-task';
-
-// TaskManager.defin
 
 function App() {
   const responseListener = React.useRef<
@@ -60,10 +52,33 @@ function App() {
   const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
+    // TODO: make sure user account is loaded before handling
+    if (accountContext?.userLoading) {
+      console.log("user account is still loading, so bye");
+      return;
+    }
+
+    appInsights.trackEvent(
+      { name: "app_started" },
+      {
+        userNpub: accountContext?.userNpub,
+      }
+    );
+
     // validate permission status for user
     (async () => {
       await notificationService.registerForPushNotificationsAsync();
       await notificationService.setUpNotificationCategories();
+      await notificationService.scheduleInsightNotifications();
+
+      // TOOD: check if userNpub is    user...make sure that account context is ready
+      if (top_responders.includes(accountContext?.userNpub!)) {
+        appInsights.trackEvent({
+          name: "top_responder_notification_setup",
+          properties: { userNpub: accountContext?.userNpub },
+        });
+        await notificationService.scheduleOutreachNotifications();
+      }
 
       // set notification handlers
       // what happens when a user responds to notification
@@ -71,16 +86,78 @@ function App() {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
+            let notificationCategory: string | null = "";
+            if ("categoryIdentifier" in response.notification.request.content) {
+              notificationCategory =
+                response.notification.request.content.categoryIdentifier;
+            }
+            if (!notificationCategory) {
+              return;
+            }
             // remove notification from tray
             Notifications.dismissNotificationAsync(
               response.notification.request.identifier
             );
+
+            if (notificationCategory.startsWith("insight_")) {
+              appInsights.trackEvent(
+                {
+                  name: "insight_notification_clicked",
+                },
+                {
+                  triggerTimestamp: Math.floor(response.notification.date),
+                  clickTimestamp: dayjs().valueOf(),
+                  userNpub: accountContext?.userNpub,
+                }
+              );
+
+              const chartPeriod = notificationCategory.startsWith(
+                "insight_weekly"
+              )
+                ? "week"
+                : "month";
+
+              navigation.navigate("InsightsNavigator", {
+                screen: "InsightsPage",
+                params: {
+                  chartPeriod,
+                },
+              });
+
+              return;
+            }
+
+            if (notificationCategory === "outreach") {
+              appInsights.trackEvent(
+                {
+                  name: "outreach_notification_clicked",
+                },
+                {
+                  triggerTimestamp: Math.floor(response.notification.date),
+                  clickTimestamp: dayjs().valueOf(),
+                  userNpub: accountContext?.userNpub,
+                }
+              );
+
+              // send the user to the booking page
+              // TODO; add the booking page
+              console.log("send user to booking page");
+              navigation.navigate("HomeNavigator", {
+                screen: "BookingPage",
+              });
+              return;
+            }
+
+            /**
+             * Logic for handling prompt notifications below
+             */
             const promptUuid =
               await notificationService.getPromptForNotificationId(
                 response.notification.request.identifier
               );
             if (!promptUuid) {
               console.log("unable to fetch prompt uuid for notification id");
+
               return;
             }
             // dismiss all other notifications for this prompt
@@ -97,7 +174,6 @@ function App() {
               response.actionIdentifier ===
               Notifications.DEFAULT_ACTION_IDENTIFIER
             ) {
-              // TODO: fix bug that doesn't let this load when the home page stack is the first one
               navigation.navigate("PromptNavigator", {
                 screen: "PromptEntry",
                 params: {
@@ -109,11 +185,6 @@ function App() {
             }
             // get response from notification
             let response_value: string | undefined;
-            let notificationCategory: string | null = "";
-            if ("categoryIdentifier" in response.notification.request.content) {
-              notificationCategory =
-                response.notification.request.content.categoryIdentifier;
-            }
             if (
               notificationCategory === "yesno" ||
               notificationCategory?.endsWith("customOptions")
@@ -148,26 +219,10 @@ function App() {
             );
           }
         );
-
-      const notificationResetStatus = await AsyncStorage.getItem(
-        "notification_reset_aug_16"
-      );
-      if (notificationResetStatus !== "true") {
-        console.log("Resetting all device notifications");
-        await promptService.resetNotificationsForActivePrompts();
-        await AsyncStorage.setItem("notification_reset_aug_16", "true");
-      }
     })();
-  }, []);
+  }, [accountContext]);
 
   React.useEffect(() => {
-    appInsights.trackEvent(
-      { name: "app_started" },
-      {
-        userNpub: accountContext?.userNpub,
-      }
-    );
-
     VersionCheck.needUpdate().then(
       async (res: { isNeeded: boolean; storeUrl: string }) => {
         if (res.isNeeded) {

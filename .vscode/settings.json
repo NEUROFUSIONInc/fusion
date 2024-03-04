@@ -6,7 +6,7 @@
     "source.fixAll.eslint": "explicit",
     "source.fixAll.format": "explicit"
   },
-  "eslint.workingDirectories": ["./fusionMobile", "./frontend"],
+  "eslint.workingDirectories": ["./mobile", "./frontend"],
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ]

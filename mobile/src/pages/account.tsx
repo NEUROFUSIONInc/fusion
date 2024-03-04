@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import PapaParse from "papaparse";
 import React from "react";
@@ -13,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import RNFS from "react-native-fs";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 import {
   NotificationConfigDays,
@@ -30,6 +32,7 @@ export function AccountScreen() {
   const [feedbackText, setFeedbackText] = React.useState("");
 
   const accountContext = React.useContext(AccountContext);
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -162,19 +165,36 @@ export function AccountScreen() {
             className="mt-10"
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ alignItems: "center" }}>
-              <Text className="font-sans text-center text-base text-white">
-                Hey there, you're using Fusion anonymously!
-              </Text>
-            </View>
-            <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text className="font-sans text-center text-base text-white">
-                We value your privacy and data security.{"\n"}Your prompts and
-                responses are stored solely on your device, not our servers.
-                They are private and inaccessible to anyone else unless you
-                decide to share them.
-              </Text>
-            </View>
+            <TouchableHighlight
+              onPress={() => {
+                Alert.alert(
+                  "Your Fusion Public Key",
+                  accountContext?.userNpub,
+                  [
+                    {
+                      text: "OK",
+                      style: "cancel",
+                    },
+                  ]
+                );
+              }}
+            >
+              <>
+                <View style={{ alignItems: "center" }}>
+                  <Text className="font-sans text-center text-base text-white">
+                    Hey there, you're using Fusion anonymously!
+                  </Text>
+                </View>
+                <View style={{ alignItems: "center", marginTop: 20 }}>
+                  <Text className="font-sans text-center text-base text-white">
+                    We value your privacy and data security.{"\n"}Your prompts
+                    and responses are stored solely on your device, not our
+                    servers. They are private and inaccessible to anyone else
+                    unless you decide to share them.
+                  </Text>
+                </View>
+              </>
+            </TouchableHighlight>
 
             {/* Feedback component */}
             <View className="mt-8">
@@ -225,11 +245,11 @@ export function AccountScreen() {
             </View>
 
             <Button
-              title="Join a user testing session!"
+              title="Book a call with us"
               onPress={async () => {
-                Linking.openURL(
-                  "https://calendly.com/oreogundipe/chat-about-fusion"
-                );
+                navigation.navigate("HomeNavigator", {
+                  screen: "BookingPage",
+                });
               }}
               fullWidth
               className="mt-5 bg-secondary-900 my-5"
@@ -237,7 +257,7 @@ export function AccountScreen() {
             />
 
             {/* Export Data */}
-            <View className="mt-10">
+            <View className="mt-5">
               <Button
                 title="Export Prompts"
                 variant="ghost"

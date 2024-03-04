@@ -24,7 +24,6 @@ class StreakService {
               queryString,
               queryParams,
               (_, { rows }) => {
-                console.log("streak score value", rows);
                 if (rows.length < 1) {
                   // eslint-disable-next-line prefer-promise-reject-errors
                   reject("no streak score found");

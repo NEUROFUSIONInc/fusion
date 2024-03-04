@@ -19,12 +19,20 @@ import { Prompt } from "~/@types";
 import { AccountContext } from "~/contexts";
 import { useStreaksQuery } from "~/hooks/useStreaks";
 import { promptService } from "~/services";
+import { appInsights } from "~/utils";
 
 export const Streaks: FC = () => {
   const accountContext = useContext(AccountContext);
   const streakSheetRef = useRef<RNBottomSheet>(null);
 
   const handleStreakSheetOpen = useCallback(() => {
+    appInsights.trackEvent({
+      name: "streak_sheet_opened",
+      properties: {
+        userNpub: accountContext?.userNpub,
+        streakScore: latestStreak?.score.toString() ?? "0",
+      },
+    });
     streakSheetRef.current?.expand();
   }, []);
 
@@ -39,6 +47,14 @@ export const Streaks: FC = () => {
         setActivePrompts(res);
       }
     })();
+
+    appInsights.trackEvent({
+      name: "streaks_loaded",
+      properties: {
+        userNpub: accountContext?.userNpub,
+        streakScore: latestStreak?.score.toString() ?? "0",
+      },
+    });
   }, []);
 
   // get total responses for active prompts
@@ -74,8 +90,8 @@ export const Streaks: FC = () => {
         <BottomSheet ref={streakSheetRef} snapPoints={["42.5%"]}>
           <View className="flex flex-1 w-full justify-between flex-col p-5 items-center mb-10">
             <Text className="text-white text-lg font-sans-bold text-center">
-              Build your streaks for {"\n"} better{" "}
-              {accountContext?.userPreferences.lastActiveCategory} Insights
+              Build your streak for {"\n"} better{" "}
+              {accountContext?.userPreferences.lastActiveCategory} insights
             </Text>
             <View>
               <View className="flex flex-row justify-around self-center">

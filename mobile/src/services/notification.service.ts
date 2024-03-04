@@ -1,10 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import {
   NotificationContentInput,
   NotificationTriggerInput,
 } from "expo-notifications";
 import * as Notifications from "expo-notifications";
 import "react-native-get-random-values";
-import * as Crypto from "expo-crypto";
 import { Alert, Linking, Platform } from "react-native";
 
 import { Days, NotificationConfigDays, Prompt } from "~/@types";
@@ -301,6 +302,11 @@ export class NotificationService {
   };
 
   public setUpNotificationCategories = async () => {
+    /**
+     * Sets up prompt notification categories
+     * - yesno, number, text
+     * - customOption categories are created on the fly
+     */
     await Notifications.setNotificationCategoryAsync("yesno", [
       {
         identifier: "Yes",
@@ -354,6 +360,276 @@ export class NotificationService {
         },
       },
     ]);
+  };
+
+  public saveCutomNotificationToDb = async (
+    notificationId: string,
+    title: string
+  ) => {
+    try {
+      const storeDetailsInDb = () => {
+        return new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              "INSERT INTO custom_notifications (notificationId, title) VALUES (?, ?)",
+              [notificationId, title],
+              () => {
+                resolve(true);
+              },
+              (_, error) => {
+                console.log("error saving in db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      };
+
+      await storeDetailsInDb();
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  public scheduleInsightNotifications = async () => {
+    /**
+     * Schedules notification for fusion insights
+     * - weekly on sunday
+     * - monthly on the first of every month
+     *
+     * flag for when it's set `insightNotificationsScheduled`
+     */
+    const isScheduled = await AsyncStorage.getItem(
+      "insightNotificationsScheduled"
+    );
+    if (isScheduled === "true") {
+      return;
+    }
+    const triggerObject: NotificationTriggerInput = {};
+    const contentObject: NotificationContentInput = {};
+
+    // if platform is android assign channel
+    if (Platform.OS === "android") {
+      triggerObject["channelId"] = "default";
+    }
+
+    contentObject["title"] = `Your weekly insights are ready ✨`;
+    contentObject["categoryIdentifier"] = "insight_weekly";
+    if (Platform.OS === "ios") {
+      // apply notification instruction
+      contentObject["body"] = `Reflect on last week and plan ahead`;
+    }
+
+    await Notifications.setNotificationCategoryAsync(
+      contentObject["categoryIdentifier"],
+      [
+        {
+          identifier: contentObject["categoryIdentifier"],
+          buttonTitle: "View",
+          options: {
+            opensAppToForeground: true,
+          },
+        },
+      ]
+    );
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: contentObject,
+      trigger: {
+        ...triggerObject,
+        hour: 12,
+        minute: 0,
+        weekday: 1,
+        repeats: true,
+      },
+    });
+    await this.saveCutomNotificationToDb(
+      notificationId,
+      contentObject["categoryIdentifier"]
+    );
+
+    // monthly insights
+    for (let i = 0; i <= 11; i++) {
+      // apply notification instruction
+      contentObject["title"] = `Your monthly insights are ready ✨`;
+      contentObject["categoryIdentifier"] = `insight_monthly_${i}`;
+      if (Platform.OS === "ios") {
+        // apply notification instruction
+        contentObject["body"] = `Reflect on last month and plan ahead`;
+      }
+
+      await Notifications.setNotificationCategoryAsync(
+        contentObject["categoryIdentifier"],
+        [
+          {
+            identifier: contentObject["categoryIdentifier"],
+            buttonTitle: "View",
+            options: {
+              opensAppToForeground: true,
+            },
+          },
+        ]
+      );
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: contentObject,
+        trigger: {
+          ...triggerObject,
+          hour: 12,
+          minute: 0,
+          month: i,
+          day: 1,
+          repeats: true,
+        },
+      });
+      await this.saveCutomNotificationToDb(
+        notificationId,
+        contentObject["categoryIdentifier"]
+      );
+    }
+
+    // write a flag to the localstorage
+    await AsyncStorage.setItem("insightNotificationsScheduled", "true");
+  };
+
+  public scheduleOutreachNotifications = async () => {
+    /**
+     * Schedules outreach notifications
+     * - first notification 30 seconds after the app is opened
+     * - repeated notifications for the next 7 days
+     *
+     * flag for when it's set `outreachNotificationsScheduled`
+     */
+    const isScheduled = await AsyncStorage.getItem(
+      "outreachNotificationsScheduled"
+    );
+    if (isScheduled === "true") {
+      return;
+    }
+    const triggerObject: NotificationTriggerInput = {};
+    const contentObject: NotificationContentInput = {};
+
+    // if platform is android assign channel
+    if (Platform.OS === "android") {
+      triggerObject["channelId"] = "default";
+    }
+
+    contentObject["title"] = `We'd love to speak with you 🫵🏾`;
+    contentObject["categoryIdentifier"] = "outreach";
+    if (Platform.OS === "ios") {
+      // apply notification instruction
+      contentObject[
+        "body"
+      ] = `You're one of our top users! Want to help make Fusion better?`;
+    }
+    await Notifications.setNotificationCategoryAsync(
+      contentObject["categoryIdentifier"],
+      [
+        {
+          identifier: contentObject["categoryIdentifier"],
+          buttonTitle: "Speak with the team",
+          options: {
+            opensAppToForeground: true,
+          },
+        },
+      ]
+    );
+
+    // first notification 60 seconds after the app is opened
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: contentObject,
+      trigger: {
+        ...triggerObject,
+        seconds: 30,
+      },
+    });
+    await this.saveCutomNotificationToDb(
+      notificationId,
+      contentObject["categoryIdentifier"]
+    );
+
+    // repeated notifications for the next 7 days
+    for (let i = 1; i <= 7; i++) {
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: contentObject,
+        trigger: {
+          ...triggerObject,
+          seconds: 60 * 60 * 24 * i,
+          repeats: false,
+        },
+      });
+      await this.saveCutomNotificationToDb(
+        notificationId,
+        contentObject["categoryIdentifier"]
+      );
+    }
+
+    await AsyncStorage.setItem("outreachNotificationsScheduled", "true");
+  };
+
+  public disableCustomNotificationByTitle = async (title: string) => {
+    /**
+     * Searches for the notifications ids for a title
+     * Disable them, delete from db
+     */
+    try {
+      const getNotificationIdsFromDb = () => {
+        return new Promise<string[]>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              "SELECT notificationId FROM custom_notifications WHERE title = ?",
+              [title],
+              (_, { rows }) => {
+                const notificationIds = rows._array.map(
+                  (row: any) => row.notificationId
+                );
+                resolve(notificationIds);
+              },
+              (_, error) => {
+                console.log("error getting notificationIds from db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      };
+
+      const notificationIds = await getNotificationIdsFromDb();
+      if (notificationIds && notificationIds.length > 0) {
+        notificationIds.forEach(async (id) => {
+          await Notifications.dismissNotificationAsync(id);
+        });
+      }
+
+      const deleteNotificationIdsFromDb = () => {
+        return new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              "DELETE FROM custom_notifications WHERE title = ?",
+              [title],
+              () => {
+                console.log("notificationIds deleted");
+                resolve(true);
+              },
+              (_, error) => {
+                console.log("error deleting notificationIds from db");
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      };
+
+      await deleteNotificationIdsFromDb();
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
   /**
@@ -437,6 +713,11 @@ export class NotificationService {
               "SELECT promptUuid FROM prompt_notifications WHERE notificationId = ? LIMIT 1",
               [notificationId],
               (_, { rows }) => {
+                if (rows.length < 1) {
+                  // eslint-disable-next-line prefer-promise-reject-errors
+                  reject("no prompt found for notificationId");
+                  return false;
+                }
                 const promptUuid = rows._array[0].promptUuid;
                 resolve(promptUuid);
               },
