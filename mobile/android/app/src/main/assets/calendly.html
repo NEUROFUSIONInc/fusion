@@ -27,7 +27,7 @@
         if (e.data.event && e.data.event.indexOf("calendly") === 0) {
           if (e.data.event === "calendly.event_scheduled") {
             // Post message to React Native WebView
-            window.ReactNativeWebView.postMessage(JSON.stringify(e.data));
+            window.ReactNativeWebView.postMessage(JSON.stringify(e.data), "*");
           }
         }
       });

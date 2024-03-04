@@ -51,6 +51,7 @@ export const BookingScreen = () => {
 
     //   disable the notification after they've viewed the booking page at least 3 times
     //  This is a work around because the android version of the app doesn't send the event when meeting is booked
+    //  edit: also getting the bug on ios so this should do
     (async () => {
       const getViewCount = await AsyncStorage.getItem("bookingPageViewCount");
       if (!getViewCount) {
