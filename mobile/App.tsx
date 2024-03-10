@@ -52,19 +52,6 @@ function App() {
   const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
-    // TODO: make sure user account is loaded before handling
-    if (accountContext?.userLoading) {
-      console.log("user account is still loading, so bye");
-      return;
-    }
-
-    appInsights.trackEvent(
-      { name: "app_started" },
-      {
-        userNpub: accountContext?.userNpub,
-      }
-    );
-
     // validate permission status for user
     (async () => {
       await notificationService.registerForPushNotificationsAsync();
@@ -220,9 +207,16 @@ function App() {
           }
         );
     })();
-  }, [accountContext]);
+  }, []);
 
   React.useEffect(() => {
+    appInsights.trackEvent(
+      { name: "app_started" },
+      {
+        userNpub: accountContext?.userNpub,
+      }
+    );
+
     VersionCheck.needUpdate().then(
       async (res: { isNeeded: boolean; storeUrl: string }) => {
         if (res.isNeeded) {
