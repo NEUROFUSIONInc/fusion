@@ -109,10 +109,15 @@ function App() {
                 ? "week"
                 : "month";
 
+              const chartStartDate = dayjs()
+                .subtract(1, chartPeriod)
+                .startOf(chartPeriod);
+
               navigation.navigate("InsightsNavigator", {
                 screen: "InsightsPage",
                 params: {
                   chartPeriod,
+                  startDate: chartStartDate,
                 },
               });
 

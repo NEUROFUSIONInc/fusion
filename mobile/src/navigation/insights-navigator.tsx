@@ -2,6 +2,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
+import dayjs from "dayjs";
 
 import { Prompt } from "~/@types";
 import { InsightsHeader } from "~/components";
@@ -13,6 +14,7 @@ export type InsightsStackParamList = {
   InsightsPage: {
     chartPeriod?: "day" | "week" | "month" | "year";
     promptUuid?: string;
+    startDate?: dayjs.Dayjs;
   };
   PromptResponsesPage: {
     prompt: Prompt;

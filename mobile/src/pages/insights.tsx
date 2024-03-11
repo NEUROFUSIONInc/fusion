@@ -37,6 +37,7 @@ export function InsightsScreen() {
   const insightContext = useContext(InsightContext);
   const routePromptUuid = route.params?.promptUuid;
   const routeChartPeriod = route.params?.chartPeriod;
+  const routeStartDate = route.params?.startDate;
 
   const accountContext = React.useContext(AccountContext);
 
@@ -50,6 +51,9 @@ export function InsightsScreen() {
     });
     if (routeChartPeriod) {
       insightContext?.setInsightPeriod(routeChartPeriod);
+    }
+    if (routeStartDate) {
+      setChartStartDate(routeStartDate);
     }
   }, []);
 
