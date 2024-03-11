@@ -23,7 +23,7 @@ import {
   OnboardingContext,
 } from "~/contexts";
 import { OnboardingScreen } from "~/pages/onboarding";
-import { notificationService, promptService } from "~/services";
+import { nostrService, notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
@@ -58,11 +58,15 @@ function App() {
       await notificationService.setUpNotificationCategories();
       await notificationService.scheduleInsightNotifications();
 
+      const userNpub =
+        accountContext?.userNpub ??
+        (await nostrService.getNostrAccount())?.npub;
+
       // TOOD: check if userNpub is    user...make sure that account context is ready
       if (top_responders.includes(accountContext?.userNpub!)) {
         appInsights.trackEvent({
           name: "top_responder_notification_setup",
-          properties: { userNpub: accountContext?.userNpub },
+          properties: { userNpub },
         });
         await notificationService.scheduleOutreachNotifications();
       }
@@ -70,6 +74,7 @@ function App() {
       // set notification handlers
       // what happens when a user responds to notification
       // even in background
+
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
@@ -94,7 +99,7 @@ function App() {
                 {
                   triggerTimestamp: Math.floor(response.notification.date),
                   clickTimestamp: dayjs().valueOf(),
-                  userNpub: accountContext?.userNpub,
+                  userNpub,
                 }
               );
 
@@ -122,7 +127,7 @@ function App() {
                 {
                   triggerTimestamp: Math.floor(response.notification.date),
                   clickTimestamp: dayjs().valueOf(),
-                  userNpub: accountContext?.userNpub,
+                  userNpub,
                 }
               );
 
@@ -192,6 +197,7 @@ function App() {
             };
             // save the prompt response
             await promptService.savePromptResponse(promptResponse, queryClient);
+
             // track event
             appInsights.trackEvent(
               {
@@ -201,7 +207,7 @@ function App() {
                 identifier: await maskPromptId(promptUuid || ""),
                 triggerTimestamp: promptResponse.triggerTimestamp,
                 responseTimestamp: promptResponse.responseTimestamp,
-                userNpub: accountContext?.userNpub,
+                userNpub,
               }
             );
           }

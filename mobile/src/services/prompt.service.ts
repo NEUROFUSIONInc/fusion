@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
+import { nostrService } from "./nostr.service";
 import {
   NotificationService,
   notificationService,
@@ -14,6 +15,7 @@ import {
   Prompt,
   PromptAdditionalMeta,
   PromptResponse,
+  UserAccount,
 } from "~/@types";
 import { db } from "~/lib";
 import {
@@ -285,6 +287,8 @@ class PromptService {
         }
 
         // TODO: include userNpub
+        const userAccount: UserAccount =
+          (await nostrService.getNostrAccount()) as UserAccount;
         // app insights tracking
         appInsights.trackEvent(
           { name: "prompt_saved" },
@@ -302,6 +306,7 @@ class PromptService {
               isNotificationActive: prompt.additionalMeta?.isNotificationActive,
               category: prompt.additionalMeta?.category,
             }),
+            userNpub: userAccount?.npub,
           }
         );
 

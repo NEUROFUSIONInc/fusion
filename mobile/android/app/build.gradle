@@ -121,7 +121,7 @@ missingDimensionStrategy "store", "play"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 78
-        versionName "1.8.2"
+        versionName "1.8.4"
         missingDimensionStrategy 'store', 'play'
     }
 
