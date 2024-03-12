@@ -5,10 +5,9 @@ import { MetaSeo } from "~/@types";
 const URL = "https://usefusion.app";
 
 export const metaDefaults = {
-  title: "Fusion by NEUROFUSION Research Inc.",
-  description:
-    "Personal Insights from Your Daily Habits and Actions. Use Fusion to understand changes in your behavior and improve your quality of life",
-  image: `${URL}/images/fusion_banner.jpg`,
+  title: "Fusion Copilot - Personal Insights to Guide Your Actions.",
+  description: "Use Fusion to understand changes in your health & behavior to improve your quality of life",
+  image: `${URL}/images/fusion_banner_new.png`,
   feed: `${URL}/`,
   keywords: [
     "technology",
