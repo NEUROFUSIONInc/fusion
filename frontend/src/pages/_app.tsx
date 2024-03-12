@@ -34,7 +34,6 @@ button {
 }`}
         </style>
       </Head>
-      <Meta />
       <SessionProvider session={session}>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>

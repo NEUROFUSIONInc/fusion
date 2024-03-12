@@ -8,7 +8,7 @@ import {
   FaqSection,
   OfferingSection,
 } from "~/components/features/landing";
-import { MainLayout, Meta } from "~/components/layouts";
+import { MainLayout, Meta, metaDefaults } from "~/components/layouts";
 
 import dynamic from "next/dynamic";
 const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
@@ -19,6 +19,9 @@ const Research: NextPage = () => {
       <Meta
         meta={{
           title: "NeuroFusion - The simplest way to do brain and behavior research",
+          description:
+            "Use NeuroFusion to do run cognitive experiments, collect brain data remotely, and analyze results.",
+          image: `${metaDefaults.baseUrl}/images/features/neurofusion_experiment.png`,
         }}
       />
       <HeroSection isResearch />

@@ -5,9 +5,10 @@ import { MetaSeo } from "~/@types";
 const URL = "https://usefusion.app";
 
 export const metaDefaults = {
-  title: "Fusion Copilot - Personal Insights to Guide Your Actions.",
+  title: "Fusion Copilot - Personal Insights to Guide Your Daily Actions",
   description: "Use Fusion to understand changes in your health & behavior to improve your quality of life",
   image: `${URL}/images/fusion_banner_new.png`,
+  baseUrl: URL,
   feed: `${URL}/`,
   keywords: [
     "technology",

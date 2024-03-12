@@ -16,12 +16,7 @@ const HeroSection = dynamic(() => import("~/components/features/landing").then((
 const Home: NextPage = () => {
   return (
     <MainLayout>
-      <Meta
-        meta={{
-          // todo: this should change based on the persona
-          title: "Fusion - Personal Insights from Your Daily Habits and Actions",
-        }}
-      />
+      <Meta />
       <HeroSection />
       <FeatureSection />
       <IntegrationsSection />
