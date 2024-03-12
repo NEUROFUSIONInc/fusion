@@ -52,15 +52,24 @@ function App() {
   const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
+    const userNpub = (async () => {
+      return (
+        accountContext?.userNpub ?? (await nostrService.getNostrAccount())?.npub
+      );
+    })();
+
+    appInsights.trackEvent(
+      { name: "app_started" },
+      {
+        userNpub,
+      }
+    );
+
     // validate permission status for user
     (async () => {
       await notificationService.registerForPushNotificationsAsync();
       await notificationService.setUpNotificationCategories();
       await notificationService.scheduleInsightNotifications();
-
-      const userNpub =
-        accountContext?.userNpub ??
-        (await nostrService.getNostrAccount())?.npub;
 
       // TOOD: check if userNpub is    user...make sure that account context is ready
       if (top_responders.includes(accountContext?.userNpub!)) {
@@ -221,13 +230,6 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    appInsights.trackEvent(
-      { name: "app_started" },
-      {
-        userNpub: accountContext?.userNpub,
-      }
-    );
-
     VersionCheck.needUpdate().then(
       async (res: { isNeeded: boolean; storeUrl: string }) => {
         if (res.isNeeded) {
