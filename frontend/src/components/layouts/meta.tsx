@@ -56,7 +56,7 @@ export const Meta = ({ meta: pageMeta }: { meta?: Partial<MetaSeo> }) => {
       {/** OpenGraph Metadata */}
       <meta property="og:url" content={`${URL}${router.asPath}`} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="Fusion by NEUROFUSION Research Inc." />
+      <meta property="og:site_name" content="NEUROFUSION Research Inc." />
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:image" content={meta.image} />
