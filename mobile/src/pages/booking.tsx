@@ -64,6 +64,13 @@ export const BookingScreen = () => {
           await notificationService.disableCustomNotificationByTitle(
             "outreach"
           );
+
+          appInsights.trackEvent({
+            name: "outreach_notification_disabled",
+            properties: {
+              userNpub: accountContext?.userNpub,
+            },
+          });
         } else {
           await AsyncStorage.setItem(
             "bookingPageViewCount",

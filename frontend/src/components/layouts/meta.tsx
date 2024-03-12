@@ -5,10 +5,10 @@ import { MetaSeo } from "~/@types";
 const URL = "https://usefusion.app";
 
 export const metaDefaults = {
-  title: "Fusion by NEUROFUSION Research Inc.",
-  description:
-    "Personal Insights from Your Daily Habits and Actions. Use Fusion to understand changes in your behavior and improve your quality of life",
-  image: `${URL}/images/fusion_banner.jpg`,
+  title: "Fusion Copilot - Personal Insights to Guide Your Daily Actions",
+  description: "Use Fusion to understand changes in your health & behavior to improve your quality of life",
+  image: `${URL}/images/fusion_banner_new.png`,
+  baseUrl: URL,
   feed: `${URL}/`,
   keywords: [
     "technology",
@@ -56,7 +56,7 @@ export const Meta = ({ meta: pageMeta }: { meta?: Partial<MetaSeo> }) => {
       {/** OpenGraph Metadata */}
       <meta property="og:url" content={`${URL}${router.asPath}`} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="Fusion by NEUROFUSION Research Inc." />
+      <meta property="og:site_name" content="NEUROFUSION Research Inc." />
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:image" content={meta.image} />

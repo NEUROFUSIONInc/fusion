@@ -23,7 +23,7 @@ import {
   OnboardingContext,
 } from "~/contexts";
 import { OnboardingScreen } from "~/pages/onboarding";
-import { notificationService, promptService } from "~/services";
+import { nostrService, notificationService, promptService } from "~/services";
 import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
@@ -52,16 +52,16 @@ function App() {
   const onboardingContext = React.useContext(OnboardingContext);
 
   React.useEffect(() => {
-    // TODO: make sure user account is loaded before handling
-    if (accountContext?.userLoading) {
-      console.log("user account is still loading, so bye");
-      return;
-    }
+    const userNpub = (async () => {
+      return (
+        accountContext?.userNpub ?? (await nostrService.getNostrAccount())?.npub
+      );
+    })();
 
     appInsights.trackEvent(
       { name: "app_started" },
       {
-        userNpub: accountContext?.userNpub,
+        userNpub,
       }
     );
 
@@ -75,7 +75,7 @@ function App() {
       if (top_responders.includes(accountContext?.userNpub!)) {
         appInsights.trackEvent({
           name: "top_responder_notification_setup",
-          properties: { userNpub: accountContext?.userNpub },
+          properties: { userNpub },
         });
         await notificationService.scheduleOutreachNotifications();
       }
@@ -83,6 +83,7 @@ function App() {
       // set notification handlers
       // what happens when a user responds to notification
       // even in background
+
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           async (response) => {
@@ -107,7 +108,7 @@ function App() {
                 {
                   triggerTimestamp: Math.floor(response.notification.date),
                   clickTimestamp: dayjs().valueOf(),
-                  userNpub: accountContext?.userNpub,
+                  userNpub,
                 }
               );
 
@@ -117,10 +118,15 @@ function App() {
                 ? "week"
                 : "month";
 
+              const chartStartDate = dayjs()
+                .subtract(1, chartPeriod)
+                .startOf(chartPeriod);
+
               navigation.navigate("InsightsNavigator", {
                 screen: "InsightsPage",
                 params: {
                   chartPeriod,
+                  startDate: chartStartDate,
                 },
               });
 
@@ -135,7 +141,7 @@ function App() {
                 {
                   triggerTimestamp: Math.floor(response.notification.date),
                   clickTimestamp: dayjs().valueOf(),
-                  userNpub: accountContext?.userNpub,
+                  userNpub,
                 }
               );
 
@@ -205,6 +211,7 @@ function App() {
             };
             // save the prompt response
             await promptService.savePromptResponse(promptResponse, queryClient);
+
             // track event
             appInsights.trackEvent(
               {
@@ -214,13 +221,13 @@ function App() {
                 identifier: await maskPromptId(promptUuid || ""),
                 triggerTimestamp: promptResponse.triggerTimestamp,
                 responseTimestamp: promptResponse.responseTimestamp,
-                userNpub: accountContext?.userNpub,
+                userNpub,
               }
             );
           }
         );
     })();
-  }, [accountContext]);
+  }, []);
 
   React.useEffect(() => {
     VersionCheck.needUpdate().then(
