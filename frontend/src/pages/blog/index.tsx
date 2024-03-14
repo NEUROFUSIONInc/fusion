@@ -17,10 +17,11 @@ export async function getStaticProps() {
 
 function Blog({ posts }: any) {
   const containerStyles = {
-    maxWidth: "65ch", // Adjust the max-width according to your needs
+    maxWidth: "82rem", // Adjust the max-width according to your needs
     margin: "48px auto",
     overflow: "hidden",
   };
+
 
   return (
     <MainLayout>
@@ -30,6 +31,9 @@ function Blog({ posts }: any) {
         }}
       />
       <div style={containerStyles}>
+        <div className="blog-heading px-12 pt-24 pb-12">
+          <h1 className="text-5xl md:text-5xl lg:text-6xl mb-6 p-2.5">Latest Updates</h1>
+        </div>
         <BlogCard posts={posts} />
       </div>
     </MainLayout>

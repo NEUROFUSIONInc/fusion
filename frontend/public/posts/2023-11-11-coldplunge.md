@@ -82,7 +82,7 @@ In summary, these visualizations provide valuable insights into the dynamic and 
 - [Download the Fusion app to monitor and understanding changes in behavior over time the impact of lifestyle choices!](https://usefusion.app)
 </aside>
 
-## Acknoledgements
+## Acknowledgements
 
 Thank you to all our participants for their patience and enthusiasm exploring the unknown together. Our goal at Neurofusion is to accelerate the adoption of neurotechnology as a tool for proving the credence of interventions in everyday life and this experiment got us one step closer to doing so.
 
