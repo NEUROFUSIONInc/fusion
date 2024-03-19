@@ -5,3 +5,4 @@ export * from "./offering-section/offering-section";
 export * from "./faq-section/faq-section";
 export * from "./testimonials-section/testimonials-section";
 export * from "./team-section/team-section";
+export * from "./blog-section/blog-section"
