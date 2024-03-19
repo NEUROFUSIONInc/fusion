@@ -27,8 +27,8 @@ const BlogCard = ({ posts }: any) => {
                     <article key={post.slug} className="flex justify-between p-2">
                       <div className="flex flex-col mr-8 gap-y-4">
                         <h2 className="text-2xl font-medium">{post.frontMatter.title}</h2>
-                        <p>{post.frontMatter.description}</p>
                         <p>{dayjs(post.frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+                        <p>{post.frontMatter.description}</p>
                       </div>
                     </article>
                   </div>

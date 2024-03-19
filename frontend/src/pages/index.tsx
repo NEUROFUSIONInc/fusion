@@ -14,7 +14,6 @@ import { MainLayout, Meta } from "~/components/layouts";
 
 import dynamic from "next/dynamic";
 
-
 const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
 
 export async function getStaticProps() {
@@ -26,7 +25,7 @@ export async function getStaticProps() {
     },
   };
 }
-const Home: NextPage = ({posts} : any) => {  
+const Home: NextPage = ({ posts }: any) => {
   return (
     <MainLayout>
       <Meta />
@@ -35,8 +34,8 @@ const Home: NextPage = ({posts} : any) => {
       <IntegrationsSection />
       <OfferingSection />
       <TestimonialSection />
-      <BlogSection posts={posts}/>
       <TeamSection />
+      <BlogSection posts={posts} />
       <FaqSection />
     </MainLayout>
   );
