@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { getAllPostsWithFrontMatter } from "~/utils/blog";
 
 import {
   FeatureSection,
@@ -7,13 +8,27 @@ import {
   TestimonialSection,
   FaqSection,
   OfferingSection,
+  BlogSection,
 } from "~/components/features/landing";
 import { MainLayout, Meta, metaDefaults } from "~/components/layouts";
 
 import dynamic from "next/dynamic";
 const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
 
-const Research: NextPage = () => {
+export async function getStaticProps() {
+  const posts: any[] = (await getAllPostsWithFrontMatter()) as unknown as any[];
+
+  const selectedSlugs = ["cold-plunge-impact", "making-health-behavior-data-accessible", "going-fulltime"];
+  const filteredPosts = posts.filter((post: any) => selectedSlugs.includes(post.slug));
+
+  return {
+    props: {
+      posts: filteredPosts,
+    },
+  };
+}
+
+const Research: NextPage = ({posts}: any) => {
   return (
     <MainLayout isResearch>
       <Meta
@@ -30,6 +45,7 @@ const Research: NextPage = () => {
       <OfferingSection />
       <TestimonialSection isResearch />
       <TeamSection />
+      <BlogSection posts={posts} />
       <FaqSection isResearch />
     </MainLayout>
   );

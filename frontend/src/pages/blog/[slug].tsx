@@ -29,7 +29,9 @@ export async function getStaticProps({ params }: any) {
 
   const posts = await getAllPostsWithFrontMatter();
 
-  const shuffledPosts = Array.isArray(posts) ? posts.sort(() => Math.random() - 0.5) : [];
+  const shuffledPosts = Array.isArray(posts)
+    ? posts.filter((post: any) => post.frontMatter.slug !== params.slug).sort(() => Math.random() - 0.5)
+    : [];
 
   return {
     props: {
@@ -63,22 +65,18 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
           <h2 className="text-xl font-bold mb-4">You Might Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {otherArticles.map((article: any) => (
-              <Link
-                href={`/blog/${article.slug}`}
-                key={article.slug}
-                className="border no-underline cursor-pointer"
-              >
-                <div className="cursor-pointer px-4 rounded-lg">
+              <Link href={`/blog/${article.slug}`} key={article.slug} className="border no-underline cursor-pointer">
+                <div className="cursor-pointer px-4 rounded-lg ">
                   <img
                     src={article.frontMatter.coverImage}
                     alt={article.frontMatter.title}
                     className="w-full h-48 object-cover mb-3"
                   />
-                  <h3 className="font-semibold">{article.frontMatter.title}</h3>
+                  <h3 className="not-prose text-xl">{article.frontMatter.title}</h3>
                   <p className="text-sm text-gray-500">
                     {dayjs(article.frontMatter.publishedDate).format("MMM DD, YYYY")}
                   </p>
-                  <p className="text-md leading-tight">{article.frontMatter.description}</p>
+                  <p className="text-base leading-tight">{article.frontMatter.description}</p>
                 </div>
               </Link>
             ))}

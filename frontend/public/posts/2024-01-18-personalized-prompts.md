@@ -1,5 +1,5 @@
 ---
-title: "Why You Should Use Personalized Prompts with Fusion!"
+title: "Why You Should Use Fusion Personalized Prompts!"
 description: Tracking your emotional and behavioural patterns over time
 publishedDate: 2024/01/18
 coverImage: /images/blog/personalizedprompts/article_cover.png

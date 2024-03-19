@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import { getAllPostsWithFrontMatter } from "~/utils/blog";
 
 import {
   FeatureSection,
@@ -7,13 +8,24 @@ import {
   TestimonialSection,
   FaqSection,
   OfferingSection,
+  BlogSection,
 } from "~/components/features/landing";
 import { MainLayout, Meta } from "~/components/layouts";
 
 import dynamic from "next/dynamic";
+
 const HeroSection = dynamic(() => import("~/components/features/landing").then((mod) => mod.HeroSection));
 
-const Home: NextPage = () => {
+export async function getStaticProps() {
+  const posts = await getAllPostsWithFrontMatter();
+
+  return {
+    props: {
+      posts: posts.slice(0, 3), // Slice the array to get only the first 3 posts
+    },
+  };
+}
+const Home: NextPage = ({ posts }: any) => {
   return (
     <MainLayout>
       <Meta />
@@ -23,6 +35,7 @@ const Home: NextPage = () => {
       <OfferingSection />
       <TestimonialSection />
       <TeamSection />
+      <BlogSection posts={posts} />
       <FaqSection />
     </MainLayout>
   );
