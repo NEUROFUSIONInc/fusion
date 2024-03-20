@@ -36,7 +36,7 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
       if (firstDay.get("month") === dayjs().get("month")) {
         lastDay = dayjs().endOf("week");
       } else if (firstDay < dayjs().startOf("day")) {
-        lastDay = firstDay.endOf("month").subtract(1, "day");
+        lastDay = selectedDate.endOf("month").subtract(1, "day");
       } else {
         lastDay = dayjs().startOf("day");
       }
@@ -199,22 +199,23 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
           ))}
 
           {/* Display right arrow */}
-          {selectedDate.endOf("month").isBefore(dayjs().endOf("month")) && (
-            <View className="self-center">
-              <Button
-                variant="ghost"
-                size="icon"
-                leftIcon={
-                  <ChevronRightSmall width={20} height={20} color="#9ca3af" />
-                }
-                onPress={() => {
-                  setSelectedDate(
-                    selectedDate.add(1, "month").startOf("month")
-                  );
-                }}
-              />
-            </View>
-          )}
+          {insightContext?.insightPeriod !== "day" &&
+            selectedDate.endOf("month").isBefore(dayjs().endOf("month")) && (
+              <View className="self-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  leftIcon={
+                    <ChevronRightSmall width={20} height={20} color="#9ca3af" />
+                  }
+                  onPress={() => {
+                    setSelectedDate(
+                      selectedDate.add(1, "month").startOf("month").endOf("day")
+                    );
+                  }}
+                />
+              </View>
+            )}
 
           {insightContext?.insightPeriod === "day" &&
             selectedDate.endOf("week").isBefore(dayjs().endOf("week")) && (
