@@ -72,6 +72,25 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
     });
   };
 
+  const getDaysInWeek = (selectedDate: dayjs.Dayjs) => {
+    return new Promise<dayjs.Dayjs[]>((resolve) => {
+      const firstDay = selectedDate.startOf("week");
+      const lastDay = selectedDate.endOf("week");
+
+      const days = [];
+
+      let dayIterator = firstDay.startOf("day");
+      while (
+        dayIterator <= lastDay.endOf("day") &&
+        dayIterator <= dayjs().endOf("day")
+      ) {
+        days.push(dayIterator);
+        dayIterator = dayIterator.add(1, "day");
+      }
+      resolve(days);
+    });
+  };
+
   const dateTextStyle = cva("text-base font-sans text-gray-400 p-2", {
     variants: {
       active: {
@@ -88,7 +107,7 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
     setDatePickerVisibility(false);
   };
   const handleDatePickerConfimm = (date: Date) => {
-    if (insightContext!.insightPeriod === "week") {
+    if (["week", "day"].includes(insightContext!.insightPeriod)) {
       setSelectedDate(dayjs(date));
     } else if (insightContext!.insightPeriod === "month") {
       setSelectedDate(dayjs(date).startOf("month"));
@@ -104,6 +123,10 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
       }
       if (selectedDate && insightContext!.insightPeriod === "month") {
         const dates = await getLastFourMonths(selectedDate);
+        setDisplayedDates(dates);
+      }
+      if (selectedDate && insightContext!.insightPeriod === "day") {
+        const dates = await getDaysInWeek(selectedDate);
         setDisplayedDates(dates);
       }
     })();
@@ -167,10 +190,15 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
                 {insightContext!.insightPeriod === "month" && (
                   <>{date.format("MMM YYYY")}</>
                 )}
+
+                {insightContext!.insightPeriod === "day" && (
+                  <>{date.format("MMM DD")}</>
+                )}
               </Text>
             </Pressable>
           ))}
 
+          {/* Display right arrow */}
           {selectedDate.endOf("month").isBefore(dayjs().endOf("month")) && (
             <View className="self-center">
               <Button
@@ -187,6 +215,24 @@ export const CalendarPicker: FC<CalendarPickerProps> = ({
               />
             </View>
           )}
+
+          {insightContext?.insightPeriod === "day" &&
+            selectedDate.endOf("week").isBefore(dayjs().endOf("week")) && (
+              <View className="self-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  leftIcon={
+                    <ChevronRightSmall width={20} height={20} color="#9ca3af" />
+                  }
+                  onPress={() => {
+                    setSelectedDate(
+                      selectedDate.add(1, "month").startOf("month")
+                    );
+                  }}
+                />
+              </View>
+            )}
         </>
       </ScrollView>
     </View>

@@ -10,14 +10,27 @@ import { InsightContext } from "~/contexts";
 export const InsightsHeader = () => {
   const insightContext = useContext(InsightContext);
 
+  const insightLabels = {
+    day: "Daily",
+    week: "Weekly",
+    month: "Monthly",
+    year: "Yearly",
+  };
+
   return (
     <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
       <ContextMenu
-        actions={[{ title: "Weekly" }, { title: "Monthly" }]}
+        actions={[
+          { title: "Daily" },
+          { title: "Weekly" },
+          { title: "Monthly" },
+        ]}
         onPress={(e) => {
           if (e.nativeEvent.index === 0) {
-            insightContext?.setInsightPeriod("week");
+            insightContext?.setInsightPeriod("day");
           } else if (e.nativeEvent.index === 1) {
+            insightContext?.setInsightPeriod("week");
+          } else if (e.nativeEvent.index === 2) {
             insightContext?.setInsightPeriod("month");
           }
         }}
@@ -30,9 +43,7 @@ export const InsightsHeader = () => {
           variant="ghost"
           size="icon"
           rightIcon={<ChevronDown />}
-          title={
-            insightContext?.insightPeriod === "week" ? "Weekly" : "Monthly"
-          }
+          title={insightLabels[insightContext?.insightPeriod!]}
           textSize="bold"
         />
       </ContextMenu>

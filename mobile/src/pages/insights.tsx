@@ -91,6 +91,7 @@ export function InsightsScreen() {
     }
   }, [savedPrompts, selectedCategory]);
 
+  // TODO: this is conflicting with the values the user sets..
   useEffect(() => {
     setChartStartDate(dayjs().startOf(insightContext!.insightPeriod));
   }, [insightContext!.insightPeriod]);
