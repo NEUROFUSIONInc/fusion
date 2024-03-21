@@ -25,7 +25,7 @@ export const HeroSection = ({ isResearch = false }) => {
               Personal Insights to <span className="text-primary-gradient">Guide Your Actions</span>
             </h1>
             <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
-              Use Fusion to understand changes in your behavior and improve your quality of life.
+              Use Fusion to understand and improve your productivity, physical and mental health.
             </p>
           </div>
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
