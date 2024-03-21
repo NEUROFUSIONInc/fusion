@@ -15,19 +15,22 @@ In a world where people often juggle multiple roles and responsibilities, the re
 
 ![Article Cover - Navigating Burnout](/images/blog/navigatingburnout/blog-post-cover-4.png)
 
-This article explores the unfiltered experiences of women who have confronted burnout, sharing their struggles and successes. By sharing their stories anonymously, we aim to encourage discussion, promote empathy, and show support to those facing similar challenges.
+This article explores the unfiltered experiences of women who have confronted burnout, sharing their struggles and successes.
 
 *To protect the privacy and anonymity of the individuals involved, all names in the following stories have been changed.*
 
 ### **Susan, 51 - Accountant**
 
 "I used to feel excited about going to my job, but suddenly, it was replaced with overwhelming fatigue. It was tiring to get out of bed in the morning and I lost interest in my daily work routine, which I used to love. I realized I was only going to the job because I had to earn a living. 
+
 To help me navigate this, I remind myself of my 'why'  which is to provide for my children and give them an advantage in life. I also try to avoid being in denial and acknowledge that experiencing burnout is not uncommon, and I focus on activities that bring me happiness while staying mindful of my thoughts and emotions."
 
 ### **Kristy, 25 - Marketing Lead**
 
 "My burnout story started at my job working at a marketing agency which was stressful, especially doing the same tasks over again. Despite the initial challenges of our small staff number, more responsibilities were continuously delegated to me even after the hiring of new staff.
+
 The increasing workload eventually took its toll on me when I was wrongly blamed for a task that was not mine to handle. That was my breaking point (I think I cried, I am not certain). 
+
 To navigate this, I reached out to my partner for emotional support, it is always great to have someone to talk about it with. I also had a conversation with my boss about the multiple tasks that were not mine to handle and I am happy we resolved it."
 
 <figure>
@@ -36,13 +39,15 @@ To navigate this, I reached out to my partner for emotional support, it is alway
              alt="Fusion Copilot"
              aria-describedby="caption">
     </a>
-    <figcaption id="caption">Need to keep track of your stress levels, moods, and productivity? Download Fusion Copilot today. <a href="https://usefusion.app/">Click here</a> to get started.</figcaption>
+    <figcaption id="caption">Track and understand changes in your stress levels, moods and productivity. <a href="https://usefusion.app/">Click here</a> to get started.</figcaption>
 </figure>
 
 ### **Haley, 24 - Writer**
 
 "I have experienced multiple burnouts but the year of August 2022 marked a significant period of burnout for me. Balancing multiple jobs and volunteering responsibilities took a toll on my mental wellbeing.
+
 As an extrovert, who particularly loves being around people, I realized I was withdrawing to myself. I found myself unable to perform my best and resorted to stress-eating.
+
 To navigate this challenging time, I made a conscious decision to take a break from everything. As a writer, I stopped writing from August to December 2022, disconnecting from work and focusing on activities that brought me joy, like watching K-dramas and prioritizing sufficient rest."
 
 ![Woman expressing being under stress](/images/blog/navigatingburnout/blog-post-cover-3.png)
@@ -50,9 +55,10 @@ To navigate this challenging time, I made a conscious decision to take a break f
 ### **Anu, 24 -  Social Media Manager**
 
 "I started experiencing constant headaches, even after resting. I had pushed myself beyond my limits, trying to avoid any hint of laziness. The constant need for coming up with ideas at my job became exhausting, leading me to realize that I was burnt out. I reached a point where I felt fed up with work and discovered that I was happier when I engaged in activities unrelated to my job.
+
 Navigating through burnout was tough, especially because I desperately needed a break from work. Unfortunately, I couldn't take one due to the end-of-year peak period at my company.
-However, I found ways to cope. I focused on activities that brought me joy, like spending time with friends and family, deepening my spiritual connections, getting enough rest, reducing my screen time, indulging in my cravings, and staying hydrated.
-While burnout doesn't disappear overnight, I managed to navigate through it by prioritizing self-care and engaging in activities that nourished my well-being."
+
+While burnout doesn't disappear overnight, I found ways to cope. I focused on activities that brought me joy, like spending time with friends and family, prioritizing my time with God, getting enough rest, reducing my screen time, indulging in my cravings, and staying hydrated."
 
 ![woman in front of laptop expressing frustration and fatigue](/images/blog/navigatingburnout/concept-burnout-syndrome-business-woman-feels-royalty-free-image-1675458812.jpg)
 
