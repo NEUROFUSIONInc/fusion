@@ -7,7 +7,7 @@ tags:
   - fusion
 slug: fusion-launch
 authors:
-  - Ore Ogundipe
+  - name: "Ore Ogundipe"
 ---
 
 Over the weekend, we released the Fusion app on the iOS app store! Pretty exciting right?

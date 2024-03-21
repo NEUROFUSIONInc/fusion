@@ -7,8 +7,8 @@ slug: inception
 tags:
   - fusion
 authors:
-  - Ore Ogundipe
-  - Adaobi Adibe
+  - name: "Ore Ogundipe"
+  - name: "Adaobi Adibe"
 ---
 
 > In 2021, my friend & I (Ore) did some analysis on my data and birth the initial version of Fusion. Here's a summary of what we learnt and what we envisioned Fusion to evolve to. My friend has moved on to biology research & Fusion has evolved a lot since then but the essence is still the same. Helping you understand yourself better :)

@@ -57,7 +57,8 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
         <h1>{frontMatter.title}</h1>
-        <p>{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+        <p>Written by {frontMatter.authors[0].name}</p>
+        <p className=" text-gray-500">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
         <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14" />
 
         {/* Suggestions for other articles */}
@@ -72,8 +73,8 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
                     alt={article.frontMatter.title}
                     className="w-full h-48 object-cover mb-3"
                   />
-                  <h3 className="not-prose text-xl">{article.frontMatter.title}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="not-prose text-xl font-medium">{article.frontMatter.title}</h3>
+                  <p className="text-base text-gray-500">
                     {dayjs(article.frontMatter.publishedDate).format("MMM DD, YYYY")}
                   </p>
                   <p className="text-base leading-tight">{article.frontMatter.description}</p>

@@ -7,7 +7,7 @@ tags:
   - fusion
 slug: fusion-copilot
 authors:
-  - Ore Ogundipe
+  - name: "Ore Ogundipe"
 ---
 
 Since our launch, Fusion has helped you manage and improve your productivity, health and wellbeing. In the past, we took your responses and showed you how they changed over time using visuals. Now, with Fusion Copilot, you receive summaries and recommendations to act on based on your personalized context.
