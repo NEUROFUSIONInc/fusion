@@ -7,7 +7,7 @@ tags:
   - fusion
 slug: personalized-prompts
 authors:
-  - Ore Ogundipe
+  - name: "Ore Ogundipe"
 ---
 
 If you're struggling to keep up with important aspects of your life, conventional tracking methods may not offer the right solutions. That's where personalized prompts come in. Prompts are tailored questions designed to help you understand and optimize your daily needs in areas like mental health, productivity, self-care, finances, spirituality and many more.

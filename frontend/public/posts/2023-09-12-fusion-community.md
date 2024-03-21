@@ -7,7 +7,7 @@ tags:
   - fusion
 slug: fusion-community-lagos
 authors:
-  - Ore Ogundipe
+  - name: "Ore Ogundipe"
 ---
 
 We hosted our first community event, in Lagos! Although, a heavy rain tried to stop our fun, we experienced a fantastic turnout. We were so excited to finally connect with users who want to take control of their health, productivity, well-being.

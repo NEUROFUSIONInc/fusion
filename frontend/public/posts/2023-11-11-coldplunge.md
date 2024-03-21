@@ -8,7 +8,7 @@ tags:
   - neurotech
 slug: cold-plunge-impact
 authors:
-  - Ore Ogundipe
+  - name: "Ore Ogundipe"
 ---
 
 During [ZuConnect](https://zuzalu.city/), we were curious about the impact of cold plunges on peoples brain activity & overall wellbeing. Are there changes in attention & stress response?
