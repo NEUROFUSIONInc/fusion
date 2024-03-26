@@ -4,7 +4,8 @@ description: Personalized recommendations to guide your daily actions.
 publishedDate: 2023/10/30
 coverImage: /images/blog/fusioncopilot/fusion-copilot.webp
 tags:
-  - fusion
+  - Fusion
+  - Product Insights
 slug: fusion-copilot
 authors:
   - name: "Ore Ogundipe"

@@ -4,7 +4,9 @@ description: Tracking your emotional and behavioural patterns over time
 publishedDate: 2024/01/18
 coverImage: /images/blog/personalizedprompts/article_cover.png
 tags:
-  - fusion
+  - Product Insights
+  - Resources
+  - How-To Guides
 slug: personalized-prompts
 authors:
   - name: "Ore Ogundipe"

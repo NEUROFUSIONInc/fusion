@@ -4,7 +4,11 @@ description: Fusion is now available on App Stores!
 publishedDate: 2023/08/15
 coverImage: /images/blog/fusion-app-stores.webp
 tags:
-  - fusion
+  - Goal Setting
+  - Personal Development
+  - Resources
+  - How-To Guides
+  - Fusion
 slug: fusion-launch
 authors:
   - name: "Ore Ogundipe"

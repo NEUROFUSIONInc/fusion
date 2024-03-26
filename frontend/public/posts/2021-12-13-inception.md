@@ -5,7 +5,10 @@ publishedDate: 2021/12/13
 coverImage: /images/blog/fusion-screenshot.jpg
 slug: inception
 tags:
-  - fusion
+  - Personal Development
+  - Product Insights
+  - How-To Guides
+  - Resources
 authors:
   - name: "Ore Ogundipe"
   - name: "Adaobi Adibe"

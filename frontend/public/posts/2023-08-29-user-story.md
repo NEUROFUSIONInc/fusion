@@ -4,7 +4,8 @@ description: Understanding the relationship between my diet & well-being
 publishedDate: 2023/08/29
 coverImage: /images/blog/user-story-health.webp
 tags:
-  - fusion
+  - Personal Growth
+  - Health Insights
 slug: how-fusion-reshaped-my-health-journey
 authors:
   - name: "Gabriel Price"

@@ -44,7 +44,13 @@ export async function getStaticProps({ params }: any) {
 
 function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
   if (!frontMatter) return <></>;
-  console.log(otherArticles);
+
+  const tags = frontMatter.tags.map((tag: string) => (
+    <span key={tag} className="text-base bg-gray-200 rounded-full py-1 px-3 mr-2 mb-2">
+      {tag}
+    </span>
+  ));
+
 
   return (
     <MainLayout>
@@ -56,10 +62,13 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
         }}
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
-        <h1 className="not-prose text-5xl leading-tight text-[#000]">{frontMatter.title}</h1>
+        <h1 className=" text-5xl leading-tight text-[#000] font-semibold">{frontMatter.title}</h1>
         <p>Written by {frontMatter.authors[0].name}</p>
         <p className=" text-gray-500">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
         <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
+
+        {/*Reading Tags*/}
+        <div className="pt-4 flex flex-wrap gap-2">{tags}</div>
 
         {/* Suggestions for other articles */}
         <div className="pt-8">
@@ -77,7 +86,7 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
                   <p className="text-base text-gray-500">
                     {dayjs(article.frontMatter.publishedDate).format("MMM DD, YYYY")}
                   </p>
-                  <p className="text-lg text-normal leading-tight">{article.frontMatter.description}</p>
+                  <p className="text-lg text-normal leading-tight font-normal">{article.frontMatter.description}</p>
                 </div>
               </Link>
             ))}
