@@ -1,13 +1,21 @@
 ---
+<<<<<<< HEAD
 title: "Navigating Burnout: Stories from Women in the Workplace and How They're Navigating Through It"
+=======
+title: "Navigating Burnout: Stories from Women in the Workplace"
+>>>>>>> master
 description: In our Women’s Month series, we delve into the topic of burnout, resonating deeply with women worldwide.
 
 publishedDate: 2024/03/21
 coverImage: /images/blog/navigatingburnout/blog-post-cover-4.png
 tags:
+<<<<<<< HEAD
   - Mental Health
   - Health Stories
   - Resources
+=======
+  - fusion
+>>>>>>> master
 slug: navigating-burnout
 authors:
   - name: "Temidayo Awosanmi"
