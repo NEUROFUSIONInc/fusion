@@ -5,7 +5,9 @@ description: In our Women’s Month series, we delve into the topic of burnout, 
 publishedDate: 2024/03/21
 coverImage: /images/blog/navigatingburnout/blog-post-cover-4.png
 tags:
-  - fusion
+  - Mental Health
+  - Health Stories
+  - Resources
 slug: navigating-burnout
 authors:
   - name: "Temidayo Awosanmi"

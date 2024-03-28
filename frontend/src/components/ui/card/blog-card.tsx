@@ -12,6 +12,7 @@ const BlogCard = ({ posts }: any) => {
               return new Date(b.frontMatter.publishedDate).getTime() - new Date(a.frontMatter.publishedDate).getTime();
             })
             .map((post: any) => {
+              const firstTag = post.frontMatter.tags.slice(0, 2);
               return (
                 <Link
                   href={{ pathname: `/blog/${post.slug}` }}
@@ -29,6 +30,13 @@ const BlogCard = ({ posts }: any) => {
                         <h2 className="text-2xl font-medium">{post.frontMatter.title}</h2>
                         <p>{dayjs(post.frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
                         <p>{post.frontMatter.description}</p>
+                        <div className="flex gap-2">
+                          {firstTag.map((tag: any, index: number) => (
+                            <p key={index} className="text-sm bg-gray-200 rounded-full py-1 px-2">
+                              {tag}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     </article>
                   </div>

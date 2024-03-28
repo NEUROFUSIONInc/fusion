@@ -4,8 +4,8 @@ description: Are there changes in attention & stress response after cold water i
 publishedDate: 2023/11/11
 coverImage: /images/blog/coldplunge/doing_experiment.png
 tags:
-  - fusion
-  - neurotech
+  - Neurotech
+  - Research Studies
 slug: cold-plunge-impact
 authors:
   - name: "Ore Ogundipe"

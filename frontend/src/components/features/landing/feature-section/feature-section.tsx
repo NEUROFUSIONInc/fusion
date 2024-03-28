@@ -5,6 +5,7 @@ import { fusionFeatures } from "./data";
 import { FusionFeature } from "./fusion-feature/fusion-feature";
 import { PromptExample } from "./prompt-example/prompt-example";
 import { ButtonLink, CustomLink } from "~/components/ui";
+import { MsPartner } from "./ms-partner";
 
 export const FeatureSection = ({ isResearch = false }) => {
   return (
@@ -55,6 +56,7 @@ export const FeatureSection = ({ isResearch = false }) => {
             </div>
           </>
         )}
+        <MsPartner />
       </div>
     </section>
   );
