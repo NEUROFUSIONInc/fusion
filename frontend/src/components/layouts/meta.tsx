@@ -64,7 +64,7 @@ export const Meta = ({ meta: pageMeta }: { meta?: Partial<MetaSeo> }) => {
       <meta property="og:image:height" content="628" />
       {/** End OpenGraph Metadata */}
       {/** Twitter Metadata */}
-      <meta name="twitter:card" content="app" />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@usefusionapp" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
