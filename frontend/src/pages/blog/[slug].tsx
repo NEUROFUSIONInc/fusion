@@ -4,6 +4,9 @@ import { MainLayout, Meta } from "~/components/layouts";
 import dayjs from "dayjs";
 import BlogCard from "~/components/ui/card/blog-card";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const md = new MarkdownIt({ html: true });
 
@@ -43,6 +46,27 @@ export async function getStaticProps({ params }: any) {
 }
 
 function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const images: NodeListOf<HTMLImageElement> = document.querySelectorAll("img[data-zoomable]");
+
+    images.forEach((image) => {
+      image.addEventListener("click", () => {
+        console.log("Image clicked:", image.src);
+        setZoomedImage(image.src);
+      });
+    });
+
+    return () => {
+      images.forEach((image) => {
+        image.removeEventListener("click", () => {
+          setZoomedImage(null);
+        });
+      });
+    };
+  }, []);
+
   if (!frontMatter) return <></>;
 
   const tags = frontMatter.tags.map((tag: string) => (
@@ -50,7 +74,6 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       {tag}
     </span>
   ));
-
 
   return (
     <MainLayout>
@@ -62,9 +85,9 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
         }}
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
-        <h1 className=" text-5xl leading-tight text-[#000] font-semibold">{frontMatter.title}</h1>
+        <h1 className="text-5xl leading-tight text-[#000] font-semibold">{frontMatter.title}</h1>
         <p>Written by {frontMatter.authors[0].name}</p>
-        <p className=" text-gray-500">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+        <p className="text-gray-500">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
         <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
 
         {/*Reading Tags*/}
@@ -81,6 +104,7 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
                     src={article.frontMatter.coverImage}
                     alt={article.frontMatter.title}
                     className="w-full h-48 object-cover mb-3"
+                    data-zoomable
                   />
                   <h3 className="not-prose text-2xl font-medium">{article.frontMatter.title}</h3>
                   <p className="text-base text-gray-500">
@@ -93,6 +117,11 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
           </div>
         </div>
       </div>
+      {zoomedImage && (
+        <Zoom>
+          <img src={zoomedImage} alt="Zoomed" />
+        </Zoom>
+      )}
     </MainLayout>
   );
 }
