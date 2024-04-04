@@ -16,7 +16,7 @@ If you're struggling to keep up with important aspects of your life, conventiona
 
 With this in mind, Fusion takes advantage of the notification system on your phone allowing you to create a unique system of prompts that are adaptive and personalized, to help you effectively manage the areas that matter most to you.
 
-![Article Cover - Why You Should Use Personalized Prompts](/images/blog/personalizedprompts/article_cover.png)
+<img src="/images/blog/personalizedprompts/article_cover.png" alt="Article Cover - Why You Should Use Personalized Prompts" data-zoomable style="cursor: zoom-in;" />
 
 ## Why Do Personalized Prompts Matter?
 
@@ -28,7 +28,7 @@ With this in mind, Fusion takes advantage of the notification system on your pho
 
 **Guiding Your Next Steps**: Personalized prompts go beyond reflection. They provide insights on when to take action for your well-being, whether it's recognizing the need for a break, seeking therapy, or identifying areas where you need to improve.
 
-![Suggested Prompts](/images/blog/personalizedprompts/prompt_suggestions.png)
+<img src="/images/blog/personalizedprompts/prompt_suggestions.png" alt="Suggested Prompts" data-zoomable style="cursor: zoom-in;" />
 
 ## Creating Personalized Prompts with Fusion
 

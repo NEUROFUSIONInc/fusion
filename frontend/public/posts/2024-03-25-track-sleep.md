@@ -22,11 +22,9 @@ Wearable devices offer sleep tracking, but not everyone has access. Apple provid
 
 ### **Using Your Apple Health app**
 
-
 <a href="https://apps.apple.com/us/app/apple-health/id1242545199" target="_blank">Apple Health</a> is a great pre-installed health app on your iPhone, represented by a white icon with a red heart. Among its features is the ability to track health metrics, including sleep, without any additional hardware.
 
-<img src="/images/blog/tracksleep/fusion-copilot-1.jpg" alt="Apple Health App" data-zoomable />
-
+<img src="/images/blog/tracksleep/fusion-copilot-1.jpg" alt="Apple Health App" data-zoomable style="cursor: zoom-in;" />
 
 #### **Enabling Sleep Tracking**
 
@@ -38,7 +36,7 @@ Wearable devices offer sleep tracking, but not everyone has access. Apple provid
 - Choose if you want Sleep Mode reminders to help you wind down before bedtime. Tap Next when done.
 - Review your selected settings and tap Done to confirm.
 
-<img src="/images/blog/tracksleep/fusion-copilot-4.jpg" alt="Apple Sleep Data" data-zoomable/>
+<img src="/images/blog/tracksleep/fusion-copilot-4.jpg" alt="Apple Sleep Data" data-zoomable style="cursor: zoom-in;"/>
 
 ### **Viewing Your Sleep Data**
 
@@ -46,7 +44,6 @@ Wearable devices offer sleep tracking, but not everyone has access. Apple provid
 - Scroll down to find the Sleep section. You'll see a summary of your sleep data, including your average bedtime, wake-up time, and time spent in bed.
 - Tap Show All Data for detailed insights into your sleep patterns, including analysis charts and trends.
 
-<img src="/images/blog/tracksleep/App-screenshots.png" alt="Fusion Copilot App" data-zoomable/>
+<img src="/images/blog/tracksleep/App-screenshots.png" alt="Fusion Copilot App" data-zoomable style="cursor: zoom-in;"/>
 
 As you track your sleep using the <a href="https://apps.apple.com/us/app/apple-health/id1242545199" target="_blank">Health app</a>, remember that your <a href="https://apps.apple.com/ca/app/fusion-copilot/id6445860500?platform=iphone" target="_blank">Fusion Copilot</a> app can leverage this valuable data to provide personalized recommendations tailored to your sleep patterns to help you optimize your routines better.
-

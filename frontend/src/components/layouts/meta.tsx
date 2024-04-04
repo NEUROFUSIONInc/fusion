@@ -66,7 +66,7 @@ export const Meta = ({ meta: pageMeta }: { meta?: Partial<MetaSeo> }) => {
       {/** Twitter Metadata */}
       <meta name="twitter:card" content="app" />
       <meta name="twitter:site" content="@usefusionapp" />
-      <meta name="twitter:title" content={meta.title} />
+      <meta name="twitter:text:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
       <meta name="twitter:image" content={meta.image} />
       {/** End Twitter Metadata */}

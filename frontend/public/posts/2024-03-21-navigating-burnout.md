@@ -15,7 +15,7 @@ authors:
 
 In a world where people often juggle multiple roles and responsibilities, the relentless pursuit of success can sometimes take a heavy toll on us. In our Women’s Month series, we want to shed light on a topic that resonates deeply with countless people and women worldwide: **_burnout_**.
 
-![Article Cover - Navigating Burnout](/images/blog/navigatingburnout/blog-post-cover-4.png)
+<img src="/images/blog/navigatingburnout/blog-post-cover-4.png" alt="Article Cover - Navigating Burnout" data-zoomable style="cursor: zoom-in;" />
 
 This article explores the unfiltered experiences of women who have confronted burnout, sharing their struggles and successes.
 
@@ -36,11 +36,9 @@ The increasing workload eventually took its toll on me when I was wrongly blamed
 To navigate this, I reached out to my partner for emotional support, it is always great to have someone to talk about it with. I also had a conversation with my boss about the multiple tasks that were not mine to handle and I am happy we resolved it."
 
 <figure>
-    <a href="https://usefusion.app/" target="_blank" rel="noopener noreferrer">
-        <img src="/images/blog/navigatingburnout/fusion-copilot.png"
+<img src="/images/blog/navigatingburnout/fusion-copilot.png"
              alt="Fusion Copilot"
-             aria-describedby="caption">
-    </a>
+             aria-describedby="caption" data-zoomable style="cursor: zoom-in;">
     <figcaption id="caption">Track and understand changes in your stress levels, moods and productivity. <a href="https://usefusion.app/">Click here</a> to get started.</figcaption>
 </figure>
 
@@ -52,7 +50,7 @@ As an extrovert, who particularly loves being around people, I realized I was wi
 
 To navigate this challenging time, I made a conscious decision to take a break from everything. As a writer, I stopped writing from August to December 2022, disconnecting from work and focusing on activities that brought me joy, like watching K-dramas and prioritizing sufficient rest."
 
-![Woman expressing being under stress](/images/blog/navigatingburnout/blog-post-cover-3.png)
+<img src="/images/blog/navigatingburnout/blog-post-cover-3.png" alt="Woman expressing being under stress" data-zoomable style="cursor: zoom-in;" />
 
 ### **Anu, 24 - Social Media Manager**
 
@@ -62,7 +60,7 @@ Navigating through burnout was tough, especially because I desperately needed a 
 
 While burnout doesn't disappear overnight, I found ways to cope. I focused on activities that brought me joy, like spending time with friends and family, prioritizing my time with God, getting enough rest, reducing my screen time, indulging in my cravings, and staying hydrated."
 
-![woman in front of laptop expressing frustration and fatigue](/images/blog/navigatingburnout/concept-burnout-syndrome-business-woman-feels-royalty-free-image-1675458812.jpg)
+<img src="/images/blog/navigatingburnout/concept-burnout-syndrome-business-woman-feels-royalty-free-image-1675458812.jpg" alt="woman in front of laptop expressing frustration and fatigue" data-zoomable style="cursor: zoom-in;" />
 
 ### **Jemima, 26 - Operations & Strategy**
 

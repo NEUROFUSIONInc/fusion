@@ -5,8 +5,6 @@ import dayjs from "dayjs";
 import BlogCard from "~/components/ui/card/blog-card";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Zoom from "react-medium-image-zoom";
-import "react-medium-image-zoom/dist/styles.css";
 
 const md = new MarkdownIt({ html: true });
 
@@ -47,6 +45,7 @@ export async function getStaticProps({ params }: any) {
 
 function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  
 
   useEffect(() => {
     const images: NodeListOf<HTMLImageElement> = document.querySelectorAll("img[data-zoomable]");
@@ -55,6 +54,7 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       image.addEventListener("click", () => {
         console.log("Image clicked:", image.src);
         setZoomedImage(image.src);
+        document.body.classList.add("zoomed-in");
       });
     });
 
@@ -62,10 +62,12 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       images.forEach((image) => {
         image.removeEventListener("click", () => {
           setZoomedImage(null);
+          document.body.classList.remove("zoomed-in");
         });
       });
     };
   }, []);
+  
 
   if (!frontMatter) return <></>;
 
@@ -77,6 +79,11 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
 
   return (
     <MainLayout>
+      {zoomedImage && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur">
+          <img src={zoomedImage} alt="Zoomed" className="max-w-full max-h-full cursor-zoom-out" onClick={() => setZoomedImage(null)} />
+        </div>
+      )}
       <Meta
         meta={{
           title: `${frontMatter.title} | Fusion Blog`,
@@ -98,30 +105,26 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
           <h2 className="text-xl font-bold mb-4">You Might Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {otherArticles.map((article: any) => (
-              <Link href={`/blog/${article.slug}`} key={article.slug} className="border no-underline cursor-pointer">
-                <div className="cursor-pointer px-4 rounded-lg ">
+              <Link href={`/blog/${article.slug}`} key={article.slug} className="border rounded-md no-underline cursor-pointer">
+                <div className="cursor-pointer  rounded-lg ">
                   <img
                     src={article.frontMatter.coverImage}
                     alt={article.frontMatter.title}
-                    className="w-full h-48 object-cover mb-3"
+                    className="not-prose w-full h-48 object-cover mb-3 mt-0"
                     data-zoomable
                   />
-                  <h3 className="not-prose text-2xl font-medium">{article.frontMatter.title}</h3>
-                  <p className="text-base text-gray-500">
+
+                  <h3 className="not-prose pl-2.5 text-2xl font-medium">{article.frontMatter.title}</h3>
+                  <p className="text-base pl-2.5 text-gray-500">
                     {dayjs(article.frontMatter.publishedDate).format("MMM DD, YYYY")}
                   </p>
-                  <p className="text-lg text-normal leading-tight font-normal">{article.frontMatter.description}</p>
+                  <p className="text-lg pl-2.5 text-normal leading-tight font-normal">{article.frontMatter.description}</p>
                 </div>
               </Link>
             ))}
           </div>
         </div>
       </div>
-      {zoomedImage && (
-        <Zoom>
-          <img src={zoomedImage} alt="Zoomed" />
-        </Zoom>
-      )}
     </MainLayout>
   );
 }
