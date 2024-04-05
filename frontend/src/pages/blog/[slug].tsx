@@ -81,7 +81,12 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
     <MainLayout>
       {zoomedImage && (
         <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur">
-          <img src={zoomedImage} alt="Zoomed" className="max-w-full max-h-full cursor-zoom-out" onClick={() => setZoomedImage(null)} />
+          <img
+            src={zoomedImage}
+            alt="Zoomed"
+            className="max-w-full max-h-full cursor-zoom-out"
+            onClick={() => setZoomedImage(null)}
+          />
         </div>
       )}
       <Meta
@@ -92,9 +97,9 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
         }}
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
-        <h1 className="text-5xl leading-tight text-[#000] font-semibold">{frontMatter.title}</h1>
-        <p>Written by {frontMatter.authors[0].name}</p>
-        <p className="text-gray-500">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
+        <h1 className="text-5xl leading-tight text-[#000] font-semibold not-prose">{frontMatter.title}</h1>
+        <p className="not-prose text-[#000] pt-4 font-normal font-semibold text-base">By {frontMatter.authors[0].name}</p>
+        <p className="text-gray-500 not-prose text-base">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
         <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
 
         {/*Reading Tags*/}
@@ -105,7 +110,11 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
           <h2 className="text-xl font-bold mb-4">You Might Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {otherArticles.map((article: any) => (
-              <Link href={`/blog/${article.slug}`} key={article.slug} className="border rounded-md no-underline cursor-pointer">
+              <Link
+                href={`/blog/${article.slug}`}
+                key={article.slug}
+                className="border rounded-md no-underline cursor-pointer"
+              >
                 <div className="cursor-pointer  rounded-lg ">
                   <img
                     src={article.frontMatter.coverImage}
@@ -118,7 +127,9 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
                   <p className="text-base pl-2.5 text-gray-500">
                     {dayjs(article.frontMatter.publishedDate).format("MMM DD, YYYY")}
                   </p>
-                  <p className="text-lg pl-2.5 text-normal leading-tight font-normal">{article.frontMatter.description}</p>
+                  <p className="text-lg pl-2.5 text-normal leading-tight font-normal">
+                    {article.frontMatter.description}
+                  </p>
                 </div>
               </Link>
             ))}
