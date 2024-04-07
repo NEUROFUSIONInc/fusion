@@ -46,8 +46,7 @@
     "nostr-tools": "^1.14.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.45.2",
-    "react-medium-image-zoom": "^5.1.11",
+    "react-hook-form": "^7.45.2"
     "react-notifications": "^1.7.4",
     "react-typist-component": "^1.0.5",
     "rooks": "^7.14.1",
