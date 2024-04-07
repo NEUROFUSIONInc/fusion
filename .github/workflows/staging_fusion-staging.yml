@@ -30,8 +30,6 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-        env:
-          NODE_ENV: production
 
       - name: Zip artifact for deployment
         run: zip release.zip ./frontend -r --symlinks
@@ -66,5 +64,3 @@ jobs:
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0F583A999268441B9740DD851D5977B0 }}
           package: .
-        env:
-          NODE_ENV: production
