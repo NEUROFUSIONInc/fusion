@@ -8,14 +8,14 @@ export interface IIntegration {
 }
 
 export const integrations = [
-  {
-    slug: "fusion",
-    title: "Fusion (Health & Behavior)",
-    href: "https://usefusion.app/download",
-    imageUrl: "/images/logo.png",
-    description: "Connect your prompts, responses and health data from the Fusion Mobile App.",
-    active: true,
-  },
+  // {
+  //   slug: "fusion",
+  //   title: "Fusion (Health & Behavior)",
+  //   href: "https://usefusion.app/download",
+  //   imageUrl: "/images/logo.png",
+  //   description: "Connect your prompts, responses and health data from the Fusion Mobile App.",
+  //   active: true,
+  // },
   {
     slug: "neurosity",
     title: "Neurosity (EEG Brain Data)",
