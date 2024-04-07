@@ -3,7 +3,7 @@ title: "How to Track Your Sleep on iPhone Without a Wearable"
 description: Learn how to track your sleep on your iPhone without a wearable device using the built-in Health app.
 
 publishedDate: 2024/03/25
-coverImage: /images/blog/tracksleep/fusion-copilot-3.jpg
+coverImage: /images/blog/tracksleep/Blog-post-covers.png
 tags:
   - How-To Guides
   - Sleep
