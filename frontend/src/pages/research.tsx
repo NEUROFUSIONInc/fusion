@@ -42,7 +42,7 @@ const Research: NextPage = ({posts}: any) => {
       <HeroSection isResearch />
       <FeatureSection isResearch />
       <IntegrationsSection />
-      <OfferingSection />
+      <OfferingSection isResearch />
       <TestimonialSection isResearch />
       <TeamSection />
       <BlogSection posts={posts} />

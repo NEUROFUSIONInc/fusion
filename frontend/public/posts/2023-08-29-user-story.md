@@ -25,7 +25,7 @@ Fusion's gentle prompts help me see these patterns in my daily life, focusing on
 
 I concentrated on prompts related to autoimmunity and connected matters. I chose the following prompts:
 
-![User Prompts for Managing Health](/images/blog/user_prompts_for_health.webp)
+<img src="/images/blog/user_prompts_for_health.webp" alt="User Prompts for Managing Health" data-zoomable style="cursor: zoom-in;" />
 
 <button><a href="https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone">Download Fusion on your iPhone/iPad</a></button>
 <br>

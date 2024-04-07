@@ -19,14 +19,15 @@ export const FeatureSection = ({ isResearch = false }) => {
                 Use NeuroFusion Explorer!
               </ButtonLink>
             </div>
-
-            <Image
-              src="/images/features/neurofusion_experiment.png"
-              alt="User using fusion app"
-              width={609}
-              height={914}
-              className="rounded-2xl"
-            />
+            <div className="overflow-hidden max-w-full md:max-w-2xl">
+              <Image
+                src="/images/features/neurofusion_experiment.png"
+                alt="User using fusion app"
+                width={609}
+                height={914}
+                className="rounded-2xl"
+              />
+            </div>
           </div>
         ) : (
           <>

@@ -13,7 +13,7 @@ authors:
 
 During [ZuConnect](https://zuzalu.city/), we were curious about the impact of cold plunges on peoples brain activity & overall wellbeing. Are there changes in attention & stress response?
 
-![Picture of Water Temperature](/images/blog/coldplunge/water_temperature.png)
+<img src="/images/blog/coldplunge/water_temperature.png" alt="Picture of Water Temperature" data-zoomable style="cursor: zoom-in;" />
 
 **Average water temperature 5-10 degrees celsius**
 
@@ -23,7 +23,7 @@ For the experiment, each person wore:
 
 - An 8 channel EEG headset ([Neurosity Crown](https://neurosity.co)) and performed recordings using the [Fusion Explorer](https://usefusion.app/playground)
 
-![Picture of Participant in Water](/images/blog/coldplunge/participant_in_water.png)
+<img src="/images/blog/coldplunge/participant_in_water.png" alt="Picture of Participant in Water" data-zoomable style="cursor: zoom-in;"/>
 
 ### Flow
 
@@ -36,7 +36,7 @@ Total time: 25mins
 - Stroop task (5mins)
 - Resting state (5mins)
 
-![Picture of Participant in Doing Cognitive Task](/images/blog/coldplunge/doing_experiment.png)
+<img src="/images/blog/coldplunge/doing_experiment.png" alt="Picture of Participant in Doing Cognitive Task" data-zoomable style="cursor: zoom-in";/>
 
 ## What did we observe?
 
@@ -45,24 +45,24 @@ Total time: 25mins
 Key observations:
 
 - **Delta Band (Deep Relaxation or Stress):** Changes in the delta band could indicate varying levels of deep relaxation or stress. During the cold plunge ('plunge_open_ended'), some participants show an increase in delta power, which might suggest a relaxation response or a dissociative state in response to extreme cold. Others may show a decrease, indicating a stress response.
-  ![Relative Delta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_delta_across.png)
+  <img src="/images/blog/coldplunge/relative_delta_across.png" alt="Relative Delta Power Across Sessions & Partipants" data-zoomable style="cursor: zoom-in;"/>
 - **Theta Band (Emotional Response):** The theta band, often associated with emotional experiences, shows varied responses during the experiment. Increases in theta power, particularly during the plunge, could reflect an emotional or meditative response. It's also worth noting how participants' theta activity changes during the cognitive tasks ('pre_plunge_stroop' and 'post_plunge_stroop'), as this might reflect emotional reactions to cognitive stress.
 
   - Theta is often linked to drowsiness, creativity, and emotional experiences. Fluctuations might reflect emotional responses or relaxed states.
 
-  ![Relative Theta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_theta_across.png)
+  <img src="/images/blog/coldplunge/relative_theta_across.png" alt="Relative Theta Power Across Sessions & Partipants" data-zoomable style="cursor: zoom-in;" />
 
 - **Alpha Band (Relaxation and Alertness):** The alpha band is typically linked to states of relaxation and calmness. Higher, more relaxation. Lower, more alertness. Fluctuations in this band, especially in the post-plunge phases, could be indicative of changes in relaxation or alertness levels as the participants recover from the stress of the plunge.
 
-  ![Relative Alpha Power Across Sessions & Partipants](/images/blog/coldplunge/relative_alpha_across.png)
+  <img src="/images/blog/coldplunge/relative_alpha_across.png" alt="Relative Alpha Power Across Sessions & Partipants" data-zoomable style="cursor: zoom-in;" />
 
 - **Beta Band (Active Thinking and Focus):** The beta band is related to active thinking and focus. Variations here during the 'stroop' tasks suggest differences in cognitive processing and stress response. An increase in beta power might indicate heightened alertness and cognitive engagement, while a decrease could suggest fatigue or decreased focus.
 
-  ![Relative Beta Power Across Sessions & Partipants](/images/blog/coldplunge/relative_beta_across.png)
+  <img src="/images/blog/coldplunge/relative_beta_across.png" alt="Relative Beta Power Across Sessions & Partipants" data-zoomable style="cursor: zoom-in;" />
 
 - **Gamma Band (Cognitive Functioning):** Lastly, the gamma band is associated with higher cognitive processing tasks. Changes in this band could reflect how different individuals' cognitive functions are affected by the stress and recovery phases of the experiment.
 
-  ![Relative Gamma Power Across Sessions & Partipants](/images/blog/coldplunge/relative_gamma_across.png)
+  <img src="/images/blog/coldplunge/relative_gamma_across.png" alt="Relative Gamma Power Across Sessions & Partipants" data-zoomable style="cursor: zoom-in;" />
 
 **Contextual Adaptation:** The progression from a resting state, through a cognitive task, into the stressor (cold plunge), and back through cognitive tasks and resting state, shows how the brain adapts to changing contexts. The variations in brain activity across these stages reflect the dynamic nature of brain responses to both cognitive and physical stressors.
 

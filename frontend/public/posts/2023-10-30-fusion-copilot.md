@@ -13,7 +13,7 @@ authors:
 
 Since our launch, Fusion has helped you manage and improve your productivity, health and wellbeing. In the past, we took your responses and showed you how they changed over time using visuals. Now, with Fusion Copilot, you receive summaries and recommendations to act on based on your personalized context.
 
-![Picture of Fusion Copilot Offering](/images/blog/fusioncopilot/fusion_copilot_large.jpg)
+<img src="/images/blog/fusioncopilot/fusion_copilot_large.jpg" alt="Picture of Fusion Copilot Offering" data-zoomable style="cursor: zoom-in;" />
 
 Feeling stressed or overwhelmed? Not sleeping well? Struggling to maintain a healthy work-life balance? With Fusion Copilot, you don't have to navigate these challenges alone. Whether you need help managing your time better, finding ways to reduce stress, or improving your sleep patterns, our Fusion Copilot provides you personalized recommendations to address these issues.
 
@@ -31,7 +31,7 @@ To get started, simply enable the feature in your Fusion app settings (top right
 
 Once enabled, Fusion Copilot brings you recommendations based on insights gathered from your responses on the Fusion app. Through careful analysis of your responses and patterns, Fusion Copilot curates actionable practical recommendations for you to implement in various aspects of your life.
 
-![App Screenshots of Copilot Recommendations](/images/blog/fusioncopilot/fusion_copilot_recommendations.jpg)
+<img src="/images/blog/fusioncopilot/fusion_copilot_recommendations.jpg" alt="App Screenshots of Copilot Recommendations" data-zoomable style="cursor: zoom-in; />
 
 ## Is Fusion Copilot a Premium Offer ?
 
