@@ -10,7 +10,7 @@ exports.generateOAuthURL = async (req, res) => {
     .createOAuthURL({
       clientId: process.env.NEUROSITY_OAUTH_CLIENT_ID,
       clientSecret: process.env.NEUROSITY_OAUTH_CLIENT_SECRET,
-      redirectUri: req.params.redirectUri,
+      redirectUri: req.query.redirectUri,
       responseType: "token",
       state: Math.random().toString().split(".")[1], // A random string is required for security reasons
       scope: [
