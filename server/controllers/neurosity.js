@@ -37,7 +37,7 @@ exports.generateOAuthURL = async (req, res) => {
     .catch((error) =>
       res.status(400).json({
         error: error.response.data,
-        redirectUri: redirectUri
+        redirectUri: req.query.redirectUri
       })
     );
 };
