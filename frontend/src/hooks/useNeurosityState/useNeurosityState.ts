@@ -71,6 +71,9 @@ export function useNeurosityState() {
         headers: {
           Authorization: `Bearer ${sessionData?.user?.authToken}`,
         },
+        params: {
+          redirectUri: window.location.origin + "/neurosity-callback",
+        }
       });
       console.log("Got response from API");
 
