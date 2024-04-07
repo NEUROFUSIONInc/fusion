@@ -5,9 +5,7 @@ const neurosity = new Neurosity({
 });
 
 exports.generateOAuthURL = async (req, res) => {
-  const redirectUri =
-    process.env.NEUROSITY_OAUTH_CLIENT_REDIRECT_URI ??
-    `https://${req.hostname}/neurosity-callback`;
+  const redirectUri = `${req.hostname}/neurosity-callback`;
   
     await neurosity
     .createOAuthURL({
@@ -40,6 +38,7 @@ exports.generateOAuthURL = async (req, res) => {
     .catch((error) =>
       res.status(400).json({
         error: error.response.data,
+        redirectUri: redirectUri
       })
     );
 };
