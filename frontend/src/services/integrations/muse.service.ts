@@ -9,7 +9,7 @@ export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
 export const PLOTTING_INTERVAL = 250; // ms
 
-const INTER_SAMPLE_INTERVAL = -(1 / 256) * 1000;
+const INTER_SAMPLE_INTERVAL = (1 / 256) * 1000;
 
 export enum SIGNAL_QUALITY {
   BAD = "#ed5a5a",
