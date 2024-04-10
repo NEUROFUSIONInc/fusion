@@ -43,6 +43,8 @@ const queryClient = new QueryClient({
   defaultOptions: QUERY_OPTIONS_DEFAULT,
 });
 
+// TODO: Register background tasks
+
 function App() {
   const responseListener = React.useRef<
     Notifications.Subscription | undefined
