@@ -163,9 +163,10 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
       >
         <Text className="font-sans text-base text-white ">
           Get personalized recommendations on how to navigate your days.
-          {"\n\n"}In future releases, you'd be able to:{"\n"}- Edit responses
-          and share custom reports.{"\n"}- Pair Fusion with your sleep, activity
-          trackers, music listening history and screen time.
+          {"\n\n"}
+          {"\n"}- Edit responses and share custom reports.
+          {"\n"}- Insights from your sleep, activity trackers, music listening
+          history and screen time.
         </Text>
 
         <View className="flex">
