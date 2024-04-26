@@ -8,8 +8,10 @@ import time
 from PIL import Image
 from flask_cors import CORS
 import base64
+import re
 
 import eeg
+import cocoa_pad
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -22,7 +24,7 @@ def encode_image_to_base64(image_path):
 
 # TODO: handle multiple files
 @app.route('/api/v1/process_eeg', methods=['POST'])
-def process():
+def process_eeg():
     try:
         # Check if the POST request contains a file with the key 'file'
         if 'file' not in request.files:
@@ -94,6 +96,40 @@ def process():
 
 # TODO: endpoint for ERP analysis
 
+
+# Endpoint for CoCoA-PAD analysis
+@app.route('/api/v1/verbal_fluency', methods=['POST'])
+def verbal_fluency():
+    print("request in here")
+    # incoming request - audio_base64, task_type
+    try:
+        # call whisper to get transcript
+        print("request.json", request.json)
+        print("request.json['audio_base64']", request.json['audio_base64'])
+        transcript = cocoa_pad.transcribe(request.json['audio_base64'])
+
+        if not transcript:
+            return jsonify({'error': 'error processing, unable to transcribe'}), 500
+        
+        # convert transcript to lower case, remove punctuations
+        clean_transcript = re.sub(r'[^\w\s]', '', transcript.lower()).strip()
+
+        # split transcript into words
+        # TODO: support animals with multiple names
+        words = clean_transcript.split(" ")
+        print("split words", words)
+
+        # words = ["cat", "dog", "parrot", "dog", "tuna", "camel", "play"]
+
+        if request.json['task_type'] == "animal_task":
+            measures = cocoa_pad.animal_task(words)
+
+            return jsonify({'response': measures, 'transcript': transcript}), 200
+
+        return jsonify({'response': "works perfect"}), 200
+    except Exception as e:
+        return jsonify({'error': 'error processing', 'message': e}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
