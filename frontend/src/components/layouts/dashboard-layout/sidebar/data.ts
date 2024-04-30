@@ -21,11 +21,11 @@ export const sidebarLinks = [
   //   title: "Datasets",
   //   href: "/datasets",
   // },
-  // {
-  //   icon: PenBox,
-  //   title: "Quests",
-  //   href: "/quests",
-  // },
+  {
+    icon: PenBox,
+    title: "Quests",
+    href: "/quests",
+  },
   {
     icon: Plug,
     title: "Integrations",

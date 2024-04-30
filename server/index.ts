@@ -13,6 +13,7 @@ const magicFlowController = require("./controllers/magicflow");
 const neurosityController = require("./controllers/neurosity");
 // const vitalController = require("./controllers/vital");
 const insightController = require("./controllers/insight");
+const questController = require("./controllers/quest");
 
 // import cron runners
 const magicFlowCron = require("./cron-jobs/magicflow-daily-fetch");
@@ -110,6 +111,12 @@ app.post("/api/getpromptsuggestions", insightController.getPromptSuggestions);
 /**
  * Get the latest version
  */
+
+/**
+ * Quest Calls
+ */
+app.post("/api/quests", questController.saveQuest);
+app.get("/api/quests", questController.getQuests);
 
 /**
  * Start server
