@@ -83,3 +83,13 @@ export interface StreakEntry {
   timestamp: number;
   score: number;
 }
+
+export interface Quest {
+  title: string;
+  description: string;
+  guid: string;
+  startDate?: number;
+  endDate?: number;
+  prompts?: Prompt[];
+  additionalMeta?: object;
+}

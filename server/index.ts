@@ -115,8 +115,12 @@ app.post("/api/getpromptsuggestions", insightController.getPromptSuggestions);
 /**
  * Quest Calls
  */
-app.post("/api/quests", questController.saveQuest);
-app.get("/api/quests", questController.getQuests);
+app.post("/api/quest", questController.saveQuest);
+app.get("/api/quests", questController.getCreatorQuests);
+app.get("/api/quest/getByCode", questController.getQuestByCode);
+app.post("/api/quest/edit", questController.editQuest);
+// app.post("/api/quest/join", questController.joinQuest);
+// app.post("/api/quest/user/status", questController.saveQuestSubscription);
 
 /**
  * Start server

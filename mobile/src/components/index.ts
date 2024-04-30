@@ -17,3 +17,4 @@ export * from "./chat-bubble";
 export * from "./headers";
 export * from "./modal";
 export * from "./calendar-picker";
+export * from "./quests";

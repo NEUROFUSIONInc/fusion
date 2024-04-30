@@ -24,15 +24,16 @@ const QuestsPage: NextPage = () => {
   const [questTitle, setQuestTitle] = React.useState<string>("");
   const [questDescription, setQuestDescription] = React.useState<string>("");
   const [questConfig, setQuestConfig] = React.useState<string>("");
-  const [activeView, setActiveView] = React.useState<"create" | "view">("create");
+  const [activeView, setActiveView] = React.useState<"create" | "view" | "edit">("create");
   const [displayShareModal, setDisplayShareModal] = React.useState<boolean>(false);
   const [savedQuests, setSavedQuests] = React.useState<IQuest[]>([]);
   const [activeQuest, setActiveQuest] = React.useState<IQuest | null>(null);
 
   const saveQuest = async () => {
     try {
+      // if activeView "edit"
       const res = await api.post(
-        "/quests",
+        "/quest",
         {
           title: questTitle,
           description: questDescription,
@@ -56,6 +57,37 @@ const QuestsPage: NextPage = () => {
       }
     } catch (error) {
       console.error("Failed to save quest", error);
+    }
+  };
+
+  const editQuest = async () => {
+    try {
+      const res = await api.post(
+        "/quest/edit",
+        {
+          title: questTitle,
+          description: questDescription,
+          config: questConfig,
+          guid: activeQuest?.guid,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session.data?.user?.authToken}`,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        console.log("Quest edited successfully");
+        console.log(res.data);
+        // send user to the quest detail page
+        setSavedQuests([...savedQuests, res.data.quest]);
+        setActiveView("view");
+      } else {
+        console.error("Failed to edit quest");
+      }
+    } catch (error) {
+      console.error("Failed to edit quest", error);
     }
   };
 
@@ -96,10 +128,10 @@ const QuestsPage: NextPage = () => {
           View Quests
         </Button>
         <Button onClick={() => setActiveView("create")} intent={activeView == "create" ? "primary" : "integration"}>
-          Configure Quest
+          Create Quest
         </Button>
       </div>
-      {activeView === "create" && (
+      {["create", "edit"].includes(activeView) && (
         <>
           <p className="mb-5 mt-5 text-lg dark:text-slate-400">
             Create a new quest that you want other participants to run
@@ -140,7 +172,19 @@ const QuestsPage: NextPage = () => {
                 onChange={(e) => setQuestConfig(e.target.value)}
               />
 
-              <Button type="submit" size="lg" fullWidth className="mt-4" onClick={saveQuest}>
+              <Button
+                type="submit"
+                size="lg"
+                fullWidth
+                className="mt-4"
+                onClick={async () => {
+                  if (activeView === "edit") {
+                    await editQuest();
+                  } else {
+                    await saveQuest();
+                  }
+                }}
+              >
                 Save Quest
               </Button>
             </div>
@@ -179,7 +223,10 @@ const QuestsPage: NextPage = () => {
                       intent="ghost"
                       onClick={() => {
                         setActiveQuest(quest);
-                        setActiveView("create");
+                        setQuestTitle(quest.title);
+                        setQuestDescription(quest.description);
+                        setQuestConfig(quest.config);
+                        setActiveView("edit");
                       }}
                     >
                       Edit
@@ -196,7 +243,7 @@ const QuestsPage: NextPage = () => {
           <DialogContent>
             <DialogTitle>Share Quest</DialogTitle>
             <DialogDescription>
-              Share the code with participants to join this quest using the Fusion mobile app
+              Share the code with your participants to join this quest using the Fusion mobile app
             </DialogDescription>
             <div className="flex flex-col space-y-4">
               <Input label="Join Code" type="text" size="lg" value={activeQuest?.joinCode} readOnly />
