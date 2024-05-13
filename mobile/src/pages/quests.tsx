@@ -15,7 +15,10 @@ export function QuestsScreen() {
   return (
     <Screen>
       <View className="flex flex-1 flex-col gap-7 items-center justify-center">
-        <Image source={require("../../assets/pie-chart.png")} />
+        <Image
+          source={require("../../assets/group-investigation.png")}
+          className="w-32 h-32"
+        />
         <Text className="font-sans-light max-w-xs text-center text-white text-base">
           Perform activites in groups and validate their impact on your
           wellness!
