@@ -84,17 +84,165 @@ export const buildHealthDataset = async (startDate: Dayjs, endDate: Dayjs) => {
    * @returns healthDataset[]
    */
 
-  const daysInRange = endDate.diff(startDate.startOf("day"), "day") + 1;
-  const dateArray: string[] = [];
-  for (let i = 0; i < daysInRange; i++) {
-    const date = startDate.add(i, "day").format("YYYY-MM-DD");
-    dateArray.push(date);
-  }
-  console.log("date array", dateArray);
-
-  const dataset: FusionHealthDataset[] = [];
+  let dataset: FusionHealthDataset[] = [];
   if (Platform.OS === "ios") {
-    AppleHealthKit.initHealthKit(permissions, (error) => {
+    dataset = await buildHealthDataFromApple(startDate, endDate);
+  }
+
+  console.log("returning dataset", dataset);
+
+  return dataset;
+};
+
+export const getAppleHealthSleepSummary = async (
+  startDate: Dayjs,
+  endDate: Dayjs
+) => {
+  return new Promise<FusionSleepSummary[]>((resolve, reject) => {
+    const daysInRange = endDate?.diff(startDate.startOf("day"), "day") + 1;
+    const dateArray: string[] = [];
+    for (let i = 0; i < daysInRange; i++) {
+      const date = startDate.add(i, "day").format("YYYY-MM-DD");
+      dateArray.push(date);
+    }
+
+    const options: HealthInputOptions = {
+      startDate: startDate.toISOString(),
+    };
+    endDate && (options.endDate = endDate.toISOString());
+
+    let sleepSummary: FusionSleepSummary[] = [];
+    const sleepSummaryMap: { [date: string]: FusionSleepSummary } = {};
+    AppleHealthKit.getSleepSamples(
+      options,
+      async (err: any, results: HealthValue[]) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        // store the total for each day
+        // get the difference between the start and end time for the duration of activity in each sample
+        // value types: apple: INBED  oura: AWAKE, ASLEEP, CORE, REM, DEEP, INBED
+        // TODO: logs can sometimes come from multiple apple devices, so we need to filter by sourceId
+
+        for (const date of dateArray) {
+          if (!sleepSummaryMap[date]) {
+            sleepSummaryMap[date] = {
+              date,
+              duration: 0,
+            };
+          }
+
+          // filter for sleep & also include from the night before after 12pm
+          const filteredData = (
+            results as unknown as AppleHealthSleepSample[]
+          ).filter((sample) =>
+            // sample.sourceId.startsWith(
+            //   "com.apple.health.FCE90122-BD0E-4B5B-BC27-D1098B176FDB"
+            // ) &&
+            // sample.value === "INBED" &&
+            dayjs(sample.startDate).isSame(dayjs(date), "day")
+          );
+
+          // TODO: we need summary's per source
+
+          // if there is no sleep data for the current date, skip
+          if (!filteredData.length) {
+            continue;
+          }
+
+          // update the sleep summary for the current date
+          for (const entry of filteredData) {
+            const entryStart = dayjs(entry.startDate);
+            const entryEnd = dayjs(entry.endDate);
+
+            // Add the current entry's value to the total for the corresponding date
+            sleepSummaryMap[date].duration += entryEnd.diff(
+              entryStart,
+              "second"
+            );
+          }
+        }
+
+        // Convert the map to an array of summary objects sorted by date
+        sleepSummary = Object.keys(sleepSummaryMap)
+          .sort() // Ensure the dates are sorted
+          .map((date) => ({
+            ...sleepSummaryMap[date],
+          }));
+
+        resolve(sleepSummary);
+      }
+    );
+  });
+};
+
+export const getAppleHealthStepsSummary = async (
+  startDate: Dayjs,
+  endDate: Dayjs
+) => {
+  return new Promise<FusionStepSummary[]>((resolve, reject) => {
+    let stepSummary: { date: string; totalSteps: number }[] = [];
+    const stepSummaryMap: { [date: string]: number } = {};
+
+    const options: HealthInputOptions = {
+      startDate: startDate.toISOString(),
+    };
+
+    endDate && (options.endDate = endDate.toISOString());
+
+    AppleHealthKit.getDailyStepCountSamples(
+      options,
+      async (err: any, results: HealthValue[]) => {
+        if (err) {
+          console.error("Error fetching step count samples:", err);
+          reject(err);
+          return;
+        }
+
+        // sum them up to get the total steps but split by day
+        // Aggregate steps by date
+        for (const entry of results) {
+          const { startDate, value } = entry;
+          const date = dayjs(startDate).format("YYYY-MM-DD");
+
+          // Check if the date already exists in the map, if not initialize to 0
+          if (!stepSummaryMap[date]) {
+            stepSummaryMap[date] = 0;
+          }
+
+          // Add the current entry's value to the total for the corresponding date
+          stepSummaryMap[date] += value;
+        }
+
+        // Convert the map to an array of summary objects sorted by date
+        stepSummary = Object.keys(stepSummaryMap)
+          .sort() // Ensure the dates are sorted
+          .map((date) => ({
+            date,
+            totalSteps: stepSummaryMap[date],
+          }));
+
+        // Log the final daily step summaries
+        resolve(stepSummary);
+      }
+    );
+  });
+};
+
+export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
+  return new Promise<FusionHealthDataset[]>((resolve, reject) => {
+    const daysInRange = endDate.diff(startDate.startOf("day"), "day") + 1;
+    const dateArray: string[] = [];
+    for (let i = 0; i < daysInRange; i++) {
+      const date = startDate.add(i, "day").format("YYYY-MM-DD");
+      dateArray.push(date);
+    }
+    console.log("date array", dateArray);
+
+    const dataset: FusionHealthDataset[] = [];
+
+    AppleHealthKit.initHealthKit(permissions, async (error) => {
       if (error) {
         Alert.alert("Missing permissions", "Cannot grant permissions!");
       }
@@ -106,107 +254,8 @@ export const buildHealthDataset = async (startDate: Dayjs, endDate: Dayjs) => {
       endDate && (options.endDate = endDate.toISOString());
 
       // get sleep summary
-      let sleepSummary: FusionSleepSummary[] = [];
-      const sleepSummaryMap: { [date: string]: FusionSleepSummary } = {};
-      AppleHealthKit.getSleepSamples(
-        options,
-        async (err: any, results: HealthValue[]) => {
-          if (err) {
-            return;
-          }
-          // store the total for each day
-          // get the difference between the start and end time for the duration of activity in each sample
-          // value types: apple: INBED  oura: AWAKE, ASLEEP, CORE, REM, DEEP, INBED
-          // TODO: logs can sometimes come from multiple apple devices, so we need to filter by sourceId
-
-          for (const date of dateArray) {
-            if (!sleepSummaryMap[date]) {
-              sleepSummaryMap[date] = {
-                date,
-                duration: 0,
-              };
-            }
-
-            // filter for sleep & also include from the night before after 12pm
-            const filteredData = (
-              results as unknown as AppleHealthSleepSample[]
-            ).filter((sample) =>
-              // sample.sourceId.startsWith(
-              //   "com.apple.health.FCE90122-BD0E-4B5B-BC27-D1098B176FDB"
-              // ) &&
-              // sample.value === "INBED" &&
-              dayjs(sample.startDate).isSame(dayjs(date), "day")
-            );
-
-            // TODO: we need summary's per source
-
-            // if there is no sleep data for the current date, skip
-            if (!filteredData.length) {
-              continue;
-            }
-
-            // update the sleep summary for the current date
-            for (const entry of filteredData) {
-              const entryStart = dayjs(entry.startDate);
-              const entryEnd = dayjs(entry.endDate);
-
-              // Add the current entry's value to the total for the corresponding date
-              sleepSummaryMap[date].duration += entryEnd.diff(
-                entryStart,
-                "second"
-              );
-            }
-          }
-
-          // Convert the map to an array of summary objects sorted by date
-          sleepSummary = Object.keys(sleepSummaryMap)
-            .sort() // Ensure the dates are sorted
-            .map((date) => ({
-              ...sleepSummaryMap[date],
-            }));
-
-          console.log(sleepSummary);
-        }
-      );
-
-      // get step summary
-      let stepSummary: { date: string; totalSteps: number }[] = [];
-      const stepSummaryMap: { [date: string]: number } = {};
-      AppleHealthKit.getDailyStepCountSamples(
-        options,
-        async (err: any, results: HealthValue[]) => {
-          if (err) {
-            console.error("Error fetching step count samples:", err);
-            return;
-          }
-
-          // sum them up to get the total steps but split by day
-          // Aggregate steps by date
-          for (const entry of results) {
-            const { startDate, value } = entry;
-            const date = dayjs(startDate).format("YYYY-MM-DD");
-
-            // Check if the date already exists in the map, if not initialize to 0
-            if (!stepSummaryMap[date]) {
-              stepSummaryMap[date] = 0;
-            }
-
-            // Add the current entry's value to the total for the corresponding date
-            stepSummaryMap[date] += value;
-          }
-
-          // Convert the map to an array of summary objects sorted by date
-          stepSummary = Object.keys(stepSummaryMap)
-            .sort() // Ensure the dates are sorted
-            .map((date) => ({
-              date,
-              totalSteps: stepSummaryMap[date],
-            }));
-
-          // Log the final daily step summaries
-          console.log(stepSummary);
-        }
-      );
+      const sleepSummary = await getAppleHealthSleepSummary(startDate, endDate);
+      const stepSummary = await getAppleHealthStepsSummary(startDate, endDate);
 
       // avg_heartrate_[morning…night],
       // AppleHealthKit.getHeartRateSamples(
@@ -227,16 +276,20 @@ export const buildHealthDataset = async (startDate: Dayjs, endDate: Dayjs) => {
           (summary) => summary.date === date
         );
 
+        console.log("date", date);
+        console.log("sleep summary", sleepSummaryForDate);
+        console.log("step summary", stepSummaryForDate);
+
         dataset.push({
           date,
           sleepSummary: sleepSummaryForDate ?? { date, duration: 0 },
           stepSummary: stepSummaryForDate ?? { date, totalSteps: 0 },
         });
       }
-    });
-  }
 
-  return dataset;
+      resolve(dataset);
+    });
+  });
 };
 
 export const connectAppleHealth = async () => {

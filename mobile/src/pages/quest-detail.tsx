@@ -152,11 +152,19 @@ export function QuestDetailScreen() {
       );
 
       if (res) {
+        console.log("health data", res);
         setHealthDataset(res);
       }
     } catch (error) {
       console.error("Failed to sync health data", error);
     }
+  };
+
+  const secondsToHms = (d: number) => {
+    if (!d) return "--hrs --mins";
+    const hours = Math.floor(d / 3600);
+    const minutes = Math.floor((d % 3600) / 60);
+    return `${hours} hrs ${minutes} mins`;
   };
 
   return (
@@ -195,7 +203,8 @@ export function QuestDetailScreen() {
                 <Text className="font-sans text-base text-white opacity-60">
                   {healthDataset.find(
                     (data) => data.date === dayjs().format("YYYY-MM-DD")
-                  )?.stepSummary.totalSteps ?? "----"}
+                  )?.stepSummary.totalSteps ?? "----"}{" "}
+                  steps
                 </Text>
               </View>
 
@@ -205,9 +214,11 @@ export function QuestDetailScreen() {
                   Sleep
                 </Text>
                 <Text className="font-sans text-base text-white opacity-60">
-                  {healthDataset.find(
-                    (data) => data.date === dayjs().format("YYYY-MM-DD")
-                  )?.sleepSummary.duration ?? "----"}
+                  {secondsToHms(
+                    healthDataset.find(
+                      (data) => data.date === dayjs().format("YYYY-MM-DD")
+                    )?.sleepSummary.duration!
+                  ) ?? "--hrs --mins"}
                 </Text>
               </View>
 
