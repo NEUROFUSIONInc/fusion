@@ -249,6 +249,7 @@ const QuestsPage: NextPage = () => {
                         setQuestTitle(quest.title);
                         setQuestDescription(quest.description);
                         setQuestConfig(quest.config);
+                        setQuestOrganizer(quest.organizerName ?? "");
                         setActiveView("edit");
                       }}
                     >
