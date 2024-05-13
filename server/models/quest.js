@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      organizerName: {
+        type: DataTypes.STRING,
+      },
       description: {
         type: DataTypes.TEXT,
       },

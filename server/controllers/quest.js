@@ -8,6 +8,7 @@ exports.saveQuest = async (req, res) => {
       userGuid: req.user.userGuid,
       title: req.body.title,
       description: req.body.description,
+      organizerName: req.body.organizerName,
       config: req.body.config,
       joinCode: Math.random().toString(36).substring(7),
     });
@@ -96,6 +97,7 @@ exports.editQuest = async (req, res) => {
     quest.title = req.body.title;
     quest.description = req.body.description;
     quest.config = req.body.config;
+    quest.organizerName = req.body.organizerName;
 
     await quest.save();
 
@@ -157,6 +159,9 @@ exports.joinQuest = async (req, res) => {
 };
 
 exports.getUserQuestSubscription = async (req, res) => {
+  /**
+   * Fetches a record for the user subscribed to a quest
+   */
   try {
     const userQuest = await db.UserQuest.findOne({
       where: {
@@ -184,4 +189,5 @@ exports.getUserQuestSubscription = async (req, res) => {
     });
   }
 };
+
 // TODO: exports.resetJoinCode

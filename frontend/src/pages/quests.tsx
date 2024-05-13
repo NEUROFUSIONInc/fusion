@@ -17,12 +17,15 @@ interface IQuest {
   createdAt: string;
   updatedAt: string;
   joinCode: string;
+  organizerName?: string;
+  participants?: string[]; // userNpubs
 }
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
   const [questTitle, setQuestTitle] = React.useState<string>("");
   const [questDescription, setQuestDescription] = React.useState<string>("");
+  const [questOrganizer, setQuestOrganizer] = React.useState<string>("");
   const [questConfig, setQuestConfig] = React.useState<string>("");
   const [activeView, setActiveView] = React.useState<"create" | "view" | "edit">("create");
   const [displayShareModal, setDisplayShareModal] = React.useState<boolean>(false);
@@ -37,6 +40,7 @@ const QuestsPage: NextPage = () => {
         {
           title: questTitle,
           description: questDescription,
+          organizerName: questOrganizer,
           config: questConfig,
         },
         {
@@ -67,6 +71,7 @@ const QuestsPage: NextPage = () => {
         {
           title: questTitle,
           description: questDescription,
+          organizerName: questOrganizer,
           config: questConfig,
           guid: activeQuest?.guid,
         },
@@ -80,8 +85,15 @@ const QuestsPage: NextPage = () => {
       if (res.status === 200) {
         console.log("Quest edited successfully");
         console.log(res.data);
-        // send user to the quest detail page
-        setSavedQuests([...savedQuests, res.data.quest]);
+        // update the entry for quest with guid from savedQuests
+        const updatedQuests = savedQuests.map((quest) => {
+          if (quest.guid === res.data.quest.guid) {
+            return res.data.quest;
+          }
+          return quest;
+        });
+
+        setSavedQuests(updatedQuests);
         setActiveView("view");
       } else {
         console.error("Failed to edit quest");
@@ -159,6 +171,17 @@ const QuestsPage: NextPage = () => {
                 value={questDescription}
                 className="pt-4 h-20 mb-2"
                 onChange={(e) => setQuestDescription(e.target.value)}
+              />
+
+              <Input
+                label="Organized by"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Organizer Name, participants will see this in the app"
+                value={questOrganizer}
+                className="mb-2"
+                onChange={(e) => setQuestOrganizer(e.target.value)}
               />
 
               <Input
@@ -242,6 +265,9 @@ const QuestsPage: NextPage = () => {
         <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
           <DialogContent>
             <DialogTitle>Share Quest</DialogTitle>
+            <div>
+              <div>Active Participants</div>
+            </div>
             <DialogDescription>
               Share the code with your participants to join this quest using the Fusion mobile app
             </DialogDescription>
