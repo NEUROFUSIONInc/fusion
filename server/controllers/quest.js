@@ -109,6 +109,79 @@ exports.editQuest = async (req, res) => {
   }
 };
 
-exports.joinQuest = async (req, res) => {};
+exports.joinQuest = async (req, res) => {
+  try {
+    const quest = await db.Quest.findOne({
+      where: {
+        guid: req.body.questId.trim().toLowerCase(),
+      },
+    });
 
+    if (!quest) {
+      res.status(404).json({
+        error: "Quest not found",
+      });
+      return;
+    }
+
+    // check if quest exists..
+    const [userQuest, created] = await db.UserQuest.findOrCreate({
+      where: {
+        userGuid: req.user.userGuid,
+        questGuid: quest.guid,
+      },
+    });
+
+    if (!userQuest) {
+      res.status(500).json({
+        error: "Error joining quest",
+      });
+    }
+    userQuest.data = JSON.stringify(req.body.data);
+
+    console.log(userQuest);
+
+    await userQuest.save();
+
+    // add the additional data to the userQuest
+
+    res.status(201).json({
+      userQuest,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Error joining quest",
+    });
+  }
+};
+
+exports.getUserQuestSubscription = async (req, res) => {
+  try {
+    const userQuest = await db.UserQuest.findOne({
+      where: {
+        userGuid: req.user.userGuid,
+        questGuid: req.query.questId,
+      },
+    });
+
+    if (!userQuest) {
+      res.status(404).json({
+        error: "UserQuest not found",
+      });
+      return;
+    }
+
+    console.log(userQuest);
+
+    res.status(200).json({
+      userQuest,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error getting userQuest",
+    });
+  }
+};
 // TODO: exports.resetJoinCode
