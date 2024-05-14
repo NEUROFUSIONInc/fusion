@@ -28,16 +28,15 @@ import { AccountContext, InsightContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { colors } from "~/theme";
-import { appInsights, maskPromptId } from "~/utils";
+import { appInsights } from "~/utils";
 
 export function InsightsScreen() {
   const route = useRoute<RouteProp<"InsightsPage">>();
   const navigation = useNavigation();
 
   const insightContext = useContext(InsightContext);
-  const routePromptUuid = route.params?.promptUuid;
   const routeChartPeriod = route.params?.chartPeriod;
-  const routeStartDate = route.params?.startDate;
+  let routeStartDate = route.params?.startDate;
 
   const accountContext = React.useContext(AccountContext);
 
@@ -45,15 +44,12 @@ export function InsightsScreen() {
     appInsights.trackPageView({
       name: "Insights",
       properties: {
-        sourcePromptId: routePromptUuid ? maskPromptId(routePromptUuid) : null,
         userNpub: accountContext?.userNpub,
       },
     });
+
     if (routeChartPeriod) {
       insightContext?.setInsightPeriod(routeChartPeriod);
-    }
-    if (routeStartDate) {
-      setChartStartDate(routeStartDate);
     }
   }, []);
 
@@ -91,8 +87,13 @@ export function InsightsScreen() {
     }
   }, [savedPrompts, selectedCategory]);
 
+  // TODO: this is conflicting with the values the user sets..
   useEffect(() => {
     setChartStartDate(dayjs().startOf(insightContext!.insightPeriod));
+    if (routeStartDate) {
+      setChartStartDate(routeStartDate);
+      routeStartDate = undefined;
+    }
   }, [insightContext!.insightPeriod]);
 
   const onHandlerStateChange = (event: {

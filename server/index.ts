@@ -13,6 +13,8 @@ const magicFlowController = require("./controllers/magicflow");
 const neurosityController = require("./controllers/neurosity");
 // const vitalController = require("./controllers/vital");
 const insightController = require("./controllers/insight");
+const questController = require("./controllers/quest");
+const mailController = require("./controllers/mailer");
 
 // import cron runners
 const magicFlowCron = require("./cron-jobs/magicflow-daily-fetch");
@@ -38,8 +40,9 @@ app.use(cors());
 /**
  * User Routes
  */
-app.post("/api/userlogin", userController.validateLogin);
 app.post("/api/nostrlogin", userController.validateNostrLogin);
+
+app.post("/api/sendContactEmail", mailController.sendContactEmail);
 
 // All routes after this require an authorization token
 app.use(userController.tokenValidator);
@@ -110,6 +113,20 @@ app.post("/api/getpromptsuggestions", insightController.getPromptSuggestions);
 /**
  * Get the latest version
  */
+
+/**
+ * Quest Calls
+ */
+app.post("/api/quest", questController.saveQuest);
+app.get("/api/quests", questController.getCreatorQuests);
+app.get("/api/quest/getByCode", questController.getQuestByCode);
+app.post("/api/quest/edit", questController.editQuest);
+app.post("/api/quest/join", questController.joinQuest);
+app.get(
+  "/api/quest/userSubscription",
+  questController.getUserQuestSubscription
+);
+app.get("/api/quest/subscribers", questController.getQuestSubscribers);
 
 /**
  * Start server

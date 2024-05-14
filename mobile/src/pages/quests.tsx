@@ -1,132 +1,39 @@
+import RNBottomSheet from "@gorhom/bottom-sheet";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text, View, Image } from "react-native";
 
-import { Screen } from "~/components";
-
-// import { neurosity } from "~/utils";
-
-export interface ScannedDevice {
-  label: string;
-  value: string;
-}
+import { Button, Plus, Screen, JoinQuestSheet } from "~/components";
+import { colors } from "~/theme";
 
 export function QuestsScreen() {
-  // const { bluetooth } = neurosity;
-
-  // // for device picker
-  // const [devicePickerOpen, setDevicePickerOpen] = React.useState(false);
-  // const [selectedDevice, setSelectedDevice] = React.useState("");
-  // const [availableDevices, setAvailableDevices] = React.useState<Peripheral[]>(
-  //   []
-  // );
-  // const [deviceSelectorItems, setDeviceSelectorItems] = React.useState<
-  //   ScannedDevice[]
-  // >([]);
-
-  // React.useEffect(() => {
-  //   bluetooth.connection().subscribe((connection) => {
-  //     console.log(`Bluetooth connected is ${connection}`);
-
-  //     if (connection === "disconnected") {
-  //       bluetooth.scan().subscribe((devices: Peripheral[]) => {
-  //         if (devices.length > 0) {
-  //           setAvailableDevices(devices);
-  //         }
-  //       });
-  //     } else if (connection === "connected") {
-  //       console.log("Bluetooth is connected, getting info");
-
-  //       bluetooth
-  //         .getDeviceId()
-  //         .then(async (deviceId) => {
-  //           console.log(`Device id is ${deviceId}`);
-  //         })
-  //         .catch((err) => {
-  //           console.log(`Error getting device id ${err}`);
-  //         });
-
-  //       bluetooth.status().subscribe((status) => {
-  //         console.log(`Bluetooth status is ${status}`);
-  //       });
-  //     }
-  //   });
-  // }, []);
-
-  // React.useEffect(() => {
-  //   if (availableDevices.length > 0) {
-  //     const peripheralList: any = [];
-  //     availableDevices.filter((device) => {
-  //       if (device.name) {
-  //         peripheralList.push({
-  //           label: device.name,
-  //           value: device.id,
-  //         });
-  //       }
-  //     });
-
-  //     if (peripheralList.length > 0) {
-  //       setDeviceSelectorItems(peripheralList);
-  //     }
-  //   }
-  // }, [availableDevices]);
-
-  // React.useEffect(() => {
-  //   if (selectedDevice) {
-  //     // find item from deviceseletoritems where id matches
-  //     const selectedDeviceObject = availableDevices.find(
-  //       (item) => item.id === selectedDevice
-  //     );
-
-  //     if (selectedDeviceObject) {
-  //       console.log(`Selected device is ${selectedDeviceObject.name}`);
-  //       (async () => {
-  //         console.log(`Connecting to ${selectedDeviceObject.name}`);
-
-  //         bluetooth
-  //           .connect(selectedDeviceObject)
-  //           .then((connection) => {
-  //             console.log(`Bluetooth connected is ${connection}`);
-  //           })
-  //           .catch((err) => {
-  //             console.log(`Bluetooth connect error is ${err}`);
-  //           });
-  //       })();
-  //     }
-  //   }
-  // }, [selectedDevice]);
-
-  // return (
-  //   <View style={styles.container}>
-  //     <Text>Start a brain recording</Text>
-
-  //     {availableDevices.length > 0 && (
-  //       <DropDownPicker
-  //         value={selectedDevice}
-  //         items={deviceSelectorItems}
-  //         placeholder="Select Device"
-  //         setValue={setSelectedDevice}
-  //         setItems={setDeviceSelectorItems}
-  //         open={devicePickerOpen}
-  //         setOpen={setDevicePickerOpen}
-  //       />
-  //     )}
-
-  //     <Button title="Start Recording" onPress={() => {}} />
-  //   </View>
-  // );
+  const bottomSheetRef = React.useRef<RNBottomSheet>(null);
+  const handleExpandSheet = React.useCallback(
+    () => bottomSheetRef.current?.expand(),
+    []
+  );
 
   return (
     <Screen>
-      <Text className="text-base">Quests</Text>
+      <View className="flex flex-1 flex-col gap-7 items-center justify-center">
+        <Image
+          source={require("../../assets/group-investigation.png")}
+          className="w-32 h-32"
+        />
+        <Text className="font-sans-light max-w-xs text-center text-white text-base">
+          Perform activites in groups and validate their impact on your
+          wellness!
+        </Text>
+        <Button
+          title="Join a Quest"
+          leftIcon={<Plus color={colors.dark} width={16} height={16} />}
+          onPress={handleExpandSheet}
+          className="self-center"
+        />
+      </View>
+
+      {/* TODO: Display a list of quests the user is subscribed to */}
+
+      <JoinQuestSheet bottomSheetRef={bottomSheetRef} />
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

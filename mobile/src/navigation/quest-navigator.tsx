@@ -3,14 +3,19 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 
-import { Logo } from "~/components/logo";
+import { Quest } from "~/@types";
+import { QuestsHeader, QuestDetailHeader } from "~/components";
+import { QuestDetailScreen } from "~/pages";
 import { QuestsScreen } from "~/pages/quests";
 
 export type QuestStackParamList = {
   QuestsScreen: undefined;
+  QuestDetailScreen: {
+    quest: Quest;
+  };
 };
 
-export type HealthScreenNavigationProp =
+export type QuestScreenNavigationProp =
   NativeStackNavigationProp<QuestStackParamList>;
 
 const Stack = createNativeStackNavigator<QuestStackParamList>();
@@ -21,7 +26,12 @@ export const QuestStack = () => {
       <Stack.Screen
         name="QuestsScreen"
         component={QuestsScreen}
-        options={{ headerTitle: () => <Logo /> }}
+        options={{ header: () => <QuestsHeader /> }}
+      />
+      <Stack.Screen
+        name="QuestDetailScreen"
+        component={QuestDetailScreen}
+        options={{ header: () => <QuestDetailHeader /> }}
       />
     </Stack.Navigator>
   );

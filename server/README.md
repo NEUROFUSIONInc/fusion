@@ -22,7 +22,7 @@ Fetch env values [from note](https://www.icloud.com/notes/081Ci0RTYFZk2smnqXttFo
 yarn start
 ```
 
-# Server functionality
+## Server functionality
 
 - JWT Authentication - a user can only interact with their own data
 - User Login - return fusion token

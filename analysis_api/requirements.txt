@@ -6,3 +6,5 @@ flask_cors
 pillow
 scipy
 fooof
+nltk
+python-dotenv

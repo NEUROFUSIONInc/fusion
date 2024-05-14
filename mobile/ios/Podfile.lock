@@ -106,6 +106,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - ExpoSystemUI (2.2.1):
     - ExpoModulesCore
+  - ExpoWebBrowser (12.1.1):
+    - ExpoModulesCore
   - EXSecureStore (12.1.1):
     - ExpoModulesCore
   - EXSharing (11.2.2):
@@ -573,6 +575,7 @@ DEPENDENCIES:
   - ExpoMailComposer (from `../node_modules/expo-mail-composer/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSharing (from `../node_modules/expo-sharing/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
@@ -687,6 +690,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoWebBrowser:
+    :path: "../node_modules/expo-web-browser/ios"
   EXSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
   EXSharing:
@@ -831,6 +836,7 @@ SPEC CHECKSUMS:
   ExpoMailComposer: 0085b258d00ba40664f7acb40d96042b29a1da7d
   ExpoModulesCore: 653958063a301098b541ae4dfed1ac0b98db607b
   ExpoSystemUI: 0be5173ee2a7c01e9abc44f56d879a1eaaa16527
+  ExpoWebBrowser: 033d34c478d9986da2f1679729041423837626e0
   EXSecureStore: e8923258361cc406d0401af380f12bd05b2b720f
   EXSharing: 09839ace249f61bfa13c50c6a28256c31d260355
   EXSplashScreen: 0e0a9ba0cf7553094e93213099bd7b42e6e237e9
@@ -897,4 +903,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 491a54574e9b2175528cdebb0d4f8a2b59053d0f
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

@@ -211,7 +211,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       {chartData.length === 0 && (
         <View className="flex flex-col items-center justify-center h-52">
           <Text className="font-sans text-white text-base align-middle">
-            No responses in this time period
+            No responses this {timePeriod}
           </Text>
 
           <View>
