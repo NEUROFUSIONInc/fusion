@@ -126,6 +126,7 @@ app.get(
   "/api/quest/userSubscription",
   questController.getUserQuestSubscription
 );
+app.get("/api/quest/subscribers", questController.getQuestSubscribers);
 
 /**
  * Start server

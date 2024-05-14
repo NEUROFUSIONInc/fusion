@@ -122,9 +122,53 @@ const QuestsPage: NextPage = () => {
     }
   };
 
+  const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
+  const getQuestSubscribers = async (questId: string) => {
+    try {
+      const res = await api.get(
+        "/quest/subscribers",
+
+        {
+          params: {
+            questId,
+          },
+          headers: {
+            Authorization: `Bearer ${session.data?.user?.authToken}`,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        console.log("Quest Subscribers fetched successfully");
+        console.log(res.data);
+        return res.data.userQuests;
+      } else {
+        console.error("Failed to fetch quest subscribers");
+      }
+    } catch (error) {
+      console.error("Failed to fetch quest subscribers", error);
+    }
+  };
+
   React.useEffect(() => {
     getSavedQuests();
   }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      if (activeQuest) {
+        const subscribers = await getQuestSubscribers(activeQuest.guid);
+        console.log("subscribers", subscribers);
+
+        if (subscribers) {
+          // update activeQuest with participants
+          setQuestSubscribers(subscribers);
+        } else {
+          setQuestSubscribers([]);
+        }
+      }
+    })();
+  }, [activeQuest]);
 
   return (
     <DashboardLayout>
@@ -262,12 +306,13 @@ const QuestsPage: NextPage = () => {
           </table>
         </>
       )}
+      {/* Share Quest Modal */}
       {activeQuest && (
         <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
           <DialogContent>
             <DialogTitle>Share Quest</DialogTitle>
             <div>
-              <div>Active Participants</div>
+              <div>Active Participants: {questSubscribers.length}</div>
             </div>
             <DialogDescription>
               Share the code with your participants to join this quest using the Fusion mobile app

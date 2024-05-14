@@ -190,4 +190,45 @@ exports.getUserQuestSubscription = async (req, res) => {
   }
 };
 
+exports.getQuestSubscribers = async (req, res) => {
+  try {
+    const userQuests = await db.UserQuest.findAll({
+      where: {
+        questGuid: req.query.questId,
+      },
+    });
+
+    console.log(userQuests);
+
+    if (!userQuests) {
+      res.status(404).json({
+        error: "UserQuests not found",
+      });
+      return;
+    }
+
+    // go ahead and get the userNpub from the userMetadata table
+    for (let i = 0; i < userQuests.length; i++) {
+      const user = await db.UserMetadata.findOne({
+        where: {
+          userGuid: userQuests[i].userGuid,
+        },
+      });
+
+      if (user) {
+        userQuests[i].user = user;
+      }
+    }
+
+    res.status(200).json({
+      userQuests,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error getting userQuests",
+    });
+  }
+};
+
 // TODO: exports.resetJoinCode
