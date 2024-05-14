@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion",
   slug: "fusion",
-  version: "1.8.6",
+  version: "2.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "80",
+    buildNumber: "82",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -35,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 80,
+    versionCode: 81,
     softwareKeyboardLayoutMode: "pan",
   },
   web: {
