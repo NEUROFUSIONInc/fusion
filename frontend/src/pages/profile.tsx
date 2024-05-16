@@ -4,9 +4,11 @@ import { getServerSession } from "next-auth";
 import { useSession, signOut } from "next-auth/react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
-import { DashboardLayout } from "~/components/layouts";
+import { DashboardLayout, Meta } from "~/components/layouts";
 import { Button, Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui";
 import { deletePrivateKey } from "~/utils/auth";
+import Link from "next/link";
+import StripeButton from "~/components/stripe-button";
 
 const AccountPage: NextPage = () => {
   const { data: session } = useSession();
@@ -19,6 +21,12 @@ const AccountPage: NextPage = () => {
 
   return (
     <DashboardLayout>
+      <Meta
+        meta={{
+          title: "Profile | NeuroFusion Explorer",
+          description: "Your account profile. You have been assigned an anonymous account.",
+        }}
+      />
       <h1 className="text-4xl">Profile</h1>
       <p className="mb-10 mt-2 text-lg dark:text-slate-400">You have been assigned an anonymous account</p>
 
@@ -38,7 +46,8 @@ const AccountPage: NextPage = () => {
       </div>
 
       <div>
-        <p className="mt-5">You're on the Fusion Free Plan.</p>
+        <p className="mt-5">Fusion is open source. Fund our development!</p>
+        <StripeButton />
       </div>
     </DashboardLayout>
   );
