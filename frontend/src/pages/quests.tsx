@@ -7,6 +7,7 @@ import { DashboardLayout, Meta } from "~/components/layouts";
 import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } from "~/components/ui";
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface IQuest {
   title: string;
@@ -175,6 +176,8 @@ const QuestsPage: NextPage = () => {
       <Meta
         meta={{
           title: "NeuroFusion | Quests",
+          description:
+            "Create and manage quests for your participants to run. Wearables. Behavior Tracking. Health Data.",
         }}
       />{" "}
       <h1 className="text-4xl">Quests</h1>
@@ -273,7 +276,9 @@ const QuestsPage: NextPage = () => {
             <tbody>
               {savedQuests.map((quest) => (
                 <tr key={quest.guid}>
-                  <td>{quest.title}</td>
+                  <Link href={`/quest/${quest.guid}`}>
+                    <td className="underline">{quest.title}</td>
+                  </Link>
                   <td>{quest.description}</td>
                   <td className="flex justify-center">
                     <Button
