@@ -179,9 +179,11 @@ export function QuestDetailScreen() {
               {route.params.quest.description}
             </Text>
 
-            <Text className="text-white opacity-60 text-base font-sans my-2">
-              Organized by Edge City
-            </Text>
+            {route.params.quest.organizerName && (
+              <Text className="text-white opacity-60 text-base font-sans my-2">
+                Organized by {route.params.quest.organizerName}
+              </Text>
+            )}
 
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}

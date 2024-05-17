@@ -93,4 +93,5 @@ export interface Quest {
   prompts?: Prompt[];
   additionalMeta?: object;
   config?: string;
+  organizerName?: string;
 }

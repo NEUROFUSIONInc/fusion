@@ -100,12 +100,7 @@ export function QuestsScreen() {
             navigation.navigate("QuestNavigator", {
               screen: "QuestDetailScreen",
               params: {
-                quest: {
-                  title: quest.title,
-                  description: quest.description,
-                  guid: quest.guid,
-                  prompts: quest.prompts,
-                },
+                quest,
               },
             });
           }}
