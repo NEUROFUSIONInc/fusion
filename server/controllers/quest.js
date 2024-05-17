@@ -158,6 +158,51 @@ exports.joinQuest = async (req, res) => {
   }
 };
 
+exports.getAllActiveQuestsForUser = async (req, res) => {
+  try {
+    const userQuests = await db.UserQuest.findAll({
+      where: {
+        userGuid: req.user.userGuid,
+      },
+    });
+
+    if (!userQuests) {
+      res.status(404).json({
+        error: "UserQuests not found",
+      });
+      return;
+    }
+
+    // find distinct questIds
+    const questIds = [
+      ...new Set(userQuests.map((userQuest) => userQuest.questGuid)),
+    ];
+
+    let activeQuests = [];
+    // go ahead and get the quest from the quest table
+    for (let i = 0; i < questIds.length; i++) {
+      const quest = await db.Quest.findOne({
+        where: {
+          guid: questIds[i],
+        },
+      });
+
+      if (quest) {
+        activeQuests.push(quest);
+      }
+    }
+
+    res.status(200).json({
+      quests: activeQuests,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error getting userQuests",
+    });
+  }
+};
+
 exports.getUserQuestSubscription = async (req, res) => {
   /**
    * Fetches a record for the user subscribed to a quest
@@ -227,6 +272,33 @@ exports.getQuestSubscribers = async (req, res) => {
     console.error(err);
     res.status(500).json({
       error: "Error getting userQuests",
+    });
+  }
+};
+
+exports.getQuestDetail = async (req, res) => {
+  try {
+    console.log("req.query.questId");
+    console.log(req.query.questId);
+    const quest = await db.Quest.findOne({
+      where: {
+        guid: req.query.questId,
+      },
+    });
+
+    if (!quest) {
+      res.status(404).json({
+        error: "Quest not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      quest,
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: "Error getting quest",
     });
   }
 };
