@@ -46,3 +46,16 @@ export interface DatasetExport {
   fileNames: string[];
   dataSets: Array<any>;
 }
+
+export interface IQuest {
+  title: string;
+  description: string;
+  config: string;
+  guid: string;
+  userGuid: string;
+  createdAt: string;
+  updatedAt: string;
+  joinCode: string;
+  organizerName?: string;
+  participants?: string[]; // userNpubs
+}

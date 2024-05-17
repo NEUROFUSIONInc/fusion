@@ -21,7 +21,7 @@ import { Button } from "../button";
 import { ChevronRight } from "../icons";
 import { Input } from "../input";
 
-import { Prompt } from "~/@types";
+import { Prompt, Quest } from "~/@types";
 import { IS_IOS } from "~/config";
 import { AccountContext } from "~/contexts";
 
@@ -58,9 +58,8 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
       if (res.data) {
         // navigate to quest screen
         const questRes = res.data.quest;
-        console.log(questRes.config);
-        const questPrompts = JSON.parse(questRes.config) as Prompt[];
-        console.log("prompts object", questPrompts);
+        questRes.prompts = JSON.parse(questRes.config) as Prompt[];
+
         // build the quest object and navigate to the quest screen
         Keyboard.dismiss();
         bottomSheetRef.current?.close();
@@ -68,12 +67,7 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         navigation.navigate("QuestNavigator", {
           screen: "QuestDetailScreen",
           params: {
-            quest: {
-              title: questRes.title,
-              description: questRes.description,
-              guid: questRes.guid,
-              prompts: questPrompts,
-            },
+            quest: questRes as Quest,
           },
         });
       } else {

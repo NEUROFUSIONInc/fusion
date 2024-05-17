@@ -92,4 +92,6 @@ export interface Quest {
   endDate?: number;
   prompts?: Prompt[];
   additionalMeta?: object;
+  config?: string;
+  organizerName?: string;
 }
