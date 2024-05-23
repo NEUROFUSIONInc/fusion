@@ -19,11 +19,12 @@ import {
   CategoryTag,
   ChevronRight,
 } from "~/components";
+import { HealthCard } from "~/components/health-details";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { promptService } from "~/services";
-import { appInsights, connectAppleHealth, getTimeOfDay } from "~/utils";
+import { appInsights, getTimeOfDay } from "~/utils";
 import { requestCopilotConsent } from "~/utils/consent";
 
 export function HomeScreen() {
@@ -216,7 +217,40 @@ export function HomeScreen() {
   return (
     <Screen>
       <View className="flex-1">
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {missedPrompts && missedPrompts.length > 0 && (
+            <Modal
+              message={`👋🏾  Good ${getTimeOfDay(
+                dayjs(),
+                false
+              )}, \n Let's catch up on prompts you missed!`}
+              clickText="Check in ✨"
+              clickAction={() => {
+                // send them to the prompt entry page
+                // there may be multiple prompt
+                navigation.navigate("PromptNavigator", {
+                  screen: "PromptEntry",
+                  params: {
+                    promptUuid: missedPrompts[0].uuid,
+                    prompts: missedPrompts,
+                    index: 0,
+                  },
+                });
+              }}
+              dismissAction={() => {
+                // dismiss the modal
+                appInsights.trackEvent({
+                  name: "dismiss_missed_prompt_modal",
+                  properties: {
+                    userNpub: accountContext?.userNpub,
+                  },
+                });
+                setMissedPrompts([]);
+              }}
+              overlay={false}
+            />
+          )}
+
           {/* Fusion Copilot Card */}
           <>
             <View className="flex flex-row w-full justify-between p-5 items-center">
@@ -255,105 +289,105 @@ export function HomeScreen() {
 
             {/* show each category at a time */}
             {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
-            <ScrollView nestedScrollEnabled>
-              <View className="flex flex-col w-full bg-secondary-900 rounded">
-                <View>
-                  <Text
-                    ellipsizeMode="tail"
-                    className="font-sans flex flex-wrap text-white text-base font-medium m-5"
-                  >
-                    {summaryText ? summaryText : "Loading summary..."}
-                  </Text>
-                </View>
+            <View className="flex flex-col w-full bg-secondary-900 rounded">
+              <View>
+                <Text
+                  ellipsizeMode="tail"
+                  className="font-sans flex flex-wrap text-white text-base font-medium m-5"
+                >
+                  {summaryText ? summaryText : "Loading summary..."}
+                </Text>
+              </View>
 
-                <View className="flex flex-row w-full justify-between p-5">
+              <View className="flex flex-row w-full justify-between p-5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  leftIcon={<Reload />}
+                  onPress={() => {
+                    appInsights.trackEvent({
+                      name: "fusion_copilot_reload_summary",
+                      properties: {
+                        category: activeCategory?.name,
+                        userNpub: accountContext?.userNpub,
+                      },
+                    });
+
+                    // reload the summary
+                    setSummaryText("Loading summary...");
+                    (async () => {
+                      const ai_summary = await getInsightSummary(
+                        activeCategory.name
+                      );
+                      setCategoryInsightSummaries((prev) => ({
+                        ...prev,
+                        [activeCategory.name]: ai_summary,
+                      }));
+                    })();
+                  }}
+                  disabled={
+                    !accountContext?.userPreferences.enableCopilot ||
+                    !activeCategory
+                  }
+                />
+
+                <View className="flex flex-row gap-x-1">
                   <Button
                     variant="ghost"
                     size="icon"
-                    leftIcon={<Reload />}
-                    onPress={() => {
-                      appInsights.trackEvent({
-                        name: "fusion_copilot_reload_summary",
-                        properties: {
-                          category: activeCategory?.name,
-                          userNpub: accountContext?.userNpub,
-                        },
-                      });
-
-                      // reload the summary
-                      setSummaryText("Loading summary...");
-                      (async () => {
-                        const ai_summary = await getInsightSummary(
-                          activeCategory.name
-                        );
-                        setCategoryInsightSummaries((prev) => ({
-                          ...prev,
-                          [activeCategory.name]: ai_summary,
-                        }));
-                      })();
-                    }}
+                    leftIcon={<ThumbsUp />}
                     disabled={
                       !accountContext?.userPreferences.enableCopilot ||
                       !activeCategory
                     }
+                    onPress={() => {
+                      appInsights.trackEvent({
+                        name: "fusion_copilot_feedback",
+                        properties: {
+                          feedback: "thumps_up",
+                          category: activeCategory.name,
+                          userNpub: accountContext?.userNpub,
+                        },
+                      });
+                      Toast.show({
+                        type: "success",
+                        // text1: "Feedback sent",
+                        text2:
+                          "Thank you for your feedback! Glad the insight was helpful.",
+                      });
+                    }}
                   />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    leftIcon={<ThumbsDown />}
+                    disabled={
+                      !accountContext?.userPreferences.enableCopilot ||
+                      !activeCategory
+                    }
+                    onPress={() => {
+                      appInsights.trackEvent({
+                        name: "fusion_copilot_feedback",
+                        properties: {
+                          feedback: "thumbs_down",
+                          category: activeCategory.name,
+                          userNpub: accountContext?.userNpub,
+                        },
+                      });
 
-                  <View className="flex flex-row gap-x-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      leftIcon={<ThumbsUp />}
-                      disabled={
-                        !accountContext?.userPreferences.enableCopilot ||
-                        !activeCategory
-                      }
-                      onPress={() => {
-                        appInsights.trackEvent({
-                          name: "fusion_copilot_feedback",
-                          properties: {
-                            feedback: "thumps_up",
-                            category: activeCategory.name,
-                            userNpub: accountContext?.userNpub,
-                          },
-                        });
-                        Toast.show({
-                          type: "success",
-                          // text1: "Feedback sent",
-                          text2:
-                            "Thank you for your feedback! Glad the insight was helpful.",
-                        });
-                      }}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      leftIcon={<ThumbsDown />}
-                      disabled={
-                        !accountContext?.userPreferences.enableCopilot ||
-                        !activeCategory
-                      }
-                      onPress={() => {
-                        appInsights.trackEvent({
-                          name: "fusion_copilot_feedback",
-                          properties: {
-                            feedback: "thumbs_down",
-                            category: activeCategory.name,
-                            userNpub: accountContext?.userNpub,
-                          },
-                        });
-
-                        Toast.show({
-                          type: "success",
-                          // text1: "Feedback sent",
-                          text2:
-                            "Thank you for your feedback! It helps us improve.",
-                        });
-                      }}
-                    />
-                  </View>
+                      Toast.show({
+                        type: "success",
+                        // text1: "Feedback sent",
+                        text2:
+                          "Thank you for your feedback! It helps us improve.",
+                      });
+                    }}
+                  />
                 </View>
               </View>
-            </ScrollView>
+            </View>
+
+            <HealthCard />
 
             {/* Contextual action buttons */}
             <View className="flex justify-between mb-5 mt-5">
@@ -379,43 +413,10 @@ export function HomeScreen() {
                   />
                 )}
 
-              {/* TODO: display sleep activity & heart rate */}
-              {!accountContext?.userLoading &&
-              accountContext?.userPreferences["enableHealthConnect"] ===
-                true ? (
-                <View className="">
-                  <View className="flex flex-row w-full justify-between p-5">
-                    <Text className="text-base font-sans-bold text-white">
-                      Health & Activity
-                    </Text>
-                  </View>
-
-                  <View className="flex flex-col w-full bg-secondary-900 rounded">
-                    <Text className="text-base font-sans text-white p-5">
-                      Sleep Heart Rate Activity
-                    </Text>
-                  </View>
-                </View>
-              ) : (
-                <>
-                  <Button
-                    title="Sync your sleep, activity & heart rate"
-                    fullWidth
-                    onPress={async () => {
-                      // reuse functions from settings page
-                      await connectAppleHealth();
-                    }}
-                    className="bg-secondary-900 flex justify-between mb-2"
-                    variant="secondary"
-                    rightIcon={<ChevronRight />}
-                  />
-                </>
-              )}
-
               {/* Connect with data source */}
               {savedPrompts && savedPrompts.length > 0 && (
                 <Button
-                  title="View Responses"
+                  title="View Insights"
                   fullWidth
                   onPress={async () => {
                     const val = activeCategory.name;
@@ -471,38 +472,6 @@ export function HomeScreen() {
           </>
         </ScrollView>
         {/* <ChatBubble /> */}
-
-        {missedPrompts && missedPrompts.length > 0 && (
-          <Modal
-            message={`👋🏾  Good ${getTimeOfDay(
-              dayjs(),
-              false
-            )}, \n Let's catch up on prompts you missed!`}
-            clickText="Check in ✨"
-            clickAction={() => {
-              // send them to the prompt entry page
-              // there may be multiple prompt
-              navigation.navigate("PromptNavigator", {
-                screen: "PromptEntry",
-                params: {
-                  promptUuid: missedPrompts[0].uuid,
-                  prompts: missedPrompts,
-                  index: 0,
-                },
-              });
-            }}
-            dismissAction={() => {
-              // dismiss the modal
-              appInsights.trackEvent({
-                name: "dismiss_missed_prompt_modal",
-                properties: {
-                  userNpub: accountContext?.userNpub,
-                },
-              });
-              setMissedPrompts([]);
-            }}
-          />
-        )}
       </View>
     </Screen>
   );
