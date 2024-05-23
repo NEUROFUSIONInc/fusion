@@ -42,6 +42,7 @@ export interface FusionHealthDataset {
   date: string;
   sleepSummary: FusionSleepSummary;
   stepSummary: FusionStepSummary;
+  heartRateSummary?: FusionHeartRateSummary;
 }
 
 interface AppleHealthSleepSample {
@@ -67,6 +68,17 @@ interface FusionSleepSummary {
   sourceId?: string;
   sourceName?: string;
   value?: "awake" | "asleep" | "core" | "rem" | "deep" | "inbed";
+}
+
+interface FusionHeartRateSummary {
+  date: string;
+  average: number;
+  min?: number;
+  max?: number;
+  source?: dataSource;
+  summaryType?: "overall" | "device";
+  sourceId?: string;
+  sourceName?: string;
 }
 
 interface dataSource {
@@ -230,6 +242,46 @@ export const getAppleHealthStepsSummary = async (
   });
 };
 
+export const getAppleHealthHeartRateSummary = async (
+  startDate: Dayjs,
+  endDate: Dayjs
+) => {
+  return new Promise<FusionHeartRateSummary[]>((resolve, reject) => {
+    const daysInRange = endDate?.diff(startDate.startOf("day"), "day") + 1;
+    const dateArray: string[] = [];
+    for (let i = 0; i < daysInRange; i++) {
+      const date = startDate.add(i, "day").format("YYYY-MM-DD");
+      dateArray.push(date);
+    }
+
+    const options: HealthInputOptions = {
+      startDate: startDate.toISOString(),
+    };
+    endDate && (options.endDate = endDate.toISOString());
+
+    const heartRateSummary: FusionHeartRateSummary[] = [];
+    const heartRateSummaryMap: { [date: string]: FusionHeartRateSummary } = {};
+
+    AppleHealthKit.getHeartRateSamples(
+      options,
+      async (err: any, results: HealthValue[]) => {
+        if (err) {
+          console.error("Error fetching heart rate samples:", err);
+          reject(err);
+        }
+
+        // sum them up to get the total steps but split by day
+        // TODO: generate heart rate summary based on days `dateArray`
+      }
+    );
+
+    resolve(heartRateSummary);
+  });
+};
+
+// store the total for each day
+// get the difference between the start and end time for the duration of activity in each sample
+// value types: apple: INBED  oura: AWAKE, ASLEEP, CORE, REM, DEEP, INBED
 export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
   return new Promise<FusionHealthDataset[]>((resolve, reject) => {
     const daysInRange = endDate.diff(startDate.startOf("day"), "day") + 1;
@@ -294,16 +346,18 @@ export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
 
 export const connectAppleHealth = async () => {
   if (Platform.OS === "ios") {
-    AppleHealthKit.initHealthKit(permissions, (error) => {
-      /* Called after we receive a response from the system */
-      if (error) {
-        console.log("[ERROR] Cannot grant permissions!");
-      }
-
-      Alert.alert(
-        "Apple Health Connected",
-        "We will use your sleep, activity and heart rate over time to personalize your Copilot recommendations"
-      );
+    return new Promise<boolean>((resolve, reject) => {
+      AppleHealthKit.initHealthKit(permissions, (error) => {
+        /* Called after we receive a response from the system */
+        if (error) {
+          console.log("[ERROR] Cannot grant permissions!");
+          resolve(false);
+        } else {
+          console.log("[SUCCESS] Permissions granted!");
+          resolve(true);
+        }
+      });
     });
   }
+  return false;
 };

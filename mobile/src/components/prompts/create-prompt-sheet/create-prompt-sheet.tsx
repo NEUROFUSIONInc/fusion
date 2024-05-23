@@ -242,6 +242,7 @@ export const CreatePromptSheet: FC<CreatePromptSheetProps> = ({
           paddingBottom,
           flexGrow: 1,
         }}
+        showsVerticalScrollIndicator={false}
       >
         {success ? (
           <Success text="Way to go! Your prompt has been created successfully!" />

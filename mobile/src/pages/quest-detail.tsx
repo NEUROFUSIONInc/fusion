@@ -1,26 +1,30 @@
-import { useRoute } from "@react-navigation/native";
-import axios from "axios";
-import dayjs from "dayjs";
-import Constants from "expo-constants";
-import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { Portal } from "@gorhom/portal";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
-import { black } from "tailwindcss/colors";
 
-import { Button, ChevronRight, PromptDetails, Screen } from "~/components";
+import { Prompt } from "~/@types";
+import {
+  Button,
+  PromptDetails,
+  PromptOptionsSheet,
+  Screen,
+} from "~/components";
+import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
 import { RouteProp } from "~/navigation";
-import {
-  appInsights,
-  buildHealthDataset,
-  connectAppleHealth,
-  FusionHealthDataset,
-} from "~/utils";
+import { promptService } from "~/services";
+import { questService } from "~/services/quest.service";
+import { appInsights, getApiService } from "~/utils";
 
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
+  const navigation = useNavigation();
 
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
+
+  const [addedQuestPrompts, setAddQuestPrompts] = React.useState<Prompt[]>([]);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -31,6 +35,29 @@ export function QuestDetailScreen() {
     });
 
     (async () => {
+      const questPrompts = await questService.fetchQuestPrompts(
+        route.params.quest.guid
+      );
+      if (questPrompts) {
+        // it'll be slow for now but find prompt from db & set it
+        const fetchPrompts = async () => {
+          const fetchedPrompts = await Promise.all(
+            questPrompts.map(async (qp) => {
+              const prompt = await promptService.getPrompt(qp.promptId);
+              if (prompt) {
+                return prompt;
+              }
+            })
+          );
+          const filteredPrompts = fetchedPrompts.filter(
+            (prompt) => prompt !== undefined
+          );
+          if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
+        };
+
+        fetchPrompts();
+      }
+
       await getQuestSubscriptionStatus();
     })();
   }, []);
@@ -38,25 +65,16 @@ export function QuestDetailScreen() {
   const [isSubscribed, setIsSubscribed] = React.useState(false);
 
   const getQuestSubscriptionStatus = async () => {
+    /**
+     * Combination of it quest is saved locally & if api returns user subscription status
+     */
     try {
-      const response = await axios.get(
-        `${Constants.expoConfig?.extra?.fusionBackendUrl}/api/quest/userSubscription`,
-        {
-          params: {
-            questId: route.params.quest.guid,
-          },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accountContext?.userApiToken}`,
-          },
-        }
+      const getQuest = await questService.getSingleQuest(
+        route.params.quest.guid
       );
-
-      if (response.status >= 200 && response.status < 300) {
-        console.log("Subscription status", response.data);
+      if (getQuest) {
+        console.log("Quest is saved locally so user is subscribed", getQuest);
         setIsSubscribed(true);
-      } else {
-        console.log(response.status);
       }
     } catch (error) {
       console.error("Failed to get quest subscription status", error);
@@ -76,29 +94,31 @@ export function QuestDetailScreen() {
     // 'I agree to share data I collect with the quest organizer',
     //  'I want to share my data anoymously with the research community']
     try {
-      const requestUrl = `${Constants.expoConfig?.extra?.fusionBackendUrl}/api/quest/join`;
-      console.log("requestUrl", requestUrl);
-      console.log("questGuid", route.params.quest.guid);
-      const addUserResponse = await axios.post(
-        `${Constants.expoConfig?.extra?.fusionBackendUrl}/api/quest/join`,
-        {
-          questId: route.params.quest.guid,
-          data: {
-            consentClaims: ["I agree to participate in this quest"],
-            displayName: "Test User",
-          },
+      // remote call to add user to quest
+      const apiService = await getApiService();
+      if (apiService === null) {
+        return;
+      }
+      const addUserResponse = await apiService.post(`/quest/join`, {
+        questId: route.params.quest.guid,
+        data: {
+          consentClaims: ["I agree to participate in this quest"],
+          displayName: "Test User",
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accountContext?.userApiToken}`,
-          },
-        }
-      );
+      });
 
+      // set: is subscribed.. event
       if (addUserResponse.status >= 200 && addUserResponse.status < 300) {
         console.log("User added to quest successfully");
         console.log(addUserResponse.data);
+
+        // save quest locally
+        const res = await questService.saveQuest(route.params.quest);
+
+        if (!res) {
+          // show error toast
+          throw new Error("Failed to save quest locally");
+        }
 
         setIsSubscribed(true);
 
@@ -107,7 +127,7 @@ export function QuestDetailScreen() {
           properties: {
             userNpub: accountContext?.userNpub,
             questGuid: route.params.quest.guid,
-            // todo: add consent claims
+            // TODO: add consent claims
           },
         });
 
@@ -117,55 +137,51 @@ export function QuestDetailScreen() {
           text1: "Quest Started",
           text2: "You have successfully joined the quest!",
         });
-
-        // TODO: save prompts locations
-
-        // TODO: fetch health data
-        // await connectAppleHealth();
       } else {
         console.log(addUserResponse.status);
       }
     } catch (error) {
+      appInsights.trackEvent({
+        name: "fusion_quest_join_error",
+        properties: {
+          userNpub: accountContext?.userNpub,
+          questGuid: route.params.quest.guid,
+        },
+      });
       console.error("Failed to add user to quest", error);
     }
   };
 
-  const saveAndConfigureQuestPrompts = async () => {
-    // add entry to quest, quest_prompts
-    // save prompts in db & configure them
-    // fetch health data
-  };
+  const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
+  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
+  // Bottom sheet for prompt options when user has a list of prompts
+  const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
+    setActivePrompt(prompt);
+  }, []);
 
-  const [healthDataset, setHealthDataset] = React.useState<
-    FusionHealthDataset[]
-  >([]);
-
-  const syncHealthData = async () => {
-    // reuse functions from settings page
-    await connectAppleHealth();
-
-    // build the health dataset
-    try {
-      const res = await buildHealthDataset(
-        dayjs().startOf("day").subtract(5, "days"),
-        dayjs()
-      );
-
-      if (res) {
-        console.log("health data", res);
-        setHealthDataset(res);
-      }
-    } catch (error) {
-      console.error("Failed to sync health data", error);
+  const handlePromptBottomSheetClose = useCallback(() => {
+    setActivePrompt(undefined);
+    promptOptionsSheetRef.current?.close();
+  }, []);
+  useEffect(() => {
+    /**
+     * This delay is added before showing bottom sheet because some time
+     * is required for the assignment in react state to reflect in the UI.
+     */
+    let delayMs = 300;
+    if (Platform.OS === "android") {
+      delayMs = 500;
     }
-  };
+    if (activePrompt) {
+      const timeout = setTimeout(() => {
+        promptOptionsSheetRef.current?.expand();
+      }, delayMs);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [activePrompt]);
 
-  const secondsToHms = (d: number) => {
-    if (!d) return "-- hrs -- mins";
-    const hours = Math.floor(d / 3600);
-    const minutes = Math.floor((d % 3600) / 60);
-    return `${hours} hrs ${minutes} mins`;
-  };
 
   return (
     <Screen>
@@ -187,54 +203,51 @@ export function QuestDetailScreen() {
 
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
-              <Text className="text-white font-sans text-lg">Prompts</Text>
+              <Text className="text-white font-sans text-lg px-5">Prompts</Text>
               {route.params.quest.prompts?.map((prompt) => (
                 <View key={Math.random()} className="my-2">
-                  <PromptDetails prompt={prompt} />
+                  <PromptDetails
+                    prompt={prompt}
+                    variant={
+                      addedQuestPrompts.find((p) => {
+                        return p.promptText === prompt.promptText;
+                      })
+                        ? "detail"
+                        : "add"
+                    }
+                    displayFrequency={
+                      !!addedQuestPrompts
+                        .map((p) => p.promptText)
+                        .includes(prompt.promptText)
+                    }
+                    onClick={() => {
+                      // if prompt is saved, show detail
+                      if (
+                        addedQuestPrompts.find((p) => {
+                          return p.promptText === prompt.promptText;
+                        })
+                      ) {
+                        // TODO: prompt actions:handlePromptExpandSheet(prompt);
+                        // handle prompt bottom sheet
+                      } else {
+                        // necessary so that quest_prompts get linked
+                        prompt.additionalMeta["questId"] =
+                          route.params.quest.guid;
+                        navigation.navigate("PromptNavigator", {
+                          screen: "EditPrompt",
+                          params: {
+                            prompt,
+                            type: "add",
+                          },
+                        });
+                      }
+                    }}
+                  />
                 </View>
               ))}
             </View>
-            {isSubscribed === true && (
-              <View className="mt-5">
-                <Text className="text-white font-sans text-lg">Health</Text>
 
-                {/* display the steps data */}
-                <View className="flex flex-row w-full items-center justify-between rounded-md mt-2 py-5 px-4 bg-secondary-900 active:opacity-90">
-                  <Text className="font-sans flex flex-wrap text-white text-base mr-2">
-                    Steps
-                  </Text>
-                  <Text className="font-sans text-base text-white opacity-60">
-                    {healthDataset.find(
-                      (data) => data.date === dayjs().format("YYYY-MM-DD")
-                    )?.stepSummary.totalSteps ?? "----"}{" "}
-                    steps
-                  </Text>
-                </View>
-
-                {/* display the sleep data */}
-                <View className="flex flex-row w-full items-center justify-between rounded-md mt-2 py-5 px-4 bg-secondary-900 active:opacity-90">
-                  <Text className="font-sans flex flex-wrap text-white text-base mr-2">
-                    Sleep
-                  </Text>
-                  <Text className="font-sans text-base text-white opacity-60">
-                    {secondsToHms(
-                      healthDataset.find(
-                        (data) => data.date === dayjs().format("YYYY-MM-DD")
-                      )?.sleepSummary.duration!
-                    ) ?? "-- hrs -- mins"}
-                  </Text>
-                </View>
-
-                {/* sync or display health data */}
-                <Button
-                  title="Sync your sleep, activity & heart rate"
-                  fullWidth
-                  onPress={syncHealthData}
-                  className="flex justify-between mt-2"
-                  rightIcon={<ChevronRight color={black} />}
-                />
-              </View>
-            )}
+            <HealthCard />
           </View>
 
           {/* if the user is subscribed, show 'View Quest' */}
@@ -253,6 +266,17 @@ export function QuestDetailScreen() {
           )}
         </View>
       </ScrollView>
+      <Portal>
+        {activePrompt && (
+          <PromptOptionsSheet
+            promptOptionsSheetRef={promptOptionsSheetRef}
+            promptId={activePrompt?.uuid!}
+            onBottomSheetClose={handlePromptBottomSheetClose}
+            defaultPrompt={activePrompt}
+          />
+        )}
+      </Portal>
+
     </Screen>
   );
 }

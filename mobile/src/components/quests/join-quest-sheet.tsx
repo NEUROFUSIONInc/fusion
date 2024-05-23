@@ -2,9 +2,8 @@ import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
-import { FC, RefObject, useContext, useState } from "react";
+import { FC, RefObject, useState } from "react";
 import {
   View,
   Pressable,
@@ -23,7 +22,7 @@ import { Input } from "../input";
 
 import { Prompt, Quest } from "~/@types";
 import { IS_IOS } from "~/config";
-import { AccountContext } from "~/contexts";
+import { getApiService } from "~/utils";
 
 interface AddPromptSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;
@@ -31,27 +30,21 @@ interface AddPromptSheetProps {
 }
 
 export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
-  const accountContext = useContext(AccountContext);
   const navigation = useNavigation();
-
-  let fusionBackendUrl = "";
-  if (Constants.expoConfig?.extra) {
-    fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
-  }
-
   const [joinCode, setJoinCode] = useState("");
 
   const handleJoinQuest = async () => {
     // call api to fetch the quest if it's still active
     try {
-      console.log(fusionBackendUrl);
-      const res = await axios.get(`${fusionBackendUrl}/api/quest/getByCode`, {
+      const apiService = await getApiService();
+
+      if (apiService === null) {
+        return;
+      }
+
+      const res = await apiService.get(`/quest/getByCode`, {
         params: {
           joinCode,
-        },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accountContext?.userApiToken}`,
         },
       });
 
@@ -78,13 +71,14 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         Alert.alert(err.response.data.message || "Quest not found");
       } else {
         Alert.alert("An error occurred. Please try again later");
+        console.error("Api error", err);
       }
     }
   };
 
   const _handlePressButtonAsync = async () => {
     const result = await WebBrowser.openBrowserAsync(
-      "https://usefusion.ai/blog"
+      "https://usefusion.ai/blog/quests"
     );
   };
 

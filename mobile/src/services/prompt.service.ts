@@ -7,6 +7,7 @@ import {
   NotificationService,
   notificationService,
 } from "./notification.service";
+import { questService } from "./quest.service";
 import { streakService } from "./streaks.service";
 
 import {
@@ -167,8 +168,8 @@ class PromptService {
       await this.notificationService.cancelExistingNotificationForPrompt(uuid);
 
       // check if prompt exists
-      const exists = await this.promptExists(uuid);
-      if (!exists) {
+      const prompt = await this.getPrompt(uuid);
+      if (!prompt) {
         throw new Error("prompt does not exist");
       }
 
@@ -185,7 +186,17 @@ class PromptService {
           });
         });
 
-      await deleteFromDb();
+      const deleteStatus = await deleteFromDb();
+      if (deleteStatus) {
+        // delete from quest_prompt table
+        if (prompt.additionalMeta?.questId) {
+          const stat = await questService.deleteQuestPrompt(
+            prompt.additionalMeta?.questId,
+            prompt.uuid
+          );
+          console.log("quest prompt delete status", stat);
+        }
+      }
 
       // get list of current prompts
       const prompts = await this.readSavedPrompts();
@@ -279,6 +290,19 @@ class PromptService {
             await this.notificationService.cancelExistingNotificationForPrompt(
               prompt.uuid
             );
+          }
+
+          // make call to save in quest_prompt table
+          console.log("checking if prompt is part of a quest");
+          if (prompt.additionalMeta["questId"]) {
+            console.log("about to save quest prompt");
+            const res = await questService.saveQuestPrompt(
+              prompt.additionalMeta.questId,
+              prompt.uuid
+            );
+            console.log("quest prompt save status", res);
+          } else {
+            console.log("prompt is not part of a quest");
           }
         }
 

@@ -106,6 +106,7 @@ export function EditPromptScreen() {
         category: category!,
         isNotificationActive: prompt?.additionalMeta?.isNotificationActive,
         customOptionText: customOptions.join(";"),
+        questId: prompt?.additionalMeta?.questId,
       },
     };
 
