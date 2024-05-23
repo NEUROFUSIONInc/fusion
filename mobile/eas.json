@@ -7,7 +7,8 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
       },
       "env": {
         "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
@@ -17,7 +18,8 @@
     "preview": {
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
       },
       "env": {
         "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
@@ -26,7 +28,8 @@
     },
     "production": {
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
       },
       "env": {
         "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=e9a047e3-efc6-4339-acef-1ef135fd15ea;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",

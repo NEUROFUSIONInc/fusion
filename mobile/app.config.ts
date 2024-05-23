@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "85",
+    buildNumber: "86",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 85,
+    versionCode: 86,
     softwareKeyboardLayoutMode: "pan",
   },
   web: {
@@ -52,7 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       process.env.APP_INSIGHTS_CONNECTION_STRING ??
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     fusionBackendUrl:
-      process.env.FUSION_BACKEND_API_URL ?? "https://tall-rocks-scream.loca.lt", //"https://neurofusion-backend.azurewebsites.net",
+      process.env.FUSION_BACKEND_API_URL ?? "https://upset-bugs-look.loca.lt", //"https://neurofusion-backend.azurewebsites.net",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",

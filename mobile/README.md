@@ -191,3 +191,11 @@ Expo handles environment variables a little different than regular web app. We s
 and then use constants. See appInsights.js for an example. More docs - https://docs.expo.dev/build-reference/variables/
 
 - Follow this doc for neurosity bluetooth integration: https://docs.neurosity.co/docs/api/bluetooth-react-native
+
+### Custom Notifications
+
+Currently used to nudge users on Sundays & at the start of every month to view their Fusion Copilot insights page
+
+- Right now, this notification doesn't present the summaries but it should contain dynamic content movine forward.
+
+- This is dependent on the taskmanager.service.ts
