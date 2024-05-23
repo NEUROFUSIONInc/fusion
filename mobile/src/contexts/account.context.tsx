@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 
 import { UserPreferences } from "~/@types";
@@ -30,23 +30,27 @@ export const AccountContextProvider = ({
   const isFirstRender = useRef(true);
 
   useEffect(() => {
+    console.log("accoount context, isFirstRender", isFirstRender.current);
+    console.log("user preferences", userPreferences);
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
 
-    SecureStore.setItemAsync(
-      "copilot_consent",
-      userPreferences.enableCopilot.toString()
-    );
-    SecureStore.setItemAsync(
-      "health_connect",
-      userPreferences.enableHealthConnect.toString()
-    );
-    SecureStore.setItemAsync(
-      "last_active_category",
-      userPreferences.lastActiveCategory ?? categories[0].name
-    );
+    (async () => {
+      await AsyncStorage.setItem(
+        "copilot_consent",
+        userPreferences.enableCopilot.toString()
+      );
+      await AsyncStorage.setItem(
+        "health_connect",
+        userPreferences.enableHealthConnect.toString()
+      );
+      await AsyncStorage.setItem(
+        "last_active_category",
+        userPreferences.lastActiveCategory ?? categories[0].name
+      );
+    })();
   }, [userPreferences]);
 
   useEffect(() => {
@@ -55,17 +59,19 @@ export const AccountContextProvider = ({
       setUserNpub(userDetails!.npub);
 
       // now make request to get api token
+      console.log("getting api token");
       const apiToken = await nostrService.getApiToken(userDetails!);
+      console.log("api token", apiToken);
       setUserApiToken(apiToken!);
 
       // now make request to get user preferences
       const copilotConsent =
-        (await SecureStore.getItemAsync("copilot_consent")) === "true";
+        (await AsyncStorage.getItem("copilot_consent")) === "true";
 
       const healthConnect =
-        (await SecureStore.getItemAsync("health_connect")) === "true";
+        (await AsyncStorage.getItem("health_connect")) === "true";
 
-      const lastActiveCategory = await SecureStore.getItemAsync(
+      const lastActiveCategory = await AsyncStorage.getItem(
         "last_active_category"
       );
 
@@ -78,6 +84,8 @@ export const AccountContextProvider = ({
       setUserLoading(false);
     })();
   }, []);
+
+  // we need a logic to retry when the token expires
 
   return (
     <AccountContext.Provider
