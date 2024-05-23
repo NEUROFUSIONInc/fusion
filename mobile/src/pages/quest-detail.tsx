@@ -13,6 +13,7 @@ import {
 } from "~/components";
 import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
+import { useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
@@ -25,6 +26,8 @@ export function QuestDetailScreen() {
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
   const [addedQuestPrompts, setAddQuestPrompts] = React.useState<Prompt[]>([]);
+
+  const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -113,7 +116,7 @@ export function QuestDetailScreen() {
         console.log(addUserResponse.data);
 
         // save quest locally
-        const res = await questService.saveQuest(route.params.quest);
+        const res = await createQuest(route.params.quest);
 
         if (!res) {
           // show error toast

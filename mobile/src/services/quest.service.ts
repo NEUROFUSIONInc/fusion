@@ -72,8 +72,7 @@ class QuestService {
       }
 
       // for now adding prompts will be manual.
-
-      return true;
+      return quest;
     } catch (error) {
       console.log(error);
       return false;

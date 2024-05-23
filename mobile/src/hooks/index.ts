@@ -4,3 +4,4 @@ export * from "./useCreatePrompt";
 export * from "./useDeletePrompt";
 export * from "./useUpdatePromptState";
 export * from "./useUpdatePrompt";
+export * from "./useQuests";
