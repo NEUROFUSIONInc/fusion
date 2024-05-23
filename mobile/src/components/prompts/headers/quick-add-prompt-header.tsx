@@ -1,16 +1,17 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
+import { Portal } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useRef } from "react";
 import { View } from "react-native";
 
 import { Button } from "../../button";
-import { LeftArrow, Pencil, VerticalMenu } from "../../icons";
-import { AddPromptSheet } from "../create-prompt-sheet/add-prompt-sheet";
+import { LeftArrow, Pencil } from "../../icons";
+import { CreatePromptSheet } from "../create-prompt-sheet";
 
 export const QuickAddPromptsHeader = () => {
   const navigation = useNavigation();
 
-  const bottomSheetRef = useRef<RNBottomSheet>(null);
+  const createPromptSheetRef = useRef<RNBottomSheet>(null);
 
   const handleGoBack = () => {
     navigation.navigate("PromptNavigator", {
@@ -19,7 +20,7 @@ export const QuickAddPromptsHeader = () => {
   };
 
   const handleExpandSheet = useCallback(
-    () => bottomSheetRef.current?.expand(),
+    () => createPromptSheetRef.current?.expand(),
     []
   );
 
@@ -31,6 +32,7 @@ export const QuickAddPromptsHeader = () => {
         leftIcon={<LeftArrow width={25} height={25} />}
         onPress={handleGoBack}
       />
+
       <Button
         variant="ghost"
         size="icon"
@@ -38,7 +40,10 @@ export const QuickAddPromptsHeader = () => {
         onPress={handleExpandSheet}
       />
 
-      <AddPromptSheet bottomSheetRef={bottomSheetRef} />
+      {/* <AddPromptSheet bottomSheetRef={bottomSheetRef} /> */}
+      <Portal>
+        <CreatePromptSheet promptSheetRef={createPromptSheetRef} />
+      </Portal>
     </View>
   );
 };
