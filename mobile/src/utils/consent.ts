@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 
 import { appInsights } from "./appInsights";
@@ -7,7 +7,7 @@ export const requestCopilotConsent = async (userNpub: string) => {
   // TODO: this should actually be a bottom sheet component
   // ask user to enable copilot
   let copilotConsent =
-    (await SecureStore.getItemAsync("copilot_consent")) === "true";
+    (await AsyncStorage.getItem("copilot_consent")) === "true";
 
   const getConstentValue = async () =>
     new Promise((resolve) => {
@@ -26,7 +26,7 @@ export const requestCopilotConsent = async (userNpub: string) => {
                 },
               });
 
-              await SecureStore.setItemAsync("copilot_consent", "true");
+              await AsyncStorage.setItem("copilot_consent", "true");
               resolve(true);
             },
           },
@@ -41,7 +41,7 @@ export const requestCopilotConsent = async (userNpub: string) => {
                 },
               });
 
-              await SecureStore.setItemAsync("copilot_consent", "false");
+              await AsyncStorage.setItem("copilot_consent", "false");
               resolve(false);
             },
           },
