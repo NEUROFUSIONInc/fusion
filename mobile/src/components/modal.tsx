@@ -6,6 +6,7 @@ import { Button } from "./button";
 interface ModalProps {
   message: string;
   clickText: string;
+  overlay?: boolean;
   clickAction: () => void;
   dismissAction: () => void;
 }
@@ -15,9 +16,13 @@ export const Modal: React.FC<ModalProps> = ({
   clickText,
   clickAction,
   dismissAction,
+  overlay = true,
 }) => {
+  const overlayStyle = overlay ? "absolute inset-0 bg-black bg-opacity-50" : "";
   return (
-    <View className="flex flex-1 w-full h-full bg-secondary-900 absolute justify-center p-5 rounded items-center">
+    <View
+      className={`flex flex-1 w-full bg-secondary-900 justify-center p-5 rounded items-center h-full ${overlayStyle}`}
+    >
       {/* <View className="flex justify-center items-center mb-10 rounded-full">
         <Image
           source={require("../../assets/icon.png")}

@@ -213,6 +213,66 @@ export const createBaseTables = () => {
           return Boolean(error);
         }
       );
+
+      // tx.executeSql(`DROP TABLE IF EXISTS quests;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS quest_prompts;`);
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS quests (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          guid TEXT NOT NULL UNIQUE,
+          description TEXT NOT NULL,
+          title TEXT NOT NULL,
+          organizerName TEXT,
+          config TEXT,
+          startTimestamp INTEGER,
+          endTimestamp INTEGER
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS quest_prompts (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          questGuid TEXT NOT NULL,
+          promptUuid TEXT NOT NULL
+          );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS quest_datasets (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          questGuid TEXT NOT NULL,
+          type TEXT NOT NULL,
+          value TEXT NOT NULL,
+          timestamp INTEGER NOT NULL
+          );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
     });
   });
 };

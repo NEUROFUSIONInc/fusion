@@ -88,10 +88,17 @@ export interface Quest {
   title: string;
   description: string;
   guid: string;
-  startDate?: number;
-  endDate?: number;
+  organizerName: string;
+  startTimestamp?: number;
+  endTimestamp?: number;
   prompts?: Prompt[];
   additionalMeta?: object;
   config?: string;
-  organizerName?: string;
+}
+
+export interface QuestDataset {
+  questGuid: string;
+  type: "prompt_response" | "health";
+  value: string;
+  timestamp: number;
 }

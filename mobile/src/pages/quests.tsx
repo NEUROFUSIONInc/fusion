@@ -1,11 +1,9 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import Constants from "expo-constants";
 import React, { useContext, useEffect, useState } from "react";
 import { Text, View, Image, Pressable } from "react-native";
 
-import { Prompt, Quest } from "~/@types";
+import { Quest } from "~/@types";
 import {
   Button,
   Plus,
@@ -14,6 +12,7 @@ import {
   VerticalMenu,
 } from "~/components";
 import { AccountContext } from "~/contexts";
+import { questService } from "~/services/quest.service";
 import { colors } from "~/theme";
 
 export function QuestsScreen() {
@@ -28,42 +27,16 @@ export function QuestsScreen() {
 
   const [activeQuests, setActiveQuests] = useState<Quest[]>([]);
 
-  const fetchActiveQuests = async () => {
-    try {
-      console.log(accountContext?.userApiToken);
-      const res = await axios.get(
-        `${Constants.expoConfig?.extra?.fusionBackendUrl}/api/quest/getAllActiveQuestsForUser`,
-        {
-          headers: {
-            Authorization: `Bearer ${accountContext?.userApiToken}`,
-          },
-        }
-      );
-
-      if (res.status === 200) {
-        console.log(res.data.quests);
-
-        res.data.quests.map((quest: Quest) => {
-          quest.prompts = (JSON.parse(quest.config!) as Prompt[]) || [];
-        });
-
-        setActiveQuests(res.data.quests);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  // on page load, fetch active quests
   useEffect(() => {
-    // if (accountContext?.userLoading) {
-    //   console.log("user details ready");
     (async () => {
-      await fetchActiveQuests();
+      const quests = await questService.fetchActiveQuests();
+      if (quests) {
+        console.log("locally saved quests", quests);
+        setActiveQuests(quests);
+      }
     })();
-    // } else {
-    //   console.error("user details still loading can't proceed");
-    // }
-  }, [accountContext?.userLoading]);
+  }, []);
 
   return (
     <Screen>
@@ -88,13 +61,14 @@ export function QuestsScreen() {
 
       {/* TODO: Display a list of quests the user is subscribed to */}
       {activeQuests.length > 0 && (
-        <Text className="mt-5 mb-3 pl-3 font-sans-bold  text-white">
+        <Text className="mt-5 mb-3 pl-3 font-sans-bold text-base text-white">
           My quests
         </Text>
       )}
 
       {activeQuests.map((quest) => (
         <Pressable
+          key={quest.guid}
           className="flex flex-row w-full items-center justify-between rounded-md py-5 px-4 bg-secondary-900 active:opacity-90 my-1"
           onPress={() => {
             navigation.navigate("QuestNavigator", {

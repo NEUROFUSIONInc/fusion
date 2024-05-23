@@ -8,7 +8,12 @@ import { useEffect, useState } from "react";
 
 import { promptFrequencyData } from "../components/timepicker/data";
 
-import { Days, NotificationConfigDays } from "~/@types";
+import { Days, NotificationConfigDays, UserAccount } from "~/@types";
+
+import axios from "axios";
+import Constants from "expo-constants";
+
+import { nostrService } from "~/services";
 
 /**
  * Helper functions
@@ -379,3 +384,32 @@ export function useSearchDebounce(delay = 350) {
 
   return [search, setSearchQuery];
 }
+
+export const secondsToHms = (d: number) => {
+  if (!d) return "-- hrs -- mins";
+  const hours = Math.floor(d / 3600);
+  const minutes = Math.floor((d % 3600) / 60);
+  return `${hours} hrs ${minutes} mins`;
+};
+
+export const getApiService = async () => {
+  const baseUrl = `${Constants.expoConfig?.extra?.fusionBackendUrl}/api`;
+
+  const userAccount: UserAccount =
+    (await nostrService.getNostrAccount()) as UserAccount;
+  const apiToken = await nostrService.getApiToken(userAccount);
+
+  if (!apiToken) {
+    return null;
+  }
+
+  // get the bearer token to always attach
+  return axios.create({
+    baseURL: baseUrl,
+    headers: {
+      Accept: "application/json",
+      "Content-type": "application/json",
+      Authorization: `Bearer ${apiToken}`,
+    },
+  });
+};
