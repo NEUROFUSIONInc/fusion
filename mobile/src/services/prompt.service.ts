@@ -301,6 +301,8 @@ class PromptService {
               prompt.uuid
             );
             console.log("quest prompt save status", res);
+          } else {
+            console.log("prompt is not part of a quest");
           }
         }
 

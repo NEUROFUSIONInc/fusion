@@ -229,6 +229,9 @@ export function QuestDetailScreen() {
                         // TODO: prompt actions:handlePromptExpandSheet(prompt);
                         // handle prompt bottom sheet
                       } else {
+                        // necessary so that quest_prompts get linked
+                        prompt.additionalMeta["questId"] =
+                          route.params.quest.guid;
                         navigation.navigate("PromptNavigator", {
                           screen: "EditPrompt",
                           params: {
@@ -242,7 +245,8 @@ export function QuestDetailScreen() {
                 </View>
               ))}
             </View>
-            {isSubscribed === true && <HealthCard />}
+
+            <HealthCard />
           </View>
 
           {/* if the user is subscribed, show 'View Quest' */}
