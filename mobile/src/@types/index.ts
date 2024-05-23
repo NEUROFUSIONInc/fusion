@@ -15,6 +15,7 @@ export type PromptAdditionalMeta = {
   category?: string;
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
+  questId?: string;
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
@@ -101,4 +102,9 @@ export interface QuestDataset {
   type: "prompt_response" | "health";
   value: string;
   timestamp: number;
+}
+
+export interface QuestPrompt {
+  questId: string;
+  promptId: string;
 }

@@ -216,6 +216,7 @@ export const createBaseTables = () => {
 
       // tx.executeSql(`DROP TABLE IF EXISTS quests;`);
       // tx.executeSql(`DROP TABLE IF EXISTS quest_prompts;`);
+      // tx.executeSql(`DROP TABLE IF EXISTS quest_datasets;`);
       tx.executeSql(
         `CREATE TABLE IF NOT EXISTS quests (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -241,8 +242,8 @@ export const createBaseTables = () => {
       tx.executeSql(
         `CREATE TABLE IF NOT EXISTS quest_prompts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          questGuid TEXT NOT NULL,
-          promptUuid TEXT NOT NULL
+          questId TEXT NOT NULL,
+          promptId TEXT NOT NULL
           );`,
         [],
         (tx) => {
@@ -258,7 +259,7 @@ export const createBaseTables = () => {
       tx.executeSql(
         `CREATE TABLE IF NOT EXISTS quest_datasets (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          questGuid TEXT NOT NULL,
+          questId TEXT NOT NULL,
           type TEXT NOT NULL,
           value TEXT NOT NULL,
           timestamp INTEGER NOT NULL

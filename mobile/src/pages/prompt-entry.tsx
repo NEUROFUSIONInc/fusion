@@ -312,7 +312,7 @@ export function PromptEntryScreen() {
                 isVisible={toolTipVisible}
                 content={
                   <Text className="text-base font-sans">
-                    NEW: Tap to change response time.
+                    Tap to change response time.
                   </Text>
                 }
                 placement="top"

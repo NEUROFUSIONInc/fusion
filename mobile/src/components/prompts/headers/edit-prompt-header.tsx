@@ -51,7 +51,7 @@ export const EditPromptHeader = () => {
         onPress={handleGoBack}
       />
       <Text className="font-sans text-base text-white">
-        {isEdit ? "Edit prompt" : "Quick add prompts"}
+        {isEdit ? "Edit Prompt" : "Add Prompt "}
       </Text>
       {isEdit ? (
         <Button
