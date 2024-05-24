@@ -185,6 +185,7 @@ export function QuestDetailScreen() {
     }
   }, [activePrompt]);
 
+
   return (
     <Screen>
       <ScrollView>
@@ -268,7 +269,6 @@ export function QuestDetailScreen() {
           )}
         </View>
       </ScrollView>
-
       <Portal>
         {activePrompt && (
           <PromptOptionsSheet
@@ -279,6 +279,7 @@ export function QuestDetailScreen() {
           />
         )}
       </Portal>
+
     </Screen>
   );
 }
