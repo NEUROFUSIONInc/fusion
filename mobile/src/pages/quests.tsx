@@ -36,8 +36,8 @@ export function QuestsScreen() {
             className="w-32 h-32"
           />
           <Text className="font-sans-light max-w-xs text-center text-white text-base">
-            Quests allow you to share your data while doing activities with
-            others.
+            Share changes in your health and behavior with others. Join research
+            studies.
           </Text>
           <Button
             title="Join a Quest"

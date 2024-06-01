@@ -53,7 +53,7 @@ export const OnboardingScreen = () => {
     {
       title: "Your Prompts and Responses are saved locally on your device",
       description:
-        "Your privacy is important to us, so we’ve set up an anonymous account just for you. This is your unique identity on Fusion.",
+        "We've set up an anonymous identity for you on Fusion. Your data is stored on your device.",
       image: require("../../assets/onboarding/prompt_responses.png"),
     },
     {

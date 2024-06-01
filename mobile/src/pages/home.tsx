@@ -129,7 +129,7 @@ export function HomeScreen() {
     // only run this function if user has consented for FusionCopilot
     const copilotConsent = accountContext?.userPreferences.enableCopilot!;
     if (copilotConsent !== true)
-      return "Use Fusion Copilot to get summaries and personalized recommendations.";
+      return "Turn on Fusion Copilot in settings page to get summaries and personalized recommendations.";
 
     const filteredPrompts = savedPrompts!.filter(
       (prompt) => prompt.additionalMeta?.category === category
