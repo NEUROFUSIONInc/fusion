@@ -1,3 +1,4 @@
+const dayjs = require("dayjs");
 const db = require("../models/index");
 
 exports.saveQuest = async (req, res) => {
@@ -304,3 +305,46 @@ exports.getQuestDetail = async (req, res) => {
 };
 
 // TODO: exports.resetJoinCode
+
+exports.saveQuestDataset = async (req, res) => {
+  // TODO: validate paramss.. edit json field?
+  // ensure that quest exists
+  try {
+    const quest = await db.Quest.findOne({
+      where: {
+        guid: req.body.questId,
+      },
+    });
+
+    if (!quest) {
+      res.status(404).json({
+        error: "Quest not found",
+      });
+      return;
+    }
+
+    console.log("incoming dataset:\n", req.body);
+    const userQuestDataset = await db.UserQuestDataset.create({
+      userGuid: req.user.userGuid,
+      questGuid: req.body.questId,
+      type: req.body.type,
+      value: JSON.stringify(req.body.value),
+      timestamp: dayjs().unix(),
+    });
+
+    if (!userQuestDataset) {
+      res.status(500).json({
+        error: "Error saving quest dataset",
+      });
+    }
+
+    res.status(201).json({
+      userQuestDataset,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Error saving quest dataset",
+    });
+  }
+};

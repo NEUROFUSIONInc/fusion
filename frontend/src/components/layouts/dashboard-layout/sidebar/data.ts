@@ -8,7 +8,7 @@ export const sidebarLinks = [
   // },
   {
     icon: LayoutDashboard,
-    title: "Lab",
+    title: "Recording",
     href: "/playground",
   },
   {
@@ -26,11 +26,11 @@ export const sidebarLinks = [
     title: "Quests",
     href: "/quests",
   },
-  {
-    icon: Plug,
-    title: "Integrations",
-    href: "/integrations",
-  },
+  // {
+  //   icon: Plug,
+  //   title: "Integrations",
+  //   href: "/integrations",
+  // },
 ];
 
 export const appearanceModes = [
