@@ -62,6 +62,15 @@ export function PromptEntryScreen() {
     if (prompt?.responseType === "customOptions" && customOptions) {
       setCustomOptions(customOptions.split(";"));
     }
+
+    // write event to app insights
+    appInsights.trackPageView({
+      name: "PromptEntry",
+      properties: {
+        identifier: maskPromptId(prompt?.uuid!),
+        userNpub: accountContext?.userNpub,
+      },
+    });
   }, [prompt]);
 
   const handleCustomOptionChange = (option: string) => {

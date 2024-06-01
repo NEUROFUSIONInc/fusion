@@ -22,18 +22,6 @@ Fetch env values [from note](https://www.icloud.com/notes/081Ci0RTYFZk2smnqXttFo
 yarn start
 ```
 
-## Server functionality
-
-- JWT Authentication - a user can only interact with their own data
-- User Login - return fusion token
-- Upload and Fetch data from azure blob storage
-- Neurosity - for managing neurosity device connection
-- Magicflow - get/set token and queue fetch to fusion storage
-- Analytics
-  - calls after related data points are fetched (can only perform action if token matches user account)
-    - merge eegPowerSpectrum with signal quality
-- Soon surreal db
-
 ## Database
 
 Tables:
@@ -41,6 +29,9 @@ Tables:
 - UserMetadata
 - Provider
 - UserProvider - connects the UserMetadata & Provider (many to many)
+- Quests
+- UserQuest - list of people subscribed to a quest
+- UserQuestDataset - datasets of people subscribed to a quest
 
 We use sequelize for managing database tables and model relationships.
 
@@ -55,7 +46,7 @@ Commands
 ```bash
 - Run migrations
 
-yarn sequelize-cli db:migrate
+yarn sequelize-cli db:migrate --name <migration-file-path>.js
 
 - Example model generate command
 

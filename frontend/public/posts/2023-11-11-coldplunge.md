@@ -36,7 +36,7 @@ Total time: 25mins
 - Stroop task (5mins)
 - Resting state (5mins)
 
-<img src="/images/blog/coldplunge/doing_experiment.png" alt="Picture of Participant in Doing Cognitive Task" data-zoomable style="cursor: zoom-in";/>
+<img src="/images/blog/coldplunge/doing_experiment.png" alt="Picture of Participant in Doing Cognitive Task" data-zoomable style="cursor: zoom-in;" />
 
 ## What did we observe?
 

@@ -69,12 +69,12 @@ export function SettingsScreen() {
         await connectAppleHealth();
       },
     });
-    itemList.push({
-      text: "Manage Subscription",
-      onPress: async () => {
-        subscriptionSheetRef.current?.expand();
-      },
-    });
+    // itemList.push({
+    //   text: "Manage Subscription",
+    //   onPress: async () => {
+    //     subscriptionSheetRef.current?.expand();
+    //   },
+    // });
   }
 
   // add data export
