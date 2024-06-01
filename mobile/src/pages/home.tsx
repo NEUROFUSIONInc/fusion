@@ -75,7 +75,6 @@ export function HomeScreen() {
   }, [activeCategory]);
 
   React.useEffect(() => {
-    console.log("activeCategory", activeCategory);
     if (!savedPrompts || savedPrompts.length === 0) {
       setSummaryText("Head over to the Prompts page to get started.");
       // redirect to prompts page

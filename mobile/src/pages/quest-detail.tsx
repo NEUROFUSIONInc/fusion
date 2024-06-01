@@ -1,5 +1,6 @@
 import { Portal } from "@gorhom/portal";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
@@ -29,6 +30,8 @@ export function QuestDetailScreen() {
 
   const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
 
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
+
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "QuestDetail",
@@ -37,6 +40,9 @@ export function QuestDetailScreen() {
       },
     });
 
+    /**
+     * Fetch the prompts user has saved for this quest
+     */
     (async () => {
       const questPrompts = await questService.fetchQuestPrompts(
         route.params.quest.guid
@@ -64,8 +70,6 @@ export function QuestDetailScreen() {
       await getQuestSubscriptionStatus();
     })();
   }, []);
-
-  const [isSubscribed, setIsSubscribed] = React.useState(false);
 
   const getQuestSubscriptionStatus = async () => {
     /**
@@ -185,7 +189,6 @@ export function QuestDetailScreen() {
     }
   }, [activePrompt]);
 
-
   return (
     <Screen>
       <ScrollView>
@@ -257,18 +260,40 @@ export function QuestDetailScreen() {
           {/* display the procedural steps that happen after they join */}
           {/* sync data, leave quest etc.. */}
           {/*  */}
-
-          {/* if the user is not subscribed, show 'Get Started' */}
-          {isSubscribed === false && (
-            <Button
-              title="Get Started"
-              fullWidth
-              className="mb-5"
-              onPress={addUserToQuest}
-            />
-          )}
         </View>
       </ScrollView>
+
+      {/* if the user is not subscribed, show 'Get Started' */}
+      {isSubscribed === false && (
+        <View className="mt-5">
+          <Button
+            title="Get Started"
+            fullWidth
+            className="mb-5"
+            onPress={addUserToQuest}
+          />
+        </View>
+      )}
+
+      {isSubscribed && (
+        <View className="mt-5">
+          <Button
+            title="View Leaderboard"
+            fullWidth
+            className="mb-5"
+            onPress={async () => {
+              // push data to remote (this storage)
+              await questService.uploadQuestDataset(route.params.quest.guid);
+
+              // send the user to the quest page
+              await WebBrowser.openBrowserAsync(
+                `https://usefusion.ai/quest/${route.params.quest.guid}`
+              );
+            }}
+          />
+        </View>
+      )}
+
       <Portal>
         {activePrompt && (
           <PromptOptionsSheet
@@ -279,7 +304,6 @@ export function QuestDetailScreen() {
           />
         )}
       </Portal>
-
     </Screen>
   );
 }
