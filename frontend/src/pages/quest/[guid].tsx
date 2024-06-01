@@ -15,11 +15,6 @@ import { FusionLineChart } from "~/components/charts";
 import { set } from "zod";
 import dayjs from "dayjs";
 
-interface DisplayCategory {
-  name: string;
-  value: string;
-}
-
 const categories: DisplayCategory[] = [
   {
     name: "Steps",
