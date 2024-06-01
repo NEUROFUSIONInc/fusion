@@ -5,14 +5,33 @@ import Image from "next/image";
 import { fusionOfferingFeatures } from "./data";
 
 import { CustomLink, ButtonLink } from "~/components/ui";
+import { api } from "~/config";
 
 export const OfferingSection = ({ isResearch = false }) => {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContacMessage] = useState("");
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // Submit logic here, e.g., send form data to server
-    setSubmitted(true);
+    try {
+      const res = await api.post("/sendContactEmail", {
+        name: contactName,
+        email: contactEmail,
+        message: contactMessage,
+      });
+
+      if (res.status === 200) {
+        setSubmitted(true);
+      } else {
+        alert("Failed to send email. You can send one directly to contact@usefusion.app");
+      }
+    } catch (e) {
+      alert("Failed to send email. You can send one directly to contact@usefusion.app");
+    }
   };
 
   return (
@@ -38,7 +57,7 @@ export const OfferingSection = ({ isResearch = false }) => {
                 <p className="font-normal text-md text-gray-500">
                   Got any questions about the product or contributing to our research? We're here to help!
                 </p>
-                <form className="w-full max-w-lg mt-3" onSubmit={handleSubmit}>
+                <div className="w-full max-w-lg mt-3">
                   <div className="flex flex-wrap -m-2">
                     <div className="w-full p-2">
                       <label htmlFor="name" className="block text-gray-700">
@@ -48,6 +67,8 @@ export const OfferingSection = ({ isResearch = false }) => {
                         type="text"
                         id="name"
                         name="name"
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
                         placeholder="Enter your name"
                         className="form-input mt-1 block w-full p-2.5 border-2"
                       />
@@ -60,6 +81,8 @@ export const OfferingSection = ({ isResearch = false }) => {
                         type="email"
                         id="email"
                         name="email"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
                         placeholder="youremail@example.com"
                         className="form-input mt-1 block w-full p-2.5 border-2"
                       />
@@ -73,6 +96,8 @@ export const OfferingSection = ({ isResearch = false }) => {
                         name="message"
                         rows={4}
                         cols={40}
+                        value={contactMessage}
+                        onChange={(e) => setContacMessage(e.target.value)}
                         placeholder="Type your message here..."
                         className="form-textarea mt-1 p-2.5 block w-full border-2"
                       ></textarea>
@@ -89,7 +114,7 @@ export const OfferingSection = ({ isResearch = false }) => {
                       </ButtonLink>
                     </div>
                   </div>
-                </form>
+                </div>
               </>
             )}
           </div>
