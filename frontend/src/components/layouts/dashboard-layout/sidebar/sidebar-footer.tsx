@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 
 import { appearanceModes } from "./data";
 
-import { Avatar, AvatarFallback, AvatarImage, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import { Avatar, AvatarFallback, AvatarImage, CustomLink, Tabs, TabsList, TabsTrigger } from "~/components/ui";
 import Link from "next/link";
 
 interface ISidebarFooterProps {
@@ -22,6 +22,8 @@ export const SidebarFooter: FC<ISidebarFooterProps> = ({ user }) => {
 
   return (
     <div className="mx-auto flex w-full flex-col items-stretch space-y-5 rounded-none md:w-64 lg:w-72">
+      <CustomLink store="discord" className="w-full md:w-auto" />
+
       <Link href="/profile">
         <div className="dark:border-slate-700/60 group relative flex w-full items-center justify-between rounded-md border p-2 hover:cursor-pointer hover:bg-slate-50 dark:hover:border-transparent dark:hover:bg-slate-800">
           <div className="flex items-center space-x-4">

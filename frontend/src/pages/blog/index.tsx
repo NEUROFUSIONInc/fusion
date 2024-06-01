@@ -22,12 +22,11 @@ function Blog({ posts }: any) {
     overflow: "hidden",
   };
 
-
   return (
     <MainLayout>
       <Meta
         meta={{
-          title: "Blog | Fusion - Personal Insights from your daily habits and actions",
+          title: "NeuroFusion Blog",
         }}
       />
       <div style={containerStyles}>

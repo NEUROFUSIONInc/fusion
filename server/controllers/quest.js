@@ -142,8 +142,6 @@ exports.joinQuest = async (req, res) => {
     }
     userQuest.data = JSON.stringify(req.body.data);
 
-    console.log(userQuest);
-
     await userQuest.save();
 
     // add the additional data to the userQuest
@@ -152,7 +150,6 @@ exports.joinQuest = async (req, res) => {
       userQuest,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       error: "Error joining quest",
     });
@@ -223,8 +220,6 @@ exports.getUserQuestSubscription = async (req, res) => {
       return;
     }
 
-    console.log(userQuest);
-
     res.status(200).json({
       userQuest,
     });
@@ -243,8 +238,6 @@ exports.getQuestSubscribers = async (req, res) => {
         questGuid: req.query.questId,
       },
     });
-
-    console.log(userQuests);
 
     if (!userQuests) {
       res.status(404).json({
@@ -345,6 +338,68 @@ exports.saveQuestDataset = async (req, res) => {
     console.log(err);
     res.status(500).json({
       error: "Error saving quest dataset",
+    });
+  }
+};
+
+exports.getQuestDatasets = async (req, res) => {
+  try {
+    console.log("about fetch db", req.query.questId);
+    const latestTimestamps = await db.UserQuestDataset.findAll({
+      where: {
+        questGuid: req.query.questId,
+      },
+      attributes: [
+        "userGuid",
+        "questGuid",
+        "type",
+        [
+          db.sequelize.fn("MAX", db.sequelize.col("timestamp")),
+          "latestTimestamp",
+        ],
+      ],
+      group: ["userGuid", "questGuid", "type"],
+      raw: true, // Get plain objects instead of Sequelize instances
+    });
+
+    const conditions = latestTimestamps.map(
+      ({ userGuid, questGuid, type, latestTimestamp }) => ({
+        userGuid,
+        questGuid,
+        type,
+        timestamp: latestTimestamp,
+      })
+    );
+
+    const userQuestDatasets = await db.UserQuestDataset.findAll({
+      where: {
+        [db.Sequelize.Op.or]: conditions,
+      },
+      attributes: [
+        "userGuid",
+        "questGuid",
+        "type",
+        "timestamp",
+        "value", // Get the JSON data from the original table
+      ],
+    });
+
+    console.log("query returned for user quests", userQuestDatasets);
+
+    if (!userQuestDatasets) {
+      res.status(404).json({
+        error: "UserQuestDatasets not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      userQuestDatasets,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error getting userQuestDatasets",
     });
   }
 };

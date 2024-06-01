@@ -5,11 +5,35 @@ import { getServerSession } from "next-auth";
 import { DashboardLayout, Meta } from "~/components/layouts";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { Button } from "~/components/ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
-import { IQuest } from "~/@types";
+import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IQuest } from "~/@types";
 import { usePathname } from "next/navigation";
+import { Experiment } from "~/components/lab";
+import { FusionLineChart } from "~/components/charts";
+import { set } from "zod";
+import dayjs from "dayjs";
+
+interface DisplayCategory {
+  name: string;
+  value: string;
+}
+
+const categories: DisplayCategory[] = [
+  {
+    name: "Steps",
+    value: "steps",
+  },
+  {
+    name: "Sleep",
+    value: "sleep",
+  },
+  {
+    name: "Heart Rate",
+    value: "heart_rate",
+  },
+];
 
 const QuestDetailPage: NextPage = () => {
   const [quest, setQuest] = React.useState<IQuest | null>(null);
@@ -40,6 +64,8 @@ const QuestDetailPage: NextPage = () => {
         if (questSubscribers) {
           setQuestSubscribers(questSubscribers);
         }
+
+        await updateQuestDatasets();
       }
     })();
   }, []);
@@ -73,6 +99,50 @@ const QuestDetailPage: NextPage = () => {
     }
   };
 
+  const [questDatasets, setQuestDatasets] = React.useState<FusionQuestDataset[]>([]);
+  const getQuestDatasets = async (questId: string) => {
+    try {
+      const res = await api.get(
+        "/quest/datasets",
+
+        {
+          params: {
+            questId,
+          },
+          headers: {
+            Authorization: `Bearer ${session.data?.user?.authToken}`,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        console.log("Quest Dataset fetched successfully");
+
+        return res.data.userQuestDatasets;
+      } else {
+        console.error("Failed to fetch quest dataset");
+      }
+    } catch (error) {
+      console.error("Failed to fetch quest dataset", error);
+    }
+  };
+  const updateQuestDatasets = useCallback(async () => {
+    if (questId) {
+      const questDatasets = await getQuestDatasets(questId);
+      questDatasets.map((dataset: any) => {
+        dataset.value = JSON.parse(dataset.value) as FusionHealthDataset[];
+      });
+
+      console.log("updated quest object", questDatasets);
+
+      if (questDatasets) {
+        setQuestDatasets(questDatasets);
+      }
+    }
+  }, [questId]);
+
+  const [category, setCategory] = React.useState<DisplayCategory>(categories[0]);
+
   return (
     <DashboardLayout>
       <Meta
@@ -91,9 +161,63 @@ const QuestDetailPage: NextPage = () => {
         <p className="mt-2">Active Participants: {questSubscribers.length}</p>
       </div>
 
-      <Button intent="primary" className="mt-4">
-        Download Data
-      </Button>
+      {/* if the quest contains an experiment link, embed it */}
+      {/* <Experiment {...quest?.experiment} /> */}
+
+      <div className="flex space-x-2 gap-x-2 mt-4">
+        <Button
+          className=""
+          onClick={() => {
+            // setDisplayShareModal(true);
+          }}
+        >
+          Join Quest
+        </Button>
+
+        <Button intent="primary" className="">
+          Download Data
+        </Button>
+
+        <Button className="" intent="primary" onClick={updateQuestDatasets}>
+          Refresh
+        </Button>
+      </div>
+
+      {/* dynamic content based on colelcted data */}
+      <div className="mt-5">
+        {/* category selection */}
+        {/* <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <select
+            id="activity"
+            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+            onChange={(e) => {
+              setCategory(categories.find((cat) => cat.value === e.target.value));
+            }}
+            value={category?.value}
+          >
+            {categories.map((category) => {
+              return (
+                <option key={category.value} value={category.value}>
+                  {category.name}
+                </option>
+              );
+            })}
+          </select>
+        </label> */}
+
+        {/* display the graph */}
+        {questDatasets && questDatasets.length > 0 && (
+          <div className="mt-5">
+            <p>{category?.name} in the past week</p>
+            <FusionLineChart
+              seriesData={questDatasets}
+              timePeriod="week"
+              startDate={dayjs().startOf("day")}
+              category={category}
+            />
+          </div>
+        )}
+      </div>
     </DashboardLayout>
   );
 };
