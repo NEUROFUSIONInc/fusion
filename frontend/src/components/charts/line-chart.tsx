@@ -62,7 +62,7 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
 
   return (
     <div>
-      <ReactEcharts option={chartOptions} style={{ height: "500px", width: "800px" }} opts={{ renderer: "canvas" }} />
+      <ReactEcharts option={chartOptions} style={{ height: "500px", width: "100%" }} opts={{ renderer: "canvas" }} />
     </div>
   );
 };
