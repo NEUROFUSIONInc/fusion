@@ -64,17 +64,16 @@ const LoginPage = React.memo(() => {
   const completeNostrLogin = async (publicKey: string, privateKey?: string) => {
     const authObject = await authService.completeNostrLogin(publicKey, privateKey);
 
-    console.log(authObject);
     if (authObject) {
       await signIn("credentials", {
         ...authObject,
         privateKey,
         redirect: true,
-        callbackUrl: router.query.callbackUrl?.toString(),
+        callbackUrl: router.query.callbackUrl?.toString() ?? "/playground",
       });
     } else {
       // TODO: render error message
-      console.error("Error logging in");
+      alert("Error logging in, please try again or reach out to contact@usefusion.app");
     }
   };
 

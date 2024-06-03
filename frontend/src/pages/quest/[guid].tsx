@@ -10,9 +10,7 @@ import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IQuest } from "~/@types";
 import { usePathname } from "next/navigation";
-import { Experiment } from "~/components/lab";
 import { FusionLineChart } from "~/components/charts";
-import { set } from "zod";
 import dayjs from "dayjs";
 
 const categories: DisplayCategory[] = [
@@ -223,9 +221,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
+    const currentUrl = `${req.url}`;
     return {
       redirect: {
-        destination: "/auth/login",
+        destination: `/auth/login?callbackUrl=${encodeURIComponent(currentUrl)}`,
         permanent: false,
       },
     };
