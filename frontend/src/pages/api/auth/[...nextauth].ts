@@ -7,8 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { randomBytes } from "crypto";
 
-const magic = new Magic(process.env.MAGIC_SECRET_KEY);
-
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXT_AUTH_SECRET,
   session: {
@@ -21,8 +19,12 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
   callbacks: {
-    async redirect() {
-      return "/playground";
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
     async jwt({ token, user }) {
       if (user) {
@@ -48,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         privateKey: { label: "privateKey", type: "password" },
       },
       async authorize(credentials, req) {
-        if (credentials && (credentials.userNpub && credentials.authToken)) {
+        if (credentials && credentials.userNpub && credentials.authToken) {
           const resObject: User = {
             id: randomBytes(4).toString("hex"),
             name: credentials.userNpub,
