@@ -8,6 +8,7 @@ import {
   PromptDetailsStep,
   TimePicker,
   promptSelectionDays,
+  Screen,
 } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { useCreatePrompt, usePrompt, useUpdatePrompt } from "~/hooks";
@@ -121,63 +122,66 @@ export function EditPromptScreen() {
   };
 
   return (
-    <ScrollView
-      className="flex flex-col bg-dark p-5 pt-2 w-full"
-      horizontal={false}
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      {isPromptLoading && isEditPage && (
-        <Text className="font-sans text-base text-white">Loading...</Text>
-      )}
-      {prompt && (
-        <>
-          <View>
-            <PromptDetailsStep
-              promptText={promptText}
-              setPromptText={setPromptText}
-              responseType={responseType}
-              setResponseType={setResponseType}
-              customOptions={customOptions}
-              setCustomOptions={setCustomOptions}
-              category={category}
-              setCategory={setCategory}
-              isCreating={false}
-            />
-          </View>
-          <View className="flex -z-10">
-            <TimePicker
-              start={start}
-              end={end}
-              setEnd={setEnd}
-              setStart={setStart}
-              days={days}
-              setDays={setDays}
-              setPromptCount={setCountPerDay}
-              defaultPromptFrequencyLabel={getFrequencyLabel(
-                prompt.notificationConfig_startTime,
-                prompt.notificationConfig_endTime,
-                prompt.notificationConfig_countPerDay
-              )}
-            />
-          </View>
-          <Button
-            title={
-              isEditPage
-                ? "Save edits"
-                : isCreating
-                ? "Adding prompt..."
-                : isUpdating
-                ? "Updating..."
-                : "Add Prompt"
-            }
-            loading={isUpdating}
-            fullWidth
-            className="mt-4 mb-8"
-            disabled={buttonDisabled}
-            onPress={savePrompt}
-          />
-        </>
-      )}
-    </ScrollView>
+    <Screen>
+      <ScrollView
+        className="flex flex-col bg-dark p-5 pt-2 w-full"
+        horizontal={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {isPromptLoading && isEditPage && (
+          <Text className="font-sans text-base text-white">Loading...</Text>
+        )}
+        {prompt && (
+          <>
+            <View>
+              <PromptDetailsStep
+                promptText={promptText}
+                setPromptText={setPromptText}
+                responseType={responseType}
+                setResponseType={setResponseType}
+                customOptions={customOptions}
+                setCustomOptions={setCustomOptions}
+                category={category}
+                setCategory={setCategory}
+                isCreating={false}
+              />
+            </View>
+            <View className="flex -z-10">
+              <TimePicker
+                start={start}
+                end={end}
+                setEnd={setEnd}
+                setStart={setStart}
+                days={days}
+                setDays={setDays}
+                setPromptCount={setCountPerDay}
+                defaultPromptFrequencyLabel={getFrequencyLabel(
+                  prompt.notificationConfig_startTime,
+                  prompt.notificationConfig_endTime,
+                  prompt.notificationConfig_countPerDay
+                )}
+              />
+            </View>
+          </>
+        )}
+      </ScrollView>
+      <Button
+        title={
+          isEditPage
+            ? "Save edits"
+            : isCreating
+            ? "Adding prompt..."
+            : isUpdating
+            ? "Updating..."
+            : "Add Prompt"
+        }
+        loading={isUpdating}
+        fullWidth
+        className="mt-4 mb-4"
+        disabled={buttonDisabled}
+        onPress={savePrompt}
+      />
+    </Screen>
   );
 }

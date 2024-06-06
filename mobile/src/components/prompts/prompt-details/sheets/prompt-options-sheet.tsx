@@ -76,7 +76,9 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
                   }
                 );
                 onBottomSheetClose();
-                navigation.navigate("Prompts");
+                navigation.navigate("PromptNavigator", {
+                  screen: "Prompts",
+                });
               }
             },
             style: "destructive",
@@ -123,9 +125,12 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       onPress: () => {
         onBottomSheetClose();
         activePrompt &&
-          navigation.navigate("PromptEntry", {
-            promptUuid: activePrompt?.uuid,
-            triggerTimestamp: Math.floor(dayjs().unix()),
+          navigation.navigate("PromptNavigator", {
+            screen: "PromptEntry",
+            params: {
+              promptUuid: activePrompt?.uuid,
+              triggerTimestamp: Math.floor(dayjs().unix()),
+            },
           });
       },
     },
@@ -149,9 +154,12 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       onPress: () => {
         onBottomSheetClose();
         activePrompt &&
-          navigation.navigate("EditPrompt", {
-            promptId: activePrompt?.uuid,
-            type: "edit",
+          navigation.navigate("PromptNavigator", {
+            screen: "EditPrompt",
+            params: {
+              promptId: activePrompt?.uuid,
+              type: "edit",
+            },
           });
       },
     },

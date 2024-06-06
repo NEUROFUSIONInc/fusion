@@ -14,7 +14,7 @@ import {
 } from "~/components";
 import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
-import { useCreateQuest } from "~/hooks";
+import { useCreatePrompt, useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
@@ -29,6 +29,8 @@ export function QuestDetailScreen() {
   const [addedQuestPrompts, setAddQuestPrompts] = React.useState<Prompt[]>([]);
 
   const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
+
+  const { mutateAsync: createPrompt } = useCreatePrompt();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
@@ -129,6 +131,22 @@ export function QuestDetailScreen() {
           throw new Error("Failed to save quest locally");
         }
 
+        // save prompts locally
+        if (route.params.quest.prompts) {
+          const res = await Promise.all(
+            route.params.quest.prompts.map(async (prompt) => {
+              // link prompt to quest
+              prompt.additionalMeta["questId"] = route.params.quest.guid;
+              const promptRes = await createPrompt(prompt);
+              return promptRes;
+            })
+          );
+
+          if (res.includes(undefined)) {
+            throw new Error("Failed to save prompts locally");
+          }
+        }
+
         setIsSubscribed(true);
 
         appInsights.trackEvent({
@@ -217,38 +235,12 @@ export function QuestDetailScreen() {
                 <View key={Math.random()} className="my-2">
                   <PromptDetails
                     prompt={prompt}
-                    variant={
-                      addedQuestPrompts.find((p) => {
-                        return p.promptText === prompt.promptText;
-                      })
-                        ? "detail"
-                        : "add"
-                    }
-                    displayFrequency={
-                      !!addedQuestPrompts
-                        .map((p) => p.promptText)
-                        .includes(prompt.promptText)
-                    }
+                    variant="detail"
+                    displayFrequency
                     onClick={() => {
-                      // if prompt is saved, show detail
-                      if (
-                        addedQuestPrompts.find((p) => {
-                          return p.promptText === prompt.promptText;
-                        })
-                      ) {
-                        // TODO: prompt actions:handlePromptExpandSheet(prompt);
+                      if (isSubscribed !== false) {
+                        handlePromptExpandSheet(prompt);
                         // handle prompt bottom sheet
-                      } else {
-                        // necessary so that quest_prompts get linked
-                        prompt.additionalMeta["questId"] =
-                          route.params.quest.guid;
-                        navigation.navigate("PromptNavigator", {
-                          screen: "EditPrompt",
-                          params: {
-                            prompt,
-                            type: "add",
-                          },
-                        });
                       }
                     }}
                   />
