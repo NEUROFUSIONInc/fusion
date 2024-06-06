@@ -200,13 +200,12 @@ export function QuestDetailScreen() {
             <Text className="text-white opacity-60 text-base font-sans my-2">
               {route.params.quest.description}
             </Text>
-
             {route.params.quest.organizerName && (
               <Text className="text-white opacity-60 text-base font-sans my-2">
                 Organized by {route.params.quest.organizerName}
               </Text>
             )}
-
+            <HealthCard />
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
@@ -252,8 +251,12 @@ export function QuestDetailScreen() {
                 </View>
               ))}
             </View>
-
-            <HealthCard />
+            {/* Leadewrboard */}
+            <View className="mt-5">
+              <Text className="text-white font-sans text-lg px-5">
+                Leaderboard
+              </Text>
+            </View>
           </View>
 
           {/* if the user is subscribed, show 'View Quest' */}
@@ -283,7 +286,9 @@ export function QuestDetailScreen() {
             className="mb-5"
             onPress={async () => {
               // push data to remote (this storage)
-              await questService.uploadQuestDataset(route.params.quest.guid);
+              const pushStatus = await questService.uploadQuestDataset(
+                route.params.quest.guid
+              );
 
               // send the user to the quest page
               await WebBrowser.openBrowserAsync(
