@@ -23,7 +23,13 @@ import {
   OnboardingContext,
 } from "~/contexts";
 import { OnboardingScreen } from "~/pages/onboarding";
-import { nostrService, notificationService, promptService } from "~/services";
+import {
+  defineQuestDataSyncTask,
+  nostrService,
+  notificationService,
+  promptService,
+  setupBackgroundTasks,
+} from "~/services";
 import { toastConfig } from "~/theme";
 
 Logs.enableExpoCliLogging();
@@ -44,6 +50,7 @@ const queryClient = new QueryClient({
 });
 
 // TODO: Register background tasks
+defineQuestDataSyncTask();
 
 function App() {
   const responseListener = React.useRef<
@@ -66,6 +73,11 @@ function App() {
         userNpub,
       }
     );
+
+    // TODO: register background tasks
+    (async () => {
+      await setupBackgroundTasks();
+    })();
 
     // validate permission status for user
     (async () => {
