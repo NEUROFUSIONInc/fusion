@@ -31,6 +31,7 @@ export function QuestDetailScreen() {
   const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [joiningQuest, setJoiningQuest] = React.useState(false);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -101,6 +102,7 @@ export function QuestDetailScreen() {
     // 'I agree to share data I collect with the quest organizer',
     //  'I want to share my data anoymously with the research community']
     try {
+      setJoiningQuest(true);
       // remote call to add user to quest
       const apiService = await getApiService();
       if (apiService === null) {
@@ -156,6 +158,8 @@ export function QuestDetailScreen() {
         },
       });
       console.error("Failed to add user to quest", error);
+    } finally {
+      setJoiningQuest(false);
     }
   };
 
@@ -252,15 +256,13 @@ export function QuestDetailScreen() {
               ))}
             </View>
             {/* Leadewrboard */}
-            <View className="mt-5">
+            {/* <View className="mt-5">
               <Text className="text-white font-sans text-lg px-5">
                 Leaderboard
               </Text>
-            </View>
+            </View> */}
           </View>
 
-          {/* if the user is subscribed, show 'View Quest' */}
-          {/* display the procedural steps that happen after they join */}
           {/* sync data, leave quest etc.. */}
           {/*  */}
         </View>
@@ -274,6 +276,7 @@ export function QuestDetailScreen() {
             fullWidth
             className="mb-5"
             onPress={addUserToQuest}
+            loading={joiningQuest}
           />
         </View>
       )}
