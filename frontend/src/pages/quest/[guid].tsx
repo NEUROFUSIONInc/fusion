@@ -12,6 +12,7 @@ import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IQuest } from
 import { usePathname } from "next/navigation";
 import { FusionLineChart } from "~/components/charts";
 import dayjs from "dayjs";
+import { ShareModal } from "~/components/quests";
 
 const categories: DisplayCategory[] = [
   {
@@ -136,6 +137,8 @@ const QuestDetailPage: NextPage = () => {
 
   const [category, setCategory] = React.useState<DisplayCategory>(categories[0]);
 
+  const [displayShareModal, setDisplayShareModal] = React.useState(false);
+
   return (
     <DashboardLayout>
       <Meta
@@ -161,15 +164,16 @@ const QuestDetailPage: NextPage = () => {
         <Button
           className=""
           onClick={() => {
-            // setDisplayShareModal(true);
+            setDisplayShareModal(true);
           }}
         >
           Join Quest
         </Button>
-
+        {/*
+        // TODO: gate this with zupass
         <Button intent="primary" className="">
           Download Data
-        </Button>
+        </Button> */}
 
         <Button className="" intent="primary" onClick={updateQuestDatasets}>
           Refresh
@@ -200,15 +204,35 @@ const QuestDetailPage: NextPage = () => {
 
         {/* display the graph */}
         {questDatasets && questDatasets.length > 0 && (
-          <div className="mt-5">
-            <p>{category?.name} in the past week</p>
-            <FusionLineChart
-              seriesData={questDatasets}
-              timePeriod="week"
-              startDate={dayjs().startOf("day")}
-              category={category}
-            />
-          </div>
+          <>
+            <div className="mt-5">
+              <p>{category?.name} in the past week</p>
+              <FusionLineChart
+                seriesData={questDatasets}
+                timePeriod="week"
+                startDate={dayjs().startOf("day")}
+                category={category}
+              />
+            </div>
+
+            {/* <div className="mt-5">
+              <p>Sleep in the past week</p>
+              <FusionLineChart
+                seriesData={questDatasets}
+                timePeriod="week"
+                startDate={dayjs().startOf("day")}
+                category={{ name: "Sleep", value: "sleep" }}
+              />
+            </div> */}
+          </>
+        )}
+
+        {quest && (
+          <ShareModal
+            quest={quest!}
+            displayShareModal={displayShareModal}
+            setDisplayShareModal={setDisplayShareModal}
+          />
         )}
       </div>
     </DashboardLayout>
