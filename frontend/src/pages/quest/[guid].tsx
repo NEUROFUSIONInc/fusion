@@ -156,7 +156,7 @@ const QuestDetailPage: NextPage = () => {
 
       {/* if the quest contains an experiment link, embed it */}
       {/* <Experiment {...quest?.experiment} /> */}
-
+      {/*
       <div className="flex space-x-2 gap-x-2 mt-4">
         <Button
           className=""
@@ -175,6 +175,7 @@ const QuestDetailPage: NextPage = () => {
           Refresh
         </Button>
       </div>
+      */}
 
       {/* dynamic content based on colelcted data */}
       <div className="mt-5">
