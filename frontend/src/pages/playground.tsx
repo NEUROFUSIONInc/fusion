@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import React, { use, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 
@@ -8,7 +8,45 @@ import { Experiment } from "~/components/lab";
 import { DashboardLayout, Meta } from "~/components/layouts";
 import { IExperiment } from "~/@types";
 
+import { Button, Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui";
+
 const PlaygroundPage: NextPage = () => {
+  const [showCapabilitiesModal, setShowCapabilitiesModal] = useState(true);
+  const [showDataHandlingModal, setShowDataHandlingModal] = useState(false);
+
+  useEffect(() => {
+    const viewedOnboarding = localStorage.getItem("viewedOnboarding");
+    if (viewedOnboarding !== "true") {
+      setShowCapabilitiesModal(true);
+    }
+  }, []);
+
+  const handleCapabilitiesNext = () => {
+    setShowCapabilitiesModal(false);
+    setShowDataHandlingModal(true);
+  };
+
+  const handleDataHandlingPrevious = () => {
+    setShowCapabilitiesModal(true);
+    setShowDataHandlingModal(false);
+  };
+
+  const handleDataHandlingGetStarted = () => {
+    setShowDataHandlingModal(false);
+    localStorage.setItem("viewedOnboarding", "true");
+  };
+
+  const handleCloseCapabilities = () => {
+    setShowCapabilitiesModal(false);
+  }
+
+  const handleCloseDataHandling = () => {
+    setShowDataHandlingModal(false)
+  }
+  // const handleRemoveOnboarding = () => {
+  //   localStorage.removeItem("viewedOnboarding");
+  //   setShowCapabilitiesModal(true);
+  // };
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -117,6 +155,16 @@ const PlaygroundPage: NextPage = () => {
         </select>
       </label>
       <Experiment {...activeExperiment} />
+      {showCapabilitiesModal && (
+        <CapabilitiesModal
+          onNext={handleCapabilitiesNext}
+        
+          onCancel={handleCloseCapabilities }
+        />
+      )}
+      {showDataHandlingModal && (
+        <DataHandlingModal onPrevious={handleDataHandlingPrevious} onGetStarted={handleDataHandlingGetStarted} onClose={handleCloseDataHandling} />
+      )}
     </DashboardLayout>
   );
 };
@@ -136,6 +184,66 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { session },
+    props: { session},
   };
 };
+
+interface CapabilitiesModalProps {
+  onNext: () => void;
+  onCancel: () => void;
+ 
+}
+
+const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,  }) => {
+  return (
+    <Dialog open={true} onOpenChange={onCancel}>
+      <DialogContent>
+        <DialogTitle>Welcome to Fusion</DialogTitle>
+        <DialogDescription>
+          Here's what you can do with Fusion:
+          <ul className="list-disc ml-6 mt-2">
+            <li>Record brain activity during cognitive experiments</li>
+            <li>Respond to prompts on mobile devices</li>
+          </ul>
+        </DialogDescription>
+        <div className="flex justify-end mt-4">
+          <Button  intent="primary" onClick={onNext}>Next</Button>
+          <Button intent="dark" onClick={onCancel} className="ml-2">
+            Cancel
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+interface DataHandlingModalProps {
+  onPrevious: () => void;
+  onGetStarted: () => void;
+  onClose : () =>void;
+}
+
+const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGetStarted, onClose }) => {
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogTitle>Data Handling in Fusion</DialogTitle>
+        <DialogDescription>
+          How Fusion handles your data:
+          <ul className="list-disc ml-6 mt-2">
+            <li>Assigns anonymous identities with no email required</li>
+            <li>Stores data locally on your device</li>
+          </ul>
+        </DialogDescription>
+        <div className="flex justify-end mt-4">
+          <Button onClick={onPrevious}>Previous</Button>
+          <Button intent="dark" onClick={onGetStarted} className="ml-2">
+            Get Started
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export { CapabilitiesModal, DataHandlingModal };
