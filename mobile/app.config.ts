@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion",
   slug: "fusion",
-  version: "2.0.0",
+  version: "2.0.2",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "87",
+    buildNumber: "91",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,8 +36,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 87,
+    versionCode: 91,
     softwareKeyboardLayoutMode: "pan",
+    permissions: [
+      "android.permission.health.READ_STEPS",
+      "android.permission.health.READ_HEART_RATE",
+      "android.permission.health.READ_SLEEP",
+    ],
   },
   web: {
     favicon: "./assets/favicon.png",
@@ -52,7 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       process.env.APP_INSIGHTS_CONNECTION_STRING ??
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     fusionBackendUrl:
-      process.env.FUSION_BACKEND_API_URL ?? "https://fresh-horses-read.loca.lt", //"https://neurofusion-backend.azurewebsites.net",
+      process.env.FUSION_BACKEND_API_URL ?? "http://localhost:4000", //"https://neurofusion-backend.azurewebsites.net",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
@@ -60,6 +65,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     // ["expo-notifications", { icon: "./assets/notification-icon.png" }],
     "react-native-iap",
+    ["react-native-health-connect"],
+    [
+      "expo-build-properties",
+      {
+        android: {
+          compileSdkVersion: 34,
+          targetSdkVersion: 34,
+          minSdkVersion: 26,
+        },
+        ios: {
+          deploymentTarget: "15.0",
+        },
+      },
+    ],
   ],
   userInterfaceStyle: "automatic",
   owner: "oreogundipe",
