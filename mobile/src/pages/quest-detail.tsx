@@ -14,7 +14,7 @@ import {
 } from "~/components";
 import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
-import { useCreateQuest } from "~/hooks";
+import { useCreatePrompt, useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
@@ -30,7 +30,10 @@ export function QuestDetailScreen() {
 
   const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
 
+  const { mutateAsync: createPrompt } = useCreatePrompt();
+
   const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [joiningQuest, setJoiningQuest] = React.useState(false);
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -101,6 +104,7 @@ export function QuestDetailScreen() {
     // 'I agree to share data I collect with the quest organizer',
     //  'I want to share my data anoymously with the research community']
     try {
+      setJoiningQuest(true);
       // remote call to add user to quest
       const apiService = await getApiService();
       if (apiService === null) {
@@ -125,6 +129,22 @@ export function QuestDetailScreen() {
         if (!res) {
           // show error toast
           throw new Error("Failed to save quest locally");
+        }
+
+        // save prompts locally
+        if (route.params.quest.prompts) {
+          const res = await Promise.all(
+            route.params.quest.prompts.map(async (prompt) => {
+              // link prompt to quest
+              prompt.additionalMeta["questId"] = route.params.quest.guid;
+              const promptRes = await createPrompt(prompt);
+              return promptRes;
+            })
+          );
+
+          if (res.includes(undefined)) {
+            throw new Error("Failed to save prompts locally");
+          }
         }
 
         setIsSubscribed(true);
@@ -156,6 +176,8 @@ export function QuestDetailScreen() {
         },
       });
       console.error("Failed to add user to quest", error);
+    } finally {
+      setJoiningQuest(false);
     }
   };
 
@@ -200,13 +222,12 @@ export function QuestDetailScreen() {
             <Text className="text-white opacity-60 text-base font-sans my-2">
               {route.params.quest.description}
             </Text>
-
             {route.params.quest.organizerName && (
               <Text className="text-white opacity-60 text-base font-sans my-2">
                 Organized by {route.params.quest.organizerName}
               </Text>
             )}
-
+            <HealthCard />
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
@@ -214,50 +235,26 @@ export function QuestDetailScreen() {
                 <View key={Math.random()} className="my-2">
                   <PromptDetails
                     prompt={prompt}
-                    variant={
-                      addedQuestPrompts.find((p) => {
-                        return p.promptText === prompt.promptText;
-                      })
-                        ? "detail"
-                        : "add"
-                    }
-                    displayFrequency={
-                      !!addedQuestPrompts
-                        .map((p) => p.promptText)
-                        .includes(prompt.promptText)
-                    }
+                    variant="detail"
+                    displayFrequency
                     onClick={() => {
-                      // if prompt is saved, show detail
-                      if (
-                        addedQuestPrompts.find((p) => {
-                          return p.promptText === prompt.promptText;
-                        })
-                      ) {
-                        // TODO: prompt actions:handlePromptExpandSheet(prompt);
+                      if (isSubscribed !== false) {
+                        handlePromptExpandSheet(prompt);
                         // handle prompt bottom sheet
-                      } else {
-                        // necessary so that quest_prompts get linked
-                        prompt.additionalMeta["questId"] =
-                          route.params.quest.guid;
-                        navigation.navigate("PromptNavigator", {
-                          screen: "EditPrompt",
-                          params: {
-                            prompt,
-                            type: "add",
-                          },
-                        });
                       }
                     }}
                   />
                 </View>
               ))}
             </View>
-
-            <HealthCard />
+            {/* Leadewrboard */}
+            {/* <View className="mt-5">
+              <Text className="text-white font-sans text-lg px-5">
+                Leaderboard
+              </Text>
+            </View> */}
           </View>
 
-          {/* if the user is subscribed, show 'View Quest' */}
-          {/* display the procedural steps that happen after they join */}
           {/* sync data, leave quest etc.. */}
           {/*  */}
         </View>
@@ -271,6 +268,7 @@ export function QuestDetailScreen() {
             fullWidth
             className="mb-5"
             onPress={addUserToQuest}
+            loading={joiningQuest}
           />
         </View>
       )}
@@ -283,7 +281,9 @@ export function QuestDetailScreen() {
             className="mb-5"
             onPress={async () => {
               // push data to remote (this storage)
-              await questService.uploadQuestDataset(route.params.quest.guid);
+              const pushStatus = await questService.uploadQuestDataset(
+                route.params.quest.guid
+              );
 
               // send the user to the quest page
               await WebBrowser.openBrowserAsync(

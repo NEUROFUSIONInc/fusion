@@ -33,9 +33,12 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
   const navigation = useNavigation();
   const [joinCode, setJoinCode] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const handleJoinQuest = async () => {
     // call api to fetch the quest if it's still active
     try {
+      setLoading(true);
       const apiService = await getApiService();
 
       if (apiService === null) {
@@ -73,6 +76,8 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         Alert.alert("An error occurred. Please try again later");
         console.error("Api error", err);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,7 +95,6 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         <KeyboardAvoidingView
           behavior="padding"
           keyboardVerticalOffset={IS_IOS ? 130 : 0}
-          // className="h-full bg-dark"
           className="flex flex-1 w-full h-full justify-center gap-y-10 flex-col p-5"
         >
           <View className="flex flex-col gap-y-2.5">
@@ -119,8 +123,9 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
               rightIcon={<ChevronRight color={black} />}
               fullWidth
               className="flex flex-row justify-between"
-              disabled={joinCode === ""}
+              disabled={joinCode.length !== 6}
               onPress={handleJoinQuest}
+              loading={loading}
             />
             <Pressable onPress={_handlePressButtonAsync}>
               <Text className="font-sans text-white underline">
