@@ -8,6 +8,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 interface IQuest {
   title: string;
@@ -207,6 +208,7 @@ const QuestsPage: NextPage = () => {
                 value={questTitle}
                 className="mb-2"
                 onChange={(e) => setQuestTitle(e.target.value)}
+                required
               />
 
               <Input
@@ -218,6 +220,7 @@ const QuestsPage: NextPage = () => {
                 value={questDescription}
                 className="pt-4 h-20 mb-2"
                 onChange={(e) => setQuestDescription(e.target.value)}
+                required
               />
 
               <Input
@@ -225,22 +228,35 @@ const QuestsPage: NextPage = () => {
                 type="text"
                 size="lg"
                 fullWidth
-                placeholder="Enter Organizer Name, participants will see this in the app"
+                placeholder="Enter Organizer Name. Participants will see this in the app"
                 value={questOrganizer}
                 className="mb-2"
                 onChange={(e) => setQuestOrganizer(e.target.value)}
+                required
               />
 
-              <Input
-                label="Quest Config"
-                type="text"
-                size="lg"
-                fullWidth
-                placeholder="Enter Prompt Config (JSON)"
-                value={questConfig}
-                className="pt-4 h-40"
-                onChange={(e) => setQuestConfig(e.target.value)}
-              />
+              <div className="my-3 flex flex-col gap-y-2 w-fit">
+                <p className="font-semibold">Prompts</p>
+
+                {/* list the prompts if they exist -with the option to edit */}
+
+                <Button type="button" size="lg" leftIcon={<Plus />}>
+                  Add Prompt
+                </Button>
+              </div>
+
+              <div className="">
+                <Input
+                  label="Quest Config"
+                  type="text"
+                  size="lg"
+                  fullWidth
+                  placeholder="Enter Prompt Config (JSON)"
+                  value={questConfig}
+                  className="pt-4 h-40"
+                  onChange={(e) => setQuestConfig(e.target.value)}
+                />
+              </div>
 
               <Button
                 type="submit"

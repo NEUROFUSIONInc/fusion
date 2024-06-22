@@ -19,16 +19,14 @@ export const HealthCard = () => {
     FusionHealthDataset[]
   >([]);
   const accountContext = React.useContext(AccountContext);
+  const [timePeriod, setTimePeriod] = React.useState<"day" | "week">("day");
 
   useEffect(() => {
     console.log("user loading", accountContext?.userLoading);
     console.log("user preferences", accountContext?.userPreferences);
 
     (async () => {
-      if (
-        accountContext?.userLoading === false &&
-        accountContext.userPreferences["enableHealthConnect"] === true
-      ) {
+      if (accountContext?.userPreferences["enableHealthConnect"] === true) {
         await syncHealthData();
       }
     })();
@@ -52,16 +50,25 @@ export const HealthCard = () => {
     // build the health dataset
     try {
       const res = await buildHealthDataset(
-        dayjs().startOf("day").subtract(5, "days"),
+        dayjs().startOf("day").subtract(1, timePeriod),
         dayjs()
       );
 
       if (res) {
-        console.log("health data", res);
+        console.log("health dataset entries:", res.length);
+        console.log("health data", JSON.stringify(res));
         setHealthDataset(res);
       }
     } catch (error) {
       console.error("Failed to sync health data", error);
+    }
+  };
+
+  const toggleTimePeriod = () => {
+    if (timePeriod === "day") {
+      setTimePeriod("week");
+    } else {
+      setTimePeriod("day");
     }
   };
 
@@ -81,6 +88,19 @@ export const HealthCard = () => {
               rightIcon={<Reload color={black} />}
             />
           )}
+
+        {/* time period toggle */}
+        {/* {accountContext?.userLoading === false &&
+          accountContext?.userPreferences["enableHealthConnect"] === true && (
+            <Pressable
+              className="rounded-md m-0 self-center py-2 px-4 bg-secondary-900 active:opacity-90"
+              onPress={toggleTimePeriod}
+            >
+              <Text className="font-sans text-base text-[#c4ff81] opacity-60 self-center h-contain">
+                {timePeriod === "day" ? "Today" : "This Week"}
+              </Text>
+            </Pressable>
+          )} */}
       </View>
 
       {/* display the steps data */}
@@ -125,37 +145,5 @@ export const HealthCard = () => {
         </Text>
       </View>
     </View>
-
-    //   {!accountContext?.userLoading &&
-    //   accountContext?.userPreferences["enableHealthConnect"] ===
-    //     true ? (
-    //     <View className="">
-    //       <View className="flex flex-row w-full justify-between p-5">
-    //         <Text className="text-base font-sans-bold text-white">
-    //           Health & Activity
-    //         </Text>
-    //       </View>
-
-    //       <View className="flex flex-col w-full bg-secondary-900 rounded">
-    //         <Text className="text-base font-sans text-white p-5">
-    //           Sleep Heart Rate Activity
-    //         </Text>
-    //       </View>
-    //     </View>
-    //   ) : (
-    //     <>
-    //       <Button
-    //         title="Sync your sleep, activity & heart rate"
-    //         fullWidth
-    //         onPress={async () => {
-    //           // reuse functions from settings page
-    //           await connectAppleHealth();
-    //         }}
-    //         className="bg-secondary-900 flex justify-between mb-2"
-    //         variant="secondary"
-    //         rightIcon={<ChevronRight />}
-    //       />
-    //     </>
-    //   )}
   );
 };

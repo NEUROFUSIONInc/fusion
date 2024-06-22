@@ -50,6 +50,13 @@ const PlaygroundPage: NextPage = () => {
     },
     // {
     //   id: 6,
+    //   name: "Verbal Fluency - Cognitive Test",
+    //   description:
+    //     "This is a test of your verbal fluency. You eill be given a category and you have to name as many words as you can that fit that category. This test is often used to measure changes in brain processing associated with language and congitive processes.",
+    //   url: "/experiments/verbal_fluency.html",
+    // },
+    // {
+    //   id: 6,
     //   name: "Neuro Art - Generating Images from EEG",
     //   description:
     //     "Generate images from your brain waves. View some images and then see if you can think of the same image. While you do that, your brain activity (eeg) data is recorded. Data from this experiment can be used for models in relation to correlating brain activity with images.",
@@ -92,13 +99,13 @@ const PlaygroundPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Playground | Fusion Explorer",
+          title: "Recording | Fusion Explorer",
           description:
             "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
-      <h1 className="text-4xl">Playground</h1>
+      <h1 className="text-4xl">Recording</h1>
       <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
         Select activity:
         <select

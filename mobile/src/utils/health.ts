@@ -361,3 +361,7 @@ export const connectAppleHealth = async () => {
   }
   return false;
 };
+
+export const connectGoogleFit = async () => {
+  return false;
+};

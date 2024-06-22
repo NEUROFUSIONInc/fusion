@@ -87,7 +87,7 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
           key={channelName}
           ref={(e) => (echartsRefs.current[index] = e)}
           option={getOption(channelName)}
-          style={{ height: "400px", width: "1200px" }}
+          style={{ height: "200px", width: "1200px" }}
           opts={{ renderer: "canvas" }}
         />
       ))}

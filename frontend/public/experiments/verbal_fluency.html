@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-initialize-microphone@1.0.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-audio-response@1.0.3"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+        background-color: #fafafa;
+      }
+      #countDown {
+        position: absolute;
+        width: 100%;
+        display: inline;
+        align-content: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #countDown p {
+        align-content: center;
+        font-weight: 100;
+        font-size: large;
+      }
+      #jspsych-container {
+        font-size: xx-large;
+        font-family: sans;
+        font-weight: bold;
+        position: absolute;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="countDown"><p></p></div>
+    <div id="jspsych-container"></div>
+    <script>
+      function mapElapsedToUnix(data) {
+        let startStamp = -1;
+        data.trials.forEach((element) => {
+          if (startStamp === -1) {
+            if ("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
+          } else {
+            element.unixTimestamp = startStamp + element.time_elapsed;
+          }
+        });
+        return data;
+      }
+
+      const jsPsych = initJsPsych({
+        display_element: "jspsych-container",
+      });
+
+      const timeline = [];
+      let apiResponse = null;
+
+      // these are in HTML, so <br> means "line break"
+      const taskInstructions = {
+        type: jsPsychInstructions,
+        pages: ["Welcome to the Verbal Fluency Test!"],
+        show_clickable_nav: true,
+      };
+
+      const initMic = {
+        type: jsPsychInitializeMicrophone,
+      };
+
+      const audioInstructions = {
+        type: jsPsychAudioKeyboardResponse,
+        stimulus: "./assets/sounds/vb_instructions.mp3",
+        prompt: "Listen...",
+        choices: "NO_KEYS",
+        trial_ends_after_audio: true,
+      };
+
+      const animal_task = {
+        type: jsPsychHtmlAudioResponse,
+        stimulus: `<p>Start speaking...</p>`,
+        recording_duration: 60000,
+        allow_playback: true,
+        on_finish: async function (data) {
+          // make request to python endpoint & return text from api
+          return new Promise((resolve, reject) => {
+            fetch("http://127.0.0.1:8000/api/v1/verbal_fluency", {
+              method: "POST",
+              body: JSON.stringify({ audio_base64: data.response, task_type: "animal_task" }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+              .then((res) => res.json())
+              .then((response) => {
+                console.log(response);
+                apiResponse = response;
+                // Resolve the Promise to indicate completion
+                resolve();
+              })
+              .catch((error) => {
+                // Handle errors or network issues
+                alert("Failed to fetch the results.");
+                reject();
+              });
+          });
+        },
+      };
+
+      const displayResultTrial = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: function () {
+          return `<p>Processing...</p>`;
+        },
+        choices: ["Continue"],
+      };
+
+      const endTrial = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: function () {
+          console.log("api response is", apiResponse);
+          return `<div>
+            <h2>Thank you for participating in the Verbal Fluency Test!</h2>
+                <p>Transcript: ${apiResponse.transcript}</p>
+                <p>Total Words: ${apiResponse.response.total_word_count}</p>
+                <p>Correct Words: ${apiResponse.response.word_count}</p>
+                <p>Unique Words: ${apiResponse.response.unique_word_count}</p>
+                <p>Repetition: ${apiResponse.response.repetition}</p>
+                <p>Error: ${apiResponse.response.error}</p>
+                <p>Clusters: ${apiResponse.response.nb_clusters}</p>
+                <p>Switches: ${apiResponse.response.nb_switches}</p>
+            </div>`;
+        },
+        choices: ["Finish"],
+      };
+
+      timeline.push(taskInstructions, initMic, audioInstructions, animal_task, displayResultTrial, endTrial);
+
+      jsPsych.run(timeline);
+    </script>
+  </body>
+</html>

@@ -1,31 +1,50 @@
 const nodemailer = require("nodemailer");
 const { OAuth2Client } = require("google-auth-library");
+const { google } = require("googleapis");
 const { error } = require("console");
 
-const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
+const CLIENT_EMAIL = process.env.GMAIL_CLIENT_EMAIL;
 const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET;
-const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-const REFRESH_TOKEN = "YOUR_REFRESH_TOKEN";
 
-const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+// Define the required scopes
+const SCOPES = ["https://www.googleapis.com/auth/gmail.send"];
 
-oauth2Client.setCredentials({
-  refresh_token: REFRESH_TOKEN,
-});
+// Create an OAuth2 client with the given credentials
+const auth = new google.auth.JWT(
+  CLIENT_EMAIL,
+  null,
+  CLIENT_SECRET,
+  SCOPES,
+  "ore@usefusion.app"
+);
+
+// const REDIRECT_URI = "https://localhost";
+// const REFRESH_TOKEN =
+//   "1//04nUNitsdz_ruCgYIARAAGAQSNwF-L9Ir0okxhNE0HiIsPpUYWON4QKmiHTQ0QVGv5EUpMScoj1WbHHx2kVav7ls_QjILibaNV_Y";
+
+// const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+
+// oauth2Client.setCredentials({
+//   refresh_token: REFRESH_TOKEN,
+// });
 
 async function sendMail(from, to, subject, text, html) {
   try {
-    const accessToken = await oauth2Client.getAccessToken();
+    await auth.authorize();
+
+    console.log("here");
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         type: "OAuth2",
+        // user: "neurofusion-mailer@neurofusion-422110.iam.gserviceaccount.com",
         user: "ore@usefusion.app",
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token,
+        scopes: SCOPES,
+        clientId: process.env.GMAIL_CLIENT_ID,
+        privateKey: process.env.GMAIL_CLIENT_SECRET,
       },
     });
 
@@ -55,6 +74,8 @@ exports.sendContactEmail = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    console.log(name, email, message);
+
     const mailResponse = await sendMail(
       "NeuroFusion Contact <ore@usefusion.app>",
       "contact@usefusion.app",
@@ -63,11 +84,14 @@ exports.sendContactEmail = async (req, res) => {
     );
 
     if (mailResponse instanceof Error) {
+      console.error(mailResponse);
       return res.status(500).json({ message: error.message });
     } else {
+      console.log("Email sent...", mailResponse);
       return res.status(200).json({ message: "Email sent successfully" });
     }
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: error });
   }
 };

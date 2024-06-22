@@ -318,10 +318,15 @@ class QuestService {
     };
     const healthDataset = await getHealthDataset();
 
+    const questPrompts = await this.fetchQuestPrompts(questId);
+    const promptResponses = await Promise.all(
+      questPrompts.map(async (questPrompt) => {
+        // TODO: fetch the responses for each of the prompts
+      })
+    );
+
     // get the prompt responses
-    const getPromptResponses = async () => {
-      // get prompt responses related to the prompt from db
-    };
+    // { prompt, responses[] }[]
 
     // upload the dataset
     try {

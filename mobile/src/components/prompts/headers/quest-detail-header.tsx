@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Alert } from "react-native";
 
 import { Button } from "../../button";
 import { LeftArrow, VerticalMenu } from "../../icons";
@@ -9,6 +9,7 @@ export const QuestDetailHeader = () => {
   const navigation = useNavigation();
 
   const handleGoBack = () => {
+    // TODO: send the user back to the quest list page
     navigation.goBack();
   };
 
@@ -25,7 +26,24 @@ export const QuestDetailHeader = () => {
         variant="ghost"
         size="icon"
         leftIcon={<VerticalMenu />}
-        onPress={() => {}}
+        onPress={() => {
+          // show button to delete leave & delete quest
+          Alert.alert(
+            "Quest Options",
+            "What would you like to do with this quest?",
+            [
+              {
+                text: "Leave Quest",
+                onPress: () => {},
+                style: "destructive",
+              },
+              {
+                text: "Go back",
+                style: "cancel",
+              },
+            ]
+          );
+        }}
       />
     </View>
   );
