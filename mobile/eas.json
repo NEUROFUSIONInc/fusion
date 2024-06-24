@@ -1,0 +1,43 @@
+{
+  "cli": {
+    "version": ">= 3.10.2"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
+      },
+      "env": {
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://localhost:4000"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
+      },
+      "env": {
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://neurofusion-backend.azurewebsites.net"
+      }
+    },
+    "production": {
+      "ios": {
+        "resourceClass": "m-medium",
+        "image": "macos-sonoma-14.4-xcode-15.3"
+      },
+      "env": {
+        "APP_INSIGHTS_CONNECTION_STRING": "InstrumentationKey=e9a047e3-efc6-4339-acef-1ef135fd15ea;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        "FUSION_BACKEND_API_URL": "https://neurofusionbackendprd.azurewebsites.net"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

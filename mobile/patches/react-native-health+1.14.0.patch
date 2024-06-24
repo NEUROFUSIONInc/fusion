@@ -1,0 +1,40 @@
+diff --git a/node_modules/react-native-health/RCTAppleHealthKit/RCTAppleHealthKit.m b/node_modules/react-native-health/RCTAppleHealthKit/RCTAppleHealthKit.m
+index 78ab9bb..b66654f 100644
+--- a/node_modules/react-native-health/RCTAppleHealthKit/RCTAppleHealthKit.m
++++ b/node_modules/react-native-health/RCTAppleHealthKit/RCTAppleHealthKit.m
+@@ -30,7 +30,7 @@
+ 
+ @implementation RCTAppleHealthKit
+ 
+-bool hasListeners;
++bool hasHealthListeners;
+ 
+ RCT_EXPORT_MODULE();
+ 
+@@ -76,7 +76,7 @@ + (BOOL)requiresMainQueueSetup
+ RCT_EXPORT_METHOD(initStepCountObserver:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback)
+ {
+     [self _initializeHealthStore];
+-    [self fitness_initializeStepEventObserver:input hasListeners:hasListeners callback:callback];
++    [self fitness_initializeStepEventObserver:input hasListeners:hasHealthListeners callback:callback];
+ }
+ 
+ RCT_EXPORT_METHOD(getBiologicalSex:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback)
+@@ -769,7 +769,7 @@ - (void)initializeBackgroundObservers:(RCTBridge *)bridge
+         ];
+ 
+         for(NSString * type in fitnessObservers) {
+-            [self fitness_registerObserver:type bridge:bridge hasListeners:hasListeners];
++            [self fitness_registerObserver:type bridge:bridge hasListeners:hasHealthListeners];
+         }
+         
+         NSArray *clinicalObservers = @[
+@@ -784,7 +784,7 @@ - (void)initializeBackgroundObservers:(RCTBridge *)bridge
+         ];
+         
+         for(NSString * type in clinicalObservers) {
+-            [self clinical_registerObserver:type bridge:bridge hasListeners:hasListeners];
++            [self clinical_registerObserver:type bridge:bridge hasListeners:hasHealthListeners];
+         }
+ 
+         NSLog(@"[HealthKit] Background observers added to the app");

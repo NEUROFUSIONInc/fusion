@@ -1,0 +1,619 @@
+ABYSSINIAN: abyssinian, abyssinian guinea pig
+ACKIE: red ackie monitor, ackie monitor
+ADDER: puff adder, horned adder, common european adder, death adder, peringuey’s adder, night adder
+AFRICAN: african golden cat, african fish eagle, african penguin, african palm civet, african sugarcane borer, african forest elephant, african wild dog, african jacana, african bush elephant, african civet, giant african land snail, african clawed frog, african elephant, african grey parrot, african bullfrog, african tree toad
+AKITA: akita, akita shepherd
+ALASKAN: alaskan pollock, alaskan shepherd, alaskan klee kai, alaskan husky, alaskan malamute
+ALBATROSS: albatross, wandering albatross
+ALBINO: lipstick albino boa, albino (amelanistic) corn snake, lavender albino ball python, white ferret / albino ferrets
+ALLIGATOR: chinese alligator, northern alligator lizard, mexican alligator lizard, alligator gar, american alligator
+PETS: budgie, canary, cat, dog, gerbil, golden retriever, guinea, pig, hamster, parrot,rabbit
+ALLOSAURUS: allosaurus
+ALPINE: alpine goat, alpine dachsbracke
+AMAZON: amazon tree boa, amazon river dolphin (pink dolphin), amazon parrot
+AMERICAN: american cocker spaniel, american cockroach, american pit bull terrier, american robin, american hairless terrier, american alligator, american bulldog, american paddlefish, american toad, american eskimo dog, north american black bear, american coonhound, american foxhound, american dog tick, american pugabull, american bully, american pygmy goat, american alsatian, american leopard hound, american water spaniel, american staffordshire terrier, american wirehair, american eel
+ANACONDA: bolivian anaconda, yellow anaconda, green anaconda, anaconda
+ANGELFISH: angelfish, masked angelfish, emperor angelfish, peppermint angelfish
+ANGORA: angora goat, english angora rabbit, angora ferret, turkish angora
+ANOLE: knight anole, anole lizard, green anole
+ANT: carpenter ant, yellow crazy ant, ant, leafcutter ant
+APHIDS: root aphids, black aphids, milkweed aphids, red aphids, yellow aphids, woolly aphids, green aphids
+APPLE: apple head chihuahua, apple moth
+ARABIAN: arabian wolf, arabian cobra
+ARCTIC: arctic hare, arctic char, arctic fox, arctic wolf
+ARGENTINE: argentine horned frog, argentine black and white tegu
+ARIZONA: arizona blonde tarantula, arizona black rattlesnake, arizona bark scorpion, arizona coral snake
+ARMADILLO: armadillo lizard, giant armadillo, armadillo, pink fairy armadillo
+AROWANA: platinum arowana, asian arowana
+ASIAN: asian elephant, asian giant hornet, asian water monitor, alabai (central asian shepherd), asian arowana, asian longhorn beetle, asian lady beetle, asian palm civet, asian vine snake, asian cockroach, asian carp
+ASP: asp, asp caterpillar
+ASSASSIN: assassin snail, assassin bug
+ATLANTIC: atlantic cod, atlantic salmon, atlantic sturgeon
+ATLAS: atlas beetle, atlas moth
+AUSTRALIAN: australian firehawk, australian cattle dog, australian cockroach, australian bulldog, australian kelpie dog, australian labradoodle, australian mist, australian shepherd, australian gecko, australian flathead perch, australian retriever, australian shepherd mix, australian terrier
+BABOON: olive baboon, orange baboon tarantula, baboon
+BADGER: badger, honey badger
+BAGWORM: bagworm moth caterpillar, bagworm moth
+BALL: desert ghost ball python, cinnamon ball python, banana cinnamon ball python, black pastel ball python, banana ball python, axanthic ball python, panda pied ball python, firefly ball python, freeway ball python, enchi ball python, mojave ball python, spider ball python, pied ball python, ball python, super pastel ball python, orange dream ball python, lavender albino ball python, scaleless ball python, yellow belly ball python, sunset ball python, fire ball python, killer clown ball python, lemon blast ball python
+BAMBOO: bamboo shark, bamboo rat, bamboo worms
+BANANA: banana spider, banana ball python, banana eel, banana cinnamon ball python
+BANDED: banded krait, banded palm civet, banded water snake
+BANDICOOT: eastern barred bandicoot, bandicoot
+BANTAM: japanese bantam chicken, booted bantam
+BARK: bark beetle, bark scorpion, arizona bark scorpion
+BARN: barn spider, barn swallow, barn owl
+BARRED: eastern barred bandicoot, barred owl
+BASENJI: basenji mix, basenji dog
+BASS: white bass, striped bass, black bass, black sea bass, peacock bass, rock bass, bass, sea bass, largemouth bass, guadalupe bass, yellow bass, smallmouth bass, ozark bass, spotted bass
+BASSET: basset fauve de bretagne, petit basset griffon vendéen, basset hound, bagle – basset hound mix
+BAT: vampire bat, evening bat, hoary bat, mexican free-tailed bat, fruit bat, honduran white bat, bat, little brown bat
+BATFISH: red-lipped batfish, batfish
+BEAGLE: beagle mix, pocket beagle, beagle shepherd, beagle
+BEAR: grizzly bear, giant panda bear, cinnamon bear, russian bear dog, woolly bear caterpillar, polar bear, teddy bear hamster, spectacled bear, cave bear, short-faced bear, marsican brown bear, sun bear, asiatic black bear, north american black bear, brown bear, kermode bear (spirit bear), kodiak bear, bear
+BEARDED: bearded fireworm, bearded vulture, bearded collie, bearded dragon
+BEAVER: eurasian beaver, beaver, mountain beaver, giant beaver
+BEE: wool carder bee, hairy-footed flower bee, box-headed blood bee, honey bee, pantaloon bee, squash bee, ivy bee, southeastern blueberry bee, yellow-faced bee, mason bee, furrow bee, ashy mining bee, bee, africanized bee (killer bee), leafcutter bee, tawny mining bee
+BEE-EATER: european bee-eater, bee-eater, green bee-eater
+BEETLE: atlas beetle, goliath beetle, flea beetle, may beetle, green june beetle, common furniture beetle, darkling beetle, deathwatch beetle, water beetle, asian longhorn beetle, rove beetle, mealworm beetle, flour beetle, cigarette beetle, stag beetle, khapra beetle, titan beetle, elephant beetle, pine beetle, blue death feigning beetle, potato beetle, bark beetle, christmas beetle, carpet beetle, hercules beetle, jewel beetle, spider beetle, ten-lined june beetle, dung beetle, beetle, powderpost beetle, ambrosia beetle, soldier beetle, larder beetle, asian lady beetle, devil’s coach horse beetle, squash beetle, scarab beetle, horned beetle, palo verde beetle, carrion beetle, golden tortoise beetle, cucumber beetle, rhino beetle, click beetle, biscuit beetle, japanese beetle, pinacate beetle, figeater beetle, tiger beetle, blister beetle, bombardier beetle, grapevine beetle
+BELGIAN: belgian canary, belgian malinois mix, belgian malinois, belgian tervuren, belgian shepherd, belgian laekenois, belgian sheepdog
+BELLY: blue belly lizard, yellow belly ball python
+BELUGA: beluga sturgeon
+BERGER: berger blanc suisse, berger picard
+BERNESE: bernese mountain dog, bernese shepherd, bernese mountain dog mix
+BICHIR: ornate bichir, bichir
+BICHON: yorkie bichon, bichon frise
+BIRD: bird snake, elephant bird, bird of paradise, bird, great potoo bird, terror bird, red-billed quelea bird, weaver bird, myna bird
+BISON: bison, wood bison
+BLACK: black mamba, black swallowtail caterpillar, black throat monitor, argentine black and white tegu, black and tan coonhound, black swallowtail, arizona black rattlesnake, black pastel ball python, brazilian black tarantula, black bass, black widow spider, black russian terrier, black rat snake, black witch moth, north american black bear, black mouth cur, red-bellied black snake, black german shepherd, southern black racer, black tarantula, black crappie, mexican black kingsnake, asiatic black bear, black rhinoceros, welsh black cattle, black dragon lizard, black marlin, black wasp, black sea bass, black aphids, sable black german shepherd, black and white warbler
+BLACK-TAILED: black-tailed rattlesnake, ornate black-tailed rattlesnake
+BLACKTIP: blacktip reef shark, blacktip shark
+BLIND: texas blind snake, blind snake, western blind snake
+BLISTER: blister beetle
+BLOOD: blood python, box-headed blood bee
+BLUE: cobalt blue tarantula, blue eyed pleco, blue lacy dog, blue whale, blue shark, blue catfish, kerry blue terrier, blue death feigning beetle, blue iguana, blue tang, blue jay, russian blue, blue nose pit bull, blue belly lizard, blue tit, blue picardy spaniel, blue racer, blue andalusian, great blue heron, blue german shepherd, blue grosbeak, blue gray gnatcatcher, blue dragon sea slug, green bottle blue tarantula, blue tanager (blue-grey tanager)
+BLUEBIRD: mountain bluebird, eastern bluebird
+BOA: cuban boa, dumeril’s boa, jamaican boa, rainbow boa, madagascar tree boa, rosy boa, emerald tree boa, lipstick albino boa, red tail boa (common boa), amazon tree boa, rubber boa, viper boa, moonglow boa, kenyan sand boa, dwarf boa, img boa constrictor
+BORDER: border collie, border terrier, border collie mix
+BORER: european corn borer, old house borer, african sugarcane borer
+BOX: eastern box turtle, ornate box turtle, box turtle, box tree moth, box jellyfish
+BOXER: boxer dog, boxer mix
+BRAQUE: braque du bourbonnais, braque francais
+BRAZILIAN: brazilian treehopper, brazilian black tarantula, brazilian terrier
+BROWN: brown tree snake, brown dog tick, brown snake, brown headed cowbird, little brown bat, de kay’s brown snake, eastern brown snake, marsican brown bear, brown hyena, brown water snake, brown bear, texas brown tarantula
+BUFFALO: buffalo fish, buffalo, water buffalo
+BUG: assassin bug, water bug, kudzu bug, lace bug
+BUGS: kissing bugs, bed bugs
+BULL: american pit bull terrier, pit bull, miniature bull terrier, bull trout, red nose pit bull, staffordshire bull terrier, bull and terrier, bull terrier, blue nose pit bull, bull shark
+BULLDOG: catahoula bulldog, australian bulldog, bulldog, bulldog mix, american bulldog, english bulldog, french bulldog, valley bulldog, french bulldog mix
+BULLFROG: african bullfrog, bullfrog
+BUMBLEBEE: red-tailed cuckoo bumblebee, forest cuckoo bumblebee, barbut’s cuckoo bumblebee, lemon cuckoo bumblebee, yellowish cuckoo bumblebee (formerly fernald’s cuckoo bumblebee), bumblebee, field cuckoo bumblebee, gypsy cuckoo bumblebee, vestal cuckoo bumblebee
+BUNTING: painted bunting, ortolan bunting, snow bunting
+BURMESE: burmese, burmese python
+BURROWING: burrowing frog, burrowing owl
+BUSH: bush dog, bush viper, bush baby, african bush elephant, spiny bush viper
+BUTTERFLY: owl butterfly, peacock butterfly, kamehameha butterfly, purple emperor butterfly, ulysses butterfly, swallowtail butterfly, butterfly, morpho butterfly, admiral butterfly, fritillary butterfly, butterfly fish, monarch butterfly, white butterfly
+BUZZARD: honey buzzard, common buzzard
+CACTUS: cactus wren, cactus mouse, cactus moth
+CAIMAN: caiman lizard, caiman
+CALIFORNIA: california condor, california kingsnake, california tarantula
+CAMEL: camel spider, camel cricket, bactrian camel, camel
+CANADA: canada warbler, canada lynx
+CANADIAN: canadian horse, canadian eskimo dog
+CANARIO: podenco canario, perro de presa canario
+CANE: cane corso, cane spider, cane rat
+CAPUCHIN: white-faced capuchin, capuchin
+CARDINAL: cardinal, northern cardinal
+CAROLINA: carolina dog, carolina parakeet
+CARP: common carp, crucian carp, grass carp, carp, asian carp
+CARPET: carpet viper, carpet beetle, coastal carpet python, carpet python, jungle carpet python
+CAT: african golden cat, cat snake, lykoi cat, corn rex cat (cornish rex), scottish fold cat, leopard cat, sand cat, fishing cat, cat, jaguarundi cat
+CATAHOULA: catahoula leopard, catahoula bulldog
+CATERPILLAR: asp caterpillar, caterpillar, luna moth caterpillar, saddleback caterpillar, black swallowtail caterpillar, woolly bear caterpillar, hawk moth caterpillar, cosmic caterpillar, puss caterpillar, gypsy moth caterpillar, swallowtail caterpillar, bagworm moth caterpillar, tent caterpillar, tiger swallowtail caterpillar, tussock moth caterpillar, angled sunbeam caterpillar
+CATFISH: walking catfish, cory catfish, wels catfish, yellow bullhead catfish, goonch catfish, blue catfish, eel catfish, white catfish, hardhead catfish, mekong giant catfish, redtail catfish, ghost catfish, electric catfish, gulper catfish, banjo catfish, pictus catfish, armored catfish, flathead catfish, catfish
+CATTLE: australian cattle dog, lineback cattle, nelore cattle, senepol cattle, welsh black cattle, nguni cattle, highland cattle, english longhorn cattle, fleckvieh cattle
+CAUCASIAN: caucasian shepherd, caucasian mountain dog (shepherd)
+CAVE: cave bear, cave lion
+CENTIPEDE: giant desert centipede, centipede
+CESKY: cesky fousek, cesky terrier
+CHAMELEON: chameleon, jackson’s chameleon
+CHI: chi chi
+CHICKADEE: chickadee, black-capped chickadee
+CHICKEN: yokohama chicken, sussex chicken, silkie chicken, chicken snake, plymouth rock chicken, japanese bantam chicken, chicken, red star chicken, australorp chicken, phoenix chicken, onagadori chicken, redcap chicken, dorking chicken, leghorn chicken, buff orpington chicken, wyandotte chicken, frizzle chicken, modern game chicken, prairie chicken, rhode island red chicken, cochin chicken, brahma chicken, hamburg chicken, sultan chicken, houdan chicken, polish chicken, campine chicken, marans chicken, new hampshire red chicken
+CHIHUAHUA: deer head chihuahua, teacup chihuahua, chihuahua mix, apple head chihuahua, chihuahua
+CHILEAN: chilean recluse spider, chilean rose tarantula
+CHINESE: chinese cobra, chinese alligator, chinese water deer, chinese shar-pei, chinese paddlefish, chinese crested dog, chinese geese
+CHINOOK: chinook, chinook salmon
+CHIPMUNK: chipmunk, eastern chipmunk
+CHOW: chow pom, chow shepherd, chow chow
+CHRISTMAS: christmas beetle, christmas island red crab
+CICHLID: keyhole cichlid, mayan cichlid, cichlid, uaru cichlid
+CINNAMON: cinnamon ferret, cinnamon ball python, cinnamon bear, banana cinnamon ball python
+CIVET: banded palm civet, african palm civet, masked palm civet, asian palm civet, malayan civet, african civet
+CLAM: quahog clam, disco clam, giant clam
+COASTAL: coastal taipan, coastal carpet python
+COBRA: false water cobra, chinese cobra, mozambique spitting cobra, forest cobra, philippine cobra, spitting cobra, yellow cobra, egyptian cobra (egyptian asp), equatorial spitting cobra, red spitting cobra, false cobra, king cobra, arabian cobra, zebra spitting cobra, indian cobra, snouted cobra, monocled cobra
+COCKER: cocker spaniel, english cocker spaniel, american cocker spaniel
+COCKROACH: pennsylvania wood cockroach, death’s head cockroach, australian cockroach, american cockroach, smokybrown cockroach, cuban cockroach, madagascar hissing cockroach, german cockroach, cockroach, brown-banded cockroach, florida woods cockroach, asian cockroach, dubia cockroach, oriental cockroach
+COLLARED: collared peccary, eurasian collared dove
+COLLIE: collie mix, bearded collie, scotch collie, border collie, collie, border collie mix
+COMMON: common house spider, common loon, common carp, common grackle, common european adder, common furniture beetle, common goldeneye, common spotted cuscus, common toad, common raven, common frog, common yellowthroat, common green magpie, common buzzard
+COONHOUND: treeing walker coonhound, black and tan coonhound, bluetick coonhound, redbone coonhound, american coonhound
+CORAL: false coral snake, texas coral snake, coral, harlequin coral snake, arizona coral snake, coral snake, eastern coral snake
+CORGI: pembroke welsh corgi, welsh corgi
+CORN: corn snake, european corn borer, corn rex cat (cornish rex), corn earworm, albino (amelanistic) corn snake
+COW: cow reticulated python, steller’s sea cow, cow
+CRAB: sand crab, coconut crab, christmas island red crab, dungeness crab, vampire crab, crab spider, king crab, snow crab, mole crab (sand flea), hermit crab, decorator crab, ghost crab, rock crab, yeti crab, stone crab, fiddler crab, jonah crab, crab, horseshoe crab, strawberry hermit crab
+CRAB-EATING: crab-eating fox, crab-eating macaque
+CRANE: sandhill crane, whooping crane, sarus crane, crane
+CRAPPIE: black crappie, crappie fish, white crappie
+CRESTED: great crested flycatcher, english crested guinea pig, mexican eagle (northern crested caracara), chinese crested dog, crested gecko, crested penguin
+CRICKET: mole cricket, camel cricket, tree cricket, cricket
+CROCODILE: crocodile shark, crocodile, orinoco crocodile, crocodile monitor, freshwater crocodile, dwarf crocodile, nile crocodile
+CROSS: cross river gorilla, holy cross frog, cross fox
+CROW: crow, hawaiian crow
+CUBAN: cuban boa, cuban cockroach
+CUCKOO: red-tailed cuckoo bumblebee, forest cuckoo bumblebee, barbut’s cuckoo bumblebee, cuckoo, lemon cuckoo bumblebee, yellowish cuckoo bumblebee (formerly fernald’s cuckoo bumblebee), field cuckoo bumblebee, gypsy cuckoo bumblebee, vestal cuckoo bumblebee
+CUR: mountain cur, black mouth cur
+CURLY: curly coated retriever, curly hair tarantula
+DACHSHUND: piebald dachshund, dapple dachshund, dachshund, dachshund mix
+DALMATIAN: dalmatian, dalmatian mix
+DANE: great dane, great dane mix
+DARK-EYED: dark-eyed junco
+DARWIN’S: darwin’s frog, darwin’s fox
+DE: coton de tulear, de brazza’s monkey, dogue de bordeaux, perro de presa canario, de kay’s brown snake, basset fauve de bretagne
+DEATH: blue death feigning beetle, death adder
+DEER: coues deer, deer head chihuahua, deer, père david’s deer, sika deer, white-tail deer, chinese water deer, deer tick, musk deer, key deer, whitetail deer, fallow deer, red deer, mule deer, roe deer, deer mouse
+DESERT: giant desert centipede, desert ghost ball python, desert wolf, desert locust, desert rain frog, desert kingsnake, desert tortoise
+DEVIL: thorny devil, tasmanian devil
+DIAMONDBACK: red diamondback rattlesnake, diamondback moth, eastern diamondback rattlesnake, western diamondback rattlesnake
+DIVING: diving duck, diving bell spider (water spider)
+DOBSONFLY: dobsonfly, eastern dobsonfly
+DOG: boxer dog, australian cattle dog, brown dog tick, spanish water dog, dog tick, chinese crested dog, blue lacy dog, northern inuit dog, eskimo dog, entlebucher mountain dog, bolognese dog, kangal shepherd dog, carolina dog, american eskimo dog, bush dog, russian bear dog, bernese mountain dog, dog, australian kelpie dog, estrela mountain dog, caucasian mountain dog (shepherd), prairie dog, american dog tick, canaan dog, raccoon dog, bernese mountain dog mix, appenzeller dog, african wild dog, formosan mountain dog, greater swiss mountain dog, greenland dog, anatolian shepherd dog, basenji dog, canadian eskimo dog
+DOLLAR: sand dollar, silver dollar
+DOLPHIN: bottlenose dolphin, amazon river dolphin (pink dolphin), dolphin, dusky dolphin
+DOODLE: irish doodle, double doodle
+DOVE: eurasian collared dove, mourning dove
+DRAGON: komodo dragon, sea dragon, dragon eel, blue dragon sea slug, water dragon, black dragon lizard, dragon snake (javan tubercle snake, javan mudsnake), bearded dragon
+DRUM: freshwater drum, drum fish, red drum fish
+DUCK: duck, diving duck, ruddy duck, black-bellied whistling duck, fulvous whistling duck, muscovy duck, nova scotia duck tolling retriever, wood duck
+DUSKY: dusky shark, dusky dolphin
+DUTCH: dutch rabbit, dutch shepherd
+DWARF: dwarf hamster, oriental dwarf kingfisher, dwarf gourami, dwarf crocodile, dwarf boa, virgin islands dwarf gecko, netherland dwarf rabbit
+EAGLE: golden eagle, african fish eagle, harpy eagle, eagle ray, eagle, haast’s eagle, mexican eagle (northern crested caracara), sea eagle, bald eagle, white-tailed eagle
+EARTH: rough earth snake, smooth earth snake
+EASTERN: eastern phoebe, eastern diamondback rattlesnake, eastern racer, eastern rat snake, eastern glass lizard, eastern turkey (wild turkey), eastern coral snake, eastern bluebird, eastern woodrat, eastern fence lizard, eastern meadowlark, eastern chipmunk, eastern dobsonfly, eastern brown snake, eastern gray squirrel, eastern lowland gorilla, eastern green mamba, eastern box turtle, eastern kingbird, eastern barred bandicoot, eastern tiger snake, eastern cottontail, eastern indigo snake, eastern gorilla, eastern hognose snake
+EEL: conger eel, dragon eel, freshwater eel, electric eel, eel catfish, moray eel, snowflake eel, pacific spaghetti eel, spotted garden eel, fire eel, wolf eel, garden eel, eel, banana eel, ribbon eel, tire track eel, american eel, gulper eel
+EGRET: great egret, egret
+EGYPTIAN: egyptian mau, egyptian cobra (egyptian asp), egyptian goose, egyptian tortoise, egyptian vulture
+EIDER: king eider, eider
+ELECTRIC: electric catfish, electric eel
+ELEPHANT: asian elephant, elephant bird, sri lankan elephant, elephant beetle, african forest elephant, elephant, elephant shrew, indian elephant, african bush elephant, borneo elephant, sumatran elephant, african elephant, elephant seal, elephant fish
+ELK: irish elk, roosevelt elk, elk
+ELKHOUND: norwegian elkhound, swedish elkhound
+EMERALD: emerald tree monitor, emerald toucanet, emerald tree boa
+EMPEROR: emperor penguin, emperor tamarin, purple emperor butterfly, emperor angelfish, emperor goose
+ENGLISH: english pointer, english angora rabbit, english springer spaniel, english shepherd, english cream golden retriever, english crested guinea pig, english bulldog, english cocker spaniel, english setter, english foxhound, old english sheepdog, english longhorn cattle, english toy terrier
+ESKIMO: american eskimo dog, eskimo dog, canadian eskimo dog
+EURASIAN: eurasian beaver, eurasian nuthatch, eurasian jay, eurasian bullfinch, eurasian wolf, eurasian lynx, eurasian eagle-owl, eurasian collared dove, eurasian sparrowhawk
+EUROPEAN: european bee-eater, european starling, european corn borer, common european adder, european robin, european wildcat, european polecat, european goldfinch
+EVENING: evening grosbeak, evening bat
+FAIRY: pink fairy armadillo, labout’s fairy wrasse
+FALCON: peregrine falcon, falcon
+FALSE: false coral snake, false water cobra, false widow spider, false cobra, false killer whale
+FEIST: feist, mountain feist
+FERRET: cinnamon ferret, ferret, black-footed ferret, angora ferret, sable ferret, white ferret / albino ferrets
+FIELD: field cuckoo bumblebee, field spaniel
+FINCH: finch, house finch, zebra finch, purple finch, gouldian finch, red finch
+FINNISH: finnish lapphund, finnish spitz
+FIRE: fire eel, fire ball python, fire salamander
+FIREFLY: firefly, firefly ball python
+FISH: african fish eagle, drum fish, goby fish, betta fish (siamese fighting fish), flying fish, flowerhorn fish, red drum fish, skate fish, pike fish, barreleye fish (barrel eye), fish, taimen fish, bonito fish, crappie fish, sheepshead fish, cobia fish, koi fish, wahoo fish, telescope fish, buffalo fish, mullet fish, oscar fish, elephant fish, fluke fish (summer flounder), barramundi fish, walleye fish, scorpion fish, flounder fish, snook fish, swai fish, stargazer fish, perch fish, pollock fish, pompano fish, butterfly fish, football fish
+FISH): betta fish (siamese fighting fish), zebrafish (zebra fish), urechis unicinctus (penis fish), mahi mahi (dolphin fish)
+FISHING: fishing spiders, fishing cat
+FLATHEAD: australian flathead perch, flathead catfish
+FLEA: flea, flea beetle
+FLORIDA: florida mouse, florida gar, florida woods cockroach, florida panther
+FLOUNDER: flounder fish, flounder
+FLY: fruit fly, tsetse fly, fly
+FLYCATCHER: vermilion flycatcher, flycatcher, amazonian royal flycatcher, scissor-tailed flycatcher, great crested flycatcher, least flycatcher, hammond’s flycatcher, willow flycatcher, acadian flycatcher
+FLYING: golden-crowned flying fox, flying fish, paradise flying snake, flying lemur, flying snake, flying squirrel
+FOREST: african forest elephant, norwegian forest, forest cuckoo bumblebee, forest cobra
+FOX: marble fox, wire fox terrier, bat-eared fox, toy fox terrier, red fox, gray fox, fox snakes, tibetan fox, crab-eating fox, fox, arctic fox, golden-crowned flying fox, fox squirrel, darwin’s fox, fox terrier, kit fox, fennec fox, smooth fox terrier, cross fox
+FOXHOUND: american foxhound, english foxhound
+FRENCH: french lop, french bulldog mix, french bulldog
+FRESHWATER: freshwater eel, freshwater jellyfish, freshwater crocodile, freshwater sunfish, freshwater drum
+FRILLED: frilled lizard, frilled shark
+FROG: oregon spotted frog, edible frog, argentine horned frog, african clawed frog, pool frog, marsh frog, frog, sehuencas water frog, leopard frog, green frog, holy cross frog, desert rain frog, scrotum frog, striped rocket frog, gray tree frog, burrowing frog, tree frog, common frog, turtle frog, red-eyed tree frog, poison dart frog, mantella frog, darwin’s frog, green tree frog, glass frog, wood frog, goliath frog
+FROGFISH: hairy frogfish, frogfish
+FRUIT: fruit fly, fruit bat, dried fruit moth
+FUR: northern fur seal, fur seal
+GALAPAGOS: galapagos tortoise, galapagos penguin, galapagos shark
+GAR: florida gar, longnose gar, alligator gar, spotted gar, gar
+GARDEN: spotted garden eel, garden spider, garden eel
+GARTER: san francisco garter snake, checkered garter snake, texas garter snake, garter snake
+GECKO: gecko, tangerine leopard gecko, leopard gecko, gargoyle gecko, mourning gecko, tokay gecko, australian gecko, crested gecko, leaf-tailed gecko, satanic leaf-tailed gecko, virgin islands dwarf gecko
+GERMAN: black german shepherd, blue german shepherd, german sheprador, sable black german shepherd, german wirehaired pointer, sable german shepherd, german cockroach, german sheppit, german shorthaired pointer, white german shepherd, german spitz, german longhaired pointer, german shepherd guide, german pinscher, german shepherd mix
+GHOST: desert ghost ball python, ghost crab, ghost catfish
+GIANT: giant siphonophore, indian giant squirrel, giant salamander, giant leopard moth, giant weta, asian giant hornet, giant house spider, giant schnoodle, giant golden mole, aldabra giant tortoise, giant panda bear, giant clam, giant schnauzer, giant beaver, giant wood moth, mekong giant catfish, giant armadillo, kinabalu giant red leech, giant african land snail, giant desert centipede, giant trevally, giant isopod
+GLASS: glass frog, eastern glass lizard, glass lizard
+GOAT: lamancha goat, boer goat, american pygmy goat, kiko goat, goat, nigerian goat, fainting goat, kinder goat, nubian goat, savanna goat, pygora goat, spanish goat, cashmere goat, alpine goat, saanen goat, angora goat
+GOLDEN: golden shiner, english cream golden retriever, giant golden mole, golden irish, golden masked owl, golden retriever, golden trout, african golden cat, golden pyrenees, golden jackal, golden lancehead, golden lion tamarin, golden saint, golden eagle, golden shepherd, golden tortoise beetle, golden dox, golden oriole, golden mole, golden newfie, golden retriever mix
+GOLDEN-CROWNED: golden-crowned flying fox, golden-crowned kinglet
+GOLDENDOODLE: petite goldendoodle, goldendoodle
+GOLDFISH: oranda goldfish, goldfish
+GOLIATH: goliath beetle, goliath grouper, goliath tigerfish, goliath frog
+GOOSE: snow goose, egyptian goose, goose, hawaiian goose (nene), emperor goose
+GOPHER: gopher, gopher tortoise, gopher snake
+GORILLA: cross river gorilla, gorilla, eastern gorilla, western lowland gorilla, western gorilla, mountain gorilla, eastern lowland gorilla
+GOURAMI: dwarf gourami, gourami, kissing gourami
+GRASS: grass spider, grass snake, grass carp
+GRASSHOPPER: grasshopper, rainbow grasshopper (dactylotum bicolor), grasshopper mouse, leichhardt’s grasshopper
+GRAY: gray fox, blue gray gnatcatcher, gray catbird, eastern gray squirrel, gray tree frog
+GREAT: great crested flycatcher, great dane, great hammerhead shark, great plains rat snake, great egret, great kiskadee, great danoodle, great potoo bird, great pyrenees, great pyrenees mix, great white shark, great blue heron, great dane mix
+GREBE: horned grebe, eared grebe, clark’s grebe, pied-billed grebe, grebe
+GREEN: green june beetle, green heron, western green mamba, green frog, green mamba, green bee-eater, eastern green mamba, green anaconda, smooth green snake, common green magpie, green aphids, green tree python, rough green snake, pink-necked green pigeon, green sunfish, green rat snake, green anole, green tree frog, green snake, green bottle blue tarantula
+GREENLAND: greenland shark, greenland dog
+GREY: grey reef shark, grey heron, grey seal, african grey parrot, grey mouse lemur
+GREYHOUND: italian greyhound, greyhound
+GRIFFON: petit basset griffon vendéen, brussels griffon, wirehaired pointing griffon, griffon vulture
+GROSBEAK: evening grosbeak, blue grosbeak, rose-breasted grosbeak
+GROUND: ground snake, ground squirrel, uinta ground squirrel
+GROUNDHOG: groundhog (woodchuck), groundhog tick
+GROUPER: goliath grouper, neptune grouper, grouper
+GUINEA: peruvian guinea pig, abyssinian guinea pig, guinea pig, english crested guinea pig, teddy guinea pig, guinea fowl
+GULL: herring gull, ring-billed gull
+GULPER: gulper catfish, gulper eel
+GYPSY: gypsy cuckoo bumblebee, gypsy moth, gypsy moth caterpillar
+HAIRY: hairy frogfish, hairy woodpecker
+HAMMERHEAD: great hammerhead shark, hammerhead shark, hammerhead worm, smooth hammerhead shark
+HAMSTER: teddy bear hamster, syrian hamster, dwarf hamster, hamster
+HARBOR: harbor seal, harbor porpoise
+HARE: hare, snowshoe hare, arctic hare
+HARLEQUIN: harlequin coral snake, harlequin rabbit
+HARRIER: harrier, northern harrier
+HAWAIIAN: hawaiian goose (nene), hawaiian crow, hawaiian monk seal
+HAWK: rough-legged hawk (rough-legged buzzard), harris’s hawk, tarantula hawk, oleander hawk moth, hawk moth caterpillar, sharp-shinned hawk, hawk, ferruginous hawk, cooper’s hawk, red-shouldered hawk, swainson’s hawk
+HEAD: apple head chihuahua, death’s head cockroach, deer head chihuahua
+HEELER: texas heeler, lancashire heeler
+HERCULES: hercules moth, hercules beetle
+HERMIT: hermit crab, strawberry hermit crab
+HERON: night heron, grey heron, green heron, great blue heron, heron
+HERRING: herring gull, herring
+HIGHLAND: highland cattle, west highland terrier
+HIPPOPOTAMUS: hippopotamus, hippopotamus gorgops, pygmy hippopotamus
+HOGNOSE: eastern hognose snake, southern hognose snake, hognose snake, plains hognose snake, western hognose snake
+HONEY: honey buzzard, honey bee, honey badger
+HOODED: hooded seal, hooded oriole
+HORNED: spider-tailed horned viper, horned grebe, horned lizard, horned adder, horned viper, argentine horned frog, horned beetle
+HORNET: hornet, asian giant hornet
+HORSE: horse, horse mackerel, canadian horse, devil’s coach horse beetle, tennessee walking horse, teacup miniature horse
+HOUND: transylvanian hound, pharaoh hound, plott hound mix, bagle – basset hound mix, american leopard hound, afghan hound, bavarian mountain hound, ibizan hound, basset hound
+HOUSE: old house borer, southern house spider, giant house spider, house wren, house finch, white-shouldered house moth, house sparrow (english sparrow), common house spider
+HUMBOLDT: humboldt squid, humboldt penguin
+HUMMINGBIRD: rufous hummingbird, hummingbird hawk-moth, hummingbird, costa’s hummingbird, ruby-throated hummingbird, anna’s hummingbird
+HUSKY: siberian husky, miniature husky, husky jack, husky, alaskan husky
+HYENA: brown hyena, striped hyena, hyena
+IBEX: ibex, siberian ibex
+IGUANA: blue iguana, marine iguana, iguana, jamaican iguana
+INDIAN: indian rhinoceros, indian giant squirrel, indian palm squirrel, indian elephant, indian star tortoise, indian cobra, indian python
+INDIGO: eastern indigo snake, indigo snake, texas indigo snake
+INSECT: insect, stick insect
+INU: shiba inu, shiba inu mix
+IRISH: irish elk, irish terrier, irish setter, irish water spaniel, irish doodle, irish wolfhound, golden irish
+ISLAND: rhode island red chicken, christmas island red crab
+ITALIANO: volpino italiano, spinone italiano, bracco italiano
+JACANA: bronze-winged jacana, african jacana, madagascar jacana, comb-crested jacana, northern jacana, lesser jacana, pheasant-tailed jacana, wattled jacana, jacana
+JACK: husky jack, jack russells, jack crevalle
+JACKAL: jackal, golden jackal
+JAMAICAN: jamaican boa, jamaican iguana
+JAPANESE: japanese spitz, japanese squirrel, japanese beetle, japanese terrier, japanese macaque, japanese bantam chicken, japanese rat snake, japanese chin
+JAVAN: javan leopard, javan rhinoceros, dragon snake (javan tubercle snake, javan mudsnake)
+JAY: blue jay, eurasian jay
+JELLYFISH: man of war jellyfish, jellyfish, moon jellyfish, irukandji jellyfish, immortal jellyfish, freshwater jellyfish, lion’s mane jellyfish, comb jellyfish, box jellyfish
+JUMPING: regal jumping spider, jumping spider
+JUNCO: dark-eyed junco
+JUNE: ten-lined june beetle, green june beetle
+KAI: alaskan klee kai, kai ken
+KANGAROO: kangaroo rat, tree kangaroo, kangaroo, kangaroo mouse
+KILLER: killer whale, killer clown ball python, false killer whale
+KING: king vulture, king crab, king quail, king mackerel, cavalier king charles spaniel, king rat snake, king cobra, king penguin, king shepherd, king snake, king eider, king salmon
+KINGBIRD: eastern kingbird, western kingbird
+KINGFISHER: kingfisher, oriental dwarf kingfisher, belted kingfisher, ringed kingfisher
+KINGLET: ruby-crowned kinglet, golden-crowned kinglet
+KINGSNAKE: speckled kingsnake, california kingsnake, scarlet kingsnake, mexican black kingsnake, desert kingsnake
+KISSING: kissing bugs, kissing gourami
+KITE: long-winged kite spider, red kite, mississippi kite
+KRAIT: banded krait, malayan krait, krait
+LABRADOODLE: mini labradoodle, australian labradoodle, labradoodle
+LABRADOR: labrador retriever, silver labrador
+LACE: lace monitor, lace bug
+LAIKA: west siberian laika, yakutian laika, east siberian laika
+LAKE: lake sturgeon, lake trout
+LAPPHUND: finnish lapphund, swedish lapphund
+LEAF-TAILED: leaf-tailed gecko, satanic leaf-tailed gecko
+LEAFCUTTER: leafcutter bee, leafcutter ant
+LEECH: leech, kinabalu giant red leech
+LEMON: lemon cuckoo bumblebee, lemon shark, lemon blast ball python
+LEMUR: flying lemur, lemur, grey mouse lemur
+LEOPARD: amur leopard, leopard frog, leopard tortoise, tangerine leopard gecko, javan leopard, leopard gecko, leopard shark, leopard cat, american leopard hound, leopard, giant leopard moth, clouded leopard, snow leopard, catahoula leopard, leopard seal, leopard lizard
+LESSER: lesser scaup, lesser jacana
+LION: lion, cave lion, cape lion, mountain lion, golden lion tamarin, sea lion
+LIOPLEURODON: liopleurodon
+LITTLE: little brown bat, little penguin
+LIZARD: caiman lizard, frilled lizard, mexican alligator lizard, eastern glass lizard, draco volans lizard, yellow spotted lizard, skink lizard, eastern fence lizard, anole lizard, glass lizard, lazarus lizard, whiptail lizard, texas spiny lizard, blue belly lizard, horned lizard, agama lizard, monitor lizard, black dragon lizard, leopard lizard, basilisk lizard, earless monitor lizard, sand lizard, lizard, northern alligator lizard, armadillo lizard, mexican mole lizard
+LOCUST: desert locust, locust
+LONGHORN: asian longhorn beetle, english longhorn cattle
+LOP: french lop, mini lop
+LOWLAND: western lowland gorilla, eastern lowland gorilla, polish lowland sheepdog
+LUNA: luna moth caterpillar, luna moth
+LYNX: eurasian lynx, canada lynx, lynx, balkan lynx
+MACAQUE: macaque, crab-eating macaque, japanese macaque, rhesus macaque
+MACAW: macaw, scarlet macaw, hyacinth macaw, spixs macaw
+MACKEREL: king mackerel, horse mackerel, spanish mackerel
+MADAGASCAR: madagascar tree boa, madagascar hissing cockroach, madagascar jacana
+MAGPIE: magpie, common green magpie
+MAHI: mahi mahi (dolphin fish)
+MAKO: shortfin mako shark, longfin mako shark
+MALAYAN: malayan tiger, malayan civet, malayan krait
+MALINOIS: belgian malinois mix, belgian malinois
+MALTESE: teacup maltese, maltese shih tzu, maltese mix, maltese
+MAMBA: black mamba, green mamba, western green mamba, mamba, eastern green mamba
+MANGROVE: mangrove snake, mangrove snapper
+MARINE: marine iguana, marine toad
+MARLIN: white marlin, black marlin
+MARMOSET: marmoset, pygmy marmoset (finger monkey)
+MARMOT: marmot, olympic marmot
+MASKED: masked palm civet, golden masked owl, masked angelfish
+MASTIFF: mastiff mix, neapolitan mastiff, mastiff, tibetan mastiff, pyrenean mastiff, spanish mastiff
+MEXICAN: mexican fireleg tarantula, mexican eagle (northern crested caracara), mexican alligator lizard, mexican free-tailed bat, mexican mole lizard, mexican black kingsnake
+MINI: mini labradoodle, mini lop
+MINIATURE: miniature husky, miniature pinscher, miniature bull terrier, teacup miniature horse
+MINING: tawny mining bee, ashy mining bee
+MIX: belgian malinois mix, bulldog mix, bagle – basset hound mix, dachshund mix, dalmatian mix, great pyrenees mix, great dane mix, rottweiler mix, boxer mix, papillon mix, pomeranian mix, shih tzu mix, french bulldog mix, german shepherd mix, collie mix, pointer mix, pug mix, mastiff mix, australian shepherd mix, bernese mountain dog mix, basenji mix, beagle mix, maltese mix, plott hound mix, shiba inu mix, chihuahua mix, golden retriever mix, border collie mix
+MOJAVE: mojave rattlesnake, mojave ball python
+MOLA: mola mola (ocean sunfish)
+MOLE: naked mole rat, mole, mole crab (sand flea), golden mole, giant golden mole, mexican mole lizard, star-nosed mole, mole cricket, mole snake
+MONITOR: nile monitor, earless monitor lizard, crocodile monitor, black throat monitor, asian water monitor, red ackie monitor, monitor lizard, ackie monitor, emerald tree monitor, lace monitor, savannah monitor
+MONKEY: de brazza’s monkey, patas monkey, howler monkey, spider monkey, monkey, squirrel monkey, proboscis monkey, vervet monkey, woolly monkey
+MONSTER: gila monster, tully monster
+MOTH: hercules moth, imperial moth, southern flannel moth, moth, indianmeal moth, tussock moth, hawk moth caterpillar, polyphemus moth, comet moth, atlas moth, giant leopard moth, clothes moth, gypsy moth, tussock moth caterpillar, luna moth caterpillar, wax moth, madora moth, peppered moth, codling moth, black witch moth, winter moth, box tree moth, saturniidae moth, cecropia moth, giant wood moth, io moth, tiger moth, bagworm moth, spongy moth, gypsy moth caterpillar, underwing moth, white-shouldered house moth, diamondback moth, snowberry clearwing moth, cactus moth, cabbage moth, oleander hawk moth, luna moth, bagworm moth caterpillar, apple moth, puss moth, dried fruit moth
+MOUNTAIN: entlebucher mountain dog, mountain cur, bernese mountain dog, formosan mountain dog, greater swiss mountain dog, estrela mountain dog, mountain bluebird, mountain beaver, caucasian mountain dog (shepherd), mountain feist, mountain lion, bavarian mountain hound, mountain gorilla, bernese mountain dog mix
+MOURNING: mourning gecko, mourning warbler, mourning dove
+MOUSE: fancy mouse, kangaroo mouse, mouse, florida mouse, mouse spider, cactus mouse, grasshopper mouse, deer mouse, grey mouse lemur
+MULE: mule deer, mule
+MUSKELLUNGE: tiger muskellunge (muskie), muskellunge (muskie)
+MUTTABURRASAURUS: muttaburrasaurus
+NEWFOUNDLAND: landseer newfoundland, newfoundland
+NIGHT: night adder, night heron, night snake, texas night snake
+NILE: nile monitor, nile perch, nile crocodile
+NORTHERN: northern fur seal, northern water snake, northern screamer, northern pintail, northern bobwhite, northern parula, northern alligator lizard, northern jacana, northern cardinal, northern flicker, northern harrier, northern potoo, northern inuit dog
+NORWEGIAN: norwegian buhund, norwegian forest, norwegian lundehund, norwegian elkhound
+NOSE: blue nose pit bull, red nose pit bull
+NUTHATCH: nuthatch, eurasian nuthatch
+OCEAN: ocean pout, ocean whitefish, ocean perch
+OCTOPUS: octopus, blanket octopus, blue-ringed octopus
+OLD: old english sheepdog, old house borer
+OLIVE: olive baboon, olive python, olive sea snake
+ORANGE: orange dream ball python, orange spider, orange baboon tarantula, orange tanager (orange-headed tanager), orange roughy
+ORANGUTAN: tapanuli orangutan, sumatran orangutan, bornean orangutan, orangutan
+ORCHID: orchid dottyback, peruvian inca orchid
+ORIENTAL: oriental dwarf kingfisher, oriental cockroach
+ORIOLE: golden oriole, hooded oriole, orchard oriole
+ORNATE: ornate box turtle, ornate black-tailed rattlesnake, ornate bichir
+OTTER: otter, river otter, sea otter
+OWL: barred owl, barn owl, owl butterfly, owl, snowy owl, long-eared owl, burrowing owl, tawny owl, short-eared owl, golden masked owl, elf owl, ural owl
+OYSTER: oyster, oyster toadfish
+PACIFIC: pacific sleeper shark, western rattlesnake (northern pacific rattlesnake), pacific spaghetti eel, pacific coast tick, southern pacific rattlesnake
+PADDLEFISH: chinese paddlefish, paddlefish, american paddlefish
+PAINTED: painted bunting, painted turtle
+PALM: banded palm civet, indian palm squirrel, african palm civet, palm rat, masked palm civet, asian palm civet
+PANDA: giant panda bear, panda pied ball python, red panda
+PANTHER: florida panther, panther
+PAPILLON: papillon mix, papillon
+PARADISE: paradise flying snake, bird of paradise
+PARAKEET: parakeet, carolina parakeet
+PARROT: eclectus parrot, pesquet’s parrot (dracula parrot), parrot, amazon parrot, senegal parrot, parrot snake, african grey parrot
+PASTEL: black pastel ball python, super pastel ball python
+PATAGONIAN: patagonian mara, patagonian cavy
+PEACOCK: peacock butterfly, peacock, peacock bass, peacock spider
+PENGUIN: emperor penguin, adélie penguin, macaroni penguin, african penguin, magellanic penguin, little penguin, penguin, king penguin, crested penguin, royal penguin, galapagos penguin, gentoo penguin, humboldt penguin, yellow-eyed penguin, rockhopper penguin, chinstrap penguin
+PERCH: yellow perch, nile perch, perch fish, australian flathead perch, ocean perch
+PERUVIAN: peruvian guinea pig, peruvian inca orchid
+PICARDY: picardy spaniel, blue picardy spaniel
+PIED: pied tamarin, panda pied ball python, pied ball python
+PIG: peruvian guinea pig, abyssinian guinea pig, guinea pig, english crested guinea pig, pig, teddy guinea pig
+PIGEON: pigeon, nicobar pigeon, pink-necked green pigeon
+PINE: pine siskin, pine beetle, pine marten, pine snake
+PINK: pink bollworm, pink toed tarantula, pink fairy armadillo, pink salmon
+PINSCHER: german pinscher, miniature pinscher, doberman pinscher
+PIT: american pit bull terrier, pit viper, red nose pit bull, blue nose pit bull, pit bull
+PLAINS: great plains rat snake, plains hognose snake
+PLECO: zebra pleco, blue eyed pleco
+PLOTT: plott hound mix, plott hounds
+POCKET: pocket pitbull, pocket beagle
+POINTER: english pointer, pointer, german shorthaired pointer, german wirehaired pointer, german longhaired pointer, pointer mix
+POLECAT: polecat, european polecat
+POLISH: polish tatra sheepdog, polish lowland sheepdog, polish chicken
+POLLOCK: pollock fish, alaskan pollock
+POMERANIAN: pomeranian mix, pomeranian
+POODLE: toy poodle, teacup poodle, poodle
+POTOO: northern potoo, potoo, great potoo bird
+PRAIRIE: prairie chicken, prairie rattlesnake, prairie dog
+PSITTACOSAURUS: psittacosaurus
+PUG: pug mix, pug
+PURPLE: purple tarantula, purple emperor butterfly, purple finch, purple gallinule
+PUSS: puss caterpillar, puss moth
+PYGMY: pygmy rattlesnake, american pygmy goat, scale-crested pygmy tyrant, pygmy hippopotamus, pygmy shark, pygmy marmoset (finger monkey), pygmy python
+PYRENEAN: pyrenean shepherd, pyrenean mastiff
+PYRENEES: great pyrenees, great pyrenees mix, golden pyrenees
+PYTHON: children’s python, desert ghost ball python, timor python, cinnamon ball python, woma python, cow reticulated python, carpet python, olive python, banana cinnamon ball python, boelen’s python, black pastel ball python, banana ball python, axanthic ball python, savu python, python, panda pied ball python, amethystine python (scrub python), coastal carpet python, reticulated python, firefly ball python, freeway ball python, enchi ball python, pygmy python, mojave ball python, spider ball python, killer clown ball python, pied ball python, ball python, diamond python, super pastel ball python, orange dream ball python, lavender albino ball python, bismarck ringed python, scaleless ball python, oenpelli python, black-headed python, rock python, yellow belly ball python, spotted python, green tree python, sunset ball python, blood python, bredl’s python, burmese python, fire ball python, lemon blast ball python, jungle carpet python, indian python
+QUAIL: quail, king quail
+RABBIT: dutch rabbit, english angora rabbit, harlequin rabbit, rabbit, netherland dwarf rabbit, rex rabbit
+RACCOON: raccoon dog, raccoon
+RACER: southern black racer, racer snake, red racer snake, eastern racer, blue racer, antiguan racer snake
+RAINBOW: rainbow kribs (kribensis), rainbow shark, rainbow boa, rainbow grasshopper (dactylotum bicolor)
+RAT: cane rat, rat, great plains rat snake, rat terrier, western rat snake, eastern rat snake, japanese rat snake, norway rat, king rat snake, texas rat snake, black rat snake, naked mole rat, palm rat, rat snakes, bamboo rat, kangaroo rat, beauty rat snake, baird’s rat snake, green rat snake, mandarin rat snake
+RATTLESNAKE: pygmy rattlesnake, black-tailed rattlesnake, western diamondback rattlesnake, ornate black-tailed rattlesnake, western rattlesnake (northern pacific rattlesnake), eastern diamondback rattlesnake, mojave rattlesnake, arizona black rattlesnake, timber rattlesnake (canebrake rattlesnake), prairie rattlesnake, tiger rattlesnake, rattlesnake, red diamondback rattlesnake, aruba rattlesnake, midget faded rattlesnake, southern pacific rattlesnake
+RATTLESNAKE): western rattlesnake (northern pacific rattlesnake), timber rattlesnake (canebrake rattlesnake)
+RAY: manta ray, xingu river ray, thornback ray, eagle ray
+RED: red drum fish, red paper wasp, red spitting cobra, red racer snake, red tail boa (common boa), red deer, red fox, red wolf, red star chicken, red kite, christmas island red crab, red nose pit bull, red aphids, red panda, red squirrel, kinabalu giant red leech, red knee tarantula, rhode island red chicken, red finch, red ackie monitor, red diamondback rattlesnake, new hampshire red chicken
+RED-BELLIED: red-bellied black snake, red-bellied woodpecker
+REEF: bigfin reef squid, reef shark, caribbean reef shark, grey reef shark, blacktip reef shark
+RETICULATED: cow reticulated python, reticulated python
+RETRIEVER: comfort retriever, english cream golden retriever, siberian retriever, labrador retriever, nova scotia duck tolling retriever, curly coated retriever, australian retriever, golden retriever, golden retriever mix, chesapeake bay retriever, flat-coated retriever
+REX: corn rex cat (cornish rex), devon rex, tyrannosaurus rex, rex rabbit
+RHINO: rhino beetle, rhino viper
+RHINOCEROS: javan rhinoceros, white rhinoceros, sumatran rhinoceros, rhinoceros, woolly rhinoceros, black rhinoceros, indian rhinoceros
+RIBBON: ribbon snake, ribbon eel
+RIDGEBACK: rhodesian ridgeback, thai ridgeback
+RINGED: ringed kingfisher, bismarck ringed python
+RIVER: xingu river ray, cross river gorilla, amazon river dolphin (pink dolphin), river turtle, river otter
+ROBIN: robin, american robin, european robin
+ROCK: rim rock crowned snake, rock bass, rock python, plymouth rock chicken, rock hyrax, rock crab
+ROOSEVELT: roosevelt elk, teddy roosevelt terrier
+ROTTWEILER: rottweiler, long-haired rottweiler, rottweiler mix
+ROUGH: rough earth snake, rough green snake
+ROYAL: royal penguin, amazonian royal flycatcher
+RUDDY: ruddy duck, ruddy turnstone
+RUSSELL: parson russell terrier, russell terrier
+RUSSIAN: russian blue, russian tortoise, russian bear dog, black russian terrier
+SABLE: sable german shepherd, sable, sable ferret, sable black german shepherd
+SAINT: saint shepherd, saint berdoodle, saint bernard, golden saint
+SALAMANDER: giant salamander, salamander, fire salamander, tiger salamander
+SALMON: salmon shark, keta salmon, sockeye salmon, chinook salmon, steelhead salmon, pink salmon, salmon, atlantic salmon, king salmon, kokanee salmon
+SAND: six-eyed sand spiders, sand lizard, sand crab, sand cat, sand viper, sand tiger shark, kenyan sand boa, sand dollar
+SANDPIPER: sandpiper, upland sandpiper
+SAUROPODA: sauropoda
+SAVANNAH: savannah sparrow, savannah monitor
+SCARLET: scarlet tanager, scarlet macaw, scarlet kingsnake
+SCHNAUZER: standard schnauzer, parti schnauzer, giant schnauzer
+SCHNOODLE: giant schnoodle, schnoodle
+SCORPION: scorpion fish, scorpion, bark scorpion, tailless whip scorpion, arizona bark scorpion
+SCOTTISH: scottish deerhound, scottish fold cat, scottish terrier
+SEA: sea snake, sea urchin, sea bass, sea dragon, sea anemone, sea eagle, yellow-bellied sea snake, leatherback sea turtle, sea otter, sea spider, sea trout, sea lion, sea roach, black sea bass, olive sea snake, sea squirt, steller’s sea cow, sea turtle, blue dragon sea slug, sea slug, hook-nosed sea snake
+SEAL: harbor seal, northern fur seal, hooded seal, hawaiian monk seal, seal, harp seal, grey seal, elephant seal, fur seal, leopard seal, crabeater seal
+SETTER: gordon setter, irish setter, english setter
+SHARK: bonnethead shark, reef shark, caribbean reef shark, megamouth shark, sixgill shark, white shark, lemon shark, sand tiger shark, blue shark, bull shark, dusky shark, goblin shark, basking shark, spinner shark, pyjama shark, viper shark (dogfish), blacktip reef shark, porbeagle shark, smooth hammerhead shark, frilled shark, great white shark, kitefin shark, nurse shark, silky shark, bronze whaler shark, pacific sleeper shark, bamboo shark, cookiecutter shark, whale shark, blacknose shark, great hammerhead shark, shark, greenland shark, salmon shark, thresher shark, crocodile shark, longfin mako shark, oceanic whitetip shark, blacktip shark, leopard shark, grey reef shark, shortfin mako shark, zebra shark, sleeper shark, pygmy shark, galapagos shark, horn shark, tiger shark, hammerhead shark, rainbow shark
+SHEEP: bighorn sheep, aoudad sheep, sheep
+SHEEPDOG: shetland sheepdog, maremma sheepdog, polish tatra sheepdog, icelandic sheepdog, belgian sheepdog, catalan sheepdog, polish lowland sheepdog, old english sheepdog, croatian sheepdog
+SHEPHERD: alaskan shepherd, white german shepherd, akita shepherd, german shepherd guide, chow shepherd, corman shepherd, german shepherd mix, pyrenean shepherd, caucasian shepherd, black german shepherd, bernese shepherd, shiloh shepherd, sable german shepherd, australian shepherd, beagle shepherd, saint shepherd, australian shepherd mix, golden shepherd, blue german shepherd, english shepherd, sable black german shepherd, dutch shepherd, anatolian shepherd dog, belgian shepherd, king shepherd, kangal shepherd dog
+SHIBA: shiba inu, shiba inu mix
+SHIH: shih tzu mix, shih tzu, maltese shih tzu, shih poo
+SHREW: shrew, elephant shrew
+SHRIMP: shrimp, dinosaur shrimp, amano shrimp
+SIBERIAN: siberian husky, siberian ibex, siberian, siberian retriever, siberian tiger, west siberian laika, east siberian laika
+SILKY: silky shark, silky terrier
+SILVER: silver labrador, silver dollar
+SKATE: clearnose skate, skate fish
+SKUNK: spotted skunk, skunk
+SLEEPER: sleeper shark, pacific sleeper shark
+SLUG: sea slug, blue dragon sea slug, slug
+SMOOTH: smooth green snake, smooth fox terrier, smooth hammerhead shark, smooth snake, smooth earth snake
+SNAIL: snail, assassin snail, giant african land snail, volcano snail, cone snail
+SNAKE: sea snake, northern water snake, banded water snake, rim rock crowned snake, great plains rat snake, paradise flying snake, indigo snake, mussurana snake, grass snake, eastern coral snake, mamushi snake, ribbon snake, milk snake, tasmanian tiger snake, racer snake, yellow-bellied sea snake, smooth earth snake, tiger snake, moccasin snake, brown snake, southern hognose snake, texas night snake, plains hognose snake, brown water snake, false coral snake, rough green snake, eastern hognose snake, green rat snake, western blind snake, garter snake, pine snake, ground snake, hook-nosed sea snake, mangrove snake, chicken snake, gopher snake, red racer snake, eastern rat snake, rough earth snake, de kay’s brown snake, mole snake, arizona coral snake, smooth snake, antiguan racer snake, urutu snake, bird snake, brown tree snake, rhombic egg-eater snake, cat-eyed snake, smooth green snake, harlequin coral snake, tentacled snake, bushmaster snake, twig snake, fer-de-lance snake, zebra snake, vine snake, green snake, cat snake, texas indigo snake, western rat snake, hognose snake, collett’s snake, western hognose snake, arafura file snake, corn snake, sharp-tailed snake, king rat snake, eastern brown snake, texas rat snake, black rat snake, kirtland’s snake, asian vine snake, sunbeam snake, fierce snake, flying snake, red-bellied black snake, texas blind snake, texas garter snake, worm snake, eastern indigo snake, queen snake, habu snake, mandarin rat snake, coral snake, texas coral snake, snake, rinkhals snake, albino (amelanistic) corn snake, japanese rat snake, blind snake, coachwhip snake, aesculapian snake, stiletto snake, king snake, checkered garter snake, pipe snake, tree snake, san francisco garter snake, eastern tiger snake, mud snake, parrot snake, dragon snake (javan tubercle snake, javan mudsnake), beauty rat snake, baird’s rat snake, wolf snake, olive sea snake, night snake, congo snake, mulga snake
+SNAPPER: yellowtail snapper, cubera snapper, mangrove snapper
+SNOW: snow bunting, snow goose, snow crab, snow leopard
+SNOWSHOE: snowshoe, snowshoe hare
+SONG: song sparrow, song thrush
+SOUTHERN: southern black racer, southern house spider, southern flannel moth, southern hognose snake, southern pacific rattlesnake
+SPANIEL: english springer spaniel, american cocker spaniel, irish water spaniel, cavalier king charles spaniel, boykin spaniel, cocker spaniel, picardy spaniel, american water spaniel, english cocker spaniel, field spaniel, blue picardy spaniel, tibetan spaniel, clumber spaniel, welsh springer spaniel
+SPANISH: spanish mastiff, spanish goat, spanish mackerel, spanish water dog
+SPARROW: song sparrow, chipping sparrow, savannah sparrow, sparrow, house sparrow (english sparrow), white-crowned sparrow
+SPARROWHAWK: sparrowhawk, eurasian sparrowhawk
+SPECKLED: speckled trout, speckled kingsnake
+SPIDER: grass spider, spider monkey, cat-faced spider, hobo spider, sequined spider, banana spider, cane spider, peacock spider, regal jumping spider, camel spider, black widow spider, giant house spider, garden spider, clock spider, huntsman spider, redback spider, crab spider, spider wasp, trapdoor spider, yellow sac spider, diving bell spider (water spider), spider ball python, spider beetle, southern house spider, writing spider, long-winged kite spider, sea spider, false widow spider, barn spider, mouse spider, woodlouse spider, jumping spider, orange spider, chilean recluse spider, joro spider, wolf spider, common house spider, spider
+SPIDERS: six-eyed sand spiders, fishing spiders
+SPINY: spiny dogfish, spiny hill turtle, texas spiny lizard, spiny bush viper
+SPITTING: spitting cobra, equatorial spitting cobra, red spitting cobra, zebra spitting cobra, mozambique spitting cobra
+SPITZ: german spitz, japanese spitz, finnish spitz
+SPONGY: spongy moth
+SPOTTED: yellow spotted lizard, spotted lanternfly, spotted garden eel, oregon spotted frog, spotted skunk, common spotted cuscus, spotted gar, spotted python, spotted bass
+SPRINGER: welsh springer spaniel, english springer spaniel
+SQUASH: squash bee, squash beetle
+SQUID: bigfin reef squid, colossal squid, humboldt squid, squid, vampire squid
+SQUIRREL: squirrel, uinta ground squirrel, indian giant squirrel, indian palm squirrel, japanese squirrel, fox squirrel, red squirrel, squirrel monkey, eastern gray squirrel, ground squirrel, flying squirrel
+STAFFORDSHIRE: american staffordshire terrier, staffordshire bull terrier
+STAR: lone star tick, red star chicken, feather star, indian star tortoise
+STINGRAY: polka dot stingray, stingray
+STORK: stork, marabou stork, shoebill stork
+STRIPED: striped bass, striped hyena, striped rocket frog
+STURGEON: white sturgeon, sturgeon, lake sturgeon, beluga sturgeon, kaluga sturgeon, atlantic sturgeon
+SUMATRAN: sumatran elephant, sumatran rhinoceros, sumatran tiger, sumatran orangutan
+SUNBEAM: sunbeam snake, angled sunbeam caterpillar
+SUNFISH: freshwater sunfish, green sunfish, redear sunfish
+SWALLOW: swallow, barn swallow, tree swallow
+SWALLOWTAIL: black swallowtail caterpillar, swallowtail butterfly, swallowtail caterpillar, tiger swallowtail, tiger swallowtail caterpillar, black swallowtail
+SWAN: swan, tundra swan
+SWEDISH: danish swedish farmdog, swedish lapphund, swedish elkhound, swedish vallhund
+TAIPAN: inland taipan, taipan, central ranges taipan, coastal taipan
+TAKIN: takin, sichuan takin (tibetan takin), bhutan takin
+TAMARIN: emperor tamarin, pied tamarin, golden lion tamarin, geoffroys tamarin, red-handed tamarin, cotton-top tamarin, tamarin
+TANAGER: summer tanager, hepatic tanager (red tanager), scarlet tanager, orange tanager (orange-headed tanager), western tanager, yellow tanager (black-and-yellow tanager), blue tanager (blue-grey tanager)
+TANAGER): orange tanager (orange-headed tanager), hepatic tanager (red tanager), blue tanager (blue-grey tanager), yellow tanager (black-and-yellow tanager)
+TANG: tang, yellow tang, blue tang
+TARANTULA: pink toed tarantula, cobalt blue tarantula, orange baboon tarantula, gooty sapphire tarantula, brazilian black tarantula, purple tarantula, california tarantula, texas brown tarantula, chilean rose tarantula, black tarantula, mexican fireleg tarantula, curly hair tarantula, red knee tarantula, skeleton tarantula, pumpkin patch tarantula, zebra tarantula, arizona blonde tarantula, tarantula hawk, tarantula, green bottle blue tarantula
+TASMANIAN: tasmanian tiger, tasmanian tiger snake, tasmanian devil
+TAWNY: tawny frogmouth, tawny owl, tawny mining bee
+TEACUP: teacup maltese, teacup poodle, teacup miniature horse, teacup chihuahua
+TEDDY: teddy roosevelt terrier, teddy guinea pig, teddy bear hamster
+TENNESSEE: tennessee walking horse, treeing tennessee brindle
+TERRIER: parson russell terrier, sealyham terrier, glen of imaal terrier, welsh terrier, american pit bull terrier, rat terrier, wire fox terrier, staffordshire bull terrier, skye terrier, american hairless terrier, airedale terrier, boglen terrier, yorkshire terrier, scottish terrier, teddy roosevelt terrier, toy fox terrier, biewer terrier, silky terrier, kerry blue terrier, bedlington terrier, cairn terrier, tibetan terrier, black russian terrier, bull and terrier, terrier, norfolk terrier, english toy terrier, brazilian terrier, boston terrier, russell terrier, irish terrier, border terrier, lakeland terrier, manchester terrier, norwich terrier, cesky terrier, fox terrier, japanese terrier, bull terrier, taco terrier, patterdale terrier, miniature bull terrier, wheaten terrier, smooth fox terrier, west highland terrier, dandie dinmont terrier, american staffordshire terrier, australian terrier, tenterfield terrier
+TETRA: x-ray tetra, tetra, neon tetra, ember tetra
+TEXAS: texas blind snake, texas coral snake, texas indigo snake, texas night snake, texas heeler, texas rat snake, texas garter snake, texas brown tarantula, texas spiny lizard
+THRUSH: thrush, song thrush
+THYLACOLEO: thylacoleo carnifex, thylacoleo
+TIBETAN: tibetan terrier, tibetan mastiff, tibetan fox, tibetan spaniel
+TICK: lone star tick, groundhog tick, brown dog tick, western blacklegged tick, deer tick, dog tick, wood tick, pacific coast tick, tick, american dog tick
+TIGER: tiger rattlesnake, malayan tiger, sand tiger shark, tiger trout, bengal tiger, tasmanian tiger snake, south china tiger, tiger swallowtail, sumatran tiger, tiger snake, tasmanian tiger, tiger, eastern tiger snake, siberian tiger, tiger moth, tiger swallowtail caterpillar, saber-toothed tiger, tiger muskellunge (muskie), white tiger, tiger beetle, tiger shark, indochinese tiger, tiger salamander
+TIMBER: timber rattlesnake (canebrake rattlesnake), british timber
+TIT: blue tit, long-tailed tit
+TOAD: wyoming toad, oak toad, spadefoot toad, marine toad, american toad, fire-bellied toad, common toad, african tree toad
+TOADFISH: toadfish, oyster toadfish
+TORTOISE: golden tortoise beetle, gopher tortoise, leopard tortoise, tortoise, russian tortoise, egyptian tortoise, aldabra giant tortoise, red-footed tortoise, sulcata tortoise, indian star tortoise, radiated tortoise, galapagos tortoise, desert tortoise
+TOUCAN: keel-billed toucan, toucan
+TOY: toy poodle, english toy terrier, toy fox terrier
+TREE: green tree python, brown tree snake, tree swallow, madagascar tree boa, tree viper (bamboo viper), emerald tree boa, gray tree frog, green tree frog, amazon tree boa, red-eyed tree frog, tree kangaroo, tree cricket, tree snake, tree frog, emerald tree monitor, box tree moth, african tree toad
+TREEHOPPER: brazilian treehopper, treehopper
+TREEING: treeing walker coonhound, treeing tennessee brindle
+TROUT: golden trout, bull trout, trout, sea trout, tiger trout, brook trout, speckled trout, lake trout
+TUFTED: tufted coquette, tufted titmouse
+TUNA: skipjack tuna, bluefin tuna, albacore tuna, yellowfin tuna, blackfin tuna, tuna
+TURKEY: ocellated turkey, turkey vulture, eastern turkey (wild turkey), turkey
+TURTLE: eastern box turtle, ornate box turtle, leatherback sea turtle, river turtle, wood turtle, sea turtle, pig-nosed turtle, painted turtle, spiny hill turtle, snapping turtle, box turtle, turtle frog, archelon turtle
+TUSSOCK: tussock moth, tussock moth caterpillar
+TZU: shih tzu mix, shih tzu, maltese shih tzu, cava tzu
+VALLEY: mackenzie valley wolf, valley bulldog
+VAMPIRE: vampire bat, vampire squid, vampire crab
+VINE: asian vine snake, vine snake
+VIPER: carpet viper, nose-horned viper, bush viper, rhino viper, russel’s viper, saw-scaled viper, spider-tailed horned viper, horned viper, viper, pit viper, eyelash viper, viper shark (dogfish), sand viper, spiny bush viper, viper boa, gaboon viper, tree viper (bamboo viper)
+VIZSLA: wirehaired vizsla, vizsla
+VOLE: vole, water vole
+VULTURE: bearded vulture, king vulture, red-headed vulture, turkey vulture, griffon vulture, vulture, cinereous vulture, egyptian vulture, lappet-faced vulture
+WALKING: tennessee walking horse, walking catfish
+WARBLER: mourning warbler, warbler, sedge warbler, chestnut-sided warbler, kentucky warbler, blackpoll warbler, orange-crowned warbler, canada warbler, willow warbler, blackburnian warbler, black and white warbler, macgillivray’s warbler, magnolia warbler
+WASP: executioner wasp, red paper wasp, beewolf wasp, spider wasp, black wasp, wasp
+WATER: false water cobra, northern water snake, sehuencas water frog, banded water snake, water bug, chinese water deer, irish water spaniel, spanish water dog, asian water monitor, water beetle, water buffalo, american water spaniel, water vole, brown water snake, water dragon
+WEAVER: weaver bird, orb weaver
+WELSH: welsh terrier, welsh black cattle, welsh springer spaniel, pembroke welsh corgi, welsh corgi
+WEST: west highland terrier, west siberian laika
+WESTERN: western diamondback rattlesnake, western blacklegged tick, western lowland gorilla, western rattlesnake (northern pacific rattlesnake), western kingbird, western blind snake, western green mamba, western rat snake, western gorilla, western tanager, western hognose snake
+WHALE: humpback whale, killer whale, whale shark, bowhead whale, baleen whale, minke whale, blue whale, fin whale, false killer whale, sperm whale, sei whale
+WHISTLING: black-bellied whistling duck, fulvous whistling duck
+WHITE: white bass, white rhinoceros, white ferret / albino ferrets, white sturgeon, white shark, argentine black and white tegu, white catfish, white german shepherd, white marlin, white tiger, honduran white bat, black and white warbler, great white shark, white crappie, white butterfly
+WIDOW: black widow spider, false widow spider
+WILD: african wild dog, wild boar
+WILLOW: willow flycatcher, willow warbler
+WIREHAIRED: wirehaired vizsla, german wirehaired pointer, wirehaired pointing griffon
+WOLF: wolf snake, arctic wolf, mackenzie valley wolf, red wolf, desert wolf, wolf eel, apennine wolf, arabian wolf, eurasian wolf, wolf, wolf spider, dire wolf, maned wolf
+WOLFDOG: czechoslovakian wolfdog, saarloos wolfdog
+WOOD: pennsylvania wood cockroach, wood turtle, giant wood moth, wood tick, wood bison, wood duck, wood frog
+WOODLOUSE: woodlouse spider, woodlouse
+WOODPECKER: downy woodpecker, red-bellied woodpecker, hairy woodpecker, woodpecker, ivory-billed woodpecker, pileated woodpecker
+WOODRAT: diminutive woodrat, woodrat, eastern woodrat
+WOOLLY: woolly bear caterpillar, woolly rhinoceros, woolly monkey, woolly aphids, woolly mammoth
+WORM: worm snake, worm, hammerhead worm, antarctic scale worm, slow worm
+WRASSE: wrasse, labout’s fairy wrasse
+WREN: house wren, cactus wren
+YELLOW: yellow sac spider, yellow anaconda, yellow perch, yellow spotted lizard, yellow tang, yellow bellied sapsucker, yellow crazy ant, yellow bass, yellow aphids, yellow belly ball python, yellow tanager (black-and-yellow tanager), yellow bullhead catfish, yellow cobra
+YELLOWTHROAT: yellowthroat, common yellowthroat
+ZEBRA: zebra finch, zebra snake, zebra shark, zebra spitting cobra, zebra, zebra pleco, zebra mussels, zebra tarantula
