@@ -6,10 +6,10 @@ export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
     pretitle: "Your",
-    title: "digital companion",
-    description: "Create & respond to personalized prompts to understand changes in your behavior over time",
+    title: "personal assistant",
+    description: "Understand changes in your behavior over time with personalized prompts.",
     featuresList: [
-      "Get personalized plans and recommendations to meet your desired goals",
+      "Get recommendations to meet your daily goals",
       "Understand the impact of daily activities on your health and performance",
       "Reflect in one-click, even on your busiest days",
       "Share reports with your friends & family",
@@ -27,7 +27,7 @@ export const fusionFeatures: IFusionFeature[] = [
   },
   {
     id: 3,
-    title: "explorers & researchers",
+    title: "researchers",
     description: "Record experiments & design quests (a set of tasks other users can run) and share results",
     featuresList: [
       "Engaging experiments for recording brain & behavior data with instant analysis",
