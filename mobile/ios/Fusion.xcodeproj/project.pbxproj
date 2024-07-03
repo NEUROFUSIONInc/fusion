@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,29 +11,26 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		479851FA27D744D7ACD54CB9 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24745A0486514D058C98CA28 /* noop-file.swift */; };
+		96905EF65AED1B983A6B3ABC /* libPods-Fusion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Fusion.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C4E9F2F0C43D381B454757A8 /* libPods-Fusion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 761892D0A3F9AD2BA68B3382 /* libPods-Fusion.a */; };
-		D101827F2AD7791800144FB1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D101827E2AD7791800144FB1 /* StoreKit.framework */; };
+		D48C15D32C4C4143A751CC25 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1817DA79BB974983944A9F6D /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Fusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Fusion/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Fusion/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Fusion/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Fusion/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Fusion/main.m; sourceTree = "<group>"; };
-		24745A0486514D058C98CA28 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Fusion/noop-file.swift"; sourceTree = "<group>"; };
-		71FE9558246BE0D7255893E4 /* Pods-Fusion.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fusion.debug.xcconfig"; path = "Target Support Files/Pods-Fusion/Pods-Fusion.debug.xcconfig"; sourceTree = "<group>"; };
-		761892D0A3F9AD2BA68B3382 /* libPods-Fusion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Fusion.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7C650E8224ADEFA40CFE9E89 /* Pods-Fusion.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fusion.release.xcconfig"; path = "Target Support Files/Pods-Fusion/Pods-Fusion.release.xcconfig"; sourceTree = "<group>"; };
+		1817DA79BB974983944A9F6D /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Fusion/noop-file.swift"; sourceTree = "<group>"; };
+		2C74D89A045A4175A3866BEB /* Fusion-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Fusion-Bridging-Header.h"; path = "Fusion/Fusion-Bridging-Header.h"; sourceTree = "<group>"; };
+		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Fusion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Fusion.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C2E3173556A471DD304B334 /* Pods-Fusion.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fusion.debug.xcconfig"; path = "Target Support Files/Pods-Fusion/Pods-Fusion.debug.xcconfig"; sourceTree = "<group>"; };
+		7A4D352CD337FB3A3BF06240 /* Pods-Fusion.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fusion.release.xcconfig"; path = "Target Support Files/Pods-Fusion/Pods-Fusion.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Fusion/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CEDE97F3B80D4A83BEEB2DE9 /* Fusion-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Fusion-Bridging-Header.h"; path = "Fusion/Fusion-Bridging-Header.h"; sourceTree = "<group>"; };
-		D101827E2AD7791800144FB1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Fusion/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -43,8 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D101827F2AD7791800144FB1 /* StoreKit.framework in Frameworks */,
-				C4E9F2F0C43D381B454757A8 /* libPods-Fusion.a in Frameworks */,
+				96905EF65AED1B983A6B3ABC /* libPods-Fusion.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,15 +51,14 @@
 			isa = PBXGroup;
 			children = (
 				BB2F792B24A3F905000567C9 /* Supporting */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				24745A0486514D058C98CA28 /* noop-file.swift */,
-				CEDE97F3B80D4A83BEEB2DE9 /* Fusion-Bridging-Header.h */,
+				1817DA79BB974983944A9F6D /* noop-file.swift */,
+				2C74D89A045A4175A3866BEB /* Fusion-Bridging-Header.h */,
 			);
 			name = Fusion;
 			sourceTree = "<group>";
@@ -71,9 +66,8 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D101827E2AD7791800144FB1 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				761892D0A3F9AD2BA68B3382 /* libPods-Fusion.a */,
+				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Fusion.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -128,8 +122,8 @@
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				71FE9558246BE0D7255893E4 /* Pods-Fusion.debug.xcconfig */,
-				7C650E8224ADEFA40CFE9E89 /* Pods-Fusion.release.xcconfig */,
+				6C2E3173556A471DD304B334 /* Pods-Fusion.debug.xcconfig */,
+				7A4D352CD337FB3A3BF06240 /* Pods-Fusion.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -149,15 +143,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Fusion" */;
 			buildPhases = (
-				D0601533DB61554A85770315 /* [CP] Check Pods Manifest.lock */,
-				FD10A7F022414F080027D42C /* Start Packager */,
-				2219ED7C69324374980862AA /* [Expo] Configure project */,
+				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
+				D615B01B1575B4C8E2B48F2E /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				D077ACA42EAECA017202BD37 /* [CP] Embed Pods Frameworks */,
-				B79904E3AE5A0080F3B365EB /* [CP] Copy Pods Resources */,
+				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				8D9391ED03874E5D0570252F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -177,9 +170,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 2WFK99FGD7;
 						LastSwiftMigration = 1250;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -217,6 +208,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -227,28 +219,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" $PROJECT_ROOT ios relative | tail -n 1)\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios relative | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
-		2219ED7C69324374980862AA /* [Expo] Configure project */ = {
+		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "[Expo] Configure project";
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Fusion-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Fusion/expo-configure-project.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
-		B79904E3AE5A0080F3B365EB /* [CP] Copy Pods Resources */ = {
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,6 +251,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Fusion/Pods-Fusion-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
@@ -281,6 +277,7 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
@@ -308,29 +305,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Fusion/Pods-Fusion-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D0601533DB61554A85770315 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Fusion-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D077ACA42EAECA017202BD37 /* [CP] Embed Pods Frameworks */ = {
+		8D9391ED03874E5D0570252F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -348,7 +323,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Fusion/Pods-Fusion-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FD10A7F022414F080027D42C /* Start Packager */ = {
+		D615B01B1575B4C8E2B48F2E /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -358,15 +333,14 @@
 			);
 			inputPaths = (
 			);
-			name = "Start Packager";
+			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\nexport RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/.packager.env'\"`\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open `$NODE_BINARY --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/launchPackager.command'\"` || echo \"Can't start packager automatically\"\n  fi\nfi\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Fusion/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -378,7 +352,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				479851FA27D744D7ACD54CB9 /* noop-file.swift in Sources */,
+				D48C15D32C4C4143A751CC25 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,137 +361,20 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71FE9558246BE0D7255893E4 /* Pods-Fusion.debug.xcconfig */;
+			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-Fusion.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Fusion/Fusion.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2WFK99FGD7;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
-					"\"${PODS_ROOT}/Headers/Public/EXApplication\"",
-					"\"${PODS_ROOT}/Headers/Public/EXBackgroundFetch\"",
-					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFileSystem\"",
-					"\"${PODS_ROOT}/Headers/Public/EXJSONUtils\"",
-					"\"${PODS_ROOT}/Headers/Public/EXManifests\"",
-					"\"${PODS_ROOT}/Headers/Public/EXNotifications\"",
-					"\"${PODS_ROOT}/Headers/Public/EXPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSQLite\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSecureStore\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSharing\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSplashScreen\"",
-					"\"${PODS_ROOT}/Headers/Public/EXTaskManager\"",
-					"\"${PODS_ROOT}/Headers/Public/EXUpdatesInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/Expo\"",
-					"\"${PODS_ROOT}/Headers/Public/ExpoModulesCore\"",
-					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
-					"\"${PODS_ROOT}/Headers/Public/RCT-Folly\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
-					"\"${PODS_ROOT}/Headers/Public/RNAppleHealthKit\"",
-					"\"${PODS_ROOT}/Headers/Public/RNCAsyncStorage\"",
-					"\"${PODS_ROOT}/Headers/Public/RNDateTimePicker\"",
-					"\"${PODS_ROOT}/Headers/Public/RNDeviceInfo\"",
-					"\"${PODS_ROOT}/Headers/Public/RNFS\"",
-					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
-					"\"${PODS_ROOT}/Headers/Public/RNIap\"",
-					"\"${PODS_ROOT}/Headers/Public/RNPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
-					"\"${PODS_ROOT}/Headers/Public/RNSVG\"",
-					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
-					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
-					"\"${PODS_ROOT}/Headers/Public/RNZipArchive\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Codegen\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Fabric\"",
-					"\"${PODS_ROOT}/Headers/Public/React-FabricImage\"",
-					"\"${PODS_ROOT}/Headers/Public/React-ImageManager\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Mapbuffer\"",
-					"\"${PODS_ROOT}/Headers/Public/React-NativeModulesApple\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTAnimation\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTAppDelegate\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTFabric\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
-					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
-					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
-					"\"${PODS_ROOT}/Headers/Public/React-debug\"",
-					"\"${PODS_ROOT}/Headers/Public/React-graphics\"",
-					"\"${PODS_ROOT}/Headers/Public/React-hermes\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jserrorhandler\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
-					"\"${PODS_ROOT}/Headers/Public/React-logger\"",
-					"\"${PODS_ROOT}/Headers/Public/React-nativeconfig\"",
-					"\"${PODS_ROOT}/Headers/Public/React-perflogger\"",
-					"\"${PODS_ROOT}/Headers/Public/React-rendererdebug\"",
-					"\"${PODS_ROOT}/Headers/Public/React-runtimeexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-runtimescheduler\"",
-					"\"${PODS_ROOT}/Headers/Public/React-utils\"",
-					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
-					"\"${PODS_ROOT}/Headers/Public/SSZipArchive\"",
-					"\"${PODS_ROOT}/Headers/Public/SocketRocket\"",
-					"\"${PODS_ROOT}/Headers/Public/UMAppLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
-					"\"${PODS_ROOT}/Headers/Public/expo-dev-launcher\"",
-					"\"${PODS_ROOT}/Headers/Public/expo-dev-menu\"",
-					"\"${PODS_ROOT}/Headers/Public/fmt\"",
-					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"\"${PODS_ROOT}/Headers/Public/hermes-engine\"",
-					"\"${PODS_ROOT}/Headers/Public/libevent\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-context-menu-view\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-get-random-values\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-slider\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-version-check\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
-					"\"$(PODS_ROOT)/DoubleConversion\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ExpoModulesCore/Swift Compatibility Header\"",
-					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
-					"\"$(PODS_ROOT)/boost\"",
-					"\"$(PODS_ROOT)/boost\"",
-					"\"$(PODS_ROOT)/boost-for-react-native\"",
-					"\"$(PODS_ROOT)/glog\"",
-					"\"$(PODS_ROOT)/RCT-Folly\"",
-					"\"$(PODS_ROOT)/Headers/Public/React-hermes\"",
-					"\"$(PODS_ROOT)/Headers/Public/hermes-engine\"",
-					"\"$(PODS_ROOT)/../../node_modules/react-native/ReactCommon\"",
-					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/Swift Compatibility Header\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/Swift Compatibility Header\"",
-					"\"$(PODS_ROOT)/boost\"",
-					"\"$(PODS_ROOT)/boost-for-react-native\"",
-					"\"$(PODS_ROOT)/glog\"",
-					"\"$(PODS_ROOT)/RCT-Folly\"",
-					"\"${PODS_ROOT}/Headers/Public/React-hermes\"",
-					"\"${PODS_ROOT}/Headers/Public/hermes-engine\"",
-					"\"$(PODS_ROOT)/../../node_modules/react-native/ReactCommon\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/Swift Compatibility Header\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu-interface/Swift Compatibility Header\"",
-					"\"$(PODS_TARGET_SRCROOT)/include/\"",
-					"$(SRCROOT)/../node_modules/react-native/React",
-					"$(SRCROOT)/../node_modules/react-native/ReactCommon",
-					"$(SRCROOT)/../node_modules/react-native-reanimated",
-					"$(SRCROOT)/../node_modules/expo-modules-core",
-				);
 				INFOPLIST_FILE = Fusion/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -537,121 +394,15 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C650E8224ADEFA40CFE9E89 /* Pods-Fusion.release.xcconfig */;
+			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-Fusion.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Fusion/Fusion.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2WFK99FGD7;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
-					"\"${PODS_ROOT}/Headers/Public/EXApplication\"",
-					"\"${PODS_ROOT}/Headers/Public/EXBackgroundFetch\"",
-					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFileSystem\"",
-					"\"${PODS_ROOT}/Headers/Public/EXJSONUtils\"",
-					"\"${PODS_ROOT}/Headers/Public/EXManifests\"",
-					"\"${PODS_ROOT}/Headers/Public/EXNotifications\"",
-					"\"${PODS_ROOT}/Headers/Public/EXPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSQLite\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSecureStore\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSharing\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSplashScreen\"",
-					"\"${PODS_ROOT}/Headers/Public/EXTaskManager\"",
-					"\"${PODS_ROOT}/Headers/Public/EXUpdatesInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/Expo\"",
-					"\"${PODS_ROOT}/Headers/Public/ExpoModulesCore\"",
-					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
-					"\"${PODS_ROOT}/Headers/Public/RCT-Folly\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
-					"\"${PODS_ROOT}/Headers/Public/RNAppleHealthKit\"",
-					"\"${PODS_ROOT}/Headers/Public/RNCAsyncStorage\"",
-					"\"${PODS_ROOT}/Headers/Public/RNDateTimePicker\"",
-					"\"${PODS_ROOT}/Headers/Public/RNDeviceInfo\"",
-					"\"${PODS_ROOT}/Headers/Public/RNFS\"",
-					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
-					"\"${PODS_ROOT}/Headers/Public/RNIap\"",
-					"\"${PODS_ROOT}/Headers/Public/RNPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
-					"\"${PODS_ROOT}/Headers/Public/RNSVG\"",
-					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
-					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
-					"\"${PODS_ROOT}/Headers/Public/RNZipArchive\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Codegen\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Fabric\"",
-					"\"${PODS_ROOT}/Headers/Public/React-FabricImage\"",
-					"\"${PODS_ROOT}/Headers/Public/React-ImageManager\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Mapbuffer\"",
-					"\"${PODS_ROOT}/Headers/Public/React-NativeModulesApple\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTAnimation\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTAppDelegate\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTFabric\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
-					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
-					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
-					"\"${PODS_ROOT}/Headers/Public/React-debug\"",
-					"\"${PODS_ROOT}/Headers/Public/React-graphics\"",
-					"\"${PODS_ROOT}/Headers/Public/React-hermes\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jserrorhandler\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
-					"\"${PODS_ROOT}/Headers/Public/React-logger\"",
-					"\"${PODS_ROOT}/Headers/Public/React-nativeconfig\"",
-					"\"${PODS_ROOT}/Headers/Public/React-perflogger\"",
-					"\"${PODS_ROOT}/Headers/Public/React-rendererdebug\"",
-					"\"${PODS_ROOT}/Headers/Public/React-runtimeexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-runtimescheduler\"",
-					"\"${PODS_ROOT}/Headers/Public/React-utils\"",
-					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
-					"\"${PODS_ROOT}/Headers/Public/SSZipArchive\"",
-					"\"${PODS_ROOT}/Headers/Public/SocketRocket\"",
-					"\"${PODS_ROOT}/Headers/Public/UMAppLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
-					"\"${PODS_ROOT}/Headers/Public/expo-dev-launcher\"",
-					"\"${PODS_ROOT}/Headers/Public/expo-dev-menu\"",
-					"\"${PODS_ROOT}/Headers/Public/fmt\"",
-					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"\"${PODS_ROOT}/Headers/Public/hermes-engine\"",
-					"\"${PODS_ROOT}/Headers/Public/libevent\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-context-menu-view\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-get-random-values\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-slider\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-version-check\"",
-					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
-					"\"$(PODS_ROOT)/DoubleConversion\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ExpoModulesCore/Swift Compatibility Header\"",
-					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
-					"\"$(PODS_ROOT)/boost\"",
-					"\"$(PODS_ROOT)/boost\"",
-					"\"$(PODS_ROOT)/boost-for-react-native\"",
-					"\"$(PODS_ROOT)/glog\"",
-					"\"$(PODS_ROOT)/RCT-Folly\"",
-					"\"$(PODS_ROOT)/Headers/Public/React-hermes\"",
-					"\"$(PODS_ROOT)/Headers/Public/hermes-engine\"",
-					"\"$(PODS_ROOT)/../../node_modules/react-native/ReactCommon\"",
-					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu-interface/Swift Compatibility Header\"",
-					"$(SRCROOT)/../node_modules/react-native/React",
-					"$(SRCROOT)/../node_modules/react-native/ReactCommon",
-					"$(SRCROOT)/../node_modules/react-native-reanimated",
-					"$(SRCROOT)/../node_modules/expo-modules-core",
-				);
 				INFOPLIST_FILE = Fusion/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -708,7 +459,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -717,17 +467,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					/usr/lib/swift,
-					"$(inherited)",
-				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -769,26 +519,22 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,
-				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					/usr/lib/swift,
-					"$(inherited)",
-				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

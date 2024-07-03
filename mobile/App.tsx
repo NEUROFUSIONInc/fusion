@@ -32,7 +32,7 @@ import {
 } from "~/services";
 import { toastConfig } from "~/theme";
 
-Logs.enableExpoCliLogging();
+Logs?.enableExpoCliLogging();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {

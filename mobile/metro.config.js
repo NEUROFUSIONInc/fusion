@@ -4,36 +4,39 @@ const path = require("path");
 
 const { getDefaultConfig } = require("expo/metro-config");
 
-module.exports = (async () => {
-  const {
-    resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname);
 
-  return {
-    resolver: {
-      extraNodeModules: new Proxy(
-        {},
-        {
-          get: (target, name) => {
-            return path.join(__dirname, `node_modules/${name}`);
-          },
-        }
-      ),
-      alias: {
-        "~": path.resolve(__dirname, "src"),
+const { resolver, transformer } = config;
+
+config.resolver = {
+  ...resolver,
+  extraNodeModules: new Proxy(
+    {},
+    {
+      get: (target, name) => {
+        return path.join(__dirname, `node_modules/${name}`);
       },
-      sourceExts,
-      assetExts: [...assetExts, "db"],
-      resolverMainFields: ["sbmodern", "react-native", "browser", "main"],
-    },
-    watchFolders: [path.resolve(__dirname, "../")],
-    transformer: {
-      assetPlugins: ["expo-asset/tools/hashAssetFiles"],
-    },
-    maxWorkers: 2,
-    web: {
-      // disable webpack for rn-web
-      webpack: false,
-    },
-  };
-})();
+    }
+  ),
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+  },
+  assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
+  sourceExts: [...resolver.sourceExts, "svg"],
+  resolverMainFields: ["sbmodern", "react-native", "browser", "main"],
+};
+
+config.transformer = {
+  ...transformer,
+  assetPlugins: ["expo-asset/tools/hashAssetFiles"],
+  babelTransformerPath: require.resolve("react-native-svg-transformer"),
+};
+
+config.maxWorkers = 2;
+
+config.web = {
+  // disable webpack for rn-web
+  webpack: false,
+};
+
+module.exports = config;

@@ -7,8 +7,6 @@ PODS:
     - ExpoModulesCore
   - EXConstants (14.2.1):
     - ExpoModulesCore
-  - EXFileSystem (15.2.2):
-    - ExpoModulesCore
   - EXJSONUtils (0.5.1)
   - EXManifests (0.5.2):
     - EXJSONUtils
@@ -16,7 +14,7 @@ PODS:
     - ExpoModulesCore
   - EXPermissions (14.1.2):
     - ExpoModulesCore
-  - Expo (51.0.14):
+  - Expo (50.0.19):
     - ExpoModulesCore
   - expo-dev-client (2.2.1):
     - EXManifests
@@ -90,22 +88,24 @@ PODS:
     - expo-dev-menu/GestureHandler
     - expo-dev-menu/Reanimated
     - expo-dev-menu/SafeAreaView
+  - ExpoAsset (10.0.9):
+    - ExpoModulesCore
   - ExpoCrypto (12.8.1):
     - ExpoModulesCore
   - ExpoDevice (5.2.1):
     - ExpoModulesCore
+  - ExpoFileSystem (16.0.9):
+    - ExpoModulesCore
   - ExpoFont (12.0.7):
     - ExpoModulesCore
-  - ExpoKeepAwake (13.0.2):
+  - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
   - ExpoMailComposer (12.1.1):
     - ExpoModulesCore
-  - ExpoModulesCore (1.12.15):
+  - ExpoModulesCore (1.11.13):
     - glog
-    - hermes-engine
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - React-jsinspector
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
@@ -1248,7 +1248,6 @@ DEPENDENCIES:
   - EXApplication (from `../node_modules/expo-application/ios`)
   - EXBackgroundFetch (from `../node_modules/expo-background-fetch/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
-  - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
   - EXManifests (from `../node_modules/expo-manifests/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
@@ -1258,8 +1257,10 @@ DEPENDENCIES:
   - expo-dev-launcher (from `../node_modules/expo-dev-launcher`)
   - expo-dev-menu (from `../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
+  - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
+  - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoMailComposer (from `../node_modules/expo-mail-composer/ios`)
@@ -1361,8 +1362,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-background-fetch/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
-  EXFileSystem:
-    :path: "../node_modules/expo-file-system/ios"
   EXJSONUtils:
     :path: "../node_modules/expo-json-utils/ios"
   EXManifests:
@@ -1381,10 +1380,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-dev-menu"
   expo-dev-menu-interface:
     :path: "../node_modules/expo-dev-menu-interface/ios"
+  ExpoAsset:
+    :path: "../node_modules/expo-asset/ios"
   ExpoCrypto:
     :path: "../node_modules/expo-crypto/ios"
   ExpoDevice:
     :path: "../node_modules/expo-device/ios"
+  ExpoFileSystem:
+    :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
   ExpoKeepAwake:
@@ -1551,22 +1554,23 @@ SPEC CHECKSUMS:
   EXApplication: d8f53a7eee90a870a75656280e8d4b85726ea903
   EXBackgroundFetch: afa9f178aa29338eac33228e9d5d3239f5c61df9
   EXConstants: f348da07e21b23d2b085e270d7b74f282df1a7d9
-  EXFileSystem: 844e86ca9b5375486ecc4ef06d3838d5597d895d
   EXJSONUtils: 48b1e764ac35160e6f54d21ab60d7d9501f3e473
   EXManifests: 500666d48e8dd7ca5a482c9e729e4a7a6c34081b
   EXNotifications: dd628737af60fc8cc62dccebacd326b0fbbc0dcb
   EXPermissions: ee60d7978aba135b8b391185b039d78f151c376a
-  Expo: 9c87c876b45a6934894ba5e9353ee94fdba48125
+  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
   expo-dev-client: 92b9e487ad6a05a3ad1dda70334729ccaf622bfe
   expo-dev-launcher: 5275974e9f825f70a33bb79301a8ab894179fa94
   expo-dev-menu: b62be804832b6498e88a441dc9f08bda52f0fbe1
   expo-dev-menu-interface: 6c82ae323c4b8724dead4763ce3ff24a2108bdb1
+  ExpoAsset: 39e60dc31b16e204a9949caf3edb6dcda322e667
   ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
   ExpoDevice: e0bebf68f978b3d353377ce42e73c20c0a070215
+  ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
   ExpoFont: 43b69559cef3d773db57c7ae7edd3cb0aa0dc610
-  ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
+  ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoMailComposer: 0085b258d00ba40664f7acb40d96042b29a1da7d
-  ExpoModulesCore: 4098303612a4fcb264fb91468ef369ecb0f26779
+  ExpoModulesCore: 4a8928a228569301ac4fc4a1e846713e05754d05
   ExpoSystemUI: 0be5173ee2a7c01e9abc44f56d879a1eaaa16527
   ExpoWebBrowser: 033d34c478d9986da2f1679729041423837626e0
   EXSecureStore: e8923258361cc406d0401af380f12bd05b2b720f
@@ -1647,6 +1651,6 @@ SPEC CHECKSUMS:
   UMAppLoader: d1cd37524ea948f9e695722994496784a6d6213c
   Yoga: e5b887426cee15d2a326bdd34afc0282fc0486ad
 
-PODFILE CHECKSUM: 13166de3719348ed077bae9f12c4dcc9db241a40
+PODFILE CHECKSUM: 847958ad3df005b756abc729fee29506f8dfa8db
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3
