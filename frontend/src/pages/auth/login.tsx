@@ -50,7 +50,7 @@ const LoginPage = React.memo(() => {
   };
 
   const useExistingAccount = async (privateKey: string) => {
-    appInsights.trackEvent({ name: 'customEventName', properties: { customProperty: 'value' } });
+    appInsights.trackEvent({ name: 'use_existing_account', properties: { customProperty: 'value' } });
     try {
       if (privateKey.length !== 64) {
         return;
