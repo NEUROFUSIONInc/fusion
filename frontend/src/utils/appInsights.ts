@@ -20,6 +20,4 @@ const appInsights = new ApplicationInsights({
 appInsights.loadAppInsights();
 appInsights.trackPageView(); // Manually call trackPageView to establish the current user/session/pageview
 
-console.log(process.env.NEXT_PUBLIC_APP_INSIGHTS_KEY)
-
 export { appInsights, reactPlugin };
