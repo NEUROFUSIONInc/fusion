@@ -3,13 +3,14 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { getServerSession } from "next-auth";
 import { signIn } from "next-auth/react";
-
+import { appInsights } from "~/utils/appInsights";
 import { authService } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
 import { getPrivateKey, persistPrivateKey } from "~/utils/auth";
 
 import { authOptions } from "../api/auth/[...nextauth]";
+import { SeverityLevel } from "@microsoft/applicationinsights-web";
 
 const LoginPage = React.memo(() => {
   const router = useRouter();
@@ -49,6 +50,7 @@ const LoginPage = React.memo(() => {
   };
 
   const useExistingAccount = async (privateKey: string) => {
+    appInsights.trackEvent({ name: 'use_existing_account', properties: { customProperty: 'value' } });
     try {
       if (privateKey.length !== 64) {
         return;
@@ -56,8 +58,9 @@ const LoginPage = React.memo(() => {
       setPrivateKey(privateKey);
       const { publicKey } = await persistPrivateKey(privateKey);
       setPublicKey(publicKey);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      appInsights.trackException({ error: new Error(err as string), severityLevel: SeverityLevel.Error });
+      console.error(err);
     }
   };
 
