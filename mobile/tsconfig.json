@@ -5,7 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"]
-    }
+    },
+    "esModuleInterop": true
   },
   "include": ["src/**/*", "**/*.ts", "**/*.tsx", "src/utils", "index.js"],
   "extends": "expo/tsconfig.base"

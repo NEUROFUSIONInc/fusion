@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "91",
+    buildNumber: "92",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 91,
+    versionCode: 92,
     softwareKeyboardLayoutMode: "pan",
     permissions: [
       "android.permission.health.READ_STEPS",
@@ -58,7 +58,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     fusionBackendUrl:
       process.env.FUSION_BACKEND_API_URL ??
-      "https://neurofusion-backend.azurewebsites.net", //"https://neurofusion-backend.azurewebsites.net",
+      "https://neurofusionbackendprd.azurewebsites.net", //"https://neurofusion-backend.azurewebsites.net",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
@@ -67,6 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // ["expo-notifications", { icon: "./assets/notification-icon.png" }],
     "expo-font",
     "react-native-iap",
+    "expo-secure-store",
     ["react-native-health-connect"],
     [
       "expo-build-properties",
