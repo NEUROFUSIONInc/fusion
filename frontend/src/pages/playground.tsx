@@ -43,10 +43,8 @@ const PlaygroundPage: NextPage = () => {
   const handleCloseDataHandling = () => {
     setShowDataHandlingModal(false)
   }
-  // const handleRemoveOnboarding = () => {
-  //   localStorage.removeItem("viewedOnboarding");
-  //   setShowCapabilitiesModal(true);
-  // };
+
+  
   const experiments: IExperiment[] = [
     {
       id: 3,
