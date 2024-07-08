@@ -12,6 +12,16 @@ import { PromptModalDetsContext, AddPromptModalContext, AddPromptTimesContext } 
 import PromptModalDets from "~/components/questmodals/promptdets";
 import AddPromptModal from "~/components/questmodals/addprompts";
 import AddPromptTimes from "~/components/questmodals/addtimes";
+interface Prompt {
+  promptText: string;
+  selectedCategory: string;
+  responseType: string;
+  selectedDays: string[];
+  betweenTime: string;
+  andTime: string;
+  frequency: string;
+}
+
 interface IQuest {
   title: string;
   description: string;
@@ -22,7 +32,8 @@ interface IQuest {
   updatedAt: string;
   joinCode: string;
   organizerName?: string;
-  participants?: string[]; // userNpubs
+  participants?: string[];
+  prompts: Prompt[]; // userNpubs
 }
 
 const QuestsPage: NextPage = () => {
@@ -56,7 +67,9 @@ const QuestsPage: NextPage = () => {
       if (res.status === 201) {
         console.log("Quest saved successfully");
         console.log(res.data);
-        setSavedQuests([...savedQuests, res.data.quest]);
+        setSavedQuests([...savedQuests, { ...res.data.quest, prompts: JSON.parse(res.data.quest.config) }]); // Parse config back to prompts array
+
+        console.log(res.data.quest);
         setActiveView("view");
       } else {
         console.error("Failed to save quest");
@@ -94,7 +107,9 @@ const QuestsPage: NextPage = () => {
           return quest;
         });
 
-        setSavedQuests(updatedQuests);
+        // setSavedQuests(updatedQuests);
+        setSavedQuests([...updatedQuests, { ...res.data.quest, prompts: JSON.parse(res.data.quest.config) }]); // Parse config back to prompts array
+
         setActiveView("view");
       } else {
         console.error("Failed to edit quest");
@@ -177,16 +192,7 @@ const QuestsPage: NextPage = () => {
   const [betweenTime, setBetweenTime] = useState<string>("");
   const [andTime, setAndTime] = useState<string>("");
   const [frequency, setFrequency] = useState<string>("");
-  interface Prompt {
-    promptText: string;
-    selectedCategory: string;
-    responseType: string;
-    selectedDays: string[];
-    betweenTime: string;
-    andTime: string;
-    frequency: string;
-  }
-
+  
   // Assuming you're using useState, you should type it like this:
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
@@ -352,7 +358,7 @@ const QuestsPage: NextPage = () => {
                     />
 
                     <div>
-                      {prompts.length > 0 && (
+                   {prompts.length > 0 && (
                         <div className="mt-8">
                           <h2 className="mb-4">Prompts</h2>
                           <div className="flex flex-wrap gap-6">
@@ -377,6 +383,7 @@ const QuestsPage: NextPage = () => {
                           </div>
                         </div>
                       )}
+
                     </div>
                     <div className="mt-8">
                       {" "}
@@ -420,6 +427,11 @@ const QuestsPage: NextPage = () => {
                           <td className="underline">{quest.title}</td>
                         </Link>
                         <td>{quest.description}</td>
+                        {quest.prompts && (
+      <td>
+      
+      </td>
+    )}
                         <td className="flex justify-center">
                           <Button
                             size="sm"
