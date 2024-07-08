@@ -352,8 +352,6 @@ const QuestsPage: NextPage = () => {
                     />
 
                     <div>
-                      {/* Display Added Prompts */}
-                      {/* Display Added Prompts */}
                       {prompts.length > 0 && (
                         <div className="mt-8">
                           <h2 className="mb-4">Prompts</h2>

@@ -1,6 +1,6 @@
-import React from 'react';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
-import { ReactPlugin, withAITracking } from '@microsoft/applicationinsights-react-js';
+import React from "react";
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
+import { ReactPlugin, withAITracking } from "@microsoft/applicationinsights-react-js";
 
 const reactPlugin = new ReactPlugin();
 
@@ -13,7 +13,7 @@ const appInsights = new ApplicationInsights({
     autoTrackPageVisitTime: true,
     enableCorsCorrelation: true,
     enableRequestHeaderTracking: true,
-    enableResponseHeaderTracking: true
+    enableResponseHeaderTracking: true,
   },
 });
 
