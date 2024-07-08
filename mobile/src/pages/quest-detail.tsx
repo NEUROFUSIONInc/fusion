@@ -264,7 +264,7 @@ export function QuestDetailScreen() {
       {isSubscribed === false && (
         <View className="mt-5">
           <Button
-            title="Get Started"
+            title="Complete Onboarding"
             fullWidth
             className="mb-5"
             onPress={addUserToQuest}
