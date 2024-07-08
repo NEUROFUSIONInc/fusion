@@ -73,7 +73,7 @@ export function useNeurosityState() {
         },
         params: {
           redirectUri: window.location.origin + "/neurosity-callback",
-        }
+        },
       });
       console.log("Got response from API");
 

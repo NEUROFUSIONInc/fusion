@@ -38,13 +38,12 @@ const PlaygroundPage: NextPage = () => {
 
   const handleCloseCapabilities = () => {
     setShowCapabilitiesModal(false);
-  }
+  };
 
   const handleCloseDataHandling = () => {
-    setShowDataHandlingModal(false)
-  }
+    setShowDataHandlingModal(false);
+  };
 
-  
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -154,14 +153,14 @@ const PlaygroundPage: NextPage = () => {
       </label>
       <Experiment {...activeExperiment} />
       {showCapabilitiesModal && (
-        <CapabilitiesModal
-          onNext={handleCapabilitiesNext}
-        
-          onCancel={handleCloseCapabilities }
-        />
+        <CapabilitiesModal onNext={handleCapabilitiesNext} onCancel={handleCloseCapabilities} />
       )}
       {showDataHandlingModal && (
-        <DataHandlingModal onPrevious={handleDataHandlingPrevious} onGetStarted={handleDataHandlingGetStarted} onClose={handleCloseDataHandling} />
+        <DataHandlingModal
+          onPrevious={handleDataHandlingPrevious}
+          onGetStarted={handleDataHandlingGetStarted}
+          onClose={handleCloseDataHandling}
+        />
       )}
     </DashboardLayout>
   );
@@ -182,17 +181,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { session},
+    props: { session },
   };
 };
 
 interface CapabilitiesModalProps {
   onNext: () => void;
   onCancel: () => void;
- 
 }
 
-const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,  }) => {
+const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel }) => {
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent>
@@ -205,7 +203,9 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
           </ul>
         </DialogDescription>
         <div className="flex justify-end mt-4">
-          <Button  intent="primary" onClick={onNext}>Next</Button>
+          <Button intent="primary" onClick={onNext}>
+            Next
+          </Button>
           <Button intent="dark" onClick={onCancel} className="ml-2">
             Cancel
           </Button>
@@ -218,7 +218,7 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
 interface DataHandlingModalProps {
   onPrevious: () => void;
   onGetStarted: () => void;
-  onClose : () =>void;
+  onClose: () => void;
 }
 
 const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGetStarted, onClose }) => {

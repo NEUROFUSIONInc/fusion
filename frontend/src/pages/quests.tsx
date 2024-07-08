@@ -191,7 +191,6 @@ const QuestsPage: NextPage = () => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
 
-
   console.log("prompt text", {
     promptText,
     selectedCategory,
@@ -218,7 +217,7 @@ const QuestsPage: NextPage = () => {
     setFrequency(promptToEdit.frequency);
     setDisplayAddPromptModal(true);
   };
-  
+
   const handleDeletePrompt = (index: number) => {
     setPrompts((prevPrompts) => prevPrompts.filter((_, i) => i !== index));
   };
@@ -241,7 +240,7 @@ const QuestsPage: NextPage = () => {
       andTime,
       frequency,
     };
-  
+
     setPrompts((prevPrompts: Prompt[]) => {
       if (editingPromptIndex !== null) {
         // Editing an existing prompt
@@ -253,17 +252,17 @@ const QuestsPage: NextPage = () => {
         return [...prevPrompts, newPrompt];
       }
     });
-  
+
     setDisplayAddPromptTimes(false);
     setEditingPromptIndex(null);
     // Reset all the state values
-    setPromptText('');
-    setSelectedCategory('');
-    setResponseType('');
+    setPromptText("");
+    setSelectedCategory("");
+    setResponseType("");
     setSelectedDays([]);
-    setBetweenTime('');
-    setAndTime('');
-    setFrequency('');
+    setBetweenTime("");
+    setAndTime("");
+    setFrequency("");
   };
 
   return (
@@ -354,26 +353,32 @@ const QuestsPage: NextPage = () => {
 
                     <div>
                       {/* Display Added Prompts */}
-                    {/* Display Added Prompts */}
-{prompts.length > 0 && (
-  <div className="mt-8">
-    <h2 className="mb-4">Prompts</h2>
-    <div className="flex flex-wrap gap-6">
-      {prompts.map((prompt, index) => (
-        <div key={index} className="border p-4 rounded-md">
-          <h3 className="font-bold">{prompt.promptText}</h3>
-          <p>Days: {prompt.selectedDays.join(", ")}</p>
-          <p>Time: {prompt.betweenTime} - {prompt.andTime}</p>
-          <p>Frequency: {prompt.frequency}</p>
-          <div className="mt-2 space-x-2">
-            <Button size="sm" onClick={() => handleEditPrompt(index)}>Edit</Button>
-            <Button size="sm"  intent="ghost"  onClick={() => handleDeletePrompt(index)}>Delete</Button>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                      {/* Display Added Prompts */}
+                      {prompts.length > 0 && (
+                        <div className="mt-8">
+                          <h2 className="mb-4">Prompts</h2>
+                          <div className="flex flex-wrap gap-6">
+                            {prompts.map((prompt, index) => (
+                              <div key={index} className="border p-4 rounded-md">
+                                <h3 className="font-bold">{prompt.promptText}</h3>
+                                <p>Days: {prompt.selectedDays.join(", ")}</p>
+                                <p>
+                                  Time: {prompt.betweenTime} - {prompt.andTime}
+                                </p>
+                                <p>Frequency: {prompt.frequency}</p>
+                                <div className="mt-2 space-x-2">
+                                  <Button size="sm" onClick={() => handleEditPrompt(index)}>
+                                    Edit
+                                  </Button>
+                                  <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
+                                    Delete
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="mt-8">
                       {" "}
