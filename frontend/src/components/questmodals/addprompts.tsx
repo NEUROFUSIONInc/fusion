@@ -40,7 +40,7 @@ const {selectedCategory, setSelectedCategory} = useContext(AddPromptModalContext
           </DialogDescription>
           <div className="mt-4 flex justify-end gap-4">
             <div></div>
-            <Button onClick={onContinue}>Continue</Button>
+            <Button disabled={selectedCategory === ""} onClick={onContinue}>Continue</Button>
           </div>
         </DialogContent>
       </Dialog>

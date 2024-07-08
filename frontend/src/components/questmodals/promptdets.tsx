@@ -56,8 +56,8 @@ const PromptModalDets: React.FC<PromptModalDetsProps> = ({ onPrevious, onClose, 
             </div>
    
           <div className="mt-4 flex justify-end space-x-2">
-            <Button onClick={onPrevious}>Previous</Button>
-            <Button onClick={onContinue}>Continue</Button>
+            <Button  onClick={onPrevious}>Previous</Button>
+            <Button disabled={promptText === "" || responseType === ""} onClick={onContinue}>Continue</Button>
           </div>
         </DialogContent>
       </Dialog>

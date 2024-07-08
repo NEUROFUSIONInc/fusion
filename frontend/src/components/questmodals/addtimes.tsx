@@ -94,7 +94,7 @@ const AddPromptTimes: React.FC<AddPromptTimesProps> = ({ onPrevious, onClose, on
           </DialogDescription>
           <div className="mt-4 flex justify-end space-x-2">
             <Button onClick={onPrevious}>Previous</Button>
-            <Button onClick={onContinue}>Continue</Button>
+            <Button disabled={!frequency || !betweenTime || !andTime || !selectedDays} onClick={onContinue}>Add Propmt</Button>
           </div>
         </DialogContent>
       </Dialog>
