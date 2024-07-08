@@ -3,12 +3,13 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import React from "react";
-
+import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import "../styles/globals.css";
 import { gtw } from "~/utils";
 import { Meta } from "~/components/layouts";
 import Head from "next/head";
+import { reactPlugin } from "~/utils/appInsights";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient({ defaultOptions: QUERY_OPTIONS_DEFAULT }));
@@ -35,6 +36,7 @@ button {
         </style>
       </Head>
       <SessionProvider session={session}>
+          <AppInsightsContext.Provider value={reactPlugin}>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
             <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
@@ -44,6 +46,7 @@ button {
             </ThemeProvider>
           </Hydrate>
         </QueryClientProvider>
+          </AppInsightsContext.Provider>
       </SessionProvider>
     </>
   );

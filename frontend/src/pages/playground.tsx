@@ -11,7 +11,7 @@ import { IExperiment } from "~/@types";
 import { Button, Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui";
 
 const PlaygroundPage: NextPage = () => {
-  const [showCapabilitiesModal, setShowCapabilitiesModal] = useState(true);
+  const [showCapabilitiesModal, setShowCapabilitiesModal] = useState(false);
   const [showDataHandlingModal, setShowDataHandlingModal] = useState(false);
 
   useEffect(() => {
@@ -43,7 +43,10 @@ const PlaygroundPage: NextPage = () => {
   const handleCloseDataHandling = () => {
     setShowDataHandlingModal(false);
   };
-
+  // const handleRemoveOnboarding = () => {
+  //   localStorage.removeItem("viewedOnboarding");
+  //   setShowCapabilitiesModal(true);
+  // };
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -152,16 +155,18 @@ const PlaygroundPage: NextPage = () => {
         </select>
       </label>
       <Experiment {...activeExperiment} />
-      {showCapabilitiesModal && (
-        <CapabilitiesModal onNext={handleCapabilitiesNext} onCancel={handleCloseCapabilities} />
-      )}
-      {showDataHandlingModal && (
-        <DataHandlingModal
-          onPrevious={handleDataHandlingPrevious}
-          onGetStarted={handleDataHandlingGetStarted}
-          onClose={handleCloseDataHandling}
-        />
-      )}
+      <div>
+        {showCapabilitiesModal && (
+          <CapabilitiesModal onNext={handleCapabilitiesNext} onCancel={handleCloseCapabilities} />
+        )}
+        {showDataHandlingModal && (
+          <DataHandlingModal
+            onPrevious={handleDataHandlingPrevious}
+            onGetStarted={handleDataHandlingGetStarted}
+            onClose={handleCloseDataHandling}
+          />
+        )}
+      </div>
     </DashboardLayout>
   );
 };
@@ -197,10 +202,10 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel 
         <DialogTitle>Welcome to Fusion</DialogTitle>
         <DialogDescription>
           Here's what you can do with Fusion:
-          <ul className="list-disc ml-6 mt-2">
-            <li>Record brain activity during cognitive experiments</li>
-            <li>Respond to prompts on mobile devices</li>
-          </ul>
+          <div className="list-disc ml-6 mt-2">
+            <p>Record brain activity during cognitive experiments</p>
+            <p>Respond to prompts on mobile devices</p>
+          </div>
         </DialogDescription>
         <div className="flex justify-end mt-4">
           <Button intent="primary" onClick={onNext}>

@@ -8,6 +8,7 @@ interface AuthResponse {
   authToken: string;
 }
 
+
 class AuthService {
   async completeNostrLogin(publicKey: string, privateKey?: string): Promise<AuthResponse | null> {
     const serverPublicKey = process.env.NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY;
@@ -44,7 +45,7 @@ class AuthService {
           });
         });
       })();
-
+      
       if (res.status == 200 && authToken) {
         return {
           userNpub: nip19.npubEncode(publicKey),
