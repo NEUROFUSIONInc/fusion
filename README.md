@@ -8,7 +8,8 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
 ## Roadmap
 
 - [x] Record EEG while performing various activities using [Neurosity Crown](https://neurosity.co) and [Muse](https://choosemuse.com)
-      Supported activities:
+
+  Supported activities on https://usefusion.ai/playground:
 
   - [x] Open Ended Brain Recording
   - [x] Resting state (Eyes Closed/Eyes Open)
@@ -16,19 +17,24 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
   - [x] Auditory Oddball
   - [x] Flappy Bird game (Detecting intent & frustration)
 
-- [ ] Analysis of collect data
+- [ ] Analysis of collected data https://usefusion.ai/analysis
 
-  - [ ] Chart of steady state frequency power across recordings
+  - [x] Chart of steady state frequency power across recordings
+  - [ ] Periodic vs. aperiodic frequency evaluation using [fooof package](https://fooof-tools.github.io/fooof/)
   - [ ] If applicable event related potential analysis
-  - [ ] Periodic vs. aperiodic frequecny evaluation using [fooof package](https://fooof-tools.github.io/fooof/)
 
-- [ ] Connect your screentime events & productivity metrics using [ActivityWatch](https://activitywatch.net)
-- [ ] Connect screentime events & productivity metrics from [Magicflow](https://magicflow.com)
+- [ ] Running Distributed Studies with people (Quests) https://usefusion.ai/blog/quests
 
-- [ ] Deploy quests to people devices - a quest is a protocol person is to follow for data collection.
-  - [ ] It can involve prompts, recording, brain activity
-- [ ] Query your data with natural language
+  - [x] A set of prompts people respond to at intervals on a topic related to you
+  - [x] Connecting Apple Health - steps, sleep, heart-rate
+  - [ ] Support for cognitive experiments
+  - [ ] Quest Dashboard - view submissions, analyze and publish results
+
 - [ ] Design and upload custom EEG experiment protocols to participants' devices
+
+- [ ] Connecting Other Sources
+  - [ ] Connect your screentime events & productivity metrics using [ActivityWatch](https://activitywatch.net)
+  - [ ] Connect screentime events & productivity metrics from [Magicflow](https://magicflow.com)
 
 ## Tech Stack
 
@@ -40,7 +46,7 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
 
 ## How to contribute
 
-See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
+We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
 
 - [Join the Fusion Community](https://discord.gg/3wCNJ6X4RF)
 
