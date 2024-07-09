@@ -67,6 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // ["expo-notifications", { icon: "./assets/notification-icon.png" }],
     "expo-font",
     "react-native-iap",
+    "expo-secure-store",
     ["react-native-health-connect"],
     [
       "expo-build-properties",

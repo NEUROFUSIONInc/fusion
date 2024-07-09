@@ -58,6 +58,8 @@
         </dict>
       </dict>
     </dict>
+    <key>NSFaceIDUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSHealthShareUsageDescription</key>
     <string>Read and understand health data.</string>
     <key>NSHealthUpdateUsageDescription</key>
