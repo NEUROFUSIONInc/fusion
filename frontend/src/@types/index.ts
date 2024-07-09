@@ -111,3 +111,32 @@ export interface DisplayCategory {
   name: string;
   value: string;
 }
+
+export type PromptResponseType = "text" | "yesno" | "number" | "customOptions";
+
+export interface Prompt {
+  uuid: string;
+  promptText: string;
+  responseType: PromptResponseType;
+  notificationConfig_days: NotificationConfigDays;
+  notificationConfig_startTime: string;
+  notificationConfig_endTime: string;
+  notificationConfig_countPerDay: number;
+  additionalMeta: PromptAdditionalMeta;
+}
+
+export type PromptAdditionalMeta = {
+  category?: string;
+  isNotificationActive?: boolean;
+  customOptionText?: string; // ; separated list of options
+  questId?: string;
+};
+
+export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
+  uuid?: string | null;
+  notificationConfig_days: NotificationConfigDays;
+};
+
+export type Days = "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday";
+
+export type NotificationConfigDays = Record<Days, boolean>;

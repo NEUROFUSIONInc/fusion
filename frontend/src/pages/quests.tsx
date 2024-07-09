@@ -192,7 +192,7 @@ const QuestsPage: NextPage = () => {
   const [betweenTime, setBetweenTime] = useState<string>("");
   const [andTime, setAndTime] = useState<string>("");
   const [frequency, setFrequency] = useState<string>("");
-  
+
   // Assuming you're using useState, you should type it like this:
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
@@ -358,7 +358,7 @@ const QuestsPage: NextPage = () => {
                     />
 
                     <div>
-                   {prompts.length > 0 && (
+                      {prompts.length > 0 && (
                         <div className="mt-8">
                           <h2 className="mb-4">Prompts</h2>
                           <div className="flex flex-wrap gap-6">
@@ -383,7 +383,6 @@ const QuestsPage: NextPage = () => {
                           </div>
                         </div>
                       )}
-
                     </div>
                     <div className="mt-8">
                       {" "}
@@ -427,11 +426,7 @@ const QuestsPage: NextPage = () => {
                           <td className="underline">{quest.title}</td>
                         </Link>
                         <td>{quest.description}</td>
-                        {quest.prompts && (
-      <td>
-      
-      </td>
-    )}
+                        {quest.prompts && <td></td>}
                         <td className="flex justify-center">
                           <Button
                             size="sm"
@@ -463,6 +458,7 @@ const QuestsPage: NextPage = () => {
                 </table>
               </>
             )}
+            {/* Display Share Modal */}
             {activeQuest && (
               <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
                 <DialogContent>
@@ -482,6 +478,8 @@ const QuestsPage: NextPage = () => {
                 </DialogContent>
               </Dialog>
             )}
+
+            {/* Prompt Create/Edit Modal */}
             {displayAddPromptModal && (
               <AddPromptModal
                 onSave={() => {
