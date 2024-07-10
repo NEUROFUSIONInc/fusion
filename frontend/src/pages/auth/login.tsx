@@ -94,7 +94,7 @@ const LoginPage = React.memo(() => {
             Get started with an anonymous account
           </p>
           <Button type="button" onClick={useGuestAccount} size="lg" fullWidth className="mt-4">
-            Continue as Guest
+            Continue
           </Button>
           {showNostrExtensionLogin && (
             <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
@@ -102,7 +102,7 @@ const LoginPage = React.memo(() => {
             </Button>
           )}
           <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
-            Use Existing Account
+            Use Presaved Key
           </a>
           {showInput && (
             <div className="w-full flex flex-row self-center">
