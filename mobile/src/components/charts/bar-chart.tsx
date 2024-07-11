@@ -1,10 +1,10 @@
+import { SvgChart, SVGRenderer } from "@wuba/react-native-echarts";
 import dayjs from "dayjs";
 import { BarChart } from "echarts/charts";
 import { GridComponent } from "echarts/components";
 import * as echarts from "echarts/core";
 import React, { FC, useRef } from "react";
 import { View, Dimensions } from "react-native";
-import SvgChart, { SVGRenderer } from "wrn-echarts/svgChart";
 
 echarts.use([SVGRenderer, BarChart, GridComponent]);
 

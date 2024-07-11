@@ -58,7 +58,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     fusionBackendUrl:
       process.env.FUSION_BACKEND_API_URL ??
-      "https://neurofusionbackendprd.azurewebsites.net", //"https://neurofusion-backend.azurewebsites.net",
+      // "https://neurofusionbackendprd.azurewebsites.net",
+      "https://neurofusion-backend.azurewebsites.net",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",

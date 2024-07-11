@@ -1,3 +1,4 @@
+import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
@@ -19,6 +20,11 @@ import { RouteProp } from "~/navigation";
 import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
+
+/**
+ *
+ * TODO:
+ */
 
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
@@ -274,7 +280,7 @@ export function QuestDetailScreen() {
       )}
 
       {isSubscribed && (
-        <View className="mt-5">
+        <View className="mt-5 space-y-2">
           <Button
             title="View Leaderboard"
             fullWidth
@@ -301,6 +307,7 @@ export function QuestDetailScreen() {
             promptId={activePrompt?.uuid!}
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
+            allowEdit={false}
           />
         )}
       </Portal>
