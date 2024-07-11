@@ -1,12 +1,14 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import axios from "axios";
+import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
-import { Prompt } from "~/@types";
+import { Prompt, Quest } from "~/@types";
 import {
   Button,
   PromptDetails,
@@ -28,18 +30,69 @@ import { appInsights, getApiService } from "~/utils";
 
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
-  const navigation = useNavigation();
 
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
-  const [addedQuestPrompts, setAddQuestPrompts] = React.useState<Prompt[]>([]);
+  const [, setAddQuestPrompts] = React.useState<Prompt[]>([]);
 
-  const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
+  const { mutateAsync: createQuest } = useCreateQuest();
 
   const { mutateAsync: createPrompt } = useCreatePrompt();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
+
+  /**
+   * Fetch quest details from remote server and updates the data cache after a period of time
+   */
+  const handleFetchQuestFromRemote = async () => {
+    let fusionBackendUrl;
+    if (Constants.expoConfig?.extra) {
+      fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
+    }
+    try {
+      const response = await axios.get(`${fusionBackendUrl}/api/quest/detail`, {
+        params: { questId: route.params.quest.guid },
+        headers: {
+          Authorization: `Bearer ${accountContext?.userApiToken}`,
+        },
+      });
+      const quest = response?.data?.quest as Quest;
+      return questService.saveQuest(quest);
+    } catch (error) {
+      console.log("error --->", error);
+    }
+  };
+
+  /**
+   * Fetch the prompts user has saved for this quest
+   */
+  const handleFetchQuestPrompts = async () => {
+    const questPrompts = await questService.fetchQuestPrompts(
+      route.params.quest.guid
+    );
+    if (questPrompts) {
+      // it'll be slow for now but find prompt from db & set it
+      const fetchPrompts = async () => {
+        const fetchedPrompts = await Promise.all(
+          questPrompts.map(async (qp) => {
+            const prompt = await promptService.getPrompt(qp.promptId);
+            if (prompt) {
+              return prompt;
+            }
+          })
+        );
+        const filteredPrompts = fetchedPrompts.filter(
+          (prompt) => prompt !== undefined
+        );
+        if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
+      };
+
+      fetchPrompts();
+    }
+
+    await getQuestSubscriptionStatus();
+  };
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -49,35 +102,11 @@ export function QuestDetailScreen() {
       },
     });
 
-    /**
-     * Fetch the prompts user has saved for this quest
-     */
-    (async () => {
-      const questPrompts = await questService.fetchQuestPrompts(
-        route.params.quest.guid
-      );
-      if (questPrompts) {
-        // it'll be slow for now but find prompt from db & set it
-        const fetchPrompts = async () => {
-          const fetchedPrompts = await Promise.all(
-            questPrompts.map(async (qp) => {
-              const prompt = await promptService.getPrompt(qp.promptId);
-              if (prompt) {
-                return prompt;
-              }
-            })
-          );
-          const filteredPrompts = fetchedPrompts.filter(
-            (prompt) => prompt !== undefined
-          );
-          if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
-        };
+    handleFetchQuestPrompts();
+  }, []);
 
-        fetchPrompts();
-      }
-
-      await getQuestSubscriptionStatus();
-    })();
+  React.useEffect(() => {
+    handleFetchQuestFromRemote();
   }, []);
 
   const getQuestSubscriptionStatus = async () => {
@@ -198,6 +227,7 @@ export function QuestDetailScreen() {
     setActivePrompt(undefined);
     promptOptionsSheetRef.current?.close();
   }, []);
+
   useEffect(() => {
     /**
      * This delay is added before showing bottom sheet because some time
