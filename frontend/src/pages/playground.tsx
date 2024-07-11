@@ -43,10 +43,7 @@ const PlaygroundPage: NextPage = () => {
   const handleCloseDataHandling = () => {
     setShowDataHandlingModal(false);
   };
-  // const handleRemoveOnboarding = () => {
-  //   localStorage.removeItem("viewedOnboarding");
-  //   setShowCapabilitiesModal(true);
-  // };
+
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -130,7 +127,7 @@ const PlaygroundPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Playground | Fusion Explorer",
+          title: "Recordings | NeuroFusion",
           description:
             "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",

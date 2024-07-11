@@ -7,7 +7,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import category from "~/config/category";
+import category from "~/config/data";
 import { PromptModalDetsContext, AddPromptModalContext, AddPromptTimesContext } from "~/hooks/modalContext";
 import PromptModalDets from "~/components/questmodals/promptdets";
 import AddPromptModal from "~/components/questmodals/addprompts";
@@ -193,7 +193,6 @@ const QuestsPage: NextPage = () => {
   const [andTime, setAndTime] = useState<string>("");
   const [frequency, setFrequency] = useState<string>("");
 
-  // Assuming you're using useState, you should type it like this:
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
 
@@ -347,47 +346,45 @@ const QuestsPage: NextPage = () => {
                     />
 
                     <Input
-                      label="Quest Config"
+                      label="Configure prompts you want people to respond to"
                       type="text"
                       size="lg"
                       fullWidth
                       placeholder="Enter Prompt Config (JSON)"
                       value={questConfig}
-                      className="pt-4 h-40  hidden"
+                      className="h-40  hidden"
                       onChange={(e) => setQuestConfig(e.target.value)}
                     />
 
-                    <div>
-                      {prompts.length > 0 && (
-                        <div className="mt-8">
-                          <h2 className="mb-4">Prompts</h2>
-                          <div className="flex flex-wrap gap-6">
-                            {prompts.map((prompt, index) => (
-                              <div key={index} className="border p-4 rounded-md">
-                                <h3 className="font-bold">{prompt.promptText}</h3>
-                                <p>Days: {prompt.selectedDays.join(", ")}</p>
-                                <p>
-                                  Time: {prompt.betweenTime} - {prompt.andTime}
-                                </p>
-                                <p>Frequency: {prompt.frequency}</p>
-                                <div className="mt-2 space-x-2">
-                                  <Button size="sm" onClick={() => handleEditPrompt(index)}>
-                                    Edit
-                                  </Button>
-                                  <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
-                                    Delete
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-8">
-                      {" "}
+                    <div className="mt-4">
                       <Button onClick={handleAddPromptModal}>Add Prompt</Button>
                     </div>
+
+                    {prompts.length > 0 && (
+                      <div className="mt-8">
+                        <h2 className="mb-4">Prompts</h2>
+                        <div className="flex flex-wrap gap-6">
+                          {prompts.map((prompt, index) => (
+                            <div key={index} className="border p-4 rounded-md">
+                              <h3 className="font-bold">{prompt.promptText}</h3>
+                              <p>Days: {prompt.selectedDays.join(", ")}</p>
+                              <p>
+                                Time: {prompt.betweenTime} - {prompt.andTime}
+                              </p>
+                              <p>Frequency: {prompt.frequency}</p>
+                              <div className="mt-2 space-x-2">
+                                <Button size="sm" onClick={() => handleEditPrompt(index)}>
+                                  Edit
+                                </Button>
+                                <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <Button
                       type="submit"
