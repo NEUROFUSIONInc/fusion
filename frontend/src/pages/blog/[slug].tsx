@@ -45,7 +45,6 @@ export async function getStaticProps({ params }: any) {
 
 function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
-  
 
   useEffect(() => {
     const images: NodeListOf<HTMLImageElement> = document.querySelectorAll("img[data-zoomable]");
@@ -67,7 +66,6 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       });
     };
   }, []);
-  
 
   if (!frontMatter) return <></>;
 
@@ -98,7 +96,9 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
         <h1 className="text-5xl leading-tight text-[#000] font-semibold not-prose">{frontMatter.title}</h1>
-        <p className="not-prose text-[#000] pt-4 font-normal font-semibold text-base">By {frontMatter.authors[0].name}</p>
+        <p className="not-prose text-[#000] pt-4 font-normal font-semibold text-base">
+          By {frontMatter.authors[0].name}
+        </p>
         <p className="text-gray-500 not-prose text-base">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
         <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
 

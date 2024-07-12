@@ -30,6 +30,8 @@ module.exports = defineConfig({
       rules: {
         "react/react-in-jsx-scope": "off",
         "unused-imports/no-unused-imports": "error",
+        "@next/next/no-document-import-in-page": "off",
+
         "import/order": [
           1,
           {

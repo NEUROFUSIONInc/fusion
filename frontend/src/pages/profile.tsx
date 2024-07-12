@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import { useSession, signOut } from "next-auth/react";
-
+import { appInsights } from "~/utils/appInsights";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { DashboardLayout, Meta } from "~/components/layouts";
 import { Button, Dialog, DialogContent, DialogDescription, DialogTitle } from "~/components/ui";
@@ -15,6 +15,7 @@ const AccountPage: NextPage = () => {
   const [confirmDeleteAccount, setConfirmDeleteAccount] = React.useState(false);
 
   const deleteAccount = () => {
+    appInsights.trackEvent({ name: "delete_account", properties: { customProperty: "value" } });
     deletePrivateKey();
     signOut();
   };

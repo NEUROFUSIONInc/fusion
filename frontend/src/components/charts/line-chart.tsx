@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import ReactEcharts from "echarts-for-react";
+const ReactEcharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import React, { FC } from "react";
 import { DisplayCategory, FusionQuestDataset } from "~/@types";
+import dynamic from "next/dynamic";
 
 export interface LineChartProps {
   seriesData: FusionQuestDataset[];
