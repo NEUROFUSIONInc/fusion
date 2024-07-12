@@ -104,7 +104,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
           <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white mt-4">
             Response Type:
             <select
-              value={responseType}
+              value={responseType ?? ""}
               onChange={(e) => {
                 setResponseType(e.target.value as PromptResponseType);
               }}
