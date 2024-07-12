@@ -140,3 +140,17 @@ export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
 export type Days = "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday";
 
 export type NotificationConfigDays = Record<Days, boolean>;
+
+export interface IQuest {
+  title: string;
+  description: string;
+  config: string;
+  guid: string;
+  userGuid: string;
+  createdAt: string;
+  updatedAt: string;
+  joinCode: string;
+  organizerName?: string;
+  participants?: string[];
+  prompts: Prompt[]; // userNpubs
+}

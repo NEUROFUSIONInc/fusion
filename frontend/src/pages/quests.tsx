@@ -7,34 +7,9 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import category from "~/config/data";
-import { PromptModalDetsContext, AddPromptModalContext, AddPromptTimesContext } from "~/hooks/modalContext";
-import PromptModalDets from "~/components/questmodals/promptdets";
-import AddPromptModal from "~/components/questmodals/addprompts";
-import AddPromptTimes from "~/components/questmodals/addtimes";
-interface Prompt {
-  promptText: string;
-  selectedCategory: string;
-  responseType: string;
-  selectedDays: string[];
-  betweenTime: string;
-  andTime: string;
-  frequency: string;
-}
-
-interface IQuest {
-  title: string;
-  description: string;
-  config: string;
-  guid: string;
-  userGuid: string;
-  createdAt: string;
-  updatedAt: string;
-  joinCode: string;
-  organizerName?: string;
-  participants?: string[];
-  prompts: Prompt[]; // userNpubs
-}
+import AddPromptModal from "~/components/quest/addprompts";
+import { IQuest, Prompt } from "~/@types";
+import { promptSelectionDays } from "~/config/data";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -46,6 +21,7 @@ const QuestsPage: NextPage = () => {
   const [displayShareModal, setDisplayShareModal] = React.useState<boolean>(false);
   const [savedQuests, setSavedQuests] = React.useState<IQuest[]>([]);
   const [activeQuest, setActiveQuest] = React.useState<IQuest | null>(null);
+  const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
 
   const saveQuest = async () => {
     try {
@@ -138,7 +114,6 @@ const QuestsPage: NextPage = () => {
     }
   };
 
-  const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
   const getQuestSubscribers = async (questId: string) => {
     try {
       const res = await api.get("/quest/subscribers", {
@@ -181,45 +156,32 @@ const QuestsPage: NextPage = () => {
     })();
   }, [activeQuest]);
 
-  const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
-  const [displayPromptModalDets, setDisplayPromptModalDets] = useState(false);
-  const [displayAddPromptTimes, setDisplayAddPromptTimes] = useState(false);
-
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [promptText, setPromptText] = useState<string>("");
-  const [responseType, setResponseType] = useState<string>("");
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [betweenTime, setBetweenTime] = useState<string>("");
-  const [andTime, setAndTime] = useState<string>("");
-  const [frequency, setFrequency] = useState<string>("");
-
   const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
+  const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
 
-  console.log("prompt text", {
-    promptText,
-    selectedCategory,
-    responseType,
-    selectedDays,
-    betweenTime,
-    andTime,
-    frequency,
-  });
-
   const handleAddPromptModal = () => {
+    const newPrompt: Prompt = {
+      uuid: "",
+      promptText: "",
+      responseType: "text", // Assuming "text" is a valid PromptResponseType
+      notificationConfig_days: promptSelectionDays,
+      notificationConfig_startTime: "",
+      notificationConfig_endTime: "",
+      notificationConfig_countPerDay: 0, // Assuming 0 is a valid default value for countPerDay
+      additionalMeta: {},
+    };
+    setEditingPromptIndex(null);
+    setActivePrompt(newPrompt);
     setDisplayAddPromptModal(true);
   };
 
   const handleEditPrompt = (index: number) => {
     const promptToEdit = prompts[index];
+    console.log("promptToEdit", promptToEdit);
     setEditingPromptIndex(index);
-    setPromptText(promptToEdit.promptText);
-    setSelectedCategory(promptToEdit.selectedCategory);
-    setResponseType(promptToEdit.responseType);
-    setSelectedDays(promptToEdit.selectedDays);
-    setBetweenTime(promptToEdit.betweenTime);
-    setAndTime(promptToEdit.andTime);
-    setFrequency(promptToEdit.frequency);
+    setActivePrompt(promptToEdit);
     setDisplayAddPromptModal(true);
   };
 
@@ -227,306 +189,243 @@ const QuestsPage: NextPage = () => {
     setPrompts((prevPrompts) => prevPrompts.filter((_, i) => i !== index));
   };
 
-  const addPrompt = (
-    promptText: string,
-    selectedCategory: string,
-    responseType: string,
-    selectedDays: string[],
-    betweenTime: string,
-    andTime: string,
-    frequency: string
-  ) => {
-    const newPrompt: Prompt = {
-      promptText,
-      selectedCategory,
-      responseType,
-      selectedDays,
-      betweenTime,
-      andTime,
-      frequency,
-    };
-
-    setPrompts((prevPrompts: Prompt[]) => {
-      if (editingPromptIndex !== null) {
-        // Editing an existing prompt
-        const updatedPrompts = [...prevPrompts];
-        updatedPrompts[editingPromptIndex] = newPrompt;
-        return updatedPrompts;
-      } else {
-        // Adding a new prompt
-        return [...prevPrompts, newPrompt];
+  // preload the prompts from questConfig
+  React.useEffect(() => {
+    if (questConfig) {
+      // make sure it's valid
+      const parsedConfig = JSON.parse(questConfig);
+      if (Array.isArray(parsedConfig)) {
+        setPrompts(parsedConfig);
       }
-    });
-
-    setDisplayAddPromptTimes(false);
-    setEditingPromptIndex(null);
-    // Reset all the state values
-    setPromptText("");
-    setSelectedCategory("");
-    setResponseType("");
-    setSelectedDays([]);
-    setBetweenTime("");
-    setAndTime("");
-    setFrequency("");
-  };
+    }
+  }, [questConfig]);
 
   return (
-    <AddPromptModalContext.Provider value={{ selectedCategory, setSelectedCategory }}>
-      <AddPromptTimesContext.Provider
-        value={{
-          frequency,
-          setFrequency,
-          selectedDays,
-          setSelectedDays,
-          betweenTime,
-          setBetweenTime,
-          andTime,
-          setAndTime,
+    <DashboardLayout>
+      <Meta
+        meta={{
+          title: "NeuroFusion | Quests",
+          description:
+            "Create and manage quests for your participants to run. Wearables. Behavior Tracking. Health Data.",
         }}
-      >
-        <PromptModalDetsContext.Provider value={{ promptText, setPromptText, responseType, setResponseType }}>
-          <DashboardLayout>
-            <Meta
-              meta={{
-                title: "NeuroFusion | Quests",
-                description:
-                  "Create and manage quests for your participants to run. Wearables. Behavior Tracking. Health Data.",
-              }}
-            />
-            <h1 className="text-4xl">Quests</h1>
-            <div className="flex flex-row space-x-4 mt-5">
-              <Button onClick={() => setActiveView("view")} intent={activeView == "view" ? "primary" : "integration"}>
-                View Quests
-              </Button>
-              <Button
-                onClick={() => setActiveView("create")}
-                intent={activeView == "create" ? "primary" : "integration"}
-              >
-                Create Quest
-              </Button>
-            </div>
-            {["create", "edit"].includes(activeView) && (
-              <>
-                <p className="mb-5 mt-5 text-lg dark:text-slate-400">
-                  Create a new quest that you want other participants to run
-                </p>
-                <div className="flex flex-col items-center justify-start w-full h-full">
-                  <div className="y-3 w-full">
-                    <Input
-                      label="Title"
-                      type="text"
-                      size="lg"
-                      fullWidth
-                      placeholder="Enter Quest Title e.g Validating Wellness Activities"
-                      value={questTitle}
-                      className="mb-2"
-                      onChange={(e) => setQuestTitle(e.target.value)}
-                    />
+      />
+      <h1 className="text-4xl">Quests</h1>
+      <div className="flex flex-row space-x-4 mt-5">
+        <Button onClick={() => setActiveView("view")} intent={activeView == "view" ? "primary" : "integration"}>
+          View Quests
+        </Button>
+        <Button onClick={() => setActiveView("create")} intent={activeView == "create" ? "primary" : "integration"}>
+          Create Quest
+        </Button>
+      </div>
+      {["create", "edit"].includes(activeView) && (
+        <>
+          <p className="mb-5 mt-5 text-lg dark:text-slate-400">
+            Create a new quest that you want other participants to run
+          </p>
+          <div className="flex flex-col items-center justify-start w-full h-full">
+            <div className="y-3 w-full">
+              <Input
+                label="Title"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Quest Title e.g Validating Wellness Activities"
+                value={questTitle}
+                className="mb-2"
+                onChange={(e) => setQuestTitle(e.target.value)}
+              />
 
-                    <Input
-                      label="Description"
-                      type="text"
-                      size="lg"
-                      fullWidth
-                      placeholder="Enter Purpose of Quest e.g Let's see what helps you feel better!"
-                      value={questDescription}
-                      className="pt-4 h-20 mb-2"
-                      onChange={(e) => setQuestDescription(e.target.value)}
-                    />
+              <Input
+                label="Description"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Purpose of Quest e.g Let's see what helps you feel better!"
+                value={questDescription}
+                className="pt-4 h-20 mb-2"
+                onChange={(e) => setQuestDescription(e.target.value)}
+              />
 
-                    <Input
-                      label="Organized by"
-                      type="text"
-                      size="lg"
-                      fullWidth
-                      placeholder="Enter Organizer Name, participants will see this in the app"
-                      value={questOrganizer}
-                      className="mb-2"
-                      onChange={(e) => setQuestOrganizer(e.target.value)}
-                    />
+              <Input
+                label="Organized by"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Organizer Name, participants will see this in the app"
+                value={questOrganizer}
+                className="mb-2"
+                onChange={(e) => setQuestOrganizer(e.target.value)}
+              />
 
-                    <Input
-                      label="Configure prompts you want people to respond to"
-                      type="text"
-                      size="lg"
-                      fullWidth
-                      placeholder="Enter Prompt Config (JSON)"
-                      value={questConfig}
-                      className="h-40  hidden"
-                      onChange={(e) => setQuestConfig(e.target.value)}
-                    />
+              <Input
+                label="Configure prompts you want people to respond to"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Prompt Config (JSON)"
+                value={questConfig}
+                className="h-40  hidden"
+                onChange={(e) => setQuestConfig(e.target.value)}
+              />
 
-                    <div className="mt-4">
-                      <Button onClick={handleAddPromptModal}>Add Prompt</Button>
-                    </div>
+              <div className="mt-4">
+                <Button onClick={handleAddPromptModal}>Add Prompt</Button>
+              </div>
 
-                    {prompts.length > 0 && (
-                      <div className="mt-8">
-                        <h2 className="mb-4">Prompts</h2>
-                        <div className="flex flex-wrap gap-6">
-                          {prompts.map((prompt, index) => (
-                            <div key={index} className="border p-4 rounded-md">
-                              <h3 className="font-bold">{prompt.promptText}</h3>
-                              <p>Days: {prompt.selectedDays.join(", ")}</p>
-                              <p>
-                                Time: {prompt.betweenTime} - {prompt.andTime}
-                              </p>
-                              <p>Frequency: {prompt.frequency}</p>
-                              <div className="mt-2 space-x-2">
-                                <Button size="sm" onClick={() => handleEditPrompt(index)}>
-                                  Edit
-                                </Button>
-                                <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
-                                  Delete
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <Button
-                      type="submit"
-                      size="lg"
-                      fullWidth
-                      className="mt-4"
-                      onClick={async () => {
-                        if (activeView === "edit") {
-                          await editQuest();
-                        } else {
-                          await saveQuest();
-                        }
-                      }}
-                    >
-                      Save Quest
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
-            {activeView === "view" && (
-              <>
-                <p className="mb-5 mt-5 text-lg dark:text-slate-400">View all quests that you have created</p>
-                <table className="w-full">
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Description</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {savedQuests.map((quest) => (
-                      <tr key={quest.guid}>
-                        <Link href={`/quest/${quest.guid}`}>
-                          <td className="underline">{quest.title}</td>
-                        </Link>
-                        <td>{quest.description}</td>
-                        {quest.prompts && <td></td>}
-                        <td className="flex justify-center">
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              setActiveQuest(quest);
-                              setDisplayShareModal(true);
-                            }}
-                          >
-                            Share
-                          </Button>
-                          <Button
-                            size="sm"
-                            intent="ghost"
-                            onClick={() => {
-                              setActiveQuest(quest);
-                              setQuestTitle(quest.title);
-                              setQuestDescription(quest.description);
-                              setQuestConfig(quest.config);
-                              setQuestOrganizer(quest.organizerName ?? "");
-                              setActiveView("edit");
-                            }}
-                          >
+              {prompts.length > 0 && (
+                <div className="mt-8">
+                  <div className="flex flex-wrap gap-6">
+                    {prompts.map((prompt, index) => (
+                      <div key={index} className="border p-4 rounded-md">
+                        <h3 className="font-bold">{prompt.promptText}</h3>
+                        <p>
+                          Days:{" "}
+                          {Object.keys(prompt.notificationConfig_days)
+                            .filter(
+                              (day) =>
+                                prompt.notificationConfig_days[day as keyof typeof prompt.notificationConfig_days]
+                            )
+                            .join(", ")}
+                        </p>
+                        <p>
+                          Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
+                        </p>
+                        <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
+                        <div className="mt-2 space-x-2">
+                          <Button size="sm" onClick={() => handleEditPrompt(index)}>
                             Edit
                           </Button>
-                        </td>
-                      </tr>
+                          <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </>
-            )}
-            {/* Display Share Modal */}
-            {activeQuest && (
-              <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
-                <DialogContent>
-                  <DialogTitle>Share Quest</DialogTitle>
-                  <div>
-                    <div>Active Participants: {questSubscribers.length}</div>
                   </div>
-                  <DialogDescription>
-                    Share the code with your participants to join this quest using the Fusion mobile app
-                  </DialogDescription>
-                  <div className="flex flex-col space-y-4">
-                    <Input label="Join Code" type="text" size="lg" value={activeQuest?.joinCode} readOnly />
-                    <Button size="lg" fullWidth>
-                      Copy Join Code
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                fullWidth
+                className="mt-4"
+                onClick={async () => {
+                  if (activeView === "edit") {
+                    await editQuest();
+                  } else {
+                    await saveQuest();
+                  }
+                }}
+              >
+                Save Quest
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+      {activeView === "view" && (
+        <>
+          <p className="mb-5 mt-5 text-lg dark:text-slate-400">View all quests that you have created</p>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {savedQuests.map((quest) => (
+                <tr key={quest.guid}>
+                  <Link href={`/quest/${quest.guid}`}>
+                    <td className="underline">{quest.title}</td>
+                  </Link>
+                  <td>{quest.description}</td>
+                  {quest.prompts && <td></td>}
+                  <td className="flex justify-center">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setActiveQuest(quest);
+                        setDisplayShareModal(true);
+                      }}
+                    >
+                      Share
                     </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
+                    <Button
+                      size="sm"
+                      intent="ghost"
+                      onClick={() => {
+                        setActiveQuest(quest);
+                        setQuestTitle(quest.title);
+                        setQuestDescription(quest.description);
+                        setQuestConfig(quest.config);
+                        setQuestOrganizer(quest.organizerName ?? "");
+                        setActiveView("edit");
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {/* Display Share Modal */}
+      {activeQuest && (
+        <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
+          <DialogContent>
+            <DialogTitle>Share Quest</DialogTitle>
+            <div>
+              <div>Active Participants: {questSubscribers.length}</div>
+            </div>
+            <DialogDescription>
+              Share the code with your participants to join this quest using the Fusion mobile app
+            </DialogDescription>
+            <div className="flex flex-col space-y-4">
+              <Input label="Join Code" type="text" size="lg" value={activeQuest?.joinCode} readOnly />
+              <Button size="lg" fullWidth>
+                Copy Join Code
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
-            {/* Prompt Create/Edit Modal */}
-            {displayAddPromptModal && (
-              <AddPromptModal
-                onSave={() => {
-                  setDisplayAddPromptModal(false);
-                }}
-                onClose={() => {
-                  setDisplayAddPromptModal(false);
-                }}
-                onContinue={() => {
-                  setDisplayAddPromptModal(false);
-                  setDisplayPromptModalDets(true);
-                }}
-              />
-            )}
-            {displayPromptModalDets && (
-              <PromptModalDets
-                onPrevious={() => {
-                  setDisplayPromptModalDets(false);
-                  setDisplayAddPromptModal(true);
-                }}
-                onClose={() => {
-                  setDisplayPromptModalDets(false);
-                }}
-                onContinue={() => {
-                  setDisplayPromptModalDets(false);
-                  // Add logic to proceed after completing details
-                  setDisplayAddPromptTimes(true);
-                }}
-              />
-            )}
+      {/* Prompt Create/Edit Modal */}
+      {displayAddPromptModal && activePrompt && (
+        <AddPromptModal
+          prompt={activePrompt}
+          setPrompt={setActivePrompt}
+          onSave={(prompt) => {
+            // first update the active entry
+            setActivePrompt(prompt);
+            // then update the prompts array
+            console.log("editingPromptIndex", editingPromptIndex);
 
-            {displayAddPromptTimes && (
-              <AddPromptTimes
-                onPrevious={() => {
-                  setDisplayAddPromptTimes(false);
-                  setDisplayPromptModalDets(true);
-                }}
-                onClose={() => {
-                  setDisplayAddPromptTimes(false);
-                }}
-                onContinue={() => {
-                  setDisplayAddPromptTimes(false);
-                  addPrompt(promptText, selectedCategory, responseType, selectedDays, betweenTime, andTime, frequency);
-                }}
-              />
-            )}
-          </DashboardLayout>
-        </PromptModalDetsContext.Provider>
-      </AddPromptTimesContext.Provider>
-    </AddPromptModalContext.Provider>
+            if (editingPromptIndex !== null) {
+              setPrompts((prevPrompts) => {
+                const updatedPrompts = [...prevPrompts];
+                updatedPrompts[editingPromptIndex] = prompt;
+                return updatedPrompts;
+              });
+            } else {
+              setPrompts((prevPrompts) => [...prevPrompts, prompt]);
+            }
+            setActivePrompt(null);
+            setEditingPromptIndex(null);
+            setDisplayAddPromptModal(false);
+          }}
+          onClose={() => {
+            setDisplayAddPromptModal(false);
+          }}
+        />
+      )}
+    </DashboardLayout>
   );
 };
 
