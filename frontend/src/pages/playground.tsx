@@ -1,4 +1,3 @@
-
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import React, { useState, useEffect } from "react";
@@ -39,15 +38,12 @@ const PlaygroundPage: NextPage = () => {
 
   const handleCloseCapabilities = () => {
     setShowCapabilitiesModal(false);
-  }
+  };
 
   const handleCloseDataHandling = () => {
-    setShowDataHandlingModal(false)
-  }
-  // const handleRemoveOnboarding = () => {
-  //   localStorage.removeItem("viewedOnboarding");
-  //   setShowCapabilitiesModal(true);
-  // };
+    setShowDataHandlingModal(false);
+  };
+
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -131,7 +127,7 @@ const PlaygroundPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Playground | Fusion Explorer",
+          title: "Recordings | NeuroFusion",
           description:
             "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
@@ -158,13 +154,14 @@ const PlaygroundPage: NextPage = () => {
       <Experiment {...activeExperiment} />
       <div>
         {showCapabilitiesModal && (
-          <CapabilitiesModal
-            onNext={handleCapabilitiesNext}
-            onCancel={handleCloseCapabilities }
-          />
+          <CapabilitiesModal onNext={handleCapabilitiesNext} onCancel={handleCloseCapabilities} />
         )}
         {showDataHandlingModal && (
-          <DataHandlingModal onPrevious={handleDataHandlingPrevious} onGetStarted={handleDataHandlingGetStarted} onClose={handleCloseDataHandling} />
+          <DataHandlingModal
+            onPrevious={handleDataHandlingPrevious}
+            onGetStarted={handleDataHandlingGetStarted}
+            onClose={handleCloseDataHandling}
+          />
         )}
       </div>
     </DashboardLayout>
@@ -186,17 +183,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { session},
+    props: { session },
   };
 };
 
 interface CapabilitiesModalProps {
   onNext: () => void;
   onCancel: () => void;
- 
 }
 
-const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,  }) => {
+const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel }) => {
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent>
@@ -209,7 +205,9 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
           </div>
         </DialogDescription>
         <div className="flex justify-end mt-4">
-          <Button  intent="primary" onClick={onNext}>Next</Button>
+          <Button intent="primary" onClick={onNext}>
+            Next
+          </Button>
           <Button intent="dark" onClick={onCancel} className="ml-2">
             Cancel
           </Button>
@@ -222,7 +220,7 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
 interface DataHandlingModalProps {
   onPrevious: () => void;
   onGetStarted: () => void;
-  onClose : () =>void;
+  onClose: () => void;
 }
 
 const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGetStarted, onClose }) => {

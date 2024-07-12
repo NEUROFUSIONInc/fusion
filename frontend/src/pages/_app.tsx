@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import React from "react";
-import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { AppInsightsContext } from "@microsoft/applicationinsights-react-js";
 import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import "../styles/globals.css";
 import { gtw } from "~/utils";
@@ -36,17 +36,17 @@ button {
         </style>
       </Head>
       <SessionProvider session={session}>
-          <AppInsightsContext.Provider value={reactPlugin}>
-        <QueryClientProvider client={queryClient}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
-              <main className={`${gtw.variable} font-body`}>
-                <Component {...pageProps} />
-              </main>
-            </ThemeProvider>
-          </Hydrate>
-        </QueryClientProvider>
-          </AppInsightsContext.Provider>
+        <AppInsightsContext.Provider value={reactPlugin}>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
+              <ThemeProvider enableSystem forcedTheme={(Component as any).theme || undefined} attribute="class">
+                <main className={`${gtw.variable} font-body`}>
+                  <Component {...pageProps} />
+                </main>
+              </ThemeProvider>
+            </Hydrate>
+          </QueryClientProvider>
+        </AppInsightsContext.Provider>
       </SessionProvider>
     </>
   );

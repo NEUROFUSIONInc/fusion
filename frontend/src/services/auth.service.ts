@@ -8,7 +8,6 @@ interface AuthResponse {
   authToken: string;
 }
 
-
 class AuthService {
   async completeNostrLogin(publicKey: string, privateKey?: string): Promise<AuthResponse | null> {
     const serverPublicKey = process.env.NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY;
@@ -22,7 +21,7 @@ class AuthService {
         console.log(`failed to connect to ${relay.url}`);
       });
       await relay.connect();
-      
+
       const loginTimestamp = dayjs().unix();
       let sub = relay.sub([
         {
@@ -37,13 +36,14 @@ class AuthService {
       const authToken: string = await (async () => {
         return new Promise((resolve) => {
           sub.on("event", async (event) => {
-            // @ts-ignore
-            const decoded = privateKey ? await nip04.decrypt(privateKey, serverPublicKey!, event.content) : await window.nostr?.nip04.decrypt(serverPublicKey!, event.content);
+            const decoded = privateKey
+              ? await nip04.decrypt(privateKey, serverPublicKey!, event.content)
+              : await (window as any).nostr?.nip04.decrypt(serverPublicKey!, event.content);
             resolve(decoded);
           });
         });
       })();
-      
+
       if (res.status == 200 && authToken) {
         return {
           userNpub: nip19.npubEncode(publicKey),

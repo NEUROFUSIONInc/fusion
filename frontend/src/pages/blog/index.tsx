@@ -9,7 +9,7 @@ export async function getStaticProps() {
   return {
     props: {
       posts,
-      title: "NeuroFusion Blog",
+      title: "Blog | NeuroFusion",
       description: "Updates on our products & research.",
     },
   };

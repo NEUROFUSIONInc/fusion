@@ -13,7 +13,7 @@ declare module "next-auth/jwt" {
 }
 
 declare module "next-auth" {
-  interface User extends IUser { }
+  interface User extends IUser {}
   interface Session extends DefaultSession {
     user?: User;
   }
