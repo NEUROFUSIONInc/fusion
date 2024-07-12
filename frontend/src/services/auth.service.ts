@@ -36,10 +36,9 @@ class AuthService {
       const authToken: string = await (async () => {
         return new Promise((resolve) => {
           sub.on("event", async (event) => {
-            // @ts-ignore
             const decoded = privateKey
               ? await nip04.decrypt(privateKey, serverPublicKey!, event.content)
-              : await window.nostr?.nip04.decrypt(serverPublicKey!, event.content);
+              : await (window as any).nostr?.nip04.decrypt(serverPublicKey!, event.content);
             resolve(decoded);
           });
         });
