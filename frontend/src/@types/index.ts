@@ -152,5 +152,5 @@ export interface IQuest {
   joinCode: string;
   organizerName?: string;
   participants?: string[];
-  prompts: Prompt[]; // userNpubs
+  prompts: Prompt[];
 }
