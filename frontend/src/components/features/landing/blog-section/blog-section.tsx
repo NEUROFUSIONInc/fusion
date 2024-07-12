@@ -9,9 +9,9 @@ export function BlogSection({ posts }: any) {
   };
   const cardStyles = {
     "&:hover": {
-        transform: "none",
-    }
-    };
+      transform: "none",
+    },
+  };
 
   return (
     <section title="News and Updates" aria-labelledby="" className="font-body mb-24">

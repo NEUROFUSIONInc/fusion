@@ -1,16 +1,23 @@
+import React from "react";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ReactPlugin, withAITracking } from "@microsoft/applicationinsights-react-js";
-import { createBrowserHistory } from "history";
-
-// const browserHistory = createBrowserHistory();
 
 const reactPlugin = new ReactPlugin();
-const ai = new ApplicationInsights({
+
+const appInsights = new ApplicationInsights({
   config: {
     instrumentationKey: process.env.NEXT_PUBLIC_APP_INSIGHTS_KEY,
+    extensions: [reactPlugin],
+    enableAutoRouteTracking: true,
+    disableAjaxTracking: false,
+    autoTrackPageVisitTime: true,
+    enableCorsCorrelation: true,
+    enableRequestHeaderTracking: true,
+    enableResponseHeaderTracking: true,
   },
 });
 
-ai.loadAppInsights();
+appInsights.loadAppInsights();
+appInsights.trackPageView(); // Manually call trackPageView to establish the current user/session/pageview
 
-export const appInsights = ai.appInsights;
+export { appInsights, reactPlugin };

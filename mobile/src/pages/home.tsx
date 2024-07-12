@@ -153,7 +153,7 @@ export function HomeScreen() {
 
     // TODO: if they haven't responded recently, pass the last 10 responses
     if (categoryPromptResponses.length === 0) {
-      return `You haven't responsed any prompts in this category recently. Add responses to your '${category}' prompts in order to see insights.`;
+      return `Add responses to your '${category}' prompts in order to get summaries and personalized recommendations.`;
     }
 
     // sort responses by timestamp ascending
@@ -165,6 +165,9 @@ export function HomeScreen() {
     if (Constants.expoConfig?.extra) {
       fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
     }
+
+    console.log(fusionBackendUrl);
+    console.log(accountContext?.userApiToken);
 
     try {
       const res = await axios.post(

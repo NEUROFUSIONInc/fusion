@@ -28,7 +28,7 @@ export async function getStaticProps() {
   };
 }
 
-const Research: NextPage = ({posts}: any) => {
+const Research: NextPage = ({ posts }: any) => {
   return (
     <MainLayout isResearch>
       <Meta

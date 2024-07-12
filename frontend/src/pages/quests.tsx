@@ -1,7 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import React from "react";
-
+import React, { useState, useContext } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { DashboardLayout, Meta } from "~/components/layouts";
 import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } from "~/components/ui";
@@ -9,19 +8,9 @@ import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-
-interface IQuest {
-  title: string;
-  description: string;
-  config: string;
-  guid: string;
-  userGuid: string;
-  createdAt: string;
-  updatedAt: string;
-  joinCode: string;
-  organizerName?: string;
-  participants?: string[]; // userNpubs
-}
+import AddPromptModal from "~/components/quest/addprompts";
+import { IQuest, Prompt } from "~/@types";
+import { promptSelectionDays } from "~/config/data";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -33,17 +22,17 @@ const QuestsPage: NextPage = () => {
   const [displayShareModal, setDisplayShareModal] = React.useState<boolean>(false);
   const [savedQuests, setSavedQuests] = React.useState<IQuest[]>([]);
   const [activeQuest, setActiveQuest] = React.useState<IQuest | null>(null);
+  const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
 
   const saveQuest = async () => {
     try {
-      // if activeView "edit"
       const res = await api.post(
         "/quest",
         {
           title: questTitle,
           description: questDescription,
           organizerName: questOrganizer,
-          config: questConfig,
+          config: JSON.stringify({ prompts: prompts }),
         },
         {
           headers: {
@@ -55,8 +44,9 @@ const QuestsPage: NextPage = () => {
       if (res.status === 201) {
         console.log("Quest saved successfully");
         console.log(res.data);
-        // send user to the quest detail page
-        setSavedQuests([...savedQuests, res.data.quest]);
+        setSavedQuests([...savedQuests, { ...res.data.quest, prompts: JSON.parse(res.data.quest.config) }]); // Parse config back to prompts array
+
+        console.log(res.data.quest);
         setActiveView("view");
       } else {
         console.error("Failed to save quest");
@@ -74,7 +64,7 @@ const QuestsPage: NextPage = () => {
           title: questTitle,
           description: questDescription,
           organizerName: questOrganizer,
-          config: questConfig,
+          config: JSON.stringify({ prompts: prompts }),
           guid: activeQuest?.guid,
         },
         {
@@ -87,7 +77,6 @@ const QuestsPage: NextPage = () => {
       if (res.status === 200) {
         console.log("Quest edited successfully");
         console.log(res.data);
-        // update the entry for quest with guid from savedQuests
         const updatedQuests = savedQuests.map((quest) => {
           if (quest.guid === res.data.quest.guid) {
             return res.data.quest;
@@ -96,6 +85,7 @@ const QuestsPage: NextPage = () => {
         });
 
         setSavedQuests(updatedQuests);
+
         setActiveView("view");
       } else {
         console.error("Failed to edit quest");
@@ -124,21 +114,16 @@ const QuestsPage: NextPage = () => {
     }
   };
 
-  const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
   const getQuestSubscribers = async (questId: string) => {
     try {
-      const res = await api.get(
-        "/quest/subscribers",
-
-        {
-          params: {
-            questId,
-          },
-          headers: {
-            Authorization: `Bearer ${session.data?.user?.authToken}`,
-          },
-        }
-      );
+      const res = await api.get("/quest/subscribers", {
+        params: {
+          questId,
+        },
+        headers: {
+          Authorization: `Bearer ${session.data?.user?.authToken}`,
+        },
+      });
 
       if (res.status === 200) {
         console.log("Quest Subscribers fetched successfully");
@@ -163,7 +148,6 @@ const QuestsPage: NextPage = () => {
         console.log("subscribers", subscribers);
 
         if (subscribers) {
-          // update activeQuest with participants
           setQuestSubscribers(subscribers);
         } else {
           setQuestSubscribers([]);
@@ -171,6 +155,59 @@ const QuestsPage: NextPage = () => {
       }
     })();
   }, [activeQuest]);
+
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
+  const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
+  const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
+
+  const handleAddPromptModal = () => {
+    const newPrompt: Prompt = {
+      uuid: "",
+      promptText: "",
+      responseType: "text", // Assuming "text" is a valid PromptResponseType
+      notificationConfig_days: promptSelectionDays,
+      notificationConfig_startTime: "",
+      notificationConfig_endTime: "",
+      notificationConfig_countPerDay: 0, // Assuming 0 is a valid default value for countPerDay
+      additionalMeta: {},
+    };
+    setEditingPromptIndex(null);
+    setActivePrompt(newPrompt);
+  };
+
+  const handleEditPrompt = (index: number) => {
+    const promptToEdit = prompts[index];
+    console.log("promptToEdit", promptToEdit);
+    setEditingPromptIndex(index);
+    setActivePrompt(promptToEdit);
+  };
+
+  const handleDeletePrompt = (index: number) => {
+    setPrompts((prevPrompts) => prevPrompts.filter((_, i) => i !== index));
+  };
+
+  // preload the prompts from questConfig
+  React.useEffect(() => {
+    if (questConfig) {
+      console.log("questConfig", questConfig);
+      // make sure it's valid
+      // handle based on if it's an array (old way) / or object with prompt key
+      const parsedConfig = JSON.parse(questConfig);
+      if (Array.isArray(parsedConfig)) {
+        setPrompts(parsedConfig);
+      } else if (parsedConfig && parsedConfig.prompts && Array.isArray(parsedConfig.prompts)) {
+        setPrompts(parsedConfig.prompts);
+      }
+    }
+  }, [questConfig]);
+
+  React.useEffect(() => {
+    console.log("activePrompt", activePrompt);
+    if (activePrompt) {
+      setDisplayAddPromptModal(true);
+    }
+  }, [activePrompt]);
 
   return (
     <DashboardLayout>
@@ -180,9 +217,8 @@ const QuestsPage: NextPage = () => {
           description:
             "Create and manage quests for your participants to run. Wearables. Behavior Tracking. Health Data.",
         }}
-      />{" "}
+      />
       <h1 className="text-4xl">Quests</h1>
-      {/* Two buttons, one for create another for view */}
       <div className="flex flex-row space-x-4 mt-5">
         <Button onClick={() => setActiveView("view")} intent={activeView == "view" ? "primary" : "integration"}>
           View Quests
@@ -196,7 +232,6 @@ const QuestsPage: NextPage = () => {
           <p className="mb-5 mt-5 text-lg dark:text-slate-400">
             Create a new quest that you want other participants to run
           </p>
-          {/* Quest Create Form */}
           <div className="flex flex-col items-center justify-start w-full h-full">
             <div className="y-3 w-full">
               <Input
@@ -235,28 +270,57 @@ const QuestsPage: NextPage = () => {
                 required
               />
 
-              <div className="my-3 flex flex-col gap-y-2 w-fit">
-                <p className="font-semibold">Prompts</p>
+              <Input
+                label="Configure prompts you want people to respond to"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Prompt Config (JSON)"
+                value={questConfig}
+                className="h-40  hidden"
+                onChange={(e) => setQuestConfig(e.target.value)}
+              />
 
-                {/* list the prompts if they exist -with the option to edit */}
-
-                <Button type="button" size="lg" leftIcon={<Plus />}>
+              <div className="mt-4">
+                <Button onClick={handleAddPromptModal} leftIcon={<Plus />}>
                   Add Prompt
                 </Button>
               </div>
 
-              <div className="">
-                <Input
-                  label="Quest Config"
-                  type="text"
-                  size="lg"
-                  fullWidth
-                  placeholder="Enter Prompt Config (JSON)"
-                  value={questConfig}
-                  className="pt-4 h-40"
-                  onChange={(e) => setQuestConfig(e.target.value)}
-                />
-              </div>
+              {/* Prompt Cards */}
+              {prompts.length > 0 && (
+                <div className="mt-8">
+                  <div className="flex flex-wrap gap-6">
+                    {prompts.map((prompt, index) => (
+                      <div key={index} className="border p-4 rounded-md">
+                        <h3 className="font-bold">{prompt.promptText}</h3>
+                        <p>
+                          Days:
+                          {Object.keys(prompt.notificationConfig_days)
+                            .filter(
+                              (day) =>
+                                prompt.notificationConfig_days[day as keyof typeof prompt.notificationConfig_days]
+                            )
+                            .join(", ")}
+                        </p>
+                        <p>
+                          Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
+                        </p>
+                        <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
+
+                        <div className="mt-2 space-x-2">
+                          <Button size="sm" onClick={() => handleEditPrompt(index)}>
+                            Edit
+                          </Button>
+                          <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <Button
                 type="submit"
@@ -280,7 +344,6 @@ const QuestsPage: NextPage = () => {
       {activeView === "view" && (
         <>
           <p className="mb-5 mt-5 text-lg dark:text-slate-400">View all quests that you have created</p>
-          {/* Quest View */}
           <table className="w-full">
             <thead>
               <tr>
@@ -296,6 +359,7 @@ const QuestsPage: NextPage = () => {
                     <td className="underline">{quest.title}</td>
                   </Link>
                   <td>{quest.description}</td>
+                  {quest.prompts && <td></td>}
                   <td className="flex justify-center">
                     <Button
                       size="sm"
@@ -327,7 +391,7 @@ const QuestsPage: NextPage = () => {
           </table>
         </>
       )}
-      {/* Share Quest Modal */}
+      {/* Display Share Modal */}
       {activeQuest && (
         <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
           <DialogContent>
@@ -346,6 +410,37 @@ const QuestsPage: NextPage = () => {
             </div>
           </DialogContent>
         </Dialog>
+      )}
+
+      {/* Prompt Create/Edit Modal */}
+      {displayAddPromptModal && activePrompt && (
+        <AddPromptModal
+          prompt={activePrompt}
+          setPrompt={setActivePrompt}
+          onSave={(prompt) => {
+            // first update the active entry
+            setActivePrompt(prompt);
+            // then update the prompts array
+            console.log("editingPromptIndex", editingPromptIndex);
+
+            if (editingPromptIndex !== null) {
+              setPrompts((prevPrompts) => {
+                const updatedPrompts = [...prevPrompts];
+                updatedPrompts[editingPromptIndex] = prompt;
+                return updatedPrompts;
+              });
+            } else {
+              setPrompts((prevPrompts) => [...prevPrompts, prompt]);
+            }
+            setActivePrompt(null);
+            setEditingPromptIndex(null);
+            setDisplayAddPromptModal(false);
+          }}
+          onClose={() => {
+            setActivePrompt(null);
+            setDisplayAddPromptModal(false);
+          }}
+        />
       )}
     </DashboardLayout>
   );

@@ -29,4 +29,4 @@ export const persistPrivateKey = (privateKey: string): Promise<KeyPair> => {
 
 export const deletePrivateKey = (): void => {
   localStorage.removeItem(PRIVATE_KEY);
-}
+};

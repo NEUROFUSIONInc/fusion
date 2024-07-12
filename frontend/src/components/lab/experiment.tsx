@@ -100,7 +100,11 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     window.addEventListener("message", (event) => {
       // IMPORTANT: Check the origin of the data!
       // You should probably not use '*', but restrict it to certain domains:
-      if (event.origin.startsWith("https://localhost:") || event.origin.startsWith("https://usefusion.app") || event.origin.startsWith("https://usefusion.ai")) {
+      if (
+        event.origin.startsWith("https://localhost:") ||
+        event.origin.startsWith("https://usefusion.app") ||
+        event.origin.startsWith("https://usefusion.ai")
+      ) {
         console.log("event", event);
         if (typeof event.data === "string") {
           return;
