@@ -43,7 +43,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
     <>
       <div className="mt-2">
         <label htmlFor="frequency" className="block text-sm font-medium text-gray-900 dark:text-white mt-4">
-          How often should we prompt participants?
+          How often do you want to prompt participants daily?
           <select
             value={frequency}
             onChange={(e) => setFrequency(e.target.value)}
@@ -59,7 +59,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         </label>
 
         <label htmlFor="time" className="block text-sm font-medium text-gray-900 dark:text-white mt-4">
-          When do you want to prompt participants?
+          When do you want to prompt them?
         </label>
         <div className="mt-2">
           <label>{isSingleTime ? "At" : "Between"}</label>

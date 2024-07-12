@@ -22,12 +22,14 @@ export function getDayjsFromTimeString(timeString: string) {
 }
 
 const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSave, onClose }) => {
-  const [promptText, setPromptText] = useState("");
-  const [customOptions, setCustomOptions] = useState<string[]>([]);
-  const [responseType, setResponseType] = useState<PromptResponseType | null>(null);
-  const [category, setCategory] = useState<string | null>("");
+  const [promptText, setPromptText] = useState(prompt.promptText);
+  const [customOptions, setCustomOptions] = useState<string[]>(
+    prompt.additionalMeta.customOptionText ? prompt.additionalMeta.customOptionText.split(";") : []
+  );
+  const [responseType, setResponseType] = useState<PromptResponseType | null>(prompt.responseType);
+  const [category, setCategory] = useState<string | null>(prompt.additionalMeta.category ?? null);
   const [countPerDay, setCountPerDay] = useState<number | undefined>();
-  const [days, setDays] = useState(promptSelectionDays);
+  const [days, setDays] = useState(prompt.notificationConfig_days);
   const [start, setStart] = useState(getDayjsFromTimeString("08:00"));
   const [end, setEnd] = useState(getDayjsFromTimeString("22:00"));
 
@@ -59,13 +61,19 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
         <DialogDescription>
           {/* Choose Prompt Category */}
           <div className="list-disc mt-2">
-            <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white mt-4">
+            <label
+              htmlFor="categorySelect"
+              className="my-2 block text-sm font-medium text-gray-900 dark:text-white mt-4"
+            >
               Category
             </label>
             <select
+              id="categorySelect"
               value={category!}
               onChange={(e) => {
-                setCategory(e.target.value);
+                const selectedCategory = e.target.value;
+                setCategory(selectedCategory);
+                console.log("Selected category: ", selectedCategory);
               }}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
             >
@@ -115,7 +123,26 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
             {/* TODO: Add Custom Options Component */}
             {responseType === "customOptions" && (
               <div>
-                <Input label="Custom Options" type="text" size="md" fullWidth placeholder="eg : 1,2,3,4,5" />
+                <Input
+                  label="Custom Options"
+                  type="text"
+                  size="md"
+                  fullWidth
+                  placeholder="eg: Good;Bad;Neutral"
+                  value={customOptions.join(";")}
+                  onChange={(e) => setCustomOptions(e.target.value.split(";"))}
+                />
+
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {customOptions.map((option, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-800"
+                    >
+                      {option}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </label>

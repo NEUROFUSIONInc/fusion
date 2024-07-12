@@ -31,7 +31,7 @@ const QuestsPage: NextPage = () => {
           title: questTitle,
           description: questDescription,
           organizerName: questOrganizer,
-          config: JSON.stringify(prompts),
+          config: JSON.stringify({ prompts: prompts }),
         },
         {
           headers: {
@@ -63,7 +63,7 @@ const QuestsPage: NextPage = () => {
           title: questTitle,
           description: questDescription,
           organizerName: questOrganizer,
-          config: JSON.stringify(prompts),
+          config: JSON.stringify({ prompts: prompts }),
           guid: activeQuest?.guid,
         },
         {
@@ -83,8 +83,7 @@ const QuestsPage: NextPage = () => {
           return quest;
         });
 
-        // setSavedQuests(updatedQuests);
-        setSavedQuests([...updatedQuests, { ...res.data.quest, prompts: JSON.parse(res.data.quest.config) }]); // Parse config back to prompts array
+        setSavedQuests(updatedQuests);
 
         setActiveView("view");
       } else {
@@ -174,7 +173,6 @@ const QuestsPage: NextPage = () => {
     };
     setEditingPromptIndex(null);
     setActivePrompt(newPrompt);
-    setDisplayAddPromptModal(true);
   };
 
   const handleEditPrompt = (index: number) => {
@@ -182,7 +180,6 @@ const QuestsPage: NextPage = () => {
     console.log("promptToEdit", promptToEdit);
     setEditingPromptIndex(index);
     setActivePrompt(promptToEdit);
-    setDisplayAddPromptModal(true);
   };
 
   const handleDeletePrompt = (index: number) => {
@@ -192,13 +189,24 @@ const QuestsPage: NextPage = () => {
   // preload the prompts from questConfig
   React.useEffect(() => {
     if (questConfig) {
+      console.log("questConfig", questConfig);
       // make sure it's valid
+      // handle based on if it's an array (old way) / or object with prompt key
       const parsedConfig = JSON.parse(questConfig);
       if (Array.isArray(parsedConfig)) {
         setPrompts(parsedConfig);
+      } else if (parsedConfig && parsedConfig.prompts && Array.isArray(parsedConfig.prompts)) {
+        setPrompts(parsedConfig.prompts);
       }
     }
   }, [questConfig]);
+
+  React.useEffect(() => {
+    console.log("activePrompt", activePrompt);
+    if (activePrompt) {
+      setDisplayAddPromptModal(true);
+    }
+  }, [activePrompt]);
 
   return (
     <DashboardLayout>
@@ -273,6 +281,7 @@ const QuestsPage: NextPage = () => {
                 <Button onClick={handleAddPromptModal}>Add Prompt</Button>
               </div>
 
+              {/* Prompt Cards */}
               {prompts.length > 0 && (
                 <div className="mt-8">
                   <div className="flex flex-wrap gap-6">
@@ -280,7 +289,7 @@ const QuestsPage: NextPage = () => {
                       <div key={index} className="border p-4 rounded-md">
                         <h3 className="font-bold">{prompt.promptText}</h3>
                         <p>
-                          Days:{" "}
+                          Days:
                           {Object.keys(prompt.notificationConfig_days)
                             .filter(
                               (day) =>
@@ -292,6 +301,7 @@ const QuestsPage: NextPage = () => {
                           Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
                         </p>
                         <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
+
                         <div className="mt-2 space-x-2">
                           <Button size="sm" onClick={() => handleEditPrompt(index)}>
                             Edit
@@ -421,6 +431,7 @@ const QuestsPage: NextPage = () => {
             setDisplayAddPromptModal(false);
           }}
           onClose={() => {
+            setActivePrompt(null);
             setDisplayAddPromptModal(false);
           }}
         />
