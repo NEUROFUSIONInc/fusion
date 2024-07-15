@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Linking,
   ScrollView,
 } from "react-native";
 import RNFS from "react-native-fs";
@@ -25,7 +24,7 @@ import {
 } from "~/@types";
 import { Button, Input, Screen } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
-import { promptService } from "~/services";
+import { handleSendFeeback, promptService } from "~/services";
 import { appInsights, maskPromptId, saveFileToDevice } from "~/utils";
 
 export function AccountScreen() {
@@ -210,34 +209,9 @@ export function AccountScreen() {
 
               <Button
                 title="Send Feedback"
-                onPress={async () => {
-                  // send feedback
-                  const recipient = "contact@usefusion.app";
-                  const subject = "Fusion Feedback";
-                  const body = feedbackText;
-
-                  const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(
-                    subject
-                  )}&body=${encodeURIComponent(body)}`;
-
-                  Alert.alert(
-                    "Send Feedback",
-                    "About to navigate to your mail app. Continue",
-                    [
-                      {
-                        text: "Cancel",
-                        style: "cancel",
-                      },
-                      {
-                        text: "OK",
-                        onPress: () => {
-                          setFeedbackText("");
-                          Linking.openURL(mailtoUrl);
-                        },
-                      },
-                    ]
-                  );
-                }}
+                onPress={() =>
+                  handleSendFeeback(feedbackText, () => setFeedbackText(""))
+                }
                 fullWidth
                 className=" bg-secondary-900"
                 variant="secondary"

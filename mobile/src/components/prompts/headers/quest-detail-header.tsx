@@ -1,9 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, View, Alert } from "react-native";
+import { Text, View } from "react-native";
+import ContextMenu from "react-native-context-menu-view";
 
 import { Button } from "../../button";
 import { LeftArrow, VerticalMenu } from "../../icons";
+
+import { handleSendFeeback } from "~/services";
 
 export const QuestDetailHeader = () => {
   const navigation = useNavigation();
@@ -22,29 +25,23 @@ export const QuestDetailHeader = () => {
         onPress={handleGoBack}
       />
       <Text className="font-sans text-base text-white">Quest</Text>
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<VerticalMenu />}
-        onPress={() => {
-          // show button to delete leave & delete quest
-          Alert.alert(
-            "Quest Options",
-            "What would you like to do with this quest?",
-            [
-              {
-                text: "Leave Quest",
-                onPress: () => {},
-                style: "destructive",
-              },
-              {
-                text: "Go back",
-                style: "cancel",
-              },
-            ]
-          );
+
+      <ContextMenu
+        title="Options"
+        dropdownMenuMode
+        actions={[
+          { title: "Feedback" },
+          { title: "Leave Quest", destructive: true },
+        ]}
+        onPress={(e) => {
+          if (e.nativeEvent.index === 0) {
+            return handleSendFeeback("");
+          } else if (e.nativeEvent.index === 1) {
+          }
         }}
-      />
+      >
+        <Button variant="ghost" size="icon" leftIcon={<VerticalMenu />} />
+      </ContextMenu>
     </View>
   );
 };

@@ -28,6 +28,23 @@ interface PromptOptionsSheetProps {
   promptId: string;
   defaultPrompt?: Prompt;
   showLimitedOptions?: boolean;
+  allowEdit?: boolean;
+}
+
+enum PromptOptionKey {
+  record = "record",
+  previous = "previous",
+  edit = "edit",
+  notification = "notification",
+  delete = "delete",
+  share = "share",
+}
+
+interface PromptOption {
+  key: PromptOptionKey;
+  option: string;
+  icon: React.ReactElement;
+  onPress: () => void;
 }
 
 export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
@@ -36,6 +53,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   promptOptionsSheetRef,
   onBottomSheetClose,
   showLimitedOptions = false,
+  allowEdit = true,
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
@@ -118,8 +136,9 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     }
   };
 
-  const promptOptions = [
+  const promptOptions: PromptOption[] = [
     {
+      key: PromptOptionKey.record,
       option: "Record Response",
       icon: <Notebook />,
       onPress: () => {
@@ -135,6 +154,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
+      key: PromptOptionKey.previous,
       option: "Previous Responses",
       icon: <FontAwesome5 name="history" size={18} color="white" />,
       onPress: () => {
@@ -149,6 +169,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
+      key: PromptOptionKey.edit,
       option: "Edit Prompt",
       icon: <Pencil />,
       onPress: () => {
@@ -164,6 +185,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       },
     },
     {
+      key: PromptOptionKey.notification,
       option:
         activePrompt?.additionalMeta?.isNotificationActive === false
           ? "Enable Notifications"
@@ -177,6 +199,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
       onPress: handlePromptNotificationStateUpdate,
     },
     {
+      key: PromptOptionKey.delete,
       option: "Delete Prompt",
       icon: <Trash />,
       onPress: handlePromptDelete,
@@ -188,11 +211,14 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   ];
 
   // Limited options: Delete Prompt,  Share Prompt
+
   const limitedOptions = promptOptions.slice(4, 5);
-  const optionsToShow = useMemo(
-    () => (showLimitedOptions ? limitedOptions : promptOptions),
-    [showLimitedOptions]
-  );
+  const optionsToShow = useMemo(() => {
+    const options = showLimitedOptions ? limitedOptions : promptOptions;
+    return !allowEdit
+      ? options.filter((option) => option.key !== PromptOptionKey.edit)
+      : options;
+  }, [showLimitedOptions]);
 
   return (
     <BottomSheet

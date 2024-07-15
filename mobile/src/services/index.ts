@@ -4,3 +4,4 @@ export * from "./nostr.service";
 export * from "./streaks.service";
 export * from "./quest.service";
 export * from "./taskmanager.service";
+export * from "./feedback.service";
