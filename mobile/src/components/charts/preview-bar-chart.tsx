@@ -8,7 +8,7 @@ import type { BarChartProps } from "./bar-chart";
 
 echarts.use([SVGRenderer, BarChart, GridComponent]);
 
-export const FusionHealthBarChart: FC<BarChartProps> = ({
+export const FusionPreviewBarChart: FC<BarChartProps> = ({
   seriesData,
   startDate,
   endDate,

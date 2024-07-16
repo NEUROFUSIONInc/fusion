@@ -1,10 +1,11 @@
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { black } from "tailwindcss/colors";
 
 import { Button } from "./button";
-import { FusionHealthBarChart } from "./charts";
+import { FusionPreviewBarChart } from "./charts";
 import { Reload } from "./icons";
 
 /**
@@ -20,6 +21,7 @@ import {
 } from "~/utils";
 
 export const HealthCard = () => {
+  const navigation = useNavigation();
   const [healthDataset, setHealthDataset] = React.useState<
     FusionHealthDataset[]
   >([]);
@@ -92,6 +94,10 @@ export const HealthCard = () => {
     [1721127600000, 75],
   ];
 
+  const handleNavigateToHealthDetail = () => {
+    navigation.navigate("HealthPage");
+  };
+
   return (
     <View className="w-full">
       <View className="flex flex-row justify-between">
@@ -124,7 +130,10 @@ export const HealthCard = () => {
       </View>
 
       {/* display the steps data */}
-      <TouchableOpacity activeOpacity={0.75}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={handleNavigateToHealthDetail}
+      >
         <View className="rounded-md mt-2 py-5 px-5 bg-secondary-900 active:opacity-90">
           <Text className="font-sans flex flex-wrap text-white text-base mr-2">
             Steps
@@ -139,7 +148,7 @@ export const HealthCard = () => {
               steps
             </Text>
             <View className="items-start h-16">
-              <FusionHealthBarChart
+              <FusionPreviewBarChart
                 seriesData={healthData}
                 startDate={dayjs().startOf(timePeriod)}
                 timePeriod={timePeriod}
@@ -150,7 +159,10 @@ export const HealthCard = () => {
       </TouchableOpacity>
 
       {/* display the sleep data */}
-      <TouchableOpacity activeOpacity={0.75}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={handleNavigateToHealthDetail}
+      >
         <View className="rounded-md mt-2 py-5 px-5 bg-secondary-900 active:opacity-90">
           <Text className="font-sans flex flex-wrap text-white text-base mr-2">
             Sleep
@@ -165,7 +177,7 @@ export const HealthCard = () => {
               ) ?? "-- hrs -- mins"}
             </Text>
             <View className="items-start h-16">
-              <FusionHealthBarChart
+              <FusionPreviewBarChart
                 seriesData={healthData}
                 startDate={dayjs().startOf(timePeriod)}
                 timePeriod={timePeriod}
@@ -176,7 +188,10 @@ export const HealthCard = () => {
       </TouchableOpacity>
 
       {/* display the heart rate data */}
-      <TouchableOpacity activeOpacity={0.75}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={handleNavigateToHealthDetail}
+      >
         <View className="rounded-md mt-2 py-5 px-5 bg-secondary-900 active:opacity-90">
           <Text className="font-sans flex flex-wrap text-white text-base mr-2">
             Heart Rate
@@ -189,7 +204,7 @@ export const HealthCard = () => {
               bpm
             </Text>
             <View className="items-start h-16">
-              <FusionHealthBarChart
+              <FusionPreviewBarChart
                 seriesData={healthData}
                 startDate={dayjs().startOf(timePeriod)}
                 timePeriod={timePeriod}
