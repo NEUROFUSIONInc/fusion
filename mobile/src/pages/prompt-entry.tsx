@@ -335,7 +335,7 @@ export function PromptEntryScreen() {
                   params: {
                     promptUuid: nextPrompt.uuid,
                     prompts: promptsList,
-                    index: promptEmptryIndex + 1,
+                    index: promptEmptryIndex! + 1,
                   },
                 },
               ],
@@ -353,7 +353,8 @@ export function PromptEntryScreen() {
     >
       {route.params.prompts &&
         route.params?.prompts?.length > 1 &&
-        route.params.index + 1 < route.params.prompts?.length && (
+        route.params?.index !== undefined &&
+        route.params?.index + 1 < route.params.prompts?.length && (
           <View className="ml-auto mt-2">
             <Button
               title="Skip"
@@ -371,7 +372,7 @@ export function PromptEntryScreen() {
       >
         <Pressable
           onPress={Keyboard.dismiss}
-          className="flex flex-1 justify-center mt-10"
+          className="flex flex-1 justify-center mt-5"
         >
           {prompt && (
             <View>
