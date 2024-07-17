@@ -8,10 +8,6 @@ import { Button } from "./button";
 import { FusionPreviewBarChart } from "./charts";
 import { Reload } from "./icons";
 
-/**
- *
- */
-
 import { AccountContext } from "~/contexts";
 import {
   buildHealthDataset,
@@ -26,7 +22,7 @@ export const HealthCard = () => {
     FusionHealthDataset[]
   >([]);
   const accountContext = React.useContext(AccountContext);
-  const [timePeriod, setTimePeriod] = React.useState<"day" | "week">("day");
+  const [timePeriod, setTimePeriod] = React.useState<"day" | "week">("week");
 
   useEffect(() => {
     console.log("user loading", accountContext?.userLoading);
@@ -149,7 +145,10 @@ export const HealthCard = () => {
             </Text>
             <View className="items-start h-16">
               <FusionPreviewBarChart
-                seriesData={healthData}
+                seriesData={healthDataset.map((data) => [
+                  data.date,
+                  data.stepSummary.totalSteps,
+                ])}
                 startDate={dayjs().startOf(timePeriod)}
                 timePeriod={timePeriod}
               />
@@ -178,7 +177,10 @@ export const HealthCard = () => {
             </Text>
             <View className="items-start h-16">
               <FusionPreviewBarChart
-                seriesData={healthData}
+                seriesData={healthDataset.map((data) => [
+                  data.date,
+                  data.sleepSummary.duration / 3600, // convert seconds to hours
+                ])}
                 startDate={dayjs().startOf(timePeriod)}
                 timePeriod={timePeriod}
               />
