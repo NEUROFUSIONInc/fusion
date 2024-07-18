@@ -311,9 +311,9 @@ export function PromptEntryScreen() {
     const promptsList = route.params?.prompts as Prompt[];
 
     if (
-      !route.params.prompts &&
-      route.params.index === undefined &&
-      promptEmptryIndex &&
+      !route.params.prompts ||
+      route.params.index === undefined ||
+      promptEmptryIndex === undefined ||
       promptEmptryIndex + 1 > promptsList?.length
     )
       return;
@@ -371,7 +371,7 @@ export function PromptEntryScreen() {
       >
         <Pressable
           onPress={Keyboard.dismiss}
-          className="flex flex-1 justify-center mt-10"
+          className="flex flex-1 justify-center mt-5"
         >
           {prompt && (
             <View>
