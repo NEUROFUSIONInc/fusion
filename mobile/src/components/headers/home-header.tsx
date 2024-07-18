@@ -2,8 +2,8 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
 
-import { Button } from "../../button";
-import { Person, Settings } from "../../icons";
+import { Button } from "../button";
+import { Person, Settings } from "../icons";
 
 import { Streaks } from "~/components/streaks";
 import { AccountContext } from "~/contexts";

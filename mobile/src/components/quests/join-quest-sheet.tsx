@@ -54,7 +54,7 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
       if (res.data) {
         // navigate to quest screen
         const questRes = res.data.quest;
-        questRes.prompts = JSON.parse(questRes.config) as Prompt[];
+        questRes.prompts = JSON.parse(questRes.config).prompts as Prompt[];
 
         // build the quest object and navigate to the quest screen
         Keyboard.dismiss();
@@ -83,7 +83,7 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
 
   const _handlePressButtonAsync = async () => {
     const result = await WebBrowser.openBrowserAsync(
-      "https://usefusion.ai/blog/quests"
+      "https://forms.gle/ZYmyVKhVnGUotDX9A"
     );
   };
 
@@ -107,11 +107,9 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
                 className="mb-5"
                 placeholder="Enter join code"
                 onTouchStart={() => {
-                  console.log("input pressed");
                   setSheetHeight(["100%"]);
                 }}
                 onEndEditing={() => {
-                  console.log("input blur");
                   setSheetHeight(["45%"]);
                   Keyboard.dismiss();
                 }}
@@ -123,7 +121,6 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
               rightIcon={<ChevronRight color={black} />}
               fullWidth
               className="flex flex-row justify-between"
-              disabled={joinCode.length !== 6}
               onPress={handleJoinQuest}
               loading={loading}
             />

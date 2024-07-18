@@ -311,9 +311,9 @@ export function PromptEntryScreen() {
     const promptsList = route.params?.prompts as Prompt[];
 
     if (
-      !route.params.prompts &&
-      route.params.index === undefined &&
-      promptEmptryIndex &&
+      !route.params.prompts ||
+      route.params.index === undefined ||
+      promptEmptryIndex === undefined ||
       promptEmptryIndex + 1 > promptsList?.length
     )
       return;
@@ -335,7 +335,7 @@ export function PromptEntryScreen() {
                   params: {
                     promptUuid: nextPrompt.uuid,
                     prompts: promptsList,
-                    index: promptEmptryIndex! + 1,
+                    index: promptEmptryIndex + 1,
                   },
                 },
               ],
@@ -353,8 +353,7 @@ export function PromptEntryScreen() {
     >
       {route.params.prompts &&
         route.params?.prompts?.length > 1 &&
-        route.params?.index !== undefined &&
-        route.params?.index + 1 < route.params.prompts?.length && (
+        route.params.index + 1 < route.params.prompts?.length && (
           <View className="ml-auto mt-2">
             <Button
               title="Skip"

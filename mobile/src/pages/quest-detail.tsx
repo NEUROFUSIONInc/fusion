@@ -1,8 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useRoute } from "@react-navigation/native";
-import axios from "axios";
-import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
@@ -42,23 +40,29 @@ export function QuestDetailScreen() {
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
 
+  const [quest, setQuest] = React.useState<Quest | undefined>(
+    route.params.quest
+  );
+
   /**
    * Fetch quest details from remote server and updates the data cache after a period of time
    */
   const handleFetchQuestFromRemote = async () => {
-    let fusionBackendUrl;
-    if (Constants.expoConfig?.extra) {
-      fusionBackendUrl = Constants.expoConfig.extra.fusionBackendUrl;
-    }
     try {
-      const response = await axios.get(`${fusionBackendUrl}/api/quest/detail`, {
+      const apiService = await getApiService();
+      if (apiService === null) {
+        return;
+      }
+      const response = await apiService.get(`/quest/detail`, {
         params: { questId: route.params.quest.guid },
-        headers: {
-          Authorization: `Bearer ${accountContext?.userApiToken}`,
-        },
       });
-      const quest = response?.data?.quest as Quest;
-      return questService.saveQuest(quest);
+      const updatedQuest = response?.data?.quest as Quest;
+
+      const savedQuest = await questService.saveQuest(updatedQuest);
+
+      if (savedQuest) {
+        setQuest(savedQuest);
+      }
     } catch (error) {
       console.log("error --->", error);
     }
@@ -90,8 +94,6 @@ export function QuestDetailScreen() {
 
       fetchPrompts();
     }
-
-    await getQuestSubscriptionStatus();
   };
 
   React.useEffect(() => {
@@ -102,12 +104,17 @@ export function QuestDetailScreen() {
       },
     });
 
+    getQuestSubscriptionStatus();
+    handleFetchQuestFromRemote();
     handleFetchQuestPrompts();
+    pushQuestData();
   }, []);
 
-  React.useEffect(() => {
-    handleFetchQuestFromRemote();
-  }, []);
+  const pushQuestData = async () => {
+    if (quest?.guid) {
+      await questService.uploadQuestDataset(quest.guid);
+    }
+  };
 
   const getQuestSubscriptionStatus = async () => {
     /**
@@ -249,25 +256,23 @@ export function QuestDetailScreen() {
 
   return (
     <Screen>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-1 px-4 justify-between">
           <View>
-            <Text className="text-white font-sans text-lg">
-              {route.params.quest.title}
-            </Text>
+            <Text className="text-white font-sans text-lg">{quest?.title}</Text>
             <Text className="text-white opacity-60 text-base font-sans my-2">
-              {route.params.quest.description}
+              {quest?.description}
             </Text>
-            {route.params.quest.organizerName && (
+            {quest?.organizerName && (
               <Text className="text-white opacity-60 text-base font-sans my-2">
-                Organized by {route.params.quest.organizerName}
+                Organized by {quest.organizerName}
               </Text>
             )}
             <HealthCard />
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
-              {route.params.quest.prompts?.map((prompt) => (
+              {quest?.prompts?.map((prompt) => (
                 <View key={Math.random()} className="my-2">
                   <PromptDetails
                     prompt={prompt}
@@ -283,12 +288,6 @@ export function QuestDetailScreen() {
                 </View>
               ))}
             </View>
-            {/* Leadewrboard */}
-            {/* <View className="mt-5">
-              <Text className="text-white font-sans text-lg px-5">
-                Leaderboard
-              </Text>
-            </View> */}
           </View>
 
           {/* sync data, leave quest etc.. */}
@@ -317,13 +316,13 @@ export function QuestDetailScreen() {
             className="mb-5"
             onPress={async () => {
               // push data to remote (this storage)
-              const pushStatus = await questService.uploadQuestDataset(
-                route.params.quest.guid
-              );
+              if (quest?.guid) {
+                await questService.uploadQuestDataset(quest.guid);
+              }
 
               // send the user to the quest page
               await WebBrowser.openBrowserAsync(
-                `https://usefusion.ai/quest/${route.params.quest.guid}`
+                `https://usefusion.ai/quest/${quest?.guid}`
               );
             }}
           />
