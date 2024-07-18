@@ -1,4 +1,5 @@
 import { SvgChart, SVGRenderer } from "@wuba/react-native-echarts";
+import dayjs from "dayjs";
 import { BarChart } from "echarts/charts";
 import { GridComponent } from "echarts/components";
 import * as echarts from "echarts/core";
@@ -21,8 +22,22 @@ export const FusionPreviewBarChart: FC<BarChartProps> = ({
       animation: true,
       animationDuration: 500,
       xAxis: {
-        show: false,
         type: "time",
+        axisLabel: {
+          formatter: (value: number) => {
+            return dayjs(value).format("dd")[0];
+          },
+          show: true,
+        },
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        splitLine: {
+          show: false,
+        },
       },
       yAxis: {
         type: "value",
@@ -57,7 +72,7 @@ export const FusionPreviewBarChart: FC<BarChartProps> = ({
     if (svgChartRef.current) {
       chart = echarts.init(svgChartRef.current, "light", {
         renderer: "svg",
-        width: 120,
+        width: 150,
         height: 100,
       });
       chart.setOption(chartOptions);
