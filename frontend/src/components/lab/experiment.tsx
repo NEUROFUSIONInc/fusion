@@ -68,7 +68,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function stopMuseRecording() {
     if (museEEGService) {
       setIsMuseRecording(false);
-      await museEEGService.stopRecording(true);
+      await museEEGService.stopRecording();
     }
   }
 
@@ -105,7 +105,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         event.origin.startsWith("https://usefusion.app") ||
         event.origin.startsWith("https://usefusion.ai")
       ) {
-        console.log("event", event);
+        // console.log("event", event);
         if (typeof event.data === "string") {
           return;
         }
@@ -116,7 +116,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               // jspsych events contain trials key...
               setSandboxData(event.data);
             } else {
-              console.log("rejected non experiment data");
+              // console.log("rejected non experiment data");
             }
           }
         } catch (e) {
