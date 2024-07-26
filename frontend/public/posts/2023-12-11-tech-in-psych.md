@@ -19,7 +19,7 @@ At the Technology in Psychiatry Summit (TIPS) Annual Meeting in Tampa, FL. Our C
 
 We’re currently experiencing a youth mental health crises with average age of onset being between 12-25 years old.
 
-Our genes predict how we react differently to life stressors so there is no one size fits all approach.In order to effectively detect and intervene early, we need a way to capture digitally the biological, psychological, and social factors for an individual overtime.
+Our genes predict how we react differently to life stressors so there is no one size fits all approach. In order to effectively detect and intervene early, we need a way to capture digitally the biological, psychological, and social factors for an individual overtime.
 
 If you're a clinician or researcher interested in using our tools, [please reach out to us contact@usefusion.app](mailto:contact@usefusion.app)
 

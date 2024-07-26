@@ -30,7 +30,7 @@ With the current version of our app, you can:
 
 - **Get Real-Time Insights:** From your prompts and responses, you can get insights on your behavior and wellbeing.
 
-- **Health Monitoring:** You can monitor your health activities such as how many steps you’ve taken. (little secret: We are introducing more health features soon).
+- **Health Monitoring:** You can monitor your health activities such as how many steps you’ve taken, hours of sleep and changes in heart rate.
 
 - **Collaborate with your Health Professionals:** You can export your responses and insights to your health professionals all in the comfort of your home.
 
@@ -42,7 +42,9 @@ With the current version of our app, you can:
 
 - **Spread the Word:** Share Fusion with your friends, family, and colleagues. Let them know that there's a new and exciting way to take charge of their well-being.
 
-- **Stay Tuned for Android:** Android users, we haven't forgotten about you! We're diligently working on bringing Fusion to the Google Play Store, so stay tuned for updates. (If you’d like early access, click the button below!)
+<button><a href="https://apps.apple.com/ca/app/usefusion/id6445860500?platform=iphone">Download Fusion on your iPhone/iPad</a></button>
+<br>
+<button><a href="https://play.google.com/store/apps/details?id=com.neurofusion.fusion&pli=1">Download Fusion on your Android Phone/Tablet</a></button>
 
 ## Exciting Features to Look Forward To
 
