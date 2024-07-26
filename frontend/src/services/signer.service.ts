@@ -1,17 +1,39 @@
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { ethers, Wallet, Provider } from "ethers";
+import { ethers } from "ethers";
+import sha256 from "fast-sha256";
 
 // ethereum mainnet
-const easContractAddress = "0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587";
-// schema https://easscan.org/schema/view/0xb997c42482f0276ac7359a1c57ad91c2f880bd001b145d87c5e59d3cec6478ef
-const schemaUID = "0xb997c42482f0276ac7359a1c57ad91c2f880bd001b145d87c5e59d3cec6478ef";
+const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
+// schema https://sepolia.easscan.org/schema/view/0xbecbf8b1bd8992cbd43db64be07a2cd64a47fadab545ad2e77859f9e753bb5fb
+const schemaUID = "0xbecbf8b1bd8992cbd43db64be07a2cd64a47fadab545ad2e77859f9e753bb5fb";
 const eas = new EAS(easContractAddress);
 
+export async function getFileHash(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target && event.target.result) {
+        const arrayBuffer = event.target.result as ArrayBuffer;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const hashUint8Array = sha256(uint8Array);
+        const hash = ethers.hexlify(hashUint8Array);
+        resolve(hash);
+      } else {
+        reject(new Error("Failed to read file"));
+      }
+    };
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 export const signData = async (
+  name: string,
   startTimestamp: number,
   endTimestamp: number,
   contentHash: string,
-  deviceId: string,
   additionalMeta: {}
 ) => {
   let signer = null;
@@ -39,26 +61,41 @@ export const signData = async (
 
   // Initialize SchemaEncoder with the schema string
   const schemaEncoder = new SchemaEncoder(
-    "address owner,uint40 startTimestamp,uint40 endTimestamp,bytes32 contentHash,string deviceId,string additionalMeta"
+    "bytes32 contentHash,address owner,string name,uint48 startTimestamp,uint48 endTimestamp,string additionalMeta"
   );
-  const encodedData = schemaEncoder.encodeData([
+
+  console.log("message", [
+    { name: "contentHash", value: contentHash, type: "bytes32" },
     {
       name: "owner",
       value: (await signer.getAddress()) ?? "0x0000000000000000000000000000000000000000",
       type: "address",
     },
-    { name: "startTimestamp", value: Math.floor(startTimestamp / 1000), type: "uint40" },
-    { name: "endTimestamp", value: Math.floor(endTimestamp / 1000), type: "uint40" },
-    { name: "contentHash", value: `0x${contentHash}`, type: "bytes32" },
-    { name: "deviceId", value: deviceId, type: "string" },
+    { name: "name", value: name, type: "string" },
+    { name: "startTimestamp", value: startTimestamp, type: "uint48" },
+    { name: "endTimestamp", value: endTimestamp, type: "uint48" },
     { name: "additionalMeta", value: JSON.stringify(additionalMeta), type: "string" },
   ]);
+
+  const encodedData = schemaEncoder.encodeData([
+    { name: "contentHash", value: contentHash, type: "bytes32" },
+    {
+      name: "owner",
+      value: (await signer.getAddress()) ?? "0x0000000000000000000000000000000000000000",
+      type: "address",
+    },
+    { name: "name", value: name, type: "string" },
+    { name: "startTimestamp", value: startTimestamp, type: "uint48" },
+    { name: "endTimestamp", value: endTimestamp, type: "uint48" },
+    { name: "additionalMeta", value: JSON.stringify(additionalMeta), type: "string" },
+  ]);
+
   const tx = await eas.attest({
     schema: schemaUID,
     data: {
       recipient: "0x0000000000000000000000000000000000000000",
       expirationTime: BigInt(0),
-      revocable: true, // Be aware that if your schema is not revocable, this MUST be false
+      revocable: false, // Be aware that if your schema is not revocable, this MUST be false
       data: encodedData,
     },
   });

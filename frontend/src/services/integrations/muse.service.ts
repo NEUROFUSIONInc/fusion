@@ -3,9 +3,9 @@ import { release } from "os";
 import { MuseClient } from "muse-js";
 import { IExperiment, DatasetExport, EventData } from "~/@types";
 import dayjs from "dayjs";
-import { downloadDataAsZip, writeToLocalStorage } from "../storage.service";
+import { downloadDataAsZip, getCSVFile, writeToLocalStorage } from "../storage.service";
 import { createHash } from "crypto";
-import { signData } from "../signer.service";
+import { getFileHash, signData } from "../signer.service";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -174,7 +174,7 @@ export class MuseEEGService {
     this.museClient.start();
   }
 
-  async stopRecording(withDownload = false) {
+  async stopRecording(withDownload = false, signDataset = false) {
     this.museClient.pause();
     // prepare files for download
     const datasetExport: DatasetExport = {
@@ -182,21 +182,31 @@ export class MuseEEGService {
       dataSets: [this.rawBrainwavesParsed, this.eventSeries],
     };
 
-    const contentHash = createHash("sha256").update(JSON.stringify(this.rawBrainwavesParsed)).digest("hex");
-
-    console.log(contentHash);
-
-    try {
-      const signature = await signData(
-        this.recordingStartTimestamp,
-        dayjs().valueOf(),
-        contentHash,
-        this.museClient.deviceName!,
-        {}
+    if (signDataset) {
+      const brainwavesCSV = await getCSVFile(
+        `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+        this.rawBrainwavesParsed
       );
-      console.log("attestation, saving dataset", signature);
-    } catch (e) {
-      console.log("error signing data", e);
+      const contentHash = await getFileHash(brainwavesCSV);
+
+      try {
+        const signature = await signData(
+          `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+          this.recordingStartTimestamp,
+          dayjs().valueOf(),
+          contentHash,
+          {
+            deviceId: this.museClient.deviceName!,
+          }
+        );
+        console.log("attestation, saving dataset", signature);
+      } catch (e) {
+        console.log("error signing data", e);
+      }
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(brainwavesCSV);
+      downloadLink.download = `rawBrainwaves_${this.recordingStartTimestamp}.csv`;
+      downloadLink.click();
     }
 
     try {

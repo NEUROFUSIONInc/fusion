@@ -68,6 +68,13 @@ export async function downloadDataAsZip(datasetExport: DatasetExport, zipFileNam
   downloadLink.click();
 }
 
+export async function getCSVFile(fileName: string, dataSet: any[]): Promise<File> {
+  const content = convertToCSV(dataSet); // convert to csv format
+  const blob = new Blob([content], { type: "text/csv" });
+  const file = new File([blob], fileName, { type: "text/csv" });
+  return file;
+}
+
 export async function writeToLocalStorage(datasetExport: DatasetExport, unixTimestamp: dayjs.Dayjs) {
   console.log("writeToLocalStorage", datasetExport);
   const db = await dbPromise;
@@ -75,13 +82,11 @@ export async function writeToLocalStorage(datasetExport: DatasetExport, unixTime
   const store = tx.objectStore("files");
 
   for (let i = 0; i < datasetExport.dataSets.length; i++) {
-    const dataSet = datasetExport.dataSets[i];
-    const content = convertToCSV(dataSet); // convert to csv format
     const fileName = datasetExport.fileNames[i];
+    const dataSet = datasetExport.dataSets[i];
 
     // Create a Blob from the CSV content
-    const blob = new Blob([content], { type: "text/csv" });
-    const file = new File([blob], fileName, { type: "text/csv" });
+    const file = await getCSVFile(fileName, dataSet);
 
     await store.put({ name: fileName, file });
   }
