@@ -6,6 +6,7 @@ import { fusionOfferingFeatures } from "./data";
 
 import { CustomLink, ButtonLink } from "~/components/ui";
 import { api } from "~/config";
+import { appInsights } from "~/utils/appInsights";
 
 export const OfferingSection = ({ isResearch = false }) => {
   const [submitted, setSubmitted] = useState(false);
@@ -17,20 +18,19 @@ export const OfferingSection = ({ isResearch = false }) => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     // Submit logic here, e.g., send form data to server
-    try {
-      const res = await api.post("/sendContactEmail", {
-        name: contactName,
-        email: contactEmail,
-        message: contactMessage,
+    if (contactName && contactEmail && contactMessage) {
+      appInsights.trackEvent({
+        name: "contact-form-submitted",
+        properties: {
+          name: contactName,
+          email: contactEmail,
+          message: contactMessage,
+        },
       });
 
-      if (res.status === 200) {
-        setSubmitted(true);
-      } else {
-        alert("Failed to send email. You can send one directly to contact@usefusion.app");
-      }
-    } catch (e) {
-      alert("Failed to send email. You can send one directly to contact@usefusion.app");
+      setSubmitted(true);
+    } else {
+      alert("Please fill in all fields to submit the form.");
     }
   };
 
@@ -53,7 +53,7 @@ export const OfferingSection = ({ isResearch = false }) => {
               </div>
             ) : (
               <>
-                <h2 className="text-3xl font-semibold text-gray-900">Get in Touch</h2>
+                <h2 className="text-3xl font-semibold text-gray-900">Let's work together!</h2>
                 <p className="font-normal text-md text-gray-500">
                   Got any questions about the product or contributing to our research? We're here to help!
                 </p>
