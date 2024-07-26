@@ -4,9 +4,7 @@ description: Recap of our Lagos Community Event
 publishedDate: 2023/09/12
 coverImage: /images/blog/communityevent/lagos-community.webp
 tags:
-  - Human Stories
-  - Resources
-
+  - Community Feedback
 slug: fusion-community-lagos
 authors:
   - name: "Ore Ogundipe"

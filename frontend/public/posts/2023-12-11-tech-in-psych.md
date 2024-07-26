@@ -4,16 +4,16 @@ description: How clinicians and researchers can use NeuroFusion tools monitor in
 publishedDate: 2023/12/01
 coverImage: /images/blog/tips/ore_tips_2023.jpeg
 tags:
-  - conference
-  - abstracts
+  - Conference
+  - Remote Monitoring
 slug: tech-in-psych
 authors:
   - name: "Ore Ogundipe"
 ---
 
-<img src="/images/blog/tips/ore_tips_2023.jpeg" alt="" data-zoomable style="cursor: zoom-in;" />
+<img src="/images/blog/tips/ore_tips_2023.jpeg" alt="Ore in front of NeuroFusion poster" data-zoomable style="cursor: zoom-in;" />
 
-At the Technology in Psychiatry Summit (TIPS) Annual Meeting in Tampa, FL. Our CEO, Ore Ogundipe shared how researchers and clinicians can use our NeuroFusion's tools to understand individual variance in personal wellbeing and trialling interventions at scale.
+At the 2023 Technology in Psychiatry Summit (TIPS) Annual Meeting in Tampa, FL. Our CEO, Ore Ogundipe shared how researchers and clinicians can use our NeuroFusion's tools to understand individual variance in personal wellbeing and trialling interventions at scale.
 
 ## Background
 
