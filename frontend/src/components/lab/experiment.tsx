@@ -68,7 +68,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function stopMuseRecording() {
     if (museEEGService) {
       setIsMuseRecording(false);
-      await museEEGService.stopRecording();
+      await museEEGService.stopRecording(true);
     }
   }
 
