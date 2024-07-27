@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
       <Head>
+        // clarity tag for usefusion.app
         <script type="text/javascript">
           {`
     (function(c,l,a,r,i,t,y){
@@ -24,6 +25,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "h7a11p7zxo");`}
+        </script>
+        // clarity tag for usefusion.ai
+        <script type="text/javascript">
+          {`(function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "mg6dr0x79s");`}
         </script>
         {/* make frame draggable */}
         <style type="text/css">

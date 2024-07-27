@@ -31,7 +31,7 @@ To get started, simply enable the feature in your Fusion app settings (top right
 
 Once enabled, Fusion Copilot brings you recommendations based on insights gathered from your responses on the Fusion app. Through careful analysis of your responses and patterns, Fusion Copilot curates actionable practical recommendations for you to implement in various aspects of your life.
 
-<img src="/images/blog/fusioncopilot/fusion_copilot_recommendations.jpg" alt="App Screenshots of Copilot Recommendations" data-zoomable style="cursor: zoom-in; />
+<img src="/images/blog/fusioncopilot/fusion_copilot_recommendations.jpg" alt="App Screenshots of Copilot Recommendations" data-zoomable style="cursor: zoom-in;" />
 
 ## Is Fusion Copilot a Premium Offer ?
 

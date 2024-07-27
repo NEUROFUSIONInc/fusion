@@ -7,6 +7,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
 import { IQuest, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
@@ -242,6 +243,7 @@ const QuestsPage: NextPage = () => {
                 value={questTitle}
                 className="mb-2"
                 onChange={(e) => setQuestTitle(e.target.value)}
+                required
               />
 
               <Input
@@ -253,6 +255,7 @@ const QuestsPage: NextPage = () => {
                 value={questDescription}
                 className="pt-4 h-20 mb-2"
                 onChange={(e) => setQuestDescription(e.target.value)}
+                required
               />
 
               <Input
@@ -260,10 +263,11 @@ const QuestsPage: NextPage = () => {
                 type="text"
                 size="lg"
                 fullWidth
-                placeholder="Enter Organizer Name, participants will see this in the app"
+                placeholder="Enter Organizer Name. Participants will see this in the app"
                 value={questOrganizer}
                 className="mb-2"
                 onChange={(e) => setQuestOrganizer(e.target.value)}
+                required
               />
 
               <Input
@@ -278,7 +282,9 @@ const QuestsPage: NextPage = () => {
               />
 
               <div className="mt-4">
-                <Button onClick={handleAddPromptModal}>Add Prompt</Button>
+                <Button onClick={handleAddPromptModal} leftIcon={<Plus />}>
+                  Add Prompt
+                </Button>
               </div>
 
               {/* Prompt Cards */}

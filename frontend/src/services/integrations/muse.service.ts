@@ -3,7 +3,9 @@ import { release } from "os";
 import { MuseClient } from "muse-js";
 import { IExperiment, DatasetExport, EventData } from "~/@types";
 import dayjs from "dayjs";
-import { downloadDataAsZip } from "../storage.service";
+import { downloadDataAsZip, getCSVFile, writeToLocalStorage } from "../storage.service";
+import { createHash } from "crypto";
+import { getFileHash, signData } from "../signer.service";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -87,6 +89,7 @@ export class MuseEEGService {
   recordingStartTimestamp = 0;
 
   ppgSeries: any = [];
+  accelerometerSeries: any = [];
   rawBrainwaveSeries: any = {};
   rawBrainwavesParsed: NeuroFusionParsedEEG[] = [];
 
@@ -171,24 +174,56 @@ export class MuseEEGService {
     this.museClient.start();
   }
 
-  async stopRecording(withDownload = false) {
+  async stopRecording(withDownload = false, signDataset = false) {
     this.museClient.pause();
+    // prepare files for download
+    const datasetExport: DatasetExport = {
+      fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`, `events_${this.recordingStartTimestamp}.csv`],
+      dataSets: [this.rawBrainwavesParsed, this.eventSeries],
+    };
 
-    // call the download data as zip function
+    if (signDataset) {
+      const brainwavesCSV = await getCSVFile(
+        `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+        this.rawBrainwavesParsed
+      );
+      const contentHash = await getFileHash(brainwavesCSV);
+
+      try {
+        const signature = await signData(
+          `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+          this.recordingStartTimestamp,
+          dayjs().valueOf(),
+          contentHash,
+          {
+            deviceId: this.museClient.deviceName!,
+          }
+        );
+        console.log("attestation, saving dataset", signature);
+      } catch (e) {
+        console.log("error signing data", e);
+      }
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(brainwavesCSV);
+      downloadLink.download = `rawBrainwaves_${this.recordingStartTimestamp}.csv`;
+      downloadLink.click();
+    }
+
     try {
       if (withDownload) {
-        const datasetExport: DatasetExport = {
-          fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`],
-          dataSets: [this.rawBrainwavesParsed],
-        };
-        console.log("downloading data as zip");
         await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
+      } else {
+        await writeToLocalStorage(datasetExport, dayjs.unix(this.recordingStartTimestamp));
       }
     } catch (e) {
       console.log(e);
     } finally {
       // empty series
+      this.ppgSeries = [];
+      this.rawBrainwaveSeries = {};
       this.rawBrainwavesParsed = [];
+      this.eventSeries = [];
+      this.accelerometerSeries = [];
       this.recordingStartTimestamp = 0;
       this.recordingStatus = "stopped";
     }

@@ -395,6 +395,7 @@ export const secondsToHms = (d: number) => {
 export const getApiService = async () => {
   const baseUrl = `${Constants.expoConfig?.extra?.fusionBackendUrl}/api`;
 
+  // TODO: use existing api token before fetching a new one
   const userAccount: UserAccount =
     (await nostrService.getNostrAccount()) as UserAccount;
   const apiToken = await nostrService.getApiToken(userAccount);

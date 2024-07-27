@@ -105,7 +105,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         event.origin.startsWith("https://usefusion.app") ||
         event.origin.startsWith("https://usefusion.ai")
       ) {
-        console.log("event", event);
+        // console.log("event", event);
         if (typeof event.data === "string") {
           return;
         }
@@ -116,7 +116,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               // jspsych events contain trials key...
               setSandboxData(event.data);
             } else {
-              console.log("rejected non experiment data");
+              // console.log("rejected non experiment data");
             }
           }
         } catch (e) {
@@ -197,34 +197,37 @@ export const Experiment: FC<IExperiment> = (experiment) => {
             <p>{experiment.description}</p>
           </div>
         )}
-
-        <div className="mt-5">
-          <div className="my-5">
-            <p>
-              Duration<em>(optional)</em> :
-            </p>
-            <Input
-              type="number"
-              placeholder="Duration (seconds)"
-              onChange={(e) => setDuration(e.target.valueAsNumber)}
-              value={duration ?? 0}
-            />
-          </div>
-          <div className="my-5">
-            <p>
-              Tags <em>(optional)</em> :
-            </p>
-            <Input
-              type="text"
-              placeholder="Tags"
-              onChange={(e) => {
-                console.log(e.target.value);
-                setTags(e.target.value.split(","));
-              }}
-              value={tags.join(",")}
-            />
-          </div>
-        </div>
+        {experiment.id == 3 && (
+          <>
+            <div className="mt-5">
+              <div className="my-5">
+                <p>
+                  Duration<em>(optional)</em> :
+                </p>
+                <Input
+                  type="number"
+                  placeholder="Duration (seconds)"
+                  onChange={(e) => setDuration(e.target.valueAsNumber)}
+                  value={duration ?? 0}
+                />
+              </div>
+              <div className="my-5">
+                <p>
+                  Tags <em>(optional)</em> :
+                </p>
+                <Input
+                  type="text"
+                  placeholder="Tags"
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setTags(e.target.value.split(","));
+                  }}
+                  value={tags.join(",")}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {experiment.url && (
           <div className="m-3">
@@ -279,104 +282,111 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       </div>
 
       {/* Neurosity methods */}
-      <div className="item-start">
-        {!connectedDevice && (
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={() => {
-              location.href = "/integrations";
-            }}
-          >
-            Connect Neurosity Crown
-          </Button>
-        )}
-      </div>
-
-      {connectedDevice && (
+      {experiment.id !== 6 && (
         <>
-          <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
-          <p>Device Status: {deviceStatus}</p>
-        </>
-      )}
-
-      {deviceStatus === "online" && connectedDevice?.channelNames && (
-        <div className="flex flex-col justify-between">
-          <div className="my-5">
-            {showSignalQuality && (
-              <>
-                {neurosityBrainwaves && (
-                  <SignalViewer rawBrainwaves={neurosityBrainwaves} channelNames={connectedDevice.channelNames!} />
-                )}
-
-                <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
-              </>
+          <div className="item-start">
+            {!connectedDevice && (
+              <Button
+                intent={"dark"}
+                className="ml-auto"
+                leftIcon={<PlugZap className="fill-current" />}
+                onClick={() => {
+                  location.href = "/integrations";
+                }}
+              >
+                Connect Neurosity Crown
+              </Button>
             )}
-            <Button
-              onClick={() => {
-                setShowSignalQuality(!showSignalQuality);
-              }}
-            >
-              {showSignalQuality ? "Hide" : "Show"} Signal Quality
-            </Button>
           </div>
-        </div>
-      )}
 
-      {/* Muse Methods */}
-      <div className="item-start mt-3">
-        {!museContext?.museClient && (
-          <Button
-            intent={"dark"}
-            className="ml-auto"
-            leftIcon={<PlugZap className="fill-current" />}
-            onClick={async () => {
-              museContext?.getMuseClient();
-            }}
-          >
-            Connect Muse Headset
-          </Button>
-        )}
-      </div>
+          {connectedDevice && (
+            <>
+              <p>Active Neurosity Device: {connectedDevice?.deviceNickname}</p>
+              <p>Device Status: {deviceStatus}</p>
+            </>
+          )}
 
-      {museContext?.museClient && (
-        <div className="mt-4">
-          <p>Active Muse Device: {museContext?.museClient?.deviceName}</p>
+          {deviceStatus === "online" && connectedDevice?.channelNames && (
+            <div className="flex flex-col justify-between">
+              <div className="my-5">
+                {showSignalQuality && (
+                  <>
+                    {neurosityBrainwaves && (
+                      <SignalViewer rawBrainwaves={neurosityBrainwaves} channelNames={connectedDevice.channelNames!} />
+                    )}
 
-          {/* display live eeg */}
-          <div className="flex gap-x-5 mt-3">
-            {!isMuseRecording ? (
-              <>
+                    <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
+                  </>
+                )}
                 <Button
                   onClick={() => {
-                    startMuseRecording();
+                    setShowSignalQuality(!showSignalQuality);
                   }}
                 >
-                  Start Muse EEG Recording
+                  {showSignalQuality ? "Hide" : "Show"} Signal Quality
                 </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onClick={async () => {
-                    stopMuseRecording();
-                  }}
-                >
-                  Stop Muse EEG Recording
-                </Button>
-              </>
-            )}
-
-            <div>
-              {museBrainwaves && (
-                <>
-                  <SignalViewer rawBrainwaves={museBrainwaves} channelNames={museContext.museService?.channelNames!} />
-                </>
-              )}
+              </div>
             </div>
+          )}
+
+          {/* Muse Methods */}
+          <div className="item-start mt-3">
+            {!museContext?.museClient && (
+              <Button
+                intent={"dark"}
+                className="ml-auto"
+                leftIcon={<PlugZap className="fill-current" />}
+                onClick={async () => {
+                  museContext?.getMuseClient();
+                }}
+              >
+                Connect Muse Headset
+              </Button>
+            )}
           </div>
-        </div>
+
+          {museContext?.museClient && (
+            <div className="mt-4">
+              <p>Active Muse Device: {museContext?.museClient?.deviceName}</p>
+
+              {/* display live eeg */}
+              <div className="flex gap-x-5 mt-3">
+                {!isMuseRecording ? (
+                  <>
+                    <Button
+                      onClick={() => {
+                        startMuseRecording();
+                      }}
+                    >
+                      Start Muse EEG Recording
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={async () => {
+                        stopMuseRecording();
+                      }}
+                    >
+                      Stop Muse EEG Recording
+                    </Button>
+                  </>
+                )}
+
+                <div>
+                  {museBrainwaves && (
+                    <>
+                      <SignalViewer
+                        rawBrainwaves={museBrainwaves}
+                        channelNames={museContext.museService?.channelNames!}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

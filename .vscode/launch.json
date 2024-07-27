@@ -1,0 +1,25 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Fusion Copilot (iOS)",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/mobile",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "run:ios"]
+    },
+    {
+      "type": "python",
+      "request": "launch",
+      "name": "Run Analysis API",
+      "program": "${workspaceFolder}/analysis_api/app.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/analysis_api"
+    }
+  ]
+}

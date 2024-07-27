@@ -1,11 +1,12 @@
+import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
-import { Prompt } from "~/@types";
+import { Prompt, Quest } from "~/@types";
 import {
   Button,
   PromptDetails,
@@ -14,23 +15,86 @@ import {
 } from "~/components";
 import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
-import { useCreateQuest } from "~/hooks";
+import { useCreatePrompt, useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
 
+/**
+ *
+ * TODO:
+ */
+
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
-  const navigation = useNavigation();
 
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
-  const [addedQuestPrompts, setAddQuestPrompts] = React.useState<Prompt[]>([]);
+  const [, setAddQuestPrompts] = React.useState<Prompt[]>([]);
 
-  const { mutateAsync: createQuest, isLoading: isCreating } = useCreateQuest();
+  const { mutateAsync: createQuest } = useCreateQuest();
+
+  const { mutateAsync: createPrompt } = useCreatePrompt();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [joiningQuest, setJoiningQuest] = React.useState(false);
+
+  const [quest, setQuest] = React.useState<Quest | undefined>(
+    route.params.quest
+  );
+
+  /**
+   * Fetch quest details from remote server and updates the data cache after a period of time
+   */
+  const handleFetchQuestFromRemote = async () => {
+    try {
+      const apiService = await getApiService();
+      if (apiService === null) {
+        return;
+      }
+      const response = await apiService.get(`/quest/detail`, {
+        params: { questId: route.params.quest.guid },
+      });
+      const updatedQuest = response?.data?.quest as Quest;
+
+      const savedQuest = await questService.saveQuest(updatedQuest);
+
+      if (savedQuest) {
+        setQuest(savedQuest);
+      }
+    } catch (error) {
+      console.log("error --->", error);
+    }
+  };
+
+  /**
+   * Fetch the prompts user has saved for this quest
+   */
+  const handleFetchQuestPrompts = async () => {
+    const questPrompts = await questService.fetchQuestPrompts(
+      route.params.quest.guid
+    );
+    if (questPrompts) {
+      // it'll be slow for now but find prompt from db & set it
+      const fetchPrompts = async () => {
+        const fetchedPrompts = await Promise.all(
+          questPrompts.map(async (qp) => {
+            const prompt = await promptService.getPrompt(qp.promptId);
+            if (prompt) {
+              return prompt;
+            }
+          })
+        );
+        const filteredPrompts = fetchedPrompts.filter(
+          (prompt) => prompt !== undefined
+        );
+        if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
+      };
+
+      fetchPrompts();
+    }
+  };
 
   React.useEffect(() => {
     appInsights.trackPageView({
@@ -40,36 +104,17 @@ export function QuestDetailScreen() {
       },
     });
 
-    /**
-     * Fetch the prompts user has saved for this quest
-     */
-    (async () => {
-      const questPrompts = await questService.fetchQuestPrompts(
-        route.params.quest.guid
-      );
-      if (questPrompts) {
-        // it'll be slow for now but find prompt from db & set it
-        const fetchPrompts = async () => {
-          const fetchedPrompts = await Promise.all(
-            questPrompts.map(async (qp) => {
-              const prompt = await promptService.getPrompt(qp.promptId);
-              if (prompt) {
-                return prompt;
-              }
-            })
-          );
-          const filteredPrompts = fetchedPrompts.filter(
-            (prompt) => prompt !== undefined
-          );
-          if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
-        };
-
-        fetchPrompts();
-      }
-
-      await getQuestSubscriptionStatus();
-    })();
+    getQuestSubscriptionStatus();
+    handleFetchQuestFromRemote();
+    handleFetchQuestPrompts();
+    pushQuestData();
   }, []);
+
+  const pushQuestData = async () => {
+    if (quest?.guid) {
+      await questService.uploadQuestDataset(quest.guid);
+    }
+  };
 
   const getQuestSubscriptionStatus = async () => {
     /**
@@ -101,6 +146,7 @@ export function QuestDetailScreen() {
     // 'I agree to share data I collect with the quest organizer',
     //  'I want to share my data anoymously with the research community']
     try {
+      setJoiningQuest(true);
       // remote call to add user to quest
       const apiService = await getApiService();
       if (apiService === null) {
@@ -125,6 +171,22 @@ export function QuestDetailScreen() {
         if (!res) {
           // show error toast
           throw new Error("Failed to save quest locally");
+        }
+
+        // save prompts locally
+        if (route.params.quest.prompts) {
+          const res = await Promise.all(
+            route.params.quest.prompts.map(async (prompt) => {
+              // link prompt to quest
+              prompt.additionalMeta["questId"] = route.params.quest.guid;
+              const promptRes = await createPrompt(prompt);
+              return promptRes;
+            })
+          );
+
+          if (res.includes(undefined)) {
+            throw new Error("Failed to save prompts locally");
+          }
         }
 
         setIsSubscribed(true);
@@ -156,6 +218,8 @@ export function QuestDetailScreen() {
         },
       });
       console.error("Failed to add user to quest", error);
+    } finally {
+      setJoiningQuest(false);
     }
   };
 
@@ -170,6 +234,7 @@ export function QuestDetailScreen() {
     setActivePrompt(undefined);
     promptOptionsSheetRef.current?.close();
   }, []);
+
   useEffect(() => {
     /**
      * This delay is added before showing bottom sheet because some time
@@ -191,73 +256,40 @@ export function QuestDetailScreen() {
 
   return (
     <Screen>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex flex-1 px-4 justify-between">
           <View>
-            <Text className="text-white font-sans text-lg">
-              {route.params.quest.title}
-            </Text>
+            <Text className="text-white font-sans text-lg">{quest?.title}</Text>
             <Text className="text-white opacity-60 text-base font-sans my-2">
-              {route.params.quest.description}
+              {quest?.description}
             </Text>
-
-            {route.params.quest.organizerName && (
+            {quest?.organizerName && (
               <Text className="text-white opacity-60 text-base font-sans my-2">
-                Organized by {route.params.quest.organizerName}
+                Organized by {quest.organizerName}
               </Text>
             )}
-
+            <HealthCard />
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
-              {route.params.quest.prompts?.map((prompt) => (
+              {quest?.prompts?.map((prompt) => (
                 <View key={Math.random()} className="my-2">
                   <PromptDetails
                     prompt={prompt}
-                    variant={
-                      addedQuestPrompts.find((p) => {
-                        return p.promptText === prompt.promptText;
-                      })
-                        ? "detail"
-                        : "add"
-                    }
-                    displayFrequency={
-                      !!addedQuestPrompts
-                        .map((p) => p.promptText)
-                        .includes(prompt.promptText)
-                    }
+                    variant="detail"
+                    displayFrequency
                     onClick={() => {
-                      // if prompt is saved, show detail
-                      if (
-                        addedQuestPrompts.find((p) => {
-                          return p.promptText === prompt.promptText;
-                        })
-                      ) {
-                        // TODO: prompt actions:handlePromptExpandSheet(prompt);
+                      if (isSubscribed !== false) {
+                        handlePromptExpandSheet(prompt);
                         // handle prompt bottom sheet
-                      } else {
-                        // necessary so that quest_prompts get linked
-                        prompt.additionalMeta["questId"] =
-                          route.params.quest.guid;
-                        navigation.navigate("PromptNavigator", {
-                          screen: "EditPrompt",
-                          params: {
-                            prompt,
-                            type: "add",
-                          },
-                        });
                       }
                     }}
                   />
                 </View>
               ))}
             </View>
-
-            <HealthCard />
           </View>
 
-          {/* if the user is subscribed, show 'View Quest' */}
-          {/* display the procedural steps that happen after they join */}
           {/* sync data, leave quest etc.. */}
           {/*  */}
         </View>
@@ -267,27 +299,30 @@ export function QuestDetailScreen() {
       {isSubscribed === false && (
         <View className="mt-5">
           <Button
-            title="Get Started"
+            title="Complete Onboarding"
             fullWidth
             className="mb-5"
             onPress={addUserToQuest}
+            loading={joiningQuest}
           />
         </View>
       )}
 
       {isSubscribed && (
-        <View className="mt-5">
+        <View className="mt-5 space-y-2">
           <Button
             title="View Leaderboard"
             fullWidth
             className="mb-5"
             onPress={async () => {
               // push data to remote (this storage)
-              await questService.uploadQuestDataset(route.params.quest.guid);
+              if (quest?.guid) {
+                await questService.uploadQuestDataset(quest.guid);
+              }
 
               // send the user to the quest page
               await WebBrowser.openBrowserAsync(
-                `https://usefusion.ai/quest/${route.params.quest.guid}`
+                `https://usefusion.ai/quest/${quest?.guid}`
               );
             }}
           />
@@ -301,6 +336,7 @@ export function QuestDetailScreen() {
             promptId={activePrompt?.uuid!}
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
+            allowEdit={false}
           />
         )}
       </Portal>
