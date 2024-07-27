@@ -159,7 +159,6 @@ const QuestDetailPage: NextPage = () => {
 
       {/* if the quest contains an experiment link, embed it */}
       {/* <Experiment {...quest?.experiment} /> */}
-      {/*
       <div className="flex space-x-2 gap-x-2 mt-4">
         <Button
           className=""
@@ -167,41 +166,20 @@ const QuestDetailPage: NextPage = () => {
             setDisplayShareModal(true);
           }}
         >
-          Join Quest
+          Share Quest
         </Button>
-        {/*
-        // TODO: gate this with zupass
-        <Button intent="primary" className="">
+        {/* // TODO: gate this with zupass */}
+        {/* <Button intent="primary" className="">
           Download Data
         </Button> */}
-
         <Button className="" intent="primary" onClick={updateQuestDatasets}>
           Refresh
         </Button>
       </div>
-      */}
 
       {/* dynamic content based on colelcted data */}
       <div className="mt-5">
         {/* category selection */}
-        {/* <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-          <select
-            id="activity"
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-            onChange={(e) => {
-              setCategory(categories.find((cat) => cat.value === e.target.value));
-            }}
-            value={category?.value}
-          >
-            {categories.map((category) => {
-              return (
-                <option key={category.value} value={category.value}>
-                  {category.name}
-                </option>
-              );
-            })}
-          </select>
-        </label> */}
 
         {/* display the graph */}
         {questDatasets && questDatasets.length > 0 && (

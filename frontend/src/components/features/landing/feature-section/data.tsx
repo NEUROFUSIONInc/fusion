@@ -6,7 +6,7 @@ export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
     pretitle: "Your",
-    title: "personal assistant",
+    title: "personal copilot",
     description: "Understand changes in your behavior over time with personalized prompts.",
     featuresList: [
       "Get recommendations to meet your daily goals",

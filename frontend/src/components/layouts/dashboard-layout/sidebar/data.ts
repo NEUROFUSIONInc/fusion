@@ -8,7 +8,7 @@ export const sidebarLinks = [
   // },
   {
     icon: LayoutDashboard,
-    title: "Recording",
+    title: "Recordings",
     href: "/playground",
   },
   {

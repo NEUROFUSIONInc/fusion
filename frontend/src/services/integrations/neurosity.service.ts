@@ -1,13 +1,8 @@
 import { Neurosity, WebBluetoothTransport } from "@neurosity/sdk";
 import { Epoch, PSD } from "@neurosity/sdk/dist/esm/types/brainwaves";
-import axios from "axios";
 import dayjs from "dayjs";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { takeWhile } from "rxjs";
-import * as path from "path";
-import * as Papa from "papaparse";
-import { promises as fsPromises } from "fs";
-import JSZip, { JSZipFileOptions } from "jszip";
 import { DatasetExport, EventData, IExperiment } from "~/@types";
 import { downloadDataAsZip } from "../storage.service";
 
