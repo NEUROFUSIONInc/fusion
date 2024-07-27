@@ -5,12 +5,12 @@ export const navigationLinks = [
     persona: "default",
     external: false,
   },
-  {
-    title: "About",
-    href: "/us",
-    persona: "default",
-    external: false,
-  },
+  // {
+  //   title: "About",
+  //   href: "/us",
+  //   persona: "default",
+  //   external: false,
+  // },
   {
     title: "Research",
     href: "/research",
