@@ -88,7 +88,7 @@ export const DeleteAccountModal: FC<IDeleteAccountModalProps> = ({
     <Dialog open={confirmDeleteAccount} onOpenChange={() => setConfirmDeleteAccount(!confirmDeleteAccount)}>
       <DialogContent>
         <DialogTitle>Confirm Delete Account</DialogTitle>
-        <DialogDescription>This will delete your private key. Are you sure you want to contiue?</DialogDescription>
+        <DialogDescription>This will delete your private key. Are you sure you want to continue?</DialogDescription>
         <Button intent="dark" onClick={deleteAccount}>
           Delete Account
         </Button>

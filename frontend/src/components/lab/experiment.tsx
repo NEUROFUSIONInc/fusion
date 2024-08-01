@@ -8,7 +8,7 @@ import { Button } from "../ui/button/button";
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
-
+import { appInsights } from "~/utils/appInsights";
 import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
@@ -42,12 +42,22 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   async function startNeurosityRecording() {
     if (connectedDevice) {
+      appInsights.trackEvent({ name: 'start_neurosity_recording_init', properties: {
+        device: connectedDevice,
+        experimentDetails: experimentInfo,
+        duration: duration
+      }})
       console.log(experimentInfo);
       neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames, duration);
     }
   }
 
   async function stopNeurosityRecording() {
+    appInsights.trackEvent({ name: 'stop_neurosity_recording_init', properties: {
+      device: connectedDevice,
+      experimentDetails: experimentInfo,
+      duration: duration
+    }})
     neurosityService.stopRecording();
   }
 

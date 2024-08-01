@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { downloadDataAsZip, getCSVFile, writeToLocalStorage } from "../storage.service";
 import { createHash } from "crypto";
 import { getFileHash, signData } from "../signer.service";
+import { appInsights } from "~/utils/appInsights";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -172,10 +173,20 @@ export class MuseEEGService {
     this.recordingStartTimestamp = dayjs().valueOf();
     this.recordingStatus = "started";
     this.museClient.start();
+
+     appInsights.trackEvent({ name: 'start_muse_recording_init', properties: {
+      device: this.museClient.deviceInfo,
+      timeStamp: this.recordingStartTimestamp,
+      status: this.recordingStatus
+    }})
   }
 
   async stopRecording(withDownload = false, signDataset = false) {
     this.museClient.pause();
+    appInsights.trackEvent({ name: 'stop_muse_recording_init', properties: {
+      device: this.museClient.deviceInfo,
+      timeStamp: this.recordingStartTimestamp,
+    }})
     // prepare files for download
     const datasetExport: DatasetExport = {
       fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`, `events_${this.recordingStartTimestamp}.csv`],
@@ -210,6 +221,11 @@ export class MuseEEGService {
     }
 
     try {
+      appInsights.trackEvent({ name: 'download_muse_recording_data', properties: {
+        device: this.museClient.deviceInfo,
+        timeStamp: this.recordingStartTimestamp,
+        status: this.recordingStatus
+      }})
       if (withDownload) {
         await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
       } else {
@@ -226,6 +242,8 @@ export class MuseEEGService {
       this.accelerometerSeries = [];
       this.recordingStartTimestamp = 0;
       this.recordingStatus = "stopped";
+
+      appInsights.trackEvent({ name: 'stop_muse_recording_completed'})
     }
   }
 }
