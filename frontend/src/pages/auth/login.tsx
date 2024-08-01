@@ -8,7 +8,6 @@ import { authService } from "~/services";
 import { MainLayout, Meta } from "~/components/layouts";
 import { Button, Input, Logo } from "~/components/ui";
 import { getPrivateKey, persistPrivateKey } from "~/utils/auth";
-
 import { authOptions } from "../api/auth/[...nextauth]";
 import { SeverityLevel } from "@microsoft/applicationinsights-web";
 
@@ -26,11 +25,19 @@ const LoginPage = React.memo(() => {
 
   const useGuestAccount = async () => {
     try {
+      appInsights.trackEvent({ name: 'use_guest_account'})
       const privateKey = getPrivateKey();
       const { publicKey } = await persistPrivateKey(privateKey);
       completeNostrLogin(publicKey, privateKey);
     } catch (error) {
       console.error(error);
+      appInsights.trackException({
+        exception: new Error(error as string),
+        severityLevel: SeverityLevel.Error,
+        properties: {
+          message: "Error using guest account"
+        }
+      })
     }
   };
 
@@ -50,8 +57,8 @@ const LoginPage = React.memo(() => {
   };
 
   const useExistingAccount = async (privateKey: string) => {
-    appInsights.trackEvent({ name: 'use_existing_account', properties: { customProperty: 'value' } });
     try {
+      appInsights.trackEvent({ name: 'use_existing_account'});
       if (privateKey.length !== 64) {
         return;
       }
@@ -59,7 +66,12 @@ const LoginPage = React.memo(() => {
       const { publicKey } = await persistPrivateKey(privateKey);
       setPublicKey(publicKey);
     } catch (err) {
-      appInsights.trackException({ error: new Error(err as string), severityLevel: SeverityLevel.Error });
+      appInsights.trackException({ 
+        error: new Error(err as string), 
+        severityLevel: SeverityLevel.Error, 
+        properties: {
+          message: "Error using existing account"
+        } });
       console.error(err);
     }
   };

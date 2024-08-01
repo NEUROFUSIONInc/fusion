@@ -10,6 +10,9 @@ import { promises as fsPromises } from "fs";
 import JSZip, { JSZipFileOptions } from "jszip";
 import { DatasetExport, EventData, IExperiment } from "~/@types";
 import { downloadDataAsZip } from "../storage.service";
+import { channel } from "diagnostics_channel";
+import { appInsights } from "~/utils/appInsights";
+import { timeStamp } from "console";
 
 export declare enum STREAMING_MODE {
   WIFI_ONLY = "wifi-only",
@@ -125,6 +128,14 @@ class NeurosityService {
     this.recordingStartTimestamp = dayjs().unix();
     this.recordingStatus = "started";
 
+    appInsights.trackEvent({ name: 'neurosity_recording_started', properties: {
+      channel: channelNames,
+      experimentDetails: experiment,
+      duration: duration,
+      timeStamp: this.recordingStartTimestamp,
+      recordingStatus: this.recordingStatus,
+    }})
+
     /**
      * Add experiment data to the store
      */
@@ -158,6 +169,15 @@ class NeurosityService {
             brainwaveEntry[chName] = epochData.data[chIndex][index];
           }
           this.rawBrainwavesSeries.push(brainwaveEntry);
+
+           appInsights.trackEvent({ name: 'neurosity_recording_completed', properties: {
+              channel: channelNames,
+              experimentDetails: experiment,
+              duration: duration,
+              samples: samples,
+              timeStamp: this.recordingStartTimestamp,
+              recordingStatus: this.recordingStatus,
+            }})
 
           // notify subscribers
           this.notifySubscribers(this.rawBrainwavesSeries);
