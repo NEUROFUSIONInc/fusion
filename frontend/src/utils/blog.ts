@@ -30,7 +30,7 @@ export async function getPostBySlug(slug: string) {
   };
 }
 
-export async function getAllPostsWithFrontMatter() {
+export async function getAllPostsWithFrontMatter(): Promise<any[]> {
   const files = fs.readdirSync(path.join(root, "public/posts"));
 
   // @ts-ignore

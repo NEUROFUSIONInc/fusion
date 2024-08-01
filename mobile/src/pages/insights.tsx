@@ -176,39 +176,37 @@ export function InsightsScreen() {
           <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
             <View className="flex flex-1 flex-col w-full h-auto justify-between">
               {filteredPrompts?.map((prompt) => (
-                <>
-                  <View
-                    key={prompt.uuid}
-                    className="rounded-lg bg-secondary-900 mb-10"
-                  >
-                    <View className="flex flex-row border-b-[1px] border-tint p-5 justify-between">
-                      <Text className="text-lg font-sans text-white max-w-[90%]">
-                        {prompt.promptText}
-                      </Text>
-                      <View className="self-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          leftIcon={<Pencil width={25} height={30} />}
-                          onPress={() => {
-                            navigation.navigate("PromptResponsesPage", {
-                              prompt,
-                              selectedDate: chartStartDate.format("YYYY-MM-DD"),
-                            });
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    <View>
-                      <ChartContainer
-                        prompt={prompt}
-                        startDate={chartStartDate}
-                        timePeriod={insightContext!.insightPeriod}
+                <View
+                  key={prompt.uuid}
+                  className="rounded-lg bg-secondary-900 mb-10"
+                >
+                  <View className="flex flex-row border-b-[1px] border-tint p-5 justify-between">
+                    <Text className="text-lg font-sans text-white max-w-[90%]">
+                      {prompt.promptText}
+                    </Text>
+                    <View className="self-center">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        leftIcon={<Pencil width={25} height={30} />}
+                        onPress={() => {
+                          navigation.navigate("PromptResponsesPage", {
+                            prompt,
+                            selectedDate: chartStartDate.format("YYYY-MM-DD"),
+                          });
+                        }}
                       />
                     </View>
                   </View>
-                </>
+
+                  <View>
+                    <ChartContainer
+                      prompt={prompt}
+                      startDate={chartStartDate}
+                      timePeriod={insightContext!.insightPeriod}
+                    />
+                  </View>
+                </View>
               ))}
             </View>
           </ScrollView>

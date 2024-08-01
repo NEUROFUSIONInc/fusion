@@ -1,6 +1,8 @@
+import dayjs from "dayjs";
+
 import { Quest, Prompt, QuestPrompt } from "~/@types";
 import { db } from "~/lib";
-import { getApiService } from "~/utils";
+import { buildHealthDataset, getApiService } from "~/utils";
 
 class QuestService {
   async saveQuest(quest: Quest) {
@@ -73,7 +75,6 @@ class QuestService {
 
       // for now adding prompts will be manual.
       return quest;
-
     } catch (error) {
       console.log(error);
       return false;
@@ -293,6 +294,60 @@ class QuestService {
     // remove quest_prompts
     // remove prompt
     // remove quest
+  }
+
+  async uploadQuestDataset(questId: string) {
+    // start from the current instant and do a dump
+    const getHealthDataset = async () => {
+      // get data from health service
+      // build the health dataset
+      try {
+        const res = await buildHealthDataset(
+          dayjs().startOf("day").subtract(1, "week"),
+          dayjs()
+        );
+
+        if (res) {
+          console.log("health dataset entries:", res.length);
+          console.log("health data", JSON.stringify(res));
+          return res;
+        }
+      } catch (error) {
+        console.error("Failed to sync health data", error);
+      }
+    };
+    const healthDataset = await getHealthDataset();
+
+    const questPrompts = await this.fetchQuestPrompts(questId);
+    const promptResponses = await Promise.all(
+      questPrompts.map(async (questPrompt) => {
+        // TODO: fetch the responses for each of the prompts
+      })
+    );
+
+    // get the prompt responses
+    // { prompt, responses[] }[]
+
+    // upload the dataset
+    try {
+      const apiService = await getApiService();
+      const response = await apiService!.post(`/quest/dataset`, {
+        questId,
+        type: "health",
+        value: healthDataset,
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Dataset uploaded successfully");
+        return true;
+      } else {
+        console.log("Failed to upload dataset", response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error("Failed to upload dataset", error);
+      return false;
+    }
   }
 }
 

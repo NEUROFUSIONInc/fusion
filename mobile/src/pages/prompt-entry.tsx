@@ -21,7 +21,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Toast from "react-native-toast-message";
 import Tooltip from "react-native-walkthrough-tooltip";
 
-import { PromptResponse } from "~/@types";
+import { Prompt, PromptResponse } from "~/@types";
 import { Button, Calendar, Input, Tag } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
@@ -38,24 +38,29 @@ const yesNoOptions = [
 export function PromptEntryScreen() {
   const route = useRoute<RouteProp<"PromptEntry">>();
   const navigation = useNavigation<any>();
+
+  const queryClient = useQueryClient();
+
   const { data: prompt } = usePrompt(route.params.promptUuid);
+  const accountContext = React.useContext(AccountContext);
+
   const [userResponse, setUserResponse] = React.useState(
     route.params.previousPromptResponse?.value ?? ""
   );
   const [additonalNotes, setAdditionalNotes] = React.useState(
     route.params.previousPromptResponse?.additionalMeta?.note ?? ""
   );
-  const notificationTriggerTimestamp = route.params.triggerTimestamp
-    ? route.params.triggerTimestamp
-    : Math.floor(dayjs().unix());
   const [promptResponseTimeObj, setPromptResponseTimeObj] = React.useState(
     route.params.previousPromptResponse
       ? dayjs(route.params.previousPromptResponse.responseTimestamp)
       : dayjs()
   );
   const [customOptions, setCustomOptions] = React.useState<string[]>([]);
+  const [toolTipVisible, setToolTipVisible] = React.useState(false);
 
-  const accountContext = React.useContext(AccountContext);
+  const notificationTriggerTimestamp = route.params.triggerTimestamp
+    ? route.params.triggerTimestamp
+    : Math.floor(dayjs().unix());
 
   React.useEffect(() => {
     const customOptions = prompt?.additionalMeta?.customOptionText;
@@ -93,21 +98,21 @@ export function PromptEntryScreen() {
     });
   };
 
-  const queryClient = useQueryClient();
-
   // TODO: move date picker logic to it's own component
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
+
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
+
   const handleDatePickerConfimm = (date: Date) => {
     setPromptResponseTimeObj(dayjs(date));
     hideDatePicker();
   };
-  const [toolTipVisible, setToolTipVisible] = React.useState(false);
 
   // logic to display tooltip for the first time
   React.useEffect(() => {
@@ -301,11 +306,64 @@ export function PromptEntryScreen() {
     }
   };
 
+  const handleSkipPrompt = () => {
+    const promptEmptryIndex = route.params?.index;
+    const promptsList = route.params?.prompts as Prompt[];
+
+    if (
+      !route.params.prompts ||
+      route.params.index === undefined ||
+      promptEmptryIndex === undefined ||
+      promptEmptryIndex + 1 > promptsList?.length
+    )
+      return;
+
+    const nextPrompt = promptsList?.[promptEmptryIndex + 1];
+
+    if (!nextPrompt) return;
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: "PromptNavigator",
+            state: {
+              routes: [
+                {
+                  name: "PromptEntry",
+                  params: {
+                    promptUuid: nextPrompt.uuid,
+                    prompts: promptsList,
+                    index: promptEmptryIndex + 1,
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      })
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       behavior="padding"
       className="flex flex-grow flex-col h-full w-full items-stretch justify-center bg-dark px-5"
     >
+      {route.params.prompts &&
+        route.params?.prompts?.length > 1 &&
+        route.params.index + 1 < route.params.prompts?.length && (
+          <View className="ml-auto mt-2">
+            <Button
+              title="Skip"
+              variant="ghost"
+              className="w-20"
+              fullWidth
+              onPress={handleSkipPrompt}
+            />
+          </View>
+        )}
       <ScrollView
         contentContainerStyle={{
           flex: 1,
@@ -313,7 +371,7 @@ export function PromptEntryScreen() {
       >
         <Pressable
           onPress={Keyboard.dismiss}
-          className="flex flex-1 justify-center mt-10"
+          className="flex flex-1 justify-center mt-5"
         >
           {prompt && (
             <View>

@@ -1,12 +1,12 @@
 ---
-title: "Why You Should Use Fusion Personalized Prompts!"
+title: How To Use Fusion Personalized Prompts!
 description: Tracking your emotional and behavioural patterns over time
 publishedDate: 2024/01/18
 coverImage: /images/blog/personalizedprompts/article_cover.png
 tags:
+  - How-To Guides
   - Product Insights
   - Resources
-  - How-To Guides
 slug: personalized-prompts
 authors:
   - name: "Ore Ogundipe"
@@ -39,10 +39,11 @@ Now that you know some benefits of creating personalized prompts. It is importan
 With the latest update on the Fusion app, you can also write what you want to track and your Fusion Copilot will provide relevant prompts for you to choose from.
 
 **Choose Your Response Format**: Fusion allows you to respond to prompts in numeric, yes/no, text format or custom options.
-Numeric format: This will help you track measurable aspects, such as your stress level, or hours of sleep.
-Yes/No format: This can be used for binary questions related to your goals. For example, 'Did you drink soda today?', ‘Did you complete your most important task?’
-Text format: With this, you can note your thoughts, feelings, or experiences in more detail. This is perfect for journaling or capturing your emotions.
-Custom Options: You can set up your specific type of response with our custom format option.
+
+- Numeric format: This will help you track measurable aspects, such as your stress level, or hours of sleep.
+- Yes/No format: This can be used for binary questions related to your goals. For example, 'Did you drink soda today?', ‘Did you complete your most important task?’
+- Text format: With this, you can note your thoughts, feelings, or experiences in more detail. This is perfect for journaling or capturing your emotions.
+- Custom Options: You can set up your specific type of response with our custom format option.
 
 With this you can choose the format that best suits the nature of your prompt.
 
@@ -54,7 +55,7 @@ With this you can choose the format that best suits the nature of your prompt.
 
 ## Responding to Prompts with Fusion.
 
-Interactions on your Fusion app are designed to be effortless. With a simple "press and hold," from the notification, you can respond to prompts and seamlessly continue with your day. No distractions, just a quick acknowledgment of your current state.
+Interactions on your Fusion app are designed to be effortless. With a simple _"press and hold,"_ from the notification, you can respond to prompts and seamlessly continue with your day. No distractions, just a quick acknowledgment of your current state.
 
 As you consistently respond to prompts, Fusion reveals insights into your responses over multiple days. Visualizing how your feelings and activities have changed provides a valuable tool for self-reflection.
 

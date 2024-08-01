@@ -132,10 +132,12 @@ export const getAppleHealthSleepSummary = async (
           reject(err);
           return;
         }
+
         // store the total for each day
         // get the difference between the start and end time for the duration of activity in each sample
         // value types: apple: INBED  oura: AWAKE, ASLEEP, CORE, REM, DEEP, INBED
         // TODO: logs can sometimes come from multiple apple devices, so we need to filter by sourceId
+        // TODO: we need summary's per source
 
         for (const date of dateArray) {
           if (!sleepSummaryMap[date]) {
@@ -145,18 +147,25 @@ export const getAppleHealthSleepSummary = async (
             };
           }
 
-          // filter for sleep & also include from the night before after 12pm
+          // When filtering samples to include, we choose:
+          // - 6pm from previous night to 6pm of day
           const filteredData = (
             results as unknown as AppleHealthSleepSample[]
-          ).filter((sample) =>
-            // sample.sourceId.startsWith(
-            //   "com.apple.health.FCE90122-BD0E-4B5B-BC27-D1098B176FDB"
-            // ) &&
-            // sample.value === "INBED" &&
-            dayjs(sample.startDate).isSame(dayjs(date), "day")
+          ).filter(
+            (sample) =>
+              sample.value === "INBED" &&
+              // For the current date, include data from the day before 6pm
+              ((dayjs(sample.startDate).isSame(dayjs(date), "day") &&
+                dayjs(sample.startDate).isBefore(dayjs(date).hour(18))) ||
+                // For the previous date, include data from after 6pm
+                (dayjs(sample.startDate).isSame(
+                  dayjs(date).subtract(1, "day"),
+                  "day"
+                ) &&
+                  dayjs(sample.startDate).isAfter(
+                    dayjs(date).subtract(1, "day").hour(18)
+                  )))
           );
-
-          // TODO: we need summary's per source
 
           // if there is no sleep data for the current date, skip
           if (!filteredData.length) {
@@ -359,5 +368,9 @@ export const connectAppleHealth = async () => {
       });
     });
   }
+  return false;
+};
+
+export const connectGoogleFit = async () => {
   return false;
 };

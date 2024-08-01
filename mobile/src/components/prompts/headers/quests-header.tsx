@@ -22,8 +22,12 @@ export const QuestsHeader = () => {
           variant="ghost"
           size="icon"
           rounded
-          className="bg-white/10 ml-1"
-          leftIcon={<Plus />}
+          className="bg-white/10"
+          leftIcon={
+            <View className="pl-1">
+              <Plus height={20} width={20} />
+            </View>
+          }
           onPress={handleExpandSheet}
         />
       </View>

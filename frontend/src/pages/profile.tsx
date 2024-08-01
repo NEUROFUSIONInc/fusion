@@ -15,7 +15,7 @@ const AccountPage: NextPage = () => {
   const [confirmDeleteAccount, setConfirmDeleteAccount] = React.useState(false);
 
   const deleteAccount = () => {
-    appInsights.trackEvent({ name: 'delete_account', properties: { customProperty: 'value' } });
+    appInsights.trackEvent({ name: "delete_account", properties: { customProperty: "value" } });
     deletePrivateKey();
     signOut();
   };

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { Pressable, Text, View } from "react-native";
 // import { ScrollView } from "react-native-gesture-handler";
 import { ProgressBar } from "react-native-paper";
 import Animated from "react-native-reanimated";

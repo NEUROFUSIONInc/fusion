@@ -1,9 +1,8 @@
 import dayjs from "dayjs";
-const ReactEcharts = dynamic(() => import('echarts-for-react'), { ssr: false });
+const ReactEcharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import React, { FC } from "react";
 import { DisplayCategory, FusionQuestDataset } from "~/@types";
-import dynamic from 'next/dynamic';
-
+import dynamic from "next/dynamic";
 
 export interface LineChartProps {
   seriesData: FusionQuestDataset[];
@@ -26,7 +25,6 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
       xAxis: {
         type: "category",
         gap: true,
-        data: dates,
         splitLine: {
           show: true,
           lineStyle: {
@@ -47,15 +45,17 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
         itemStyle: {
           color: "#" + Math.floor(Math.random() * 16777215).toString(16),
         },
-        data: data.value.map((item) => item.stepSummary.totalSteps),
+        data: data.value.map((item) => [item.stepSummary.date, item.stepSummary.totalSteps]),
       })),
       legend: {
         data: seriesData.map((data) => data.userGuid),
         title: {
           text: "Participant",
         },
-        orient: "vertical", // Place the legend on the right side
-        right: 10, // Adjust the distance from the right side
+        orient: "horizontal", // Place the legend at the bottom
+        bottom: 0, // Adjust the distance from the bottom
+        type: "scroll", // Enable scrolling for the legend
+        limit: 10, // Limit the number of items displayed in the legend
       },
     };
 

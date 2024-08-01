@@ -9,8 +9,6 @@ const RecodingPage: NextPage = () => {
 
 export default RecodingPage;
 
-
-
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 

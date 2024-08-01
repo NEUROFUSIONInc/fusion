@@ -40,7 +40,6 @@ export const QuickAddPromptsHeader = () => {
         onPress={handleExpandSheet}
       />
 
-      {/* <AddPromptSheet bottomSheetRef={bottomSheetRef} /> */}
       <Portal>
         <CreatePromptSheet promptSheetRef={createPromptSheetRef} />
       </Portal>

@@ -18,7 +18,7 @@ const HeroSection = dynamic(() => import("~/components/features/landing").then((
 export async function getStaticProps() {
   const posts: any[] = (await getAllPostsWithFrontMatter()) as unknown as any[];
 
-  const selectedSlugs = ["cold-plunge-impact", "making-health-behavior-data-accessible", "going-fulltime"];
+  const selectedSlugs = ["ncode-cognitive-assessments", "tech-in-psych", "cold-plunge-impact"];
   const filteredPosts = posts.filter((post: any) => selectedSlugs.includes(post.slug));
 
   return {
@@ -28,7 +28,7 @@ export async function getStaticProps() {
   };
 }
 
-const Research: NextPage = ({posts}: any) => {
+const Research: NextPage = ({ posts }: any) => {
   return (
     <MainLayout isResearch>
       <Meta

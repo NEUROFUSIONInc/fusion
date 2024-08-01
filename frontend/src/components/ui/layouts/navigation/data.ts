@@ -6,9 +6,10 @@ export const navigationLinks = [
     external: false,
   },
   // {
-  //   title: "Coaches & Health Professionals",
-  //   href: "/?persona=coaches_health_professionals",
-  //   persona: "coaches_health_professionals",
+  //   title: "About",
+  //   href: "/us",
+  //   persona: "default",
+  //   external: false,
   // },
   {
     title: "Research",

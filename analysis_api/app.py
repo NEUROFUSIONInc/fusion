@@ -96,6 +96,42 @@ def process_eeg():
 
 # TODO: endpoint for ERP analysis
 
+@app.route('/api/v1/process_eeg_fooof', methods=['POST'])
+def process_eeg_fooof():
+    try:
+        # Check if the POST request contains a file with the key 'file'
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+
+        if 'fileTimestamp' not in request.form:
+            return jsonify({'error': 'No file timestamp'}), 400
+
+        file = request.files['file']
+
+        fileTimestamp = request.form['fileTimestamp']
+
+        # Check if the file has a filename
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        # Check if the file is a ZIP file
+        if file.filename.endswith('.zip'):
+            # Create a temporary directory to store the unzipped files
+            temp_dir = 'temp_unzip' # +`` "_" + str(int(time.time()))
+            os.makedirs(temp_dir, exist_ok=True)
+
+            # Save the ZIP file to the temporary directory
+            zip_file_path = os.path.join(temp_dir, file.filename)
+            file.save(zip_file_path)
+
+            # Unzip the file
+            with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                zip_ref.extractall(temp_dir + "/raw_files")
+            
+            print("file directory", temp_dir)
+    except Exception as e:
+        print("error", e)
+        return jsonify({'error': str(e)}), 500
 
 # Endpoint for CoCoA-PAD analysis
 @app.route('/api/v1/verbal_fluency', methods=['POST'])

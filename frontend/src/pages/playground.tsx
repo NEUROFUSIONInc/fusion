@@ -39,15 +39,12 @@ const PlaygroundPage: NextPage = () => {
 
   const handleCloseCapabilities = () => {
     setShowCapabilitiesModal(false);
-  }
+  };
 
   const handleCloseDataHandling = () => {
-    setShowDataHandlingModal(false)
-  }
-  // const handleRemoveOnboarding = () => {
-  //   localStorage.removeItem("viewedOnboarding");
-  //   setShowCapabilitiesModal(true);
-  // };
+    setShowDataHandlingModal(false);
+  };
+
   const experiments: IExperiment[] = [
     {
       id: 3,
@@ -87,6 +84,13 @@ const PlaygroundPage: NextPage = () => {
         "The Stroop task is a classic test of cognitive control and attentional flexibility. It is often used in clinical and experimental settings to measure selective attention and cognitive control. The task involves naming the color of a word, while ignoring the semantic meaning of the word. For example, the word 'red' might be written in blue ink. The task is often used to measure changes in brain activity associated with attention, relaxation, and other cognitive processes.",
       url: "/experiments/stroop_task.html",
     },
+    // {
+    //   id: 6,
+    //   name: "Verbal Fluency - Cognitive Test",
+    //   description:
+    //     "This is a test of your verbal fluency. You eill be given a category and you have to name as many words as you can that fit that category. This test is often used to measure changes in brain processing associated with language and congitive processes.",
+    //   url: "/experiments/verbal_fluency.html",
+    // },
     // {
     //   id: 6,
     //   name: "Neuro Art - Generating Images from EEG",
@@ -131,13 +135,13 @@ const PlaygroundPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Playground | Fusion Explorer",
+          title: "Recordings | NeuroFusion",
           description:
             "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
-      <h1 className="text-4xl">Playground</h1>
+      <h1 className="text-4xl">Recording</h1>
       <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
         Select activity:
         <select
@@ -158,13 +162,14 @@ const PlaygroundPage: NextPage = () => {
       <Experiment {...activeExperiment} />
       <div>
         {showCapabilitiesModal && (
-          <CapabilitiesModal
-            onNext={handleCapabilitiesNext}
-            onCancel={handleCloseCapabilities }
-          />
+          <CapabilitiesModal onNext={handleCapabilitiesNext} onCancel={handleCloseCapabilities} />
         )}
         {showDataHandlingModal && (
-          <DataHandlingModal onPrevious={handleDataHandlingPrevious} onGetStarted={handleDataHandlingGetStarted} onClose={handleCloseDataHandling} />
+          <DataHandlingModal
+            onPrevious={handleDataHandlingPrevious}
+            onGetStarted={handleDataHandlingGetStarted}
+            onClose={handleCloseDataHandling}
+          />
         )}
       </div>
     </DashboardLayout>
@@ -186,17 +191,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: { session},
+    props: { session },
   };
 };
 
 interface CapabilitiesModalProps {
   onNext: () => void;
   onCancel: () => void;
- 
 }
 
-const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,  }) => {
+const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel }) => {
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent>
@@ -209,7 +213,9 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
           </div>
         </DialogDescription>
         <div className="flex justify-end mt-4">
-          <Button  intent="primary" onClick={onNext}>Next</Button>
+          <Button intent="primary" onClick={onNext}>
+            Next
+          </Button>
           <Button intent="dark" onClick={onCancel} className="ml-2">
             Cancel
           </Button>
@@ -222,7 +228,7 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel,
 interface DataHandlingModalProps {
   onPrevious: () => void;
   onGetStarted: () => void;
-  onClose : () =>void;
+  onClose: () => void;
 }
 
 const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGetStarted, onClose }) => {

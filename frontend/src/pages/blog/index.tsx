@@ -9,7 +9,7 @@ export async function getStaticProps() {
   return {
     props: {
       posts,
-      title: "NeuroFusion Blog",
+      title: "Blog | NeuroFusion",
       description: "Updates on our products & research.",
     },
   };
@@ -26,7 +26,7 @@ function Blog({ posts }: any) {
     <MainLayout>
       <Meta
         meta={{
-          title: "NeuroFusion Blog",
+          title: "Blog | NeuroFusion",
         }}
       />
       <div style={containerStyles}>

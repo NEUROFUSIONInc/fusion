@@ -33,9 +33,12 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
   const navigation = useNavigation();
   const [joinCode, setJoinCode] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const handleJoinQuest = async () => {
     // call api to fetch the quest if it's still active
     try {
+      setLoading(true);
       const apiService = await getApiService();
 
       if (apiService === null) {
@@ -51,7 +54,7 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
       if (res.data) {
         // navigate to quest screen
         const questRes = res.data.quest;
-        questRes.prompts = JSON.parse(questRes.config) as Prompt[];
+        questRes.prompts = JSON.parse(questRes.config).prompts as Prompt[];
 
         // build the quest object and navigate to the quest screen
         Keyboard.dismiss();
@@ -73,12 +76,14 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         Alert.alert("An error occurred. Please try again later");
         console.error("Api error", err);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const _handlePressButtonAsync = async () => {
     const result = await WebBrowser.openBrowserAsync(
-      "https://usefusion.ai/blog/quests"
+      "https://forms.gle/ZYmyVKhVnGUotDX9A"
     );
   };
 
@@ -90,7 +95,6 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
         <KeyboardAvoidingView
           behavior="padding"
           keyboardVerticalOffset={IS_IOS ? 130 : 0}
-          // className="h-full bg-dark"
           className="flex flex-1 w-full h-full justify-center gap-y-10 flex-col p-5"
         >
           <View className="flex flex-col gap-y-2.5">
@@ -103,11 +107,9 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
                 className="mb-5"
                 placeholder="Enter join code"
                 onTouchStart={() => {
-                  console.log("input pressed");
                   setSheetHeight(["100%"]);
                 }}
                 onEndEditing={() => {
-                  console.log("input blur");
                   setSheetHeight(["45%"]);
                   Keyboard.dismiss();
                 }}
@@ -119,8 +121,8 @@ export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
               rightIcon={<ChevronRight color={black} />}
               fullWidth
               className="flex flex-row justify-between"
-              disabled={joinCode === ""}
               onPress={handleJoinQuest}
+              loading={loading}
             />
             <Pressable onPress={_handlePressButtonAsync}>
               <Text className="font-sans text-white underline">

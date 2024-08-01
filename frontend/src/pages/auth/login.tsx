@@ -57,6 +57,7 @@ const LoginPage = React.memo(() => {
   };
 
   const useExistingAccount = async (privateKey: string) => {
+    appInsights.trackEvent({ name: "use_existing_account", properties: { customProperty: "value" } });
     try {
       appInsights.trackEvent({ name: 'use_existing_account'});
       if (privateKey.length !== 64) {
@@ -66,12 +67,7 @@ const LoginPage = React.memo(() => {
       const { publicKey } = await persistPrivateKey(privateKey);
       setPublicKey(publicKey);
     } catch (err) {
-      appInsights.trackException({ 
-        error: new Error(err as string), 
-        severityLevel: SeverityLevel.Error, 
-        properties: {
-          message: "Error using existing account"
-        } });
+      appInsights.trackException({ error: new Error(err as string), severityLevel: SeverityLevel.Error });
       console.error(err);
     }
   };
@@ -109,7 +105,7 @@ const LoginPage = React.memo(() => {
             Get started with an anonymous account
           </p>
           <Button type="button" onClick={useGuestAccount} size="lg" fullWidth className="mt-4">
-            Continue as Guest
+            Continue
           </Button>
           {showNostrExtensionLogin && (
             <Button type="button" onClick={useExtension} size="lg" fullWidth className="mt-4">
@@ -117,7 +113,7 @@ const LoginPage = React.memo(() => {
             </Button>
           )}
           <a className="text-sm text-gray-500" onClick={() => setShowInput(!showInput)} href="#">
-            Use Existing Account
+            Use Presaved Key
           </a>
           {showInput && (
             <div className="w-full flex flex-row self-center">
