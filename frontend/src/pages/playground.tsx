@@ -46,20 +46,28 @@ const PlaygroundPage: NextPage = () => {
 
   const experiments: IExperiment[] = [
     {
-      id: 3,
-      name: "Open Ended Brain Recording",
-      description:
-        "Record your brain activity while performing a task of your choice. Afterwards, you can observe changes in your brain power over time and compare it to other activities.",
-      url: "",
-      tags: ["open_ended"],
-    },
-    {
       id: 1,
       name: "Resting State - Eyes Closed/Eyes Open",
       description:
         "The 'Eyes Closed/Eyes Open' task is a common neurofeedback protocol used to measure brain activity during periods of rest and activity. During the task, the participant is instructed to close their eyes for a period of time, followed by opening their eyes for a period of time. This cycle is repeated several times, and the brain activity is measured using EEG sensors. The task is often used to measure changes in brain activity associated with attention, relaxation, and other cognitive processes.",
       url: "/experiments/eyes_open_eyes_closed.html",
       tags: ["resting_state"],
+    },
+    {
+      id: 10,
+      name: "Visual Oddball - P300, Event Related Potential",
+      description:
+        "We want to understand how our brains react when something unexpected happens. They're particularly interested in a brain wave called the 'P300 wave'. This wave is like a signal your brain sends when it recognizes a change in the pattern of images. It usually occurs around 300 milliseconds after your brain registers the oddball sound. Start the experiment to see how your brain responds!",
+      url: "/experiments/visual_oddball.html",
+      tags: ["visual_oddball"],
+    },
+    {
+      id: 3,
+      name: "Open Ended Brain Recording",
+      description:
+        "Record your brain activity while performing a task of your choice. Afterwards, you can observe changes in your brain power over time and compare it to other activities.",
+      url: "",
+      tags: ["open_ended"],
     },
     {
       id: 2,
@@ -134,9 +142,9 @@ const PlaygroundPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Recordings | NeuroFusion",
+          title: "Brain Recordings | NeuroFusion",
           description:
-            "The simplest way to record and analyze your brain activity. Choose from a variety of experiments to record your brain activity and see results.",
+            "The simplest way to record and analyze your brain activity. Choose from a variety of cognitive experiments to record your brain activity and see results.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
