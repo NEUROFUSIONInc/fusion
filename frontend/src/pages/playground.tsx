@@ -1,4 +1,3 @@
-
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import React, { useState, useEffect } from "react";
