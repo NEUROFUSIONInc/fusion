@@ -3,7 +3,7 @@ import { appInsights } from "~/utils/appInsights";
 
 export const HeroSection = ({ isResearch = false }) => {
   const handleClick = () => {
-    appInsights.trackEvent({ name: 'use_neurofusion_explorer', properties: { customProperty: 'value' } });
+    appInsights.trackEvent({ name: "use_neurofusion_explorer" });
   };
 
   return (
@@ -18,7 +18,13 @@ export const HeroSection = ({ isResearch = false }) => {
           </h1>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
-            <ButtonLink onClick={handleClick} intent="outlined" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
+            <ButtonLink
+              onClick={handleClick}
+              intent="outlined"
+              href="/playground"
+              size="xl"
+              className="mt-4 w-full md:w-11/12"
+            >
               Use NeuroFusion Explorer!
             </ButtonLink>
           </div>
