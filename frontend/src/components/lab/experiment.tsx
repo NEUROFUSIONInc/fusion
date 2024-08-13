@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/self-closing-comp */
 import { DeviceInfo } from "@neurosity/sdk/dist/esm/types/deviceInfo";
-import { FC, useState, useEffect, use, useContext } from "react";
+import { FC, useState, useEffect, useContext } from "react";
 
 import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
 import { PlugZap } from "lucide-react";
-
+import { appInsights } from "~/utils/appInsights";
 import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
@@ -17,6 +17,7 @@ import exp from "constants";
 import { MuseContext } from "~/hooks/muse.context";
 import { MuseEEGService, NeuroFusionParsedEEG } from "~/services/integrations/muse.service";
 import { SignalViewer } from "./signalviewer";
+import { useSession } from "next-auth/react";
 
 export const Experiment: FC<IExperiment> = (experiment) => {
   const [isNeurosityRecording, setIsNeurosityRecording] = useState(false);
@@ -36,18 +37,36 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   const [experimentInfo, setExperimentInfo] = useState<IExperiment>(experiment);
 
+  const session = useSession();
+
   useEffect(() => {
     setExperimentInfo({ ...experiment, duration, tags });
   }, [experiment, tags, duration]);
 
   async function startNeurosityRecording() {
     if (connectedDevice) {
+      appInsights.trackEvent({
+        name: "start_neurosity_recording",
+        properties: {
+          deviceInfo: connectedDevice,
+          experimentInfo: experimentInfo,
+          userNpub: session.data?.user?.email,
+        },
+      });
       console.log(experimentInfo);
       neurosityService.startRecording(experimentInfo, connectedDevice?.channelNames, duration);
     }
   }
 
   async function stopNeurosityRecording() {
+    appInsights.trackEvent({
+      name: "stop_neurosity_recording",
+      properties: {
+        deviceInfo: connectedDevice,
+        experimentDetails: experimentInfo,
+        userNpub: session.data?.user?.email,
+      },
+    });
     neurosityService.stopRecording();
   }
 
@@ -61,6 +80,14 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function startMuseRecording() {
     if (museEEGService) {
       setIsMuseRecording(true);
+      appInsights.trackEvent({
+        name: "start_muse_recording",
+        properties: {
+          deviceInfo: await museContext?.museClient?.deviceInfo(),
+          experimentInfo: experimentInfo,
+          userNpub: session.data?.user?.email,
+        },
+      });
       await museEEGService.startRecording();
     }
   }
@@ -68,6 +95,14 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function stopMuseRecording() {
     if (museEEGService) {
       setIsMuseRecording(false);
+      appInsights.trackEvent({
+        name: "stop_muse_recording",
+        properties: {
+          deviceInfo: await museContext?.museClient?.deviceInfo(),
+          experimentInfo: experimentInfo,
+          userNpub: session.data?.user?.email,
+        },
+      });
       await museEEGService.stopRecording(true);
     }
   }
