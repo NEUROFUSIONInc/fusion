@@ -166,11 +166,21 @@ export class MuseEEGService {
     };
   }
 
-  async startRecording(duration: number = 0, experiment?: IExperiment) {
-    // build the dataset streams
+  async startRecording(experiment: IExperiment) {
     // @ts-ignore
-    this.recordingStartTimestamp = dayjs().valueOf();
+    this.recordingStartTimestamp = dayjs().unix();
     this.recordingStatus = "started";
+
+    /**
+     * Add experiment data to the store
+     */
+    const eventEntry: EventData = {
+      startTimestamp: this.recordingStartTimestamp,
+      duration: experiment.duration ?? 0,
+      data: JSON.stringify(experiment),
+    };
+    this.eventSeries.push(eventEntry);
+
     this.museClient.start();
   }
 
@@ -227,5 +237,7 @@ export class MuseEEGService {
       this.recordingStartTimestamp = 0;
       this.recordingStatus = "stopped";
     }
+
+    return datasetExport;
   }
 }
