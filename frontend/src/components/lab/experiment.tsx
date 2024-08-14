@@ -88,7 +88,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           userNpub: session.data?.user?.email,
         },
       });
-      await museEEGService.startRecording();
+      await museEEGService.startRecording(experimentInfo);
     }
   }
 
