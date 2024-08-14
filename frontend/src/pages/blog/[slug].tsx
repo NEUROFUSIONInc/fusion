@@ -89,19 +89,35 @@ function BlogPost({ frontMatter, markdownBody, otherArticles }: any) {
       )}
       <Meta
         meta={{
-          title: `${frontMatter.title} | Fusion Blog`,
+          title: `${frontMatter.title} | NeuroFusion`,
           description: frontMatter.description,
           image: frontMatter.coverImage,
         }}
       />
       <div className="container px-7 mx-auto mt-24 prose lg:prose-xl md:px-0 mb-10">
         <h1 className="text-5xl leading-tight text-[#000] font-semibold not-prose">{frontMatter.title}</h1>
+        <p className="text-gray-500 not-prose text-base flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          {dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}
+        </p>
+        <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
+
         <p className="not-prose text-[#000] pt-4 font-normal font-semibold text-base">
           By {frontMatter.authors[0].name}
         </p>
-        <p className="text-gray-500 not-prose text-base">{dayjs(frontMatter.publishedDate).format("MMM DD, YYYY")}</p>
-        <div dangerouslySetInnerHTML={{ __html: md.render(markdownBody) }} className="pb-14 text-justify" />
-
         {/*Reading Tags*/}
         <div className="pt-4 flex flex-wrap gap-2">{tags}</div>
 
