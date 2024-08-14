@@ -3,6 +3,9 @@ import dayjs from "dayjs";
 import JSZip from "jszip";
 import { DatasetExport } from "~/@types";
 import { IDBPDatabase, openDB } from "idb";
+import { createHelia } from "helia";
+import { unixfs } from "@helia/unixfs";
+import { CID } from "multiformats";
 
 export function convertToCSV(arr: any[]) {
   const array = [Object.keys(arr[0] ?? {})].concat(arr);
@@ -75,26 +78,9 @@ export async function getCSVFile(fileName: string, dataSet: any[]): Promise<File
   return file;
 }
 
-export async function writeToLocalStorage(datasetExport: DatasetExport, unixTimestamp: dayjs.Dayjs) {
-  console.log("writeToLocalStorage", datasetExport);
-  const db = await dbPromise;
-  const tx = db.transaction("files", "readwrite");
-  const store = tx.objectStore("files");
-
-  for (let i = 0; i < datasetExport.dataSets.length; i++) {
-    const fileName = datasetExport.fileNames[i];
-    const dataSet = datasetExport.dataSets[i];
-
-    // Create a Blob from the CSV content
-    const file = await getCSVFile(fileName, dataSet);
-
-    await store.put({ name: fileName, file });
-  }
-  await tx.done;
-
-  return true;
-}
-
+/**
+ * Methods for storing locally on IndexDB
+ */
 let dbPromise: Promise<IDBPDatabase<unknown>>;
 if (typeof window !== "undefined") {
   dbPromise = openDB("neurofusion-db", 1, {
@@ -122,4 +108,43 @@ export async function getFile(name: IDBValidKey | IDBKeyRange) {
 export async function deleteFile(name: IDBValidKey | IDBKeyRange) {
   const db = await dbPromise;
   await db.delete("files", name);
+}
+
+export async function writeToLocalStorage(datasetExport: DatasetExport, unixTimestamp: dayjs.Dayjs) {
+  console.log("writeToLocalStorage", datasetExport);
+  const db = await dbPromise;
+  const tx = db.transaction("files", "readwrite");
+  const store = tx.objectStore("files");
+
+  for (let i = 0; i < datasetExport.dataSets.length; i++) {
+    const fileName = datasetExport.fileNames[i];
+    const dataSet = datasetExport.dataSets[i];
+
+    // Create a Blob from the CSV content
+    const file = await getCSVFile(fileName, dataSet);
+
+    await store.put({ name: fileName, file });
+  }
+  await tx.done;
+
+  return true;
+}
+
+/**
+ * Decentralized storage methods
+ */
+export async function uploadToIpfs(file: File) {
+  try {
+    const helia = await createHelia();
+    const fs = unixfs(helia);
+    const fileBuffer = await file.arrayBuffer();
+    const cid = await fs.addFile({
+      content: new Uint8Array(fileBuffer),
+      path: `./${file.name}`,
+    });
+    await helia.stop();
+    return cid;
+  } catch (error) {
+    console.error("Error uploading to IPFS", error);
+  }
 }
