@@ -16,7 +16,10 @@ export const HeroSection = ({ isResearch = false }) => {
           <h1 className="font-body text-3xl font-semibold sm:text-6xl">
             The simplest way to do brain and behavior <span className="text-primary-gradient">research at scale</span>{" "}
           </h1>
-
+          <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
+            Use NeuroFusion Explorer to remotely collect and analyze EEG data from your cognitive and behavioral
+            studies.
+          </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
             <ButtonLink
               onClick={handleClick}
@@ -31,12 +34,13 @@ export const HeroSection = ({ isResearch = false }) => {
         </div>
       ) : (
         <>
-          <div className="flex w-full max-w-2xl flex-col space-y-10 text-center md:min-w-[300px]">
+          <div className="flex w-full max-w-3xl flex-col space-y-10 text-center md:min-w-[300px]">
             <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-              Personal Insights to <span className="text-primary-gradient">Guide Your Actions</span>
+              Personal Insights to <br />
+              <span className="text-primary-gradient">Guide Your Daily Actions</span>
             </h1>
             <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
-              Use Fusion to understand and improve your productivity, physical and mental health.
+              Use Fusion Copilot to improve your productivity, physical and mental health.
             </p>
           </div>
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
