@@ -3,10 +3,10 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "./api/auth/[...nextauth]";
 
-import { DashboardLayout } from "~/components/layouts";
+import { DashboardLayout, Meta } from "~/components/layouts";
 
 import { useState, useEffect } from "react";
-import { getFiles, getFile, getCSVFile } from "~/services/storage.service";
+import { getFiles, getFile, getCSVFile, deleteFile } from "~/services/storage.service";
 import { Button } from "~/components/ui";
 import dayjs from "dayjs";
 
@@ -57,7 +57,14 @@ const DatasetPage: NextPage = () => {
 
   return (
     <DashboardLayout>
+      <Meta
+        meta={{
+          title: "Datasets | NeuroFusion Explorer",
+          description: "Manage your datasets from previous recordings. You can download your data here.",
+        }}
+      />
       <h1 className="text-2xl font-bold mb-4">Datasets</h1>
+      <p className="mb-4">You can download your data here. You can also delete your data from the browser.</p>
       <ul className="space-y-2">
         {files.map((name, index) => (
           <li key={index} className="flex items-center justify-between">
@@ -75,19 +82,46 @@ const DatasetPage: NextPage = () => {
                 return `${fileName} - Recorded on ${formattedDate}`;
               })()}
             </span>
-            <Button
-              onClick={() => handleDownload(name)}
-              aria-label={`Download ${name}`}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Button>
+
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => handleDownload(name)}
+                aria-label={`Download ${name}`}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Button>
+              <Button
+                onClick={() => {
+                  if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+                    deleteFile(name)
+                      .then(() => {
+                        setFiles(files.filter((f) => f !== name));
+                      })
+                      .catch((error) => {
+                        console.error("Error deleting file:", error);
+                        alert("Failed to delete file. Please try again.");
+                      });
+                  }
+                }}
+                aria-label={`Delete ${name}`}
+                className="p-2 hover:bg-gray-100 rounded-full ml-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
