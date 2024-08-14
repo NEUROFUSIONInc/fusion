@@ -15,7 +15,7 @@ export const FeatureSection = ({ isResearch = false }) => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-y-6">
             <div>
               <FusionFeature feature={fusionFeatures[2]} />
-              <ButtonLink intent="outlined" href="/playground" size="xl" className="mt-4 w-full md:w-11/12">
+              <ButtonLink intent="outlined" href="/recordings" size="xl" className="mt-4 w-full md:w-11/12">
                 Use NeuroFusion Explorer!
               </ButtonLink>
             </div>

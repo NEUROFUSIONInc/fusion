@@ -1,294 +1,131 @@
-import { FC, useState, useEffect } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import dayjs from "dayjs";
 
-import { getDatasets, downloadDatasets } from "../utils/azure";
 import { authOptions } from "./api/auth/[...nextauth]";
 
-import { DashboardLayout } from "~/components/layouts";
-import { Button } from "~/components/ui/button/button"; // Replace this with the actual path to your dropdown menu script
+import { DashboardLayout, Meta } from "~/components/layouts";
 
-const dataSetParser = (data: Array<string>) => {
-  var recordings: { [key: number]: any } = {};
-
-  data.forEach((item: string) => {
-    const fname = item.split("/").pop();
-    if (fname !== undefined) {
-      const timestamp: number = parseInt(fname.substring(fname.lastIndexOf("_") + 1, fname.lastIndexOf(".json")));
-      if (!(timestamp in recordings)) recordings[timestamp] = [];
-      recordings[timestamp].push(item);
-    }
-  });
-  return recordings;
-};
+import { useState, useEffect } from "react";
+import { getFiles, getFile, getCSVFile, deleteFile } from "~/services/storage.service";
+import { Button } from "~/components/ui";
+import dayjs from "dayjs";
 
 const DatasetPage: NextPage = () => {
-  return (
-    <DashboardLayout>
-      <DataDisplay />
-    </DashboardLayout>
-  );
-};
-export const DataDisplay: FC = () => {
-  const [filterStartDate, setFilterStartDate] = useState(dayjs().subtract(15, "week").format("YYYY-MM-DD"));
-
-  const [datasets, setDatasets] = useState<{ [key: string]: any }>({});
-
-  const [checkedDict, setCheckedDict] = useState({});
-
-  const createCheckedDict = (dict: any, setter: any) => {
-    const createMirrorRecurse = (dictLevel: any) => {
-      var returnDict: { [key: string]: any } = { checked: false, dict: {} };
-      if (isDictionary(dictLevel)) {
-        Object.keys(dictLevel).forEach((x: string) => {
-          returnDict.dict[x] = createMirrorRecurse(dictLevel[x]);
-        });
-      } else {
-        returnDict.dict = [...dictLevel];
-      }
-
-      return returnDict;
-    };
-    var copydict = createMirrorRecurse(dict);
-
-    setter(copydict);
-  };
+  const [files, setFiles] = useState<string[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const dataSets = dataSetParser(
-        await getDatasets(
-          dayjs.unix(1).format("YYYY-MM-DD"), // add 1 day to include today
-          dayjs().add(1, "day").format("YYYY-MM-DD")
-        )
+    const fetchFiles = async () => {
+      const fileList = await getFiles();
+      setFiles(
+        fileList
+          .map((file) => file.name)
+          .sort((a, b) => {
+            const timestampA = a.split("_").pop() || "";
+            const timestampB = b.split("_").pop() || "";
+            return parseInt(timestampB) - parseInt(timestampA);
+          })
       );
+    };
 
-      const orderedTimes = Object.keys(dataSets)
-        .map((str) => parseInt(str))
-        .sort();
-      var orgDataSets: { [key: string]: any } = { All: {} };
-
-      orderedTimes.forEach((time) => {
-        const timeStamp = dayjs.unix(time);
-        if (!(timeStamp.format("YYYY") in orgDataSets["All"])) orgDataSets["All"][timeStamp.format("YYYY")] = {};
-        if (!(timeStamp.format("MMMM") in orgDataSets["All"][timeStamp.format("YYYY")]))
-          orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")] = {};
-        if (!(timeStamp.format("DD") in orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")]))
-          orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")] = {};
-        orgDataSets["All"][timeStamp.format("YYYY")][timeStamp.format("MMMM")][timeStamp.format("DD")][
-          timeStamp.format("YYYY-MM-DD h:mm:ss A") + " - EEG"
-        ] = dataSets[time];
-      });
-
-      createCheckedDict(orgDataSets["All"], setCheckedDict);
-
-      setDatasets(orgDataSets["All"]);
-
-      // TODO: parse datasets into provider, dataName, time format
-    })();
+    fetchFiles();
   }, []);
 
-  const [fSelected, setFSelected] = useState(Array<string>);
-
-  function isDictionary(variable: any) {
-    return typeof variable === "object" && !Array.isArray(variable) && variable !== null;
-  }
-
-  const recurseSet = (level: any, checked: boolean, checkCopy: object) => {
-    var head: any = checkCopy;
-
-    level.forEach((ele: any) => {
-      head = head.dict[ele];
-    });
-
-    head.checked = checked;
-
-    if (isDictionary(head.dict)) {
-      Object.keys(head.dict).forEach((x: any) => {
-        const arr = [...level];
-        arr.push(x);
-        recurseSet(arr, checked, checkCopy);
-      });
-    } else {
-    }
-    return checkCopy;
-  };
-
-  const genHandler = (level: Array<string>) => {
-    const handleCheckboxChange = (event: any) => {
-      var subDirs: { [key: string]: any } = datasets;
-      level.forEach((ele) => {
-        subDirs = subDirs[ele];
-      });
-      setCheckedDict(recurseSet(level, event.target.checked, structuredClone(checkedDict)));
-    };
-
-    var head: { [key: string]: any } = checkedDict;
-    level.forEach((ele: any) => {
-      head = head.dict[ele];
-    });
-
-    return { handler: handleCheckboxChange, checked: head.checked };
-  };
-
-  useEffect(() => {
-    const recurseAdd = (head: any) => {
-      var arr: Array<string> = [];
-
-      if (isDictionary(head.dict)) {
-        Object.keys(head.dict).forEach((x: any) => {
-          arr = arr.concat(recurseAdd(head.dict[x]));
-        });
+  const handleDownload = async (fileName: string) => {
+    const file = await getFile(fileName);
+    if (file && file.file) {
+      let csvFile;
+      if (fileName.endsWith(".csv")) {
+        csvFile = file.file;
+      } else if (fileName.endsWith(".json")) {
+        const jsonData = JSON.parse(await file.file.text());
+        csvFile = await getCSVFile(fileName, jsonData);
       } else {
-        if (head.checked) {
-          arr = arr.concat(head.dict);
-        }
+        console.error("Unsupported file type");
+        return;
       }
-      return arr;
-    };
-    setFSelected(recurseAdd(checkedDict));
-  }, [checkedDict]);
 
-  const clearSelection = () => {
-    setCheckedDict(recurseSet([], false, structuredClone(checkedDict)));
-  };
-
-  const [downloadStatus, setDownloadStatus] = useState(100);
-
-  async function downloadSelection() {
-    if (!fSelected.length) return;
-    setDownloadStatus(0);
-
-    await downloadDatasets(structuredClone(fSelected), setDownloadStatus);
-    setDownloadStatus(100);
-  }
-
-  const CircularProgress: React.FC<{ percentage: number }> = ({ percentage }) => {
-    return (
-      <svg width="50" height="50" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="45" stroke="gray" strokeWidth="15" fill="none" />
-        <circle
-          cx="60"
-          cy="60"
-          r="45"
-          stroke="blue"
-          strokeWidth="15"
-          fill="none"
-          strokeDasharray="282.7"
-          strokeDashoffset={((100 - percentage) / 100) * 2 * Math.PI * 45}
-          className="progress"
-        />
-        <text x="60" y="70" textAnchor="middle" fill="white" fontSize="30px">{`${Math.floor(percentage)}%`}</text>
-        <style jsx>{`
-          .progress {
-            transition: stroke-dashoffset 0.02s linear;
-          }
-        `}</style>
-      </svg>
-    );
+      const url = URL.createObjectURL(csvFile);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
-    <>
-      <div>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {downloadStatus != 100 ? (
-            <>
-              <p>Downloading files please remain on page</p> <CircularProgress percentage={downloadStatus} />
-            </>
-          ) : (
-            <>
-              <p>{fSelected.length} Files selected</p>
-              <Button onClick={downloadSelection} size={"sm"}>
-                Download
-              </Button>{" "}
-              <Button onClick={clearSelection} size={"sm"}>
-                Clear
+    <DashboardLayout>
+      <Meta
+        meta={{
+          title: "Datasets | NeuroFusion Explorer",
+          description: "Manage your datasets from previous recordings. You can download your data here.",
+        }}
+      />
+      <h1 className="text-2xl font-bold mb-4">Datasets</h1>
+      <p className="mb-4">You can download your data here. You can also delete your data from the browser.</p>
+      <ul className="space-y-2">
+        {files.map((name, index) => (
+          <li key={index} className="flex items-center justify-between">
+            <span>
+              {(() => {
+                const parts = name.split("_");
+                const timestamp = parts.pop() || "0";
+                const fileName = parts.join("_");
+                const timestampNumber = parseInt(timestamp);
+                const date =
+                  timestampNumber > 9999999999
+                    ? dayjs(timestampNumber) // milliseconds
+                    : dayjs.unix(timestampNumber); // seconds
+                const formattedDate = date.format("dd, DD MMM YYYY - hh:mm a");
+                return `${fileName} - Recorded on ${formattedDate}`;
+              })()}
+            </span>
+
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => handleDownload(name)}
+                aria-label={`Download ${name}`}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </Button>
-            </>
-          )}
-        </div>
-        {
-          <CollapsibleList
-            title="All"
-            checkhandler={genHandler([])}
-            defaultOpen={true}
-            listElements={Object.keys(datasets).map((year) => {
-              return (
-                <CollapsibleList
-                  title={year}
-                  checkhandler={genHandler([year])}
-                  listElements={Object.keys(datasets[year]).map((month) => {
-                    return (
-                      <CollapsibleList
-                        title={month}
-                        checkhandler={genHandler([year, month])}
-                        listElements={Object.keys(datasets[year][month]).map((day) => {
-                          return (
-                            <CollapsibleList
-                              title={day}
-                              checkhandler={genHandler([year, month, day])}
-                              listElements={Object.keys(datasets[year][month][day]).map((time) => {
-                                return (
-                                  <CollapsibleList
-                                    title={time}
-                                    checkhandler={genHandler([year, month, day, time])}
-                                    listElements={datasets[year][month][day][time].map((rec: string) => {
-                                      return rec.split("/").pop();
-                                    })}
-                                  ></CollapsibleList>
-                                );
-                              })}
-                            ></CollapsibleList>
-                          );
-                        })}
-                      ></CollapsibleList>
-                    );
-                  })}
-                ></CollapsibleList>
-              );
-            })}
-          ></CollapsibleList>
-        }
-      </div>
-    </>
-  );
-};
-
-interface CollapsibleListProps {
-  // the parameters requrired for collaspable list, makes ts happy
-  listElements: Array<any>;
-  title: string;
-  checkhandler: any;
-  defaultOpen?: boolean; // The ? indicates that this prop is optional
-}
-
-const CollapsibleList: React.FC<CollapsibleListProps> = ({
-  listElements,
-  title,
-  checkhandler,
-  defaultOpen = false, // Default values are set here
-}) => {
-  const [isExpanded, setIsExpanded] = useState(defaultOpen);
-  const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    setChecked(checkhandler.checked);
-  }, [checkhandler.checked]);
-
-  return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <button onClick={() => setIsExpanded(!isExpanded)}>{isExpanded ? "- " + title : "+ " + title}</button>
-        <input style={{ marginLeft: ".2em" }} type="checkbox" checked={checked} onChange={checkhandler.handler} />
-      </div>
-      <ul style={{ marginLeft: 20, display: isExpanded ? "inherit" : "None" }}>
-        {listElements.map((item: any) => (
-          <li>{item}</li>
+              <Button
+                onClick={() => {
+                  if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+                    deleteFile(name)
+                      .then(() => {
+                        setFiles(files.filter((f) => f !== name));
+                      })
+                      .catch((error) => {
+                        console.error("Error deleting file:", error);
+                        alert("Failed to delete file. Please try again.");
+                      });
+                  }
+                }}
+                aria-label={`Delete ${name}`}
+                className="p-2 hover:bg-gray-100 rounded-full ml-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Button>
+            </div>
+          </li>
         ))}
       </ul>
-    </div>
+    </DashboardLayout>
   );
 };
 
