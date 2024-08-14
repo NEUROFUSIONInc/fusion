@@ -90,10 +90,10 @@ export const NeurosityModal: FC<INeurosityModalProps> = ({ isOpen, onCloseModal 
             <Button
               type="submit"
               onClick={() => {
-                window.location.href = "/playground";
+                window.location.href = "/recordings";
               }}
             >
-              Go to Recording Playground
+              Go to Recordings
             </Button>
           </div>
         </Dialog.Content>

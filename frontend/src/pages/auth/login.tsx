@@ -25,7 +25,7 @@ const LoginPage = React.memo(() => {
 
   const useGuestAccount = async () => {
     try {
-      appInsights.trackEvent({ name: 'use_guest_account'})
+      appInsights.trackEvent({ name: "use_guest_account" });
       const privateKey = getPrivateKey();
       const { publicKey } = await persistPrivateKey(privateKey);
       completeNostrLogin(publicKey, privateKey);
@@ -35,9 +35,9 @@ const LoginPage = React.memo(() => {
         exception: new Error(error as string),
         severityLevel: SeverityLevel.Error,
         properties: {
-          message: "Error using guest account"
-        }
-      })
+          message: "Error using guest account",
+        },
+      });
     }
   };
 
@@ -59,7 +59,7 @@ const LoginPage = React.memo(() => {
   const useExistingAccount = async (privateKey: string) => {
     appInsights.trackEvent({ name: "use_existing_account", properties: { customProperty: "value" } });
     try {
-      appInsights.trackEvent({ name: 'use_existing_account'});
+      appInsights.trackEvent({ name: "use_existing_account" });
       if (privateKey.length !== 64) {
         return;
       }
@@ -80,7 +80,7 @@ const LoginPage = React.memo(() => {
         ...authObject,
         privateKey,
         redirect: true,
-        callbackUrl: router.query.callbackUrl?.toString() ?? "/playground",
+        callbackUrl: router.query.callbackUrl?.toString() ?? "/recordings",
       });
     } else {
       // TODO: render error message
@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   if (session) {
     return {
       redirect: {
-        destination: "/playground",
+        destination: "/recordings",
         permanent: false,
       },
     };

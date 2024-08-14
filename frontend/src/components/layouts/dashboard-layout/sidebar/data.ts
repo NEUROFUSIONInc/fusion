@@ -9,18 +9,18 @@ export const sidebarLinks = [
   {
     icon: LayoutDashboard,
     title: "Recordings",
-    href: "/playground",
+    href: "/recordings",
+  },
+  {
+    icon: HardDrive,
+    title: "Datasets",
+    href: "/datasets",
   },
   {
     icon: SignalHigh,
     title: "Analysis",
     href: "/analysis",
   },
-  // {
-  //   icon: HardDrive,
-  //   title: "Datasets",
-  //   href: "/datasets",
-  // },
   {
     icon: PenBox,
     title: "Quests",

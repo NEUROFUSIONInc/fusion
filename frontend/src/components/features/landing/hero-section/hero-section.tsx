@@ -21,7 +21,7 @@ export const HeroSection = ({ isResearch = false }) => {
             <ButtonLink
               onClick={handleClick}
               intent="outlined"
-              href="/playground"
+              href="/recordings"
               size="xl"
               className="mt-4 w-full md:w-11/12"
             >
