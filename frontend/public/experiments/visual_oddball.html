@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+        background-color: #fafafa;
+      }
+      #countDown {
+        position: absolute;
+        width: 100%;
+        display: inline;
+        align-content: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #countDown p {
+        align-content: center;
+        font-weight: 100;
+        font-size: large;
+      }
+      #jspsych-container {
+        font-size: xx-large;
+        font-family: sans;
+        font-weight: bold;
+        position: absolute;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="countDown"><p></p></div>
+    <div id="jspsych-container"></div>
+    <script>
+      function mapElapsedToUnix(data) {
+        let startStamp = -1;
+        data.trials.forEach((element) => {
+          if (startStamp === -1) {
+            if ("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
+          } else {
+            element.unixTimestamp = startStamp + element.time_elapsed;
+          }
+        });
+        return data;
+      }
+
+      const jsPsych = initJsPsych({
+        on_finish: function () {
+          window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), "*");
+          console.log(mapElapsedToUnix(jsPsych.data.get()));
+        },
+        display_element: "jspsych-container",
+      });
+
+      const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+          "Welcome to the Visual Oddball Experiment!",
+          "Get Ready: Find a quiet place and put on your headphones.</br> Make sure you're comfortable and ready to focus.",
+          "Spot the Oddball: Count the number of BLUE and GREEN circles you see in your head.",
+          "Start EEG Recording: If you have your EEG device connected",
+        ],
+        show_clickable_nav: true,
+      };
+
+      const fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus:
+          '<div style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; font-size: 150px;">+</div>',
+        response_ends_trial: false,
+        trial_duration: 500,
+      };
+
+      const iti = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "",
+        trial_duration: 250,
+        response_ends_trial: false,
+      };
+
+      // Define the standard and oddball stimuli
+      const standardStimulus = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<div style="width: 200px; height: 200px; background-color: green; border-radius: 50%;"></div>',
+        choices: [],
+        on_finish: (data) => {
+          console.log(data);
+          data.value = "standard";
+        },
+      };
+      const oddballStimulus = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<div style="width: 200px; height: 200px; background-color: blue; border-radius: 50%;"></div>',
+        choices: [],
+        on_finish: (data) => {
+          console.log(data);
+          data.value = "oddball";
+        },
+      };
+
+      const trials = [];
+      trials.push(instructions);
+      trials.push(fixation);
+
+      /**
+       * Generate the trial sequence
+       */
+      const numberOfSequences = 40;
+
+      for (let i = 0; i < numberOfSequences; i++) {
+        // 10% chance for deviant stimulus
+        if (Math.random() < 0.1) {
+          // set the duration for the stimulus
+          oddballStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
+          trials.push(oddballStimulus);
+        } else {
+          standardStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
+          trials.push(standardStimulus);
+        }
+
+        // Push fixation after each stimulus
+        trials.push(iti);
+      }
+
+      jsPsych.run(trials);
+    </script>
+  </body>
+</html>
