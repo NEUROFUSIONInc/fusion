@@ -11,6 +11,7 @@ import { Plus } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
 import { IQuest, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
+import { ExperimentEditor } from "~/components/lab";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -24,7 +25,14 @@ const QuestsPage: NextPage = () => {
   const [activeQuest, setActiveQuest] = React.useState<IQuest | null>(null);
   const [questSubscribers, setQuestSubscribers] = React.useState<any[]>([]);
 
+  const [experimentConfig, setExperimentConfig] = React.useState<string>("");
+  const [showExperimentEditor, setShowExperimentEditor] = React.useState<boolean>(false);
+
   const saveQuest = async () => {
+    if (!questTitle.trim() || !questDescription.trim() || !questOrganizer.trim() || prompts.length === 0) {
+      alert("All fields must be filled and at least one prompt must be added");
+      return;
+    }
     try {
       const res = await api.post(
         "/quest",
@@ -57,6 +65,10 @@ const QuestsPage: NextPage = () => {
   };
 
   const editQuest = async () => {
+    if (!questTitle.trim() || !questDescription.trim() || !questOrganizer.trim() || prompts.length === 0) {
+      alert("All fields must be filled and at least one prompt must be added");
+      return;
+    }
     try {
       const res = await api.post(
         "/quest/edit",
@@ -213,7 +225,7 @@ const QuestsPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "NeuroFusion | Quests",
+          title: "Quests | NeuroFusion",
           description:
             "Create and manage quests for your participants to run. Wearables. Behavior Tracking. Health Data.",
         }}
@@ -270,58 +282,87 @@ const QuestsPage: NextPage = () => {
                 required
               />
 
-              <Input
-                label="Configure prompts you want people to respond to"
-                type="text"
-                size="lg"
-                fullWidth
-                placeholder="Enter Prompt Config (JSON)"
-                value={questConfig}
-                className="h-40  hidden"
-                onChange={(e) => setQuestConfig(e.target.value)}
-              />
-
               <div className="mt-4">
+                <Input
+                  label="Configure prompts you want people to respond to"
+                  type="text"
+                  size="lg"
+                  fullWidth
+                  placeholder="Enter Prompt Config (JSON)"
+                  value={questConfig}
+                  className="h-40  hidden"
+                  onChange={(e) => setQuestConfig(e.target.value)}
+                />
+
                 <Button onClick={handleAddPromptModal} leftIcon={<Plus />}>
                   Add Prompt
                 </Button>
+
+                {/* Prompt Cards */}
+                {prompts.length > 0 && (
+                  <div className="mt-5">
+                    <div className="flex flex-wrap gap-6">
+                      {prompts.map((prompt, index) => (
+                        <div key={index} className="border p-4 rounded-md">
+                          <h3 className="font-bold">{prompt.promptText}</h3>
+                          <p>
+                            Days:
+                            {Object.keys(prompt.notificationConfig_days)
+                              .filter(
+                                (day) =>
+                                  prompt.notificationConfig_days[day as keyof typeof prompt.notificationConfig_days]
+                              )
+                              .join(", ")}
+                          </p>
+                          <p>
+                            Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
+                          </p>
+                          <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
+
+                          <div className="mt-2 space-x-2">
+                            <Button size="sm" onClick={() => handleEditPrompt(index)}>
+                              Edit
+                            </Button>
+                            <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Prompt Cards */}
-              {prompts.length > 0 && (
-                <div className="mt-8">
-                  <div className="flex flex-wrap gap-6">
-                    {prompts.map((prompt, index) => (
-                      <div key={index} className="border p-4 rounded-md">
-                        <h3 className="font-bold">{prompt.promptText}</h3>
-                        <p>
-                          Days:
-                          {Object.keys(prompt.notificationConfig_days)
-                            .filter(
-                              (day) =>
-                                prompt.notificationConfig_days[day as keyof typeof prompt.notificationConfig_days]
-                            )
-                            .join(", ")}
-                        </p>
-                        <p>
-                          Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
-                        </p>
-                        <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
+              {/* Include experiments you want people to run */}
+              <div className="mt-5">
+                <Input
+                  label="Include experiments you want people to run"
+                  type="text"
+                  size="lg"
+                  fullWidth
+                  placeholder="Enter Experiment Config (JSON)"
+                  value={experimentConfig}
+                  className="h-40  hidden"
+                  onChange={(e) => setExperimentConfig(e.target.value)}
+                />
 
-                        <div className="mt-2 space-x-2">
-                          <Button size="sm" onClick={() => handleEditPrompt(index)}>
-                            Edit
-                          </Button>
-                          <Button size="sm" intent="ghost" onClick={() => handleDeletePrompt(index)}>
-                            Delete
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                <Button
+                  onClick={() => {
+                    setShowExperimentEditor(true);
+                  }}
+                  leftIcon={<Plus />}
+                >
+                  Add Experiment
+                </Button>
+
+                {showExperimentEditor && (
+                  <div className="mt-2">
+                    <Button onClick={() => setShowExperimentEditor(false)}>Close</Button>
+                    <ExperimentEditor />
                   </div>
-                </div>
-              )}
-
+                )}
+              </div>
               <Button
                 type="submit"
                 size="lg"
