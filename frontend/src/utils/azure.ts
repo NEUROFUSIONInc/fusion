@@ -7,7 +7,7 @@ import { getSession } from "next-auth/react";
 export const getDatasets = async (startDate: string, endDate: string) => {
   const session = await getSession();
   if (!session?.user) return [];
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/search`, {
+  const res = await axios.get(`${process.env["NEXT_PUBLIC_NEUROFUSION_BACKEND_URL"]}/api/storage/search`, {
     headers: {
       Authorization: `Bearer ${session.user.authToken}`,
     },
@@ -30,7 +30,7 @@ export async function downloadDatasets(blobNames: Array<string>, downloadStatusS
   if (!session?.user) return false;
   let zip = new JSZip();
   for (let i = 0; i < blobNames.length; i++) {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/download`, {
+    const res = await axios.get(`${process.env["NEXT_PUBLIC_NEUROFUSION_BACKEND_URL"]}/api/storage/download`, {
       headers: {
         Authorization: `Bearer ${session.user.authToken}`,
       },

@@ -10,10 +10,10 @@ interface AuthResponse {
 
 class AuthService {
   async completeNostrLogin(publicKey: string, privateKey?: string): Promise<AuthResponse | null> {
-    const serverPublicKey = process.env.NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY;
+    const serverPublicKey = process.env["NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY"];
 
     try {
-      const relay = relayInit(process.env.NEXT_PUBLIC_FUSION_RELAY_URL!);
+      const relay = relayInit(process.env["NEXT_PUBLIC_FUSION_RELAY_URL"]!);
       relay.on("connect", () => {
         console.log(`connected to ${relay.url}`);
       });

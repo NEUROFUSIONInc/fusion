@@ -45,7 +45,7 @@ const AnalysisPage: NextPage = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_ANALYSIS_SERVER_URL}/api/v1/process_eeg`, {
+        const response = await fetch(`${process.env["NEXT_PUBLIC_ANALYSIS_SERVER_URL"]}/api/v1/process_eeg`, {
           method: "POST",
           body: formData,
         });

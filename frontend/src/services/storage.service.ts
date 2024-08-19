@@ -35,7 +35,7 @@ export async function writeDataToStore(dataName: string, data: any, fileTimestam
   } else if (storeType === "remoteStorage") {
     // call the upload api
     (async () => {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL}/api/storage/upload`, {
+      const res = await axios.post(`${process.env["NEXT_PUBLIC_NEUROFUSION_BACKEND_URL"]}/api/storage/upload`, {
         provider: providerName,
         dataName: dataName, // eslint-disable-line object-shorthand
         fileTimestamp: fileTimestamp, // eslint-disable-line object-shorthand
