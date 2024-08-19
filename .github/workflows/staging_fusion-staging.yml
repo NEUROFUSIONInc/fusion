@@ -25,6 +25,10 @@ jobs:
           node-version: "18.x"
 
       - name: npm install, build, and test
+        env:
+          NEXT_PUBLIC_FUSION_RELAY_URL: ${{ secrets.NEXT_PUBLIC_FUSION_RELAY_URL }}
+          NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_FUSION_NOSTR_PUBLIC_KEY }}
+          NEXT_PUBLIC_NEUROFUSION_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL }}
         run: |
           cd frontend
           npm install
