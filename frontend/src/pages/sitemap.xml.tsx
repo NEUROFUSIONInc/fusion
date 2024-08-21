@@ -6,7 +6,7 @@ const Sitemap = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const baseUrl = process.env.NEXTAUTH_URL || "https://usefusion.ai";
+  const baseUrl = process.env["NEXTAUTH_URL"] || "https://usefusion.ai";
 
   const blogs = (await getAllPostsWithFrontMatter()).map((post: any) => ({
     url: `${baseUrl}/blog/${post.slug}`,

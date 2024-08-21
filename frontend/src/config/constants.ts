@@ -1,6 +1,6 @@
 import { DefaultOptions } from "@tanstack/react-query";
 
-export const API_URL = process.env.NEXT_PUBLIC_NEUROFUSION_BACKEND_URL;
+export const API_URL = process.env["NEXT_PUBLIC_NEUROFUSION_BACKEND_URL"];
 
 export const QUERY_OPTIONS_DEFAULT: DefaultOptions = {
   queries: {

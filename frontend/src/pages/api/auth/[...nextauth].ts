@@ -8,7 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { randomBytes } from "crypto";
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env["NEXT_AUTH_SECRET"],
   session: {
     // Seconds - How long until an idle session expires and is no longer valid.
     maxAge: 30 * 24 * 60 * 60, // 30 days

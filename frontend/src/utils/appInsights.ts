@@ -6,7 +6,7 @@ const reactPlugin = new ReactPlugin();
 
 const appInsights = new ApplicationInsights({
   config: {
-    instrumentationKey: process.env.NEXT_PUBLIC_APP_INSIGHTS_KEY,
+    instrumentationKey: process.env["NEXT_PUBLIC_APP_INSIGHTS_KEY"] || "<placeholder>",
     extensions: [reactPlugin],
     enableAutoRouteTracking: true,
     disableAjaxTracking: false,
@@ -14,6 +14,7 @@ const appInsights = new ApplicationInsights({
     enableCorsCorrelation: true,
     enableRequestHeaderTracking: true,
     enableResponseHeaderTracking: true,
+    disableCookiesUsage: true,
   },
 });
 
