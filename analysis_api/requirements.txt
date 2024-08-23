@@ -9,3 +9,4 @@ fooof
 nltk
 python-dotenv
 requests
+mne

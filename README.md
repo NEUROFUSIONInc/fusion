@@ -15,22 +15,21 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
   - [x] Resting state (Eyes Closed/Eyes Open)
   - [x] Stroop Task
   - [x] Auditory Oddball
+  - [x] Visual Oddball
   - [x] Flappy Bird game (Detecting intent & frustration)
 
 - [ ] Analysis of collected data https://usefusion.ai/analysis
 
   - [x] Chart of steady state frequency power across recordings
-  - [ ] Periodic vs. aperiodic frequency evaluation using [fooof package](https://fooof-tools.github.io/fooof/)
+  - [x] Periodic vs. aperiodic frequency evaluation using [fooof package](https://fooof-tools.github.io/fooof/)
   - [ ] If applicable event related potential analysis
 
 - [ ] Running Distributed Studies with people (Quests) https://usefusion.ai/blog/quests
 
   - [x] A set of prompts people respond to at intervals on a topic related to you
   - [x] Connecting Apple Health - steps, sleep, heart-rate
-  - [ ] Support for cognitive experiments
-  - [ ] Quest Dashboard - view submissions, analyze and publish results
-
-- [ ] Design and upload custom EEG experiment protocols to participants' devices
+  - [x] Quest Dashboard - view submissions, analyze and publish results
+  - [ ] Design and upload custom EEG experiment protocols to participants' devices
 
 - [ ] Connecting Other Sources
   - [ ] Connect your screentime events & productivity metrics using [ActivityWatch](https://activitywatch.net)
