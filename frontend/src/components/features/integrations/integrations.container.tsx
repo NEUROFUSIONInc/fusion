@@ -23,6 +23,15 @@ export const IntegrationsContainer = () => {
 
   const museContext = useContext(MuseContext);
 
+  const [activityWatchConnected, setActivityWatchConnected] = useState(false);
+
+  useEffect(() => {
+    // Check ActivityWatch connection status after component mounts
+    const isActivityWatchConnected =
+      typeof window !== "undefined" && Boolean(localStorage?.getItem("selectedActivityWatchHost"));
+    setActivityWatchConnected(isActivityWatchConnected);
+  }, []);
+
   function handleIntegrationClick(integrationSlug: IntegrationSlug) {
     switch (integrationSlug) {
       case "fusion":
@@ -71,7 +80,7 @@ export const IntegrationsContainer = () => {
         return Boolean(magicflowData?.magicflowToken);
       case "activityWatch":
         // check if activityWatch is connected
-        return false;
+        return activityWatchConnected;
       case "muse":
         // call function for muse integration
         return Boolean(museContext?.museClient?.connectionStatus);
@@ -111,16 +120,11 @@ export const IntegrationsContainer = () => {
     }
   }, [neurosityLoading, user]);
 
-  // useEffect(() => {
-  //   if (!museContext.museClient) {
-  //     museContext.connectMuse();
-  //   }
-  // }, [user]);
   return (
     <section>
       <h1 className="text-4xl">Integrations and all connected apps</h1>
       <p className="mb-10 mt-2 text-lg dark:text-slate-400">
-        Connect to applications and sensors for context on your life experiences{" "}
+        Connect to applications and sensors for context on when life events happen{" "}
       </p>
       <div className="flex flex-wrap gap-8">
         {integrations.map((integration) => (
