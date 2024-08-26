@@ -12,7 +12,15 @@ export function convertToCSV(arr: any[]) {
 
   return array
     .map((it) => {
-      return Object.values(it).toString();
+      return Object.values(it)
+        .map((value) => {
+          if (typeof value === "string" && value.includes(",")) {
+            // Escape commas and wrap in quotes
+            return `"${value.replace(/"/g, '""')}"`;
+          }
+          return value;
+        })
+        .join(",");
     })
     .join("\n");
 }
@@ -28,7 +36,7 @@ export async function writeDataToStore(dataName: string, data: any, fileTimestam
     const content = convertToCSV(data); // convert to csv format
 
     const hiddenElement = document.createElement("a");
-    hiddenElement.href = `data:text/csv;charset=utf-8,${encodeURI(content)}`;
+    hiddenElement.href = `data:text/csv;charset=utf-8,${encodeURIComponent(content)}`;
     hiddenElement.target = "_blank";
     hiddenElement.download = fileName;
     hiddenElement.click();

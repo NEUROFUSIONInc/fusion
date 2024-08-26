@@ -11,7 +11,7 @@ const IntegrationsPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Integrations | Fusion - Personal Insights from your daily habits and actions",
+          title: "Integrations | NeuroFusion",
         }}
       />
       <IntegrationsContainer />

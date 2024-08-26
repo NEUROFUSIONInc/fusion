@@ -48,15 +48,15 @@ export const integrations = [
   //   description: "MagicFlow is the productivity tracker that helps you focus on what matters most.",
   //   active: true,
   // },
-  // {
-  //   slug: "activityWatch",
-  //   title: "ActivityWatch (Screen Time)",
-  //   href: "https://activitywatch.net",
-  //   imageUrl: "/images/integrations/activitywatch_icon.png",
-  //   description:
-  //     "ActivityWatch is an open source, privacy first app that automatically tracks how you spend time on your devices.",
-  //   active: true,
-  // },
+  {
+    slug: "activityWatch",
+    title: "ActivityWatch (Screen Time)",
+    href: "https://activitywatch.net",
+    imageUrl: "/images/integrations/activitywatch_icon.png",
+    description:
+      "ActivityWatch is an open source, privacy first app that automatically tracks how you spend time on your devices.",
+    active: true,
+  },
   // {
   //   slug: "spotify",
   //   title: "Spotify (Music)",
