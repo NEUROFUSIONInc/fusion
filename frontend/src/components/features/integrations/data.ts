@@ -106,13 +106,15 @@ export const activityWatchSteps = [
   {
     id: 1,
     step: "Open the server configurations",
+    image: "/images/integrations/activitywatch_guide_step1.png",
   },
   {
     id: 2,
-    step: "Add Fusion as one of the allowed domains",
+    step: "Add Fusion urls as one of the allowed domains",
+    image: "/images/integrations/activitywatch_guide_step2.png",
   },
   {
     id: 3,
-    step: "Quit & Restart ActivityWatch",
+    step: "Quit & Restart ActivityWatch then click 'Fetch Hosts'",
   },
 ];

@@ -82,7 +82,7 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
             <span className="sr-only">Close</span>
           </Dialog.Close>
 
-          {!hostList && (
+          {(!hostList || Object.keys(hostList).length === 0) && (
             <div>
               <h4 className="font-body text-lg">Steps</h4>
               <Accordion.Root type="single" collapsible className="divide-y dark:divide-slate-600">
@@ -98,13 +98,13 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
 
                       <ChevronDown className="hidden transition-transform duration-200 sm:block" />
                     </Accordion.Trigger>
-                    <Accordion.Content>
-                      {/* <Image src={step.image} alt="Magic Flow Home page" width={600} height={300} /> */}
-                    </Accordion.Content>
+                    {step.image && (
+                      <Accordion.Content>
+                        <Image src={step.image} alt="Activity Watch Guide" width={600} height={300} />
+                      </Accordion.Content>
+                    )}
                   </Accordion.Item>
                 ))}
-                {/* TODO: Update activity watch steps and include it here */}
-                {/* we should actually fetch the buckets */}
               </Accordion.Root>
             </div>
           )}
@@ -114,86 +114,86 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
               Fetch Hosts
             </Button>
 
-            {hostList && (
-              <div className="w-full">
-                <label htmlFor="hostSelect" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                  Select ActivityWatch Host
-                </label>
-                <select
-                  id="hostSelect"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  value={selectedHost}
-                  onChange={(e) => setSelectedHost(e.target.value)}
-                >
-                  <option value="">Choose a host</option>
-                  {Object.values(hostList).map((host, index) => (
-                    <option key={index} value={host.id}>
-                      {host.id}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <h4 className="font-body text-lg">Fetch Screentime Data</h4>
-
-            <div className="mt-4 space-y-4">
-              <div>
-                <label htmlFor="startDate" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                  Start Date
-                </label>
-                <Input
-                  type="datetime-local"
-                  id="startDate"
-                  defaultValue={startDate.format("YYYY-MM-DDTHH:mm")}
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  onChange={(e) => setStartDate(dayjs(e.target.value))}
-                />
-              </div>
-              <div>
-                <label htmlFor="endDate" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                  End Date
-                </label>
-                <Input
-                  type="datetime-local"
-                  id="endDate"
-                  defaultValue={endDate.format("YYYY-MM-DDTHH:mm")}
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  onChange={(e) => setEndDate(dayjs(e.target.value))}
-                />
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <Button
-                intent="primary"
-                className="w-full"
-                onClick={async () => {
-                  // Add logic to fetch data here
-                  const events = await fetchData(dayjs(startDate), dayjs(endDate));
-
-                  // parse the list into a csv dataset
-                  const data = events.map((event) => ({
-                    unixTimestamp: dayjs(event.timestamp).unix(),
-                    duration_secs: event.duration,
-                    app: event.data?.app,
-                    title: event.data?.title,
-                  }));
-
-                  console.log("Length of events", events.length);
-                  console.log("Length of data", data.length);
-
-                  writeDataToStore("activitywatch", data, endDate.unix().toString(), "download");
-                }}
-                leftIcon={<Download className="mr-2 h-4 w-4" />}
-                disabled={!selectedHost}
+            <div className="w-full">
+              <label htmlFor="hostSelect" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                Select ActivityWatch Host
+              </label>
+              <select
+                id="hostSelect"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                value={selectedHost}
+                onChange={(e) => setSelectedHost(e.target.value)}
               >
-                Get Screentime Events
-              </Button>
+                <option value="">Choose a host</option>
+                {Object.values(hostList).map((host, index) => (
+                  <option key={index} value={host.id}>
+                    {host.id}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
+
+          {hostList && Object.keys(hostList).length > 0 && (
+            <div>
+              <h4 className="font-body text-lg">Fetch Screentime Data</h4>
+
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="startDate" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                    Start Date
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    id="startDate"
+                    defaultValue={startDate.format("YYYY-MM-DDTHH:mm")}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    onChange={(e) => setStartDate(dayjs(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="endDate" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                    End Date
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    id="endDate"
+                    defaultValue={endDate.format("YYYY-MM-DDTHH:mm")}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    onChange={(e) => setEndDate(dayjs(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <Button
+                  intent="primary"
+                  className="w-full"
+                  onClick={async () => {
+                    // Add logic to fetch data here
+                    const events = await fetchData(dayjs(startDate), dayjs(endDate));
+
+                    // parse the list into a csv dataset
+                    const data = events.map((event) => ({
+                      unixTimestamp: dayjs(event.timestamp).unix(),
+                      duration_secs: event.duration,
+                      app: event.data?.app,
+                      title: event.data?.title,
+                    }));
+
+                    console.log("Length of events", events.length);
+                    console.log("Length of data", data.length);
+
+                    writeDataToStore("activitywatch", data, endDate.unix().toString(), "download");
+                  }}
+                  leftIcon={<Download className="mr-2 h-4 w-4" />}
+                  disabled={!selectedHost}
+                >
+                  Get Screentime Events
+                </Button>
+              </div>
+            </div>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
