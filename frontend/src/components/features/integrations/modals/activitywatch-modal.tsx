@@ -10,6 +10,7 @@ import { Button, Input } from "~/components/ui";
 import { activityWatchSteps } from "../data";
 import dayjs from "dayjs";
 import { writeDataToStore } from "~/services/storage.service";
+import { appInsights } from "~/utils/appInsights";
 
 interface IActivityWatchModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface IActivityWatchModalProps {
 }
 
 export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onCloseModal }) => {
+  const user = useSession();
   const [hostList, setHostList] = useState<{ [bucketId: string]: IBucket }>({});
   const [selectedHost, setSelectedHost] = useState("");
 
@@ -48,6 +50,14 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
   useEffect(() => {
     if (selectedHost) {
       localStorage.setItem("selectedActivityWatchHost", selectedHost);
+
+      appInsights.trackEvent({
+        name: "ActivityWatchHostSelected",
+        properties: {
+          userNpub: user?.data?.user?.email, // this is actually the npub, need to cast the session type so I can use the right selection
+          unixTimestamp: dayjs().unix(),
+        },
+      });
     }
   }, [selectedHost]);
 
@@ -185,6 +195,14 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
                     console.log("Length of data", data.length);
 
                     writeDataToStore("activitywatch", data, endDate.unix().toString(), "download");
+
+                    appInsights.trackEvent({
+                      name: "ActivityWatchDataDownloaded",
+                      properties: {
+                        userNpub: user?.data?.user?.email, // this is actually the npub, need to cast the session type so I can use the right selection
+                        unixTimestamp: dayjs().unix(),
+                      },
+                    });
                   }}
                   leftIcon={<Download className="mr-2 h-4 w-4" />}
                   disabled={!selectedHost}
