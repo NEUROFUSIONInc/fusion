@@ -5,10 +5,11 @@
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
     <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
     <style>
       .jspsych-btn {
@@ -42,25 +43,49 @@
     </style>
   </head>
   <body>
-    <div id="countDown"><p></p></div>
     <div id="jspsych-container"></div>
+    <button id="fullscreen-btn" style="position: absolute; top: 10px; right: 10px">Toggle Fullscreen</button>
     <script>
-      function mapElapsedToUnix(data) {
-        let startStamp = -1;
-        data.trials.forEach((element) => {
-          if (startStamp === -1) {
-            if ("unixTimestamp" in element) startStamp = element.unixTimestamp - element.time_elapsed;
-          } else {
-            element.unixTimestamp = startStamp + element.time_elapsed;
+      document.getElementById("fullscreen-btn").addEventListener("click", function () {
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            // Firefox
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            // Chrome, Safari and Opera
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            // IE/Edge
+            document.documentElement.msRequestFullscreen();
           }
-        });
-        return data;
-      }
-
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            // Firefox
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            // Chrome, Safari and Opera
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            // IE/Edge
+            document.msExitFullscreen();
+          }
+        }
+      });
+    </script>
+    <script>
       const jsPsych = initJsPsych({
         on_finish: function () {
-          window.parent.postMessage(mapElapsedToUnix(jsPsych.data.get()), "*");
-          console.log(mapElapsedToUnix(jsPsych.data.get()));
+          window.parent.postMessage(jsPsych.data.get(), "*");
+        },
+        on_trial_start: function (trial) {
+          if (!trial.data) {
+            trial.data = {};
+          }
+          trial.data.unixTimestamp = Date.now();
         },
         display_element: "jspsych-container",
       });
@@ -70,70 +95,190 @@
         pages: [
           "Welcome to the Visual Oddball Experiment!",
           "Get Ready: Find a quiet place and put on your headphones.</br> Make sure you're comfortable and ready to focus.",
-          "Spot the Oddball: Count the number of BLUE and GREEN circles you see in your head.",
           "Start EEG Recording: If you have your EEG device connected",
         ],
         show_clickable_nav: true,
       };
 
-      const fixation = {
-        type: jsPsychHtmlKeyboardResponse,
+      const consent = {
+        type: jsPsychHtmlButtonResponse,
         stimulus:
-          '<div style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; font-size: 150px;">+</div>',
-        response_ends_trial: false,
-        trial_duration: 500,
-      };
-
-      const iti = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: "",
-        trial_duration: 250,
-        response_ends_trial: false,
-      };
-
-      // Define the standard and oddball stimuli
-      const standardStimulus = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: '<div style="width: 200px; height: 200px; background-color: green; border-radius: 50%;"></div>',
-        choices: [],
-        on_finish: (data) => {
-          console.log(data);
-          data.value = "standard";
-        },
-      };
-      const oddballStimulus = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: '<div style="width: 200px; height: 200px; background-color: blue; border-radius: 50%;"></div>',
-        choices: [],
-        on_finish: (data) => {
-          console.log(data);
-          data.value = "oddball";
+          "Do you understand that by completing this, your brain activity will be recorded and shared with the research team for analysis?",
+        choices: ["Yes", "No"],
+        button_html: '<button class="jspsych-btn" style="display: inline-block; margin: 0 5px;">%choice%</button>',
+        on_finish: function (data) {
+          data.consent = data.response == 0 ? "Yes" : "No";
+          if (data.response == 1) {
+            jsPsych.endExperiment("Thank you for your time. The experiment has been terminated.");
+          }
         },
       };
 
+      // consent & text box for input
+      const userInput = {
+        type: jsPsychSurveyText,
+        questions: [
+          {
+            prompt: "How old are you?",
+            name: "age",
+            required: true,
+          },
+          {
+            prompt: "What is your sex at birth?",
+            name: "sex",
+            required: true,
+          },
+          {
+            prompt: "What is your current diagnosis?",
+            name: "diagnosis",
+            required: true,
+          },
+        ],
+      };
+
+      // eyes closed instruction & task
+      const eyesClosedSequence = () => {
+        const eyes_closed_instruction = {
+          type: jsPsychAudioKeyboardResponse,
+          stimulus: "./assets/sounds/visual_oddball/task_rest_eyes_closed_msg.mp3",
+          prompt: "Close your eyes and relax",
+          choices: "NO_KEYS",
+          trial_ends_after_audio: true,
+        };
+        const eyes_closed = {
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: "close your eyes and relax",
+          trial_duration: 60000,
+          response_ends_trial: false,
+          on_finish: (data) => {
+            data.value = "eyes_closed";
+          },
+        };
+        return [eyes_closed_instruction, eyes_closed];
+      };
+
+      // eyes open instruction & task
+      const eyesOpenSequence = () => {
+        const eyes_open_instruction = {
+          type: jsPsychAudioKeyboardResponse,
+          stimulus: "./assets/sounds/visual_oddball/task_rest_eyes_open_msg.mp3",
+          prompt: "Look at the X sign and relax",
+          choices: "NO_KEYS",
+          trial_ends_after_audio: true,
+        };
+        const eyes_open = {
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus:
+            '<div style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; font-size: 150px;">x</div>',
+          trial_duration: 60000,
+          response_ends_trial: false,
+          on_finish: (data) => {
+            data.value = "eyes_open";
+          },
+        };
+        return [eyes_open_instruction, eyes_open];
+      };
+
+      // oddball sequence generator
+      const oddballSequenceGenerator = (numberOfSequences) => {
+        const visual_oddball_instruction = {
+          type: jsPsychAudioKeyboardResponse,
+          stimulus: "./assets/sounds/visual_oddball/p300_visual_circles_instructions.mp3",
+          prompt: "Focus on the screen and silently count the number of blue circles you see",
+          choices: "NO_KEYS",
+          trial_ends_after_audio: true,
+        };
+
+        // Define the standard (green) and oddball (blue) stimuli
+        const standardStimulus = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: '<div style="width: 200px; height: 200px; background-color: green; border-radius: 50%;"></div>',
+          choices: [],
+          on_load: function () {
+            document.body.style.backgroundColor = "#808080";
+          },
+          on_finish: (data) => {
+            data.value = "standard";
+          },
+        };
+
+        const oddballStimulus = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: '<div style="width: 200px; height: 200px; background-color: blue; border-radius: 50%;"></div>',
+          choices: [],
+          on_load: function () {
+            document.body.style.backgroundColor = "#808080";
+          },
+          on_finish: (data) => {
+            data.value = "oddball";
+          },
+        };
+
+        const iti = {
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: "",
+          trial_duration: 250,
+          response_ends_trial: false,
+        };
+
+        let sequences = [visual_oddball_instruction];
+        for (let i = 0; i < numberOfSequences; i++) {
+          // 10% chance for deviant stimulus
+          if (Math.random() < 0.1) {
+            // set the duration for the stimulus
+            oddballStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
+            sequences.push(oddballStimulus);
+          } else {
+            standardStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
+            sequences.push(standardStimulus);
+          }
+
+          // Push inter interval after each stimulus
+          sequences.push(iti);
+        }
+        return sequences;
+      };
+
+      // rest video
+      const relaxSequenceGenerator = () => {
+        const relax_instruction = {
+          type: jsPsychAudioKeyboardResponse,
+          stimulus: "./assets/sounds/visual_oddball/relax_1min_instructions.mp3",
+          prompt: "Relax for 1 minute",
+          choices: "NO_KEYS",
+          trial_ends_after_audio: true,
+        };
+        const relax_task = {
+          type: jsPsychAudioKeyboardResponse,
+          stimulus: "./assets/sounds/visual_oddball/relax_1min_background.mp3",
+          choices: "NO_KEYS",
+          trial_ends_after_audio: false,
+          trial_duration: 60000,
+          on_load: function () {
+            document.body.style.backgroundImage = "url('./assets/media/waves.gif')";
+            document.body.style.backgroundSize = "cover";
+          },
+          on_finish: (data) => {
+            document.body.style.backgroundImage = "none";
+            data.value = "relax";
+          },
+        };
+        return [relax_instruction, relax_task];
+      };
+
+      // trial sequences
+      // ref: https://github.com/diamandis-lab/HEROIC/blob/41da0241ea5dd300672a3f3b87268c214d2b14bf/HEROIC-core/session_config/home_session.json
       const trials = [];
       trials.push(instructions);
-      trials.push(fixation);
-
-      /**
-       * Generate the trial sequence
-       */
-      const numberOfSequences = 40;
-
-      for (let i = 0; i < numberOfSequences; i++) {
-        // 10% chance for deviant stimulus
-        if (Math.random() < 0.1) {
-          // set the duration for the stimulus
-          oddballStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
-          trials.push(oddballStimulus);
-        } else {
-          standardStimulus.trial_duration = Math.floor(Math.random() * 400) + 800;
-          trials.push(standardStimulus);
-        }
-
-        // Push fixation after each stimulus
-        trials.push(iti);
-      }
+      trials.push(consent);
+      trials.push(userInput);
+      trials.push(...eyesClosedSequence());
+      trials.push(...eyesOpenSequence());
+      trials.push(...oddballSequenceGenerator(40));
+      trials.push(...relaxSequenceGenerator());
+      trials.push(...oddballSequenceGenerator(40));
+      trials.push(...relaxSequenceGenerator());
+      trials.push(...oddballSequenceGenerator(40));
 
       jsPsych.run(trials);
     </script>
