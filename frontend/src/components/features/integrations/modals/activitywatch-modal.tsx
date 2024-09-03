@@ -54,7 +54,7 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
       appInsights.trackEvent({
         name: "ActivityWatchHostSelected",
         properties: {
-          userNpub: user?.data?.user?.email, // this is actually the npub, need to cast the session type so I can use the right selection
+          userNpub: user?.data?.user?.name,
           unixTimestamp: dayjs().unix(),
         },
       });
@@ -199,7 +199,7 @@ export const ActivityWatchModal: FC<IActivityWatchModalProps> = ({ isOpen, onClo
                     appInsights.trackEvent({
                       name: "ActivityWatchDataDownloaded",
                       properties: {
-                        userNpub: user?.data?.user?.email, // this is actually the npub, need to cast the session type so I can use the right selection
+                        userNpub: user?.data?.user?.name,
                         unixTimestamp: dayjs().unix(),
                       },
                     });
