@@ -29,6 +29,7 @@ const RecordingsPage: NextPage = () => {
     const chosenExperiment = experiments.find((experiment) => experiment.name === e.target.value);
 
     if (chosenExperiment) {
+      router.push(`/recordings?activityId=${chosenExperiment.id}`, undefined, { shallow: true });
       setActiveExperiment(chosenExperiment);
     }
   };
@@ -43,9 +44,9 @@ const RecordingsPage: NextPage = () => {
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
-      <h1 className="text-4xl">Recordings</h1>
+      <h1 className="text-4xl">Brain Recordings</h1>
       <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white">
-        Select activity:
+        Choose activity:
         <select
           id="activity"
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"

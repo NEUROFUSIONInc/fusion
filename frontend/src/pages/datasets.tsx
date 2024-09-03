@@ -63,8 +63,8 @@ const DatasetPage: NextPage = () => {
           description: "Manage your datasets from previous recordings. You can download your data here.",
         }}
       />
-      <h1 className="text-2xl font-bold mb-4">Datasets</h1>
-      <p className="mb-4">You can download your data here. You can also delete your data from the browser.</p>
+      <h1 className="text-4xl font-bold mb-4">Datasets</h1>
+      <p className="mb-4">Manage your datasets from previous recordings. You can download your data here..</p>
       <ul className="space-y-2">
         {files.map((name, index) => (
           <li key={index} className="flex items-center justify-between">

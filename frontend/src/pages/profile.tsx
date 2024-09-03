@@ -9,6 +9,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle } from "~
 import { deletePrivateKey } from "~/utils/auth";
 import Link from "next/link";
 import StripeButton from "~/components/stripe-button";
+import { Eye, EyeOff } from "lucide-react";
 
 const AccountPage: NextPage = () => {
   const { data: session } = useSession();
@@ -19,6 +20,8 @@ const AccountPage: NextPage = () => {
     deletePrivateKey();
     signOut();
   };
+
+  const [showPrivateKey, setShowPrivateKey] = React.useState(false);
 
   return (
     <DashboardLayout>
@@ -32,7 +35,21 @@ const AccountPage: NextPage = () => {
       <p className="mb-10 mt-2 text-lg dark:text-slate-400">You have been assigned an anonymous account</p>
 
       <p>Public Key : {session?.user?.name}</p>
-      <p>Private Key: {session?.user?.privateKey} </p>
+      <div className="relative">
+        <p>
+          Private Key:{" "}
+          {session?.user?.privateKey && (
+            <span className="inline-flex items-center">
+              <span className={`${showPrivateKey ? "" : "filter blur-sm"}`}>{session.user.privateKey}</span>
+              <Button
+                onClick={() => setShowPrivateKey(!showPrivateKey)}
+                className="ml-2 text-blue-500 hover:text-blue-700"
+                leftIcon={showPrivateKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              />
+            </span>
+          )}
+        </p>
+      </div>
 
       <div className="flex flex-row space-x-4 mt-5">
         <Button onClick={() => signOut()}>Log Out</Button>
@@ -47,7 +64,7 @@ const AccountPage: NextPage = () => {
       </div>
 
       <div>
-        <p className="mt-5">Fusion is open source. Fund our development!</p>
+        <p className="mt-5">Support NeuroFusion's open-source development!</p>
         <StripeButton />
       </div>
     </DashboardLayout>

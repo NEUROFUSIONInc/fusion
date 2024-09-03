@@ -105,7 +105,7 @@ export const experiments: IExperiment[] = [
     id: 10,
     name: "Visual Oddball - P300, Event Related Potential",
     description:
-      "We want to understand how our brains react when something unexpected happens. They're particularly interested in a brain wave called the 'P300 wave'. This wave is like a signal your brain sends when it recognizes a change in the pattern of images. It usually occurs around 300 milliseconds after your brain registers the oddball sound. Start the experiment to see how your brain responds!",
+      "You’ll see a series of images containing circles of different colors. Your task is to count the number of blue and green circles that appear. Occasionally, an image will display a different or unexpected pattern. After the experiment, we will analyze your brain activity to look for changes in the P300 wave, a brain response that occurs about 300 milliseconds after noticing something unexpected.",
     url: "/experiments/visual_oddball.html",
     tags: ["visual_oddball"],
   },

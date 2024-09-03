@@ -50,7 +50,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         properties: {
           deviceInfo: connectedDevice,
           experimentInfo: experimentInfo,
-          userNpub: session.data?.user?.email,
+          userNpub: session.data?.user?.name,
         },
       });
       console.log(experimentInfo);
@@ -64,7 +64,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       properties: {
         deviceInfo: connectedDevice,
         experimentDetails: experimentInfo,
-        userNpub: session.data?.user?.email,
+        userNpub: session.data?.user?.name,
       },
     });
     neurosityService.stopRecording();
@@ -85,7 +85,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         properties: {
           deviceInfo: await museContext?.museClient?.deviceInfo(),
           experimentInfo: experimentInfo,
-          userNpub: session.data?.user?.email,
+          userNpub: session.data?.user?.name,
         },
       });
       await museEEGService.startRecording(experimentInfo);
@@ -100,7 +100,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         properties: {
           deviceInfo: await museContext?.museClient?.deviceInfo(),
           experimentInfo: experimentInfo,
-          userNpub: session.data?.user?.email,
+          userNpub: session.data?.user?.name,
         },
       });
       await museEEGService.stopRecording(true);
