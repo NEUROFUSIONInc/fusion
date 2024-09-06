@@ -60,7 +60,8 @@ const AnalysisPage: NextPage = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${process.env["NEXT_PUBLIC_ANALYSIS_SERVER_URL"]}/api/v1/process_eeg_fooof`, {
+        const urlEndpoint = stimulusFile ? "process_visual_oddball" : "process_eeg_fooof";
+        const response = await fetch(`${process.env["NEXT_PUBLIC_ANALYSIS_SERVER_URL"]}/api/v1/${urlEndpoint}`, {
           method: "POST",
           body: formData,
         });
@@ -233,9 +234,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
+    // login the user
+    const currentUrl = `${req.url}`;
     return {
       redirect: {
-        destination: "/auth/login",
+        destination: `/auth/login?callbackUrl=${encodeURIComponent(currentUrl)}`,
         permanent: false,
       },
     };
