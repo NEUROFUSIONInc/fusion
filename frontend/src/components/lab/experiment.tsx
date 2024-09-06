@@ -7,13 +7,12 @@ import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
-import { PlugZap } from "lucide-react";
+import { PlugZap, RotateCw } from "lucide-react";
 import { appInsights } from "~/utils/appInsights";
 import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
 import { Input } from "../ui";
 import dayjs from "dayjs";
-import exp from "constants";
 import { MuseContext } from "~/hooks/muse.context";
 import { MuseEEGService, NeuroFusionParsedEEG } from "~/services/integrations/muse.service";
 import { SignalViewer } from "./signalviewer";
@@ -273,6 +272,23 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
               sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
             ></iframe>
+            <div className="mt-3 flex justify-end">
+              <Button
+                onClick={() => {
+                  if (experiment.url) {
+                    const iframe = document.querySelector("iframe") as HTMLIFrameElement;
+                    if (iframe) {
+                      iframe.src = iframe.src;
+                    }
+                  }
+                }}
+                size="sm"
+                intent="dark"
+                leftIcon={<RotateCw />}
+              >
+                Restart Experiment
+              </Button>
+            </div>
           </div>
         )}
         <>
