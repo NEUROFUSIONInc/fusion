@@ -5,7 +5,10 @@ import { DatasetExport } from "~/@types";
 import { IDBPDatabase, openDB } from "idb";
 import { createHelia } from "helia";
 import { unixfs } from "@helia/unixfs";
-import { CID } from "multiformats";
+import { MemoryBlockstore } from "blockstore-core";
+
+import { OrbisDB, type OrbisConnectResult } from "@useorbis/db-sdk";
+import { OrbisKeyDidAuth } from "@useorbis/db-sdk/auth";
 
 export function convertToCSV(arr: any[]) {
   const array = [Object.keys(arr[0] ?? {})].concat(arr);
@@ -143,7 +146,8 @@ export async function writeToLocalStorage(datasetExport: DatasetExport, unixTime
  */
 export async function uploadToIpfs(file: File) {
   try {
-    const helia = await createHelia();
+    const blockstore = new MemoryBlockstore();
+    const helia = await createHelia({ blockstore });
     const fs = unixfs(helia);
     const fileBuffer = await file.arrayBuffer();
     const cid = await fs.addFile({
@@ -154,5 +158,65 @@ export async function uploadToIpfs(file: File) {
     return cid;
   } catch (error) {
     console.error("Error uploading to IPFS", error);
+  }
+}
+
+export async function uploadToCeramic(file: File) {
+  try {
+    // upload to ifps to get cid
+    const cid = await uploadToIpfs(file);
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    const orbis = new OrbisDB({
+      ceramic: {
+        gateway: "https://ceramic-orbisdb-mainnet-direct.hirenodes.io/",
+      },
+      nodes: [
+        {
+          gateway: "https://studio.useorbis.com",
+          env: process.env["NEXT_PUBLIC_CERAMIC_ENV_ID"],
+        },
+      ],
+    });
+    const auth = await OrbisKeyDidAuth.fromSeed(process.env["NEXT_PUBLIC_CERAMIC_PRIVATE_DID_SEED"] as string);
+    const authResult: OrbisConnectResult = await orbis.connectUser({ auth });
+    console.log("authResult", authResult);
+    // get hash of file
+    const hashValue = await crypto.subtle.digest("SHA-256", buffer);
+    const hashArray = Array.from(new Uint8Array(hashValue));
+    // get bytes32 hash
+    const hashHex = "0x" + hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    console.log("hashHex", hashHex);
+
+    const entry = {
+      CID: cid ? cid.toString() : "n/a",
+      name: file.name,
+      owner: "Causality Network",
+      contentHash: hashHex,
+      endTimestamp: new Date().toISOString(),
+      additionalMeta: "",
+      startTimestamp: new Date().toISOString(),
+    };
+
+    console.log("entry", entry);
+
+    // SAVE TO ORBIS
+    const updatequery = await orbis
+      .insert(process.env["NEXT_PUBLIC_CERAMIC_ATTESTATION_TABLE_ID"] as string)
+      .value(entry)
+      .context(process.env["NEXT_PUBLIC_CERAMIC_CONTEXT_ID"] as string)
+      .run();
+
+    if (updatequery.content) {
+      console.log("updatequery.content", updatequery.content);
+      return true;
+    }
+
+    console.log("updatequery FAILED");
+    return false;
+  } catch (error) {
+    console.log("error", error);
+    return false;
   }
 }
