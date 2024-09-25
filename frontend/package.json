@@ -28,6 +28,7 @@
     "@tanstack/react-query": "^4.36.1",
     "@types/archiver": "^5.3.3",
     "@types/file-saver": "^2.0.5",
+    "@useorbis/db-sdk": "^0.0.54-alpha",
     "@web3modal/wagmi": "^5.0.11",
     "aw-client": "^0.3.7",
     "axios": "^1.4.0",

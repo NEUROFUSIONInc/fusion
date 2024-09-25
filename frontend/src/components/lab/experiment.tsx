@@ -102,7 +102,12 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           userNpub: session.data?.user?.name,
         },
       });
-      await museEEGService.stopRecording(true);
+      console.log("stopping muse recording");
+      if (experiment.id === 121) {
+        await museEEGService.stopRecording(true, false, "ceramic");
+      } else {
+        await museEEGService.stopRecording(true, false, "local");
+      }
     }
   }
 
@@ -333,7 +338,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
       </div>
 
       {/* Neurosity methods */}
-      {experiment.id !== 6 && (
+      {![6, 121].includes(experiment.id) && (
         <>
           <div className="item-start">
             {!connectedDevice && (
@@ -379,8 +384,11 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               </div>
             </div>
           )}
-
-          {/* Muse Methods */}
+        </>
+      )}
+      {/* Muse Methods */}
+      {experiment.id !== 6 && (
+        <>
           <div className="item-start mt-3">
             {!museContext?.museClient && (
               <Button

@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { downloadDataAsZip, getCSVFile, writeToLocalStorage } from "../storage.service";
 import { createHash } from "crypto";
 import { getFileHash, signData } from "../signer.service";
+import { uploadToCeramic } from "../storage.service";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -184,13 +185,31 @@ export class MuseEEGService {
     this.museClient.start();
   }
 
-  async stopRecording(withDownload = false, signDataset = false) {
+  async stopRecording(
+    withDownload = false,
+    signDataset = false,
+    storageMode: "local" | "remote" | "ceramic" = "local"
+  ) {
     this.museClient.pause();
     // prepare files for download
     const datasetExport: DatasetExport = {
       fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`, `events_${this.recordingStartTimestamp}.csv`],
       dataSets: [this.rawBrainwavesParsed, this.eventSeries],
     };
+
+    console.log("storageMode", storageMode);
+    if (storageMode === "ceramic") {
+      console.log("uploading to ceramic");
+      const brainwavesCSV = await getCSVFile(
+        `rawBrainwaves_${this.recordingStartTimestamp}.csv`,
+        this.rawBrainwavesParsed
+      );
+      const contentHash = await getFileHash(brainwavesCSV);
+      console.log("contentHash", contentHash);
+
+      const res = await uploadToCeramic(brainwavesCSV);
+      console.log("res", res);
+    }
 
     if (signDataset) {
       const brainwavesCSV = await getCSVFile(

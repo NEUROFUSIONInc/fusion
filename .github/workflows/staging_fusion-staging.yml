@@ -40,9 +40,9 @@ jobs:
         run: zip release.zip ./frontend -r --symlinks
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: node-app-${{ runner.os }}
           path: release.zip
 
   deploy:
@@ -54,9 +54,10 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
-          name: node-app
+          pattern: node-app-*
+          merge-multiple: true
 
       - name: unzip artifact for deployment
         run: unzip release.zip

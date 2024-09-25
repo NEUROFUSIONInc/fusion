@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://unpkg.com/jspsych@7.3.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+    <style>
+      .jspsych-btn {
+        margin-bottom: 10px;
+      }
+      body {
+        background-color: #fafafa;
+      }
+      #countDown {
+        position: absolute;
+        width: 100%;
+        display: inline;
+        align-content: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #countDown p {
+        align-content: center;
+        font-weight: 100;
+        font-size: large;
+      }
+      #jspsych-container {
+        font-size: xx-large;
+        font-family: sans;
+        font-weight: bold;
+        position: absolute;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="jspsych-container"></div>
+    <button id="fullscreen-btn" style="position: absolute; top: 10px; right: 10px">Toggle Fullscreen</button>
+    <script>
+      document.getElementById("fullscreen-btn").addEventListener("click", function () {
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            // Firefox
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            // Chrome, Safari and Opera
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            // IE/Edge
+            document.documentElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            // Firefox
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            // Chrome, Safari and Opera
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            // IE/Edge
+            document.msExitFullscreen();
+          }
+        }
+      });
+    </script>
+    <script>
+      const jsPsych = initJsPsych({
+        on_finish: function () {
+          window.parent.postMessage(jsPsych.data.get(), "*");
+        },
+        on_trial_start: function (trial) {
+          if (!trial.data) {
+            trial.data = {};
+          }
+          trial.data.unixTimestamp = Date.now();
+        },
+        display_element: "jspsych-container",
+      });
+
+      const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+          "Welcome to the Causality Neuromarketing Experience!",
+          "Get Ready: Find a quiet place and put on your headphones.</br> Make sure you're comfortable and ready to focus.",
+          "Start EEG Recording: If you have your EEG device connected",
+        ],
+        show_clickable_nav: true,
+      };
+
+      const consent = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus:
+          "Do you understand that by completing this, your brain activity will be recorded and shared with the causality network team for analysis?",
+        choices: ["Yes", "No"],
+        button_html: '<button class="jspsych-btn" style="display: inline-block; margin: 0 5px;">%choice%</button>',
+        on_finish: function (data) {
+          data.consent = data.response == 0 ? "Yes" : "No";
+          if (data.response == 1) {
+            jsPsych.endExperiment("Thank you for your time. The experiment has been terminated.");
+          }
+        },
+      };
+
+      const fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        trial_duration: 500,
+        response_ends_trial: false,
+      };
+
+      const oldBrandImage = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: "./assets/images/cn_experience/old_branding.png",
+        trial_duration: 800,
+        response_ends_trial: false,
+      };
+
+      const newBrandImage = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: "./assets/images/cn_experience/new_branding.png",
+        trial_duration: 800,
+        response_ends_trial: false,
+      };
+
+      const sequenceGenerator = (trials) => {
+        const sequence = [fixation, oldBrandImage];
+        for (let i = 0; i < trials; i++) {
+          sequence.push(fixation);
+          sequence.push(Math.random() < 0.7 ? oldBrandImage : newBrandImage);
+        }
+        return sequence;
+      };
+
+      // trial sequences
+      // ref: https://github.com/diamandis-lab/HEROIC/blob/41da0241ea5dd300672a3f3b87268c214d2b14bf/HEROIC-core/session_config/home_session.json
+      const trials = [];
+      trials.push(instructions);
+      trials.push(consent);
+      trials.push(...sequenceGenerator(20));
+
+      trials.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: "Thank you for your time! We'll download and analyze your data.",
+        choices: [],
+        trial_duration: 2000,
+      });
+
+      jsPsych.run(trials);
+    </script>
+  </body>
+</html>
