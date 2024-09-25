@@ -168,6 +168,7 @@ export async function uploadToCeramic(file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
 
+    const randomSeed = await OrbisKeyDidAuth.generateSeed("hex");
     const orbis = new OrbisDB({
       ceramic: {
         gateway: "https://ceramic-orbisdb-mainnet-direct.hirenodes.io/",
@@ -179,7 +180,7 @@ export async function uploadToCeramic(file: File) {
         },
       ],
     });
-    const auth = await OrbisKeyDidAuth.fromSeed(process.env["NEXT_PUBLIC_CERAMIC_PRIVATE_DID_SEED"] as string);
+    const auth = await OrbisKeyDidAuth.fromSeed(randomSeed);
     const authResult: OrbisConnectResult = await orbis.connectUser({ auth });
     console.log("authResult", authResult);
     // get hash of file
