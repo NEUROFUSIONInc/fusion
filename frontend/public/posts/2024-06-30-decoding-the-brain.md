@@ -12,7 +12,7 @@ authors:
   - name: Ore Ogundipe
 ---
 
-This June, Foresight Institute & Protocol Labs hosted a Neurotech Lab Week in Northern California. We shared with the participants about how NeuroFusion Explorer is used together with mobile EEG headsets are to study brain activity changes during tasks, using recording from a chess game as an example.
+This June, Foresight Institute & Protocol Labs hosted a Neurotech Lab Week in Northern California. We shared with the participants about how NeuroFusion Explorer is used together with mobile EEG headsets to study brain activity changes during tasks, using recording from a chess game as an example.
 
 I also discuss the importance of context when interpreting EEG data, the advantages of open-source platforms, and the potential for remote data collection to validate study effects across populations.
 
