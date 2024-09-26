@@ -11,7 +11,7 @@ authors:
   - name: "Ore Ogundipe"
 ---
 
-During [ZuConnect](https://zuzalu.city/), we were curious about the impact of cold plunges on peoples brain activity & overall wellbeing. Are there changes in attention & stress response?
+During [ZuConnect](https://www.palladiummag.com/2023/10/06/why-i-built-zuzalu/), we were curious about the impact of cold plunges on peoples brain activity & overall wellbeing. Are there changes in attention & stress response?
 
 <img src="/images/blog/coldplunge/water_temperature.png" alt="Picture of Water Temperature" data-zoomable style="cursor: zoom-in;" />
 
