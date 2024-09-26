@@ -3,10 +3,11 @@ import { release } from "os";
 import { MuseClient } from "muse-js";
 import { IExperiment, DatasetExport, EventData } from "~/@types";
 import dayjs from "dayjs";
-import { downloadDataAsZip, getCSVFile, writeToLocalStorage } from "../storage.service";
+import { downloadDataAsZip, getCSVFile, uploadToIpfs, writeToLocalStorage } from "../storage.service";
 import { createHash } from "crypto";
 import { getFileHash, signData } from "../signer.service";
 import { uploadToCeramic } from "../storage.service";
+import axios from "axios";
 
 export const MUSE_SAMPLING_RATE = 256;
 export const MUSE_CHANNELS = ["TP9", "AF7", "AF8", "TP10"];
@@ -207,8 +208,37 @@ export class MuseEEGService {
       const contentHash = await getFileHash(brainwavesCSV);
       console.log("contentHash", contentHash);
 
-      const res = await uploadToCeramic(brainwavesCSV);
-      console.log("res", res);
+      const url = `${window.location.origin}/api/ceramic_upload`;
+
+      const cid = await uploadToIpfs(brainwavesCSV);
+      try {
+        console.log("Uploading to Ceramic via API...");
+        const res = await axios.post(
+          url,
+          {
+            CID: cid?.toString() ?? "n/a",
+            name: brainwavesCSV.name,
+            owner: "Causality Network",
+            contentHash: contentHash,
+            startTimestamp: `${this.recordingStartTimestamp}`,
+            endTimestamp: `${dayjs().unix()}`,
+            additionalMeta: "",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (res.data && res.data.result == true) {
+          alert("Dataset uploaded to Ceramic");
+        }
+
+        console.log("Response from Ceramic upload:", res.data);
+      } catch (error) {
+        console.error("Error uploading to Ceramic:", error);
+      }
     }
 
     if (signDataset) {

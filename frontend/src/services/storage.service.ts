@@ -161,13 +161,18 @@ export async function uploadToIpfs(file: File) {
   }
 }
 
-export async function uploadToCeramic(file: File) {
-  try {
-    // upload to ifps to get cid
-    const cid = await uploadToIpfs(file);
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
+interface CausalityNetworkSchema {
+  CID: string;
+  name: string;
+  owner: string;
+  contentHash: string;
+  startTimestamp: string;
+  endTimestamp: string;
+  additionalMeta: string;
+}
 
+export async function uploadToCeramic(entry: CausalityNetworkSchema) {
+  try {
     const randomSeed = await OrbisKeyDidAuth.generateSeed("hex");
     const orbis = new OrbisDB({
       ceramic: {
@@ -183,24 +188,6 @@ export async function uploadToCeramic(file: File) {
     const auth = await OrbisKeyDidAuth.fromSeed(randomSeed);
     const authResult: OrbisConnectResult = await orbis.connectUser({ auth });
     console.log("authResult", authResult);
-    // get hash of file
-    const hashValue = await crypto.subtle.digest("SHA-256", buffer);
-    const hashArray = Array.from(new Uint8Array(hashValue));
-    // get bytes32 hash
-    const hashHex = "0x" + hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    console.log("hashHex", hashHex);
-
-    const entry = {
-      CID: cid ? cid.toString() : "n/a",
-      name: file.name,
-      owner: "Causality Network",
-      contentHash: hashHex,
-      endTimestamp: new Date().toISOString(),
-      additionalMeta: "",
-      startTimestamp: new Date().toISOString(),
-    };
-
-    console.log("entry", entry);
 
     // SAVE TO ORBIS
     const updatequery = await orbis
