@@ -33,9 +33,9 @@ const Home: NextPage = ({ posts }: any) => {
       <FeatureSection />
       <IntegrationsSection />
       <OfferingSection />
+      <BlogSection posts={posts} />
       <TestimonialSection />
       <TeamSection />
-      <BlogSection posts={posts} />
       <FaqSection />
     </MainLayout>
   );

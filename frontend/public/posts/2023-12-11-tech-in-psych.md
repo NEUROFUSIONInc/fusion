@@ -23,7 +23,7 @@ Our genes predict how we react differently to life stressors so there is no one 
 
 If you're a clinician or researcher interested in using our tools, [please reach out to us contact@usefusion.app](mailto:contact@usefusion.app)
 
-<iframe src="https://mfr.ca-1.osf.io/render?url=https://osf.io/download/mrbw5/?direct%26mode=render"
+<iframe src="https://drive.google.com/file/d/1QLvgQHtD3PPlUukJjzFpy3TmZEhcUxwR/preview"
     width="100%"
     scrolling="yes"
     height="677px"
