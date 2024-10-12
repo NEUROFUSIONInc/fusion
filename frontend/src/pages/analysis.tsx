@@ -138,7 +138,7 @@ const AnalysisPage: NextPage = () => {
           {eegFile && (
             <div className="flex items-center space-x-4">
               <label htmlFor="samplingFrequency" className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                Sampling Frequency:
+                Choose device:
               </label>
               <select
                 id="samplingFrequency"
@@ -150,7 +150,7 @@ const AnalysisPage: NextPage = () => {
                 }}
               >
                 <option value="256">Muse - 256Hz</option>
-                <option value="250">Neurosity - 250Hz</option>
+                <option value="256">Neurosity - 256Hz</option>
               </select>
             </div>
           )}
