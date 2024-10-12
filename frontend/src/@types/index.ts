@@ -65,6 +65,11 @@ export interface dataSource {
   sourceId: string;
 }
 
+export interface FusionUser {
+  publicKey: string;
+  name?: string;
+}
+
 export interface FusionHealthDataset {
   date: string;
   sleepSummary: FusionSleepSummary;
@@ -153,4 +158,17 @@ export interface IQuest {
   organizerName?: string;
   participants?: string[];
   prompts: Prompt[];
+}
+
+export interface OnboardingQuestion {
+  question: string;
+  options?: string[];
+  required?: boolean;
+  type: PromptResponseType;
+}
+
+export interface IQuestConfig {
+  onboardingQuestions?: OnboardingQuestion[];
+  prompts?: Prompt[];
+  experiments?: IExperiment[];
 }

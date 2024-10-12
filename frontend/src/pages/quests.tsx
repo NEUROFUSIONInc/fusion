@@ -9,9 +9,10 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
-import { IQuest, Prompt } from "~/@types";
+import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
+import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -40,7 +41,11 @@ const QuestsPage: NextPage = () => {
           title: questTitle,
           description: questDescription,
           organizerName: questOrganizer,
-          config: JSON.stringify({ prompts: prompts }),
+          config: JSON.stringify({
+            prompts: prompts,
+            onboardingQuestions: onboardingQuestions,
+            collaborators: collaborators,
+          }),
         },
         {
           headers: {
@@ -169,9 +174,35 @@ const QuestsPage: NextPage = () => {
   }, [activeQuest]);
 
   const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [collaborators, setCollaborators] = useState<FusionUser[]>([]);
   const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
   const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
+
+  const [activeOnboardingQuestion, setActiveOnboardingQuestion] = useState<OnboardingQuestion | null>(null);
+  const [onboardingQuestions, setOnboardingQuestions] = useState<OnboardingQuestion[]>([]);
+  const [editingOnboardingQuestionIndex, setEditingOnboardingQuestionIndex] = useState<number | null>(null);
+
+  const handleAddOnboardingQuestionModal = () => {
+    const newOnboardingQuestion: OnboardingQuestion = {
+      question: "",
+      type: "yesno",
+      required: true,
+    };
+    setEditingOnboardingQuestionIndex(null);
+    setActiveOnboardingQuestion(newOnboardingQuestion);
+  };
+
+  const handleEditOnboardingQuestion = (index: number) => {
+    const questionToEdit = onboardingQuestions[index];
+    console.log("questionToEdit", questionToEdit);
+    setEditingOnboardingQuestionIndex(index);
+    setActiveOnboardingQuestion(questionToEdit);
+  };
+
+  const handleDeleteOnboardingQuestion = (index: number) => {
+    setOnboardingQuestions((prevQuestions) => prevQuestions.filter((_, i) => i !== index));
+  };
 
   const handleAddPromptModal = () => {
     const newPrompt: Prompt = {
@@ -205,11 +236,12 @@ const QuestsPage: NextPage = () => {
       console.log("questConfig", questConfig);
       // make sure it's valid
       // handle based on if it's an array (old way) / or object with prompt key
-      const parsedConfig = JSON.parse(questConfig);
+      const parsedConfig = JSON.parse(questConfig) as IQuestConfig;
       if (Array.isArray(parsedConfig)) {
         setPrompts(parsedConfig);
-      } else if (parsedConfig && parsedConfig.prompts && Array.isArray(parsedConfig.prompts)) {
-        setPrompts(parsedConfig.prompts);
+      } else if (parsedConfig) {
+        setPrompts(parsedConfig.prompts ?? []);
+        setOnboardingQuestions(parsedConfig.onboardingQuestions ?? []);
       }
     }
   }, [questConfig]);
@@ -282,6 +314,52 @@ const QuestsPage: NextPage = () => {
                 required
               />
 
+              <Input
+                label="Collaborators"
+                type="text"
+                size="lg"
+                fullWidth
+                placeholder="Enter Fusion public keys of collaborators (comma-separated)"
+                value={collaborators.map((user) => user.publicKey).join(", ")}
+                className="mb-2"
+                onChange={(e) => setCollaborators(e.target.value.split(",").map((key) => ({ publicKey: key.trim() })))}
+              />
+
+              <div className="mt-4">
+                <Input
+                  label="Configure onboarding and informed consent questions"
+                  type="text"
+                  size="lg"
+                  className="h-40  hidden"
+                />
+
+                <Button onClick={handleAddOnboardingQuestionModal} leftIcon={<Plus />}>
+                  Add Onboarding Question
+                </Button>
+
+                {onboardingQuestions.length > 0 && (
+                  <div className="mt-5">
+                    <div className="flex flex-wrap gap-6">
+                      {onboardingQuestions.map((question, index) => (
+                        <div key={index} className="border p-4 rounded-md">
+                          <h3 className="font-bold">{question.question}</h3>
+                          <p>Type: {question.type}</p>
+                          <p>Required: {question.required ? "Yes" : "No"}</p>
+                          <div className="mt-2 space-x-2">
+                            <Button size="sm" onClick={() => handleEditOnboardingQuestion(index)}>
+                              Edit
+                            </Button>
+                            <Button size="sm" intent="ghost" onClick={() => handleDeleteOnboardingQuestion(index)}>
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="mt-4">
                 <Input
                   label="Configure prompts you want people to respond to"
@@ -314,9 +392,7 @@ const QuestsPage: NextPage = () => {
                               )
                               .join(", ")}
                           </p>
-                          <p>
-                            Time: {prompt.notificationConfig_startTime} - {prompt.notificationConfig_endTime}
-                          </p>
+                          <p>Time: {prompt.notificationConfig_startTime}</p>
                           <p>Frequency: {prompt.notificationConfig_countPerDay}</p>
 
                           <div className="mt-2 space-x-2">
@@ -480,6 +556,33 @@ const QuestsPage: NextPage = () => {
           onClose={() => {
             setActivePrompt(null);
             setDisplayAddPromptModal(false);
+          }}
+        />
+      )}
+
+      {/* Onboarding Question Create/Edit Modal */}
+      {activeOnboardingQuestion && (
+        <AddOnboardingQuestionModal
+          question={activeOnboardingQuestion}
+          setQuestion={setActiveOnboardingQuestion}
+          onSave={(question) => {
+            setActiveOnboardingQuestion(question);
+
+            if (editingOnboardingQuestionIndex !== null) {
+              setOnboardingQuestions((prevQuestions) => {
+                const updatedQuestions = [...prevQuestions];
+                updatedQuestions[editingOnboardingQuestionIndex] = question;
+                return updatedQuestions;
+              });
+            } else {
+              setOnboardingQuestions((prevQuestions) => [...prevQuestions, question]);
+            }
+            setActiveOnboardingQuestion(null);
+            setEditingOnboardingQuestionIndex(null);
+          }}
+          onClose={() => {
+            setActiveOnboardingQuestion(null);
+            setEditingOnboardingQuestionIndex(null);
           }}
         />
       )}
