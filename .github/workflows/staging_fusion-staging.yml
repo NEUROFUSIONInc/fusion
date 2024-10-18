@@ -56,11 +56,14 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          pattern: node-app-*
-          merge-multiple: true
+          name: node-app-${{ runner.os }}
+          path: .
 
-      - name: unzip artifact for deployment
-        run: unzip release.zip
+      - name: Unzip artifact for deployment
+        run: unzip release.zip -d ./app
+
+      - name: List contents of the current directory
+        run: ls -R
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
@@ -69,4 +72,4 @@ jobs:
           app-name: "fusion-staging"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0F583A999268441B9740DD851D5977B0 }}
-          package: .
+          package: ./app
