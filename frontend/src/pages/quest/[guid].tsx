@@ -8,11 +8,12 @@ import { Button } from "~/components/ui";
 import React, { useCallback } from "react";
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
-import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IQuest } from "~/@types";
+import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IExperiment, IQuest } from "~/@types";
 import { usePathname } from "next/navigation";
 import { FusionLineChart } from "~/components/charts";
 import dayjs from "dayjs";
 import { ShareModal } from "~/components/quests";
+import { Experiment } from "~/components/lab";
 
 const categories: DisplayCategory[] = [
   {
@@ -29,8 +30,19 @@ const categories: DisplayCategory[] = [
   },
 ];
 
+interface FusionConsentClaim {
+  [key: string]: string | number;
+  timestamp: number;
+}
+
+export interface FusionQuestSubscriber {
+  userNpub: string;
+  consentClaims: FusionConsentClaim[];
+}
+
 const QuestDetailPage: NextPage = () => {
   const [quest, setQuest] = React.useState<IQuest | null>(null);
+  const [experiment, setExperiment] = React.useState<IExperiment | null>(null);
   const pathname = usePathname();
 
   // get the last part of the pathname
@@ -158,7 +170,13 @@ const QuestDetailPage: NextPage = () => {
       </div>
 
       {/* if the quest contains an experiment link, embed it */}
-      {/* <Experiment {...quest?.experiment} /> */}
+      {experiment && (
+        <div className="mt-5">
+          <h3 className="text-xl mb-2">Experiment</h3>
+          <Experiment {...experiment} />
+        </div>
+      )}
+
       <div className="flex space-x-2 gap-x-2 mt-4">
         <Button
           className=""
@@ -185,24 +203,32 @@ const QuestDetailPage: NextPage = () => {
         {questDatasets && questDatasets.length > 0 && (
           <>
             <div className="mt-5">
+              <div className="mb-4">
+                <label htmlFor="category-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Select Category
+                </label>
+                <select
+                  id="category-select"
+                  className="block w-64 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                  value={category?.value}
+                  onChange={(e) => setCategory(categories.find((cat) => cat.value === e.target.value) || categories[0])}
+                >
+                  {categories.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <p>{category?.name} in the past week</p>
               <FusionLineChart
+                key={`${category?.value}-${Math.random()}`}
                 seriesData={questDatasets}
                 timePeriod="week"
                 startDate={dayjs().startOf("day")}
                 category={category}
               />
             </div>
-
-            {/* <div className="mt-5">
-              <p>Sleep in the past week</p>
-              <FusionLineChart
-                seriesData={questDatasets}
-                timePeriod="week"
-                startDate={dayjs().startOf("day")}
-                category={{ name: "Sleep", value: "sleep" }}
-              />
-            </div> */}
           </>
         )}
 
