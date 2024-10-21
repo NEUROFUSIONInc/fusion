@@ -101,22 +101,22 @@ if (typeof window !== "undefined") {
   });
 }
 
-export async function getFiles() {
+export async function getLocalFiles() {
   const db = await dbPromise;
   return await db.getAll("files");
 }
 
-export async function saveFile(name: string, file: File) {
+export async function saveLocalFile(name: string, file: File) {
   const db = await dbPromise;
   await db.put("files", { name, file });
 }
 
-export async function getFile(name: IDBValidKey | IDBKeyRange) {
+export async function getLocalFile(name: IDBValidKey | IDBKeyRange) {
   const db = await dbPromise;
   return await db.get("files", name);
 }
 
-export async function deleteFile(name: IDBValidKey | IDBKeyRange) {
+export async function deleteLocalFile(name: IDBValidKey | IDBKeyRange) {
   const db = await dbPromise;
   await db.delete("files", name);
 }

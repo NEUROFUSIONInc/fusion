@@ -6,7 +6,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { DashboardLayout, Meta } from "~/components/layouts";
 
 import { useState, useEffect } from "react";
-import { getFiles, getFile, getCSVFile, deleteFile } from "~/services/storage.service";
+import { getLocalFiles, getLocalFile, getCSVFile, deleteLocalFile } from "~/services/storage.service";
 import { Button } from "~/components/ui";
 import dayjs from "dayjs";
 
@@ -15,7 +15,7 @@ const DatasetPage: NextPage = () => {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      const fileList = await getFiles();
+      const fileList = await getLocalFiles();
       setFiles(
         fileList
           .map((file) => file.name)
@@ -31,7 +31,7 @@ const DatasetPage: NextPage = () => {
   }, []);
 
   const handleDownload = async (fileName: string) => {
-    const file = await getFile(fileName);
+    const file = await getLocalFile(fileName);
     if (file && file.file) {
       let csvFile;
       if (fileName.endsWith(".csv")) {
@@ -100,7 +100,7 @@ const DatasetPage: NextPage = () => {
               <Button
                 onClick={() => {
                   if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-                    deleteFile(name)
+                    deleteLocalFile(name)
                       .then(() => {
                         setFiles(files.filter((f) => f !== name));
                       })
