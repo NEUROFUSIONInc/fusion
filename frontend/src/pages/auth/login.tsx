@@ -20,7 +20,13 @@ const LoginPage = React.memo(() => {
 
   useEffect(() => {
     // @ts-ignore
-    setShowNostrExtensionLogin(global.window && global.window.nostr);
+    setShowNostrExtensionLogin(global.window && "nostr" in global.window);
+    // Check if there's a callback URL and automatically login
+    if (router.query.callbackUrl) {
+      (async () => {
+        await useGuestAccount();
+      })();
+    }
   }, []);
 
   const useGuestAccount = async () => {
@@ -83,7 +89,6 @@ const LoginPage = React.memo(() => {
         callbackUrl: router.query.callbackUrl?.toString() ?? "/recordings",
       });
     } else {
-      // TODO: render error message
       alert("Error logging in, please try again or reach out to contact@usefusion.app");
     }
   };
@@ -92,7 +97,7 @@ const LoginPage = React.memo(() => {
     <MainLayout>
       <Meta
         meta={{
-          title: "Fusion | Login",
+          title: "Login | NeuroFusion Explorer",
         }}
       />
       <div className="mx-auto mt-16 flex w-full justify-center">

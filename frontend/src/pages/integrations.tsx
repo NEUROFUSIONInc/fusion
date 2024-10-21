@@ -25,9 +25,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
+    const currentUrl = `${req.url}`;
     return {
       redirect: {
-        destination: "/auth/login",
+        destination: `/auth/login?callbackUrl=${encodeURIComponent(currentUrl)}`,
         permanent: false,
       },
     };
