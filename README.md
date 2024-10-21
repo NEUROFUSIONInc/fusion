@@ -18,11 +18,11 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
   - [x] Visual Oddball
   - [x] Flappy Bird game (Detecting intent & frustration)
 
-- [ ] Analysis of collected data https://usefusion.ai/analysis
+- [x] Analysis of collected data https://usefusion.ai/analysis
 
   - [x] Chart of steady state frequency power across recordings
   - [x] Periodic vs. aperiodic frequency evaluation using [fooof package](https://fooof-tools.github.io/fooof/)
-  - [ ] If applicable event related potential analysis
+  - [x] Support for P300 event related potential analysis [Run experiment](https://usefusion.app/recordings)
 
 - [ ] Running Distributed Studies with people (Quests) https://usefusion.ai/blog/quests
 
@@ -32,7 +32,7 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
   - [ ] Design and upload custom EEG experiment protocols to participants' devices
 
 - [ ] Connecting Other Sources
-  - [ ] Connect your screentime events & productivity metrics using [ActivityWatch](https://activitywatch.net)
+  - [x] Connect your screentime events & productivity metrics using [ActivityWatch](https://usefusion.ai/integrations)
   - [ ] Connect screentime events & productivity metrics from [Magicflow](https://magicflow.com)
 
 ## Tech Stack
@@ -47,7 +47,7 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
 
 We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
 
-- [Join the Fusion Community](https://discord.gg/3wCNJ6X4RF)
+- [Join the NeuroFusion Community](https://discord.gg/3wCNJ6X4RF)
 
 - If you see any parts of the code you think needs updating, please
 - Consider creating a pull requests [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)

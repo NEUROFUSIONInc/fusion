@@ -19,7 +19,7 @@ export const integrations = [
   {
     slug: "neurosity",
     title: "Neurosity (EEG Brain Data)",
-    href: "https://neurosity.co",
+    href: "https://neurosity.co/crown",
     imageUrl: "/images/integrations/neurosity_icon_light.png",
     description:
       "Neurosity is a Brain Computer Interface (BCI) wearable that measures EEG brain activity. It also predicts how focused & calm you are in a given moment.",
