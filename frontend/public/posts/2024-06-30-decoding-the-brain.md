@@ -30,7 +30,7 @@ I also discuss the importance of context when interpreting EEG data, the advanta
 - Topomap (Brain Frequency Power) analysis during active periods of chess game
   <img src="/images/blog/decodingbrain/topomaps.png" alt="Evaluated Brain Power Analysis" data-zoomable style="cursor: zoom-in;" />
 
-A you a:
+Are you a:
 
 - A researcher interested in doing remote brain data collection during your cognitive tasks?
 - Someone curious and interested in joining a future study?
