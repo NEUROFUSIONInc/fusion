@@ -2,9 +2,9 @@ import type { ConfigContext, ExpoConfig } from "@expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "Fusion",
+  name: "Fusion Copilot",
   slug: "fusion",
-  version: "2.0.2",
+  version: "2.1.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "92",
+    buildNumber: "93",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 92,
+    versionCode: 93,
     softwareKeyboardLayoutMode: "pan",
     permissions: [
       "android.permission.health.READ_STEPS",
@@ -69,7 +69,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-font",
     "react-native-iap",
     "expo-secure-store",
-    ["react-native-health-connect"],
+    [
+      "react-native-health-connect",
+      {
+        healthConnectPermission: [
+          "READ_STEPS",
+          "READ_HEART_RATE",
+          "READ_SLEEP",
+        ],
+      },
+    ],
     [
       "expo-build-properties",
       {

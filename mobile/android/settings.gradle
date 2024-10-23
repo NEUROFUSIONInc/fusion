@@ -1,4 +1,4 @@
-rootProject.name = 'Fusion'
+rootProject.name = 'Fusion Copilot'
 
 dependencyResolutionManagement {
   versionCatalogs {
