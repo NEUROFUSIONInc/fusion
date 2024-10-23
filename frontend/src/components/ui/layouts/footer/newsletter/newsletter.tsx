@@ -34,7 +34,7 @@ export const Newsletter = () => {
     <div className="mb-8 px-6 text-center">
       <h2 className="text-2xl font-medium md:text-4xl">Subscribe to our newsletter</h2>
       <p className="my-4 max-w-xl text-[15px] md:text-base">
-        Get monthly updates from the team, on features, experiments and more.
+        Get updates from us on studies we're running and experiments you can join.
       </p>
       <div className="my-8 flex justify-center">
         <div id="custom-substack-embed" />
