@@ -21,11 +21,6 @@ import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
 
-/**
- *
- * TODO:
- */
-
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
 
@@ -104,6 +99,7 @@ export function QuestDetailScreen() {
       },
     });
 
+    // TODO: fix this!
     getQuestSubscriptionStatus();
     handleFetchQuestFromRemote();
     handleFetchQuestPrompts();
@@ -272,21 +268,23 @@ export function QuestDetailScreen() {
             <View className="mt-5">
               {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
-              {quest?.prompts?.map((prompt) => (
-                <View key={Math.random()} className="my-2">
-                  <PromptDetails
-                    prompt={prompt}
-                    variant="detail"
-                    displayFrequency
-                    onClick={() => {
-                      if (isSubscribed !== false) {
-                        handlePromptExpandSheet(prompt);
-                        // handle prompt bottom sheet
-                      }
-                    }}
-                  />
-                </View>
-              ))}
+              {quest?.prompts &&
+                quest.prompts.length > 0 &&
+                quest.prompts.map((prompt) => (
+                  <View key={Math.random()} className="my-2">
+                    <PromptDetails
+                      prompt={prompt}
+                      variant="detail"
+                      displayFrequency
+                      onClick={() => {
+                        if (isSubscribed !== false) {
+                          handlePromptExpandSheet(prompt);
+                          // handle prompt bottom sheet
+                        }
+                      }}
+                    />
+                  </View>
+                ))}
             </View>
           </View>
 
