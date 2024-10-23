@@ -107,7 +107,7 @@ export const HealthCard = () => {
           Steps
         </Text>
         <View className="flex flex-row w-full items-end justify-between">
-          <Text className="font-sans text-base text-white opacity-60">
+          <Text className="font-sans text-2xl text-white opacity-60">
             {Math.floor(
               healthDataset.find(
                 (data) => data.date === dayjs().format("YYYY-MM-DD")
@@ -135,7 +135,7 @@ export const HealthCard = () => {
         </Text>
 
         <View className="flex flex-row w-full items-end justify-between">
-          <Text className="font-sans text-base text-white opacity-60">
+          <Text className="font-sans text-2xl text-white opacity-60">
             {secondsToHms(
               healthDataset.find(
                 (data) => data.date === dayjs().format("YYYY-MM-DD")
