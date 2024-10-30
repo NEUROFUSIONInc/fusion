@@ -12,6 +12,13 @@ export interface LineChartProps {
   category: DisplayCategory;
 }
 
+export const secondsToHms = (d: number) => {
+  if (!d) return "-- hrs -- mins";
+  const hours = Math.floor(d / 3600);
+  const minutes = Math.floor((d % 3600) / 60);
+  return `${hours} hrs ${minutes} mins`;
+};
+
 export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, timePeriod, category }) => {
   const [chartOptions, setChartOptions] = React.useState<any>({});
 
@@ -26,8 +33,7 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
           let tooltipContent = params[0].axisValue + "<br/>";
           params.forEach((param: any) => {
             if (category.name.toLowerCase() === "sleep") {
-              const duration = dayjs().startOf("day").add(param.value[1], "seconds");
-              tooltipContent += param.marker + " " + param.seriesName + ": " + duration.format("H[h] m[m]") + "<br/>";
+              tooltipContent += param.marker + " " + param.seriesName + ": " + secondsToHms(param.value[1]) + "<br/>";
             } else {
               tooltipContent += param.marker + " " + param.seriesName + ": " + param.value[1] + "<br/>";
             }
@@ -57,8 +63,7 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
           axisLabel: {
             formatter: function (value: number) {
               if (category.name.toLowerCase() === "sleep") {
-                const duration = dayjs().startOf("day").add(value, "seconds");
-                return duration.format("H[h] m[m]");
+                return secondsToHms(value);
               }
               return value;
             },
