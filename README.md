@@ -70,5 +70,3 @@ We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc
 ## I want to talk to someone on the team for help or discuss collaboration together?
 
 If you need help, you can ask questions on our [Discord](https://discord.gg/DXyHcqvw3C), or send an email to [contact@usefusion.app](mailto:contact@usefusion.app).
-
-For any contribution that is not related to code of the Fusion library (including the documentation) should not be asked on GitHub, but rather on the Discord channel.
