@@ -13,9 +13,11 @@ import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/
 import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
+import { useSearchParams } from "next/navigation";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
+  const urlParams = useSearchParams();
   const [questTitle, setQuestTitle] = React.useState<string>("");
   const [questDescription, setQuestDescription] = React.useState<string>("");
   const [questOrganizer, setQuestOrganizer] = React.useState<string>("");
@@ -172,6 +174,43 @@ const QuestsPage: NextPage = () => {
       }
     })();
   }, [activeQuest]);
+
+  // handle edit from create page
+  React.useEffect(() => {
+    if (activeView == "view" || activeView == "create") {
+      // Clear URL params when returning to view
+      const url = new URL(window.location.href);
+      url.searchParams.delete("guid");
+      url.searchParams.delete("action");
+      window.history.pushState({}, "", url);
+    }
+    if (activeView == "edit" && activeQuest) {
+      // Set URL params for guid and action
+      const url = new URL(window.location.href);
+      url.searchParams.set("guid", activeQuest.guid);
+      url.searchParams.set("action", "edit");
+      window.history.pushState({}, "", url);
+    }
+  }, [activeView, activeQuest]);
+
+  // handle direct edit link
+  React.useEffect(() => {
+    const guid = urlParams.get("guid");
+    const action = urlParams.get("action");
+
+    if (guid && action === "edit") {
+      // Find the quest in savedQuests that matches the guid
+      const quest = savedQuests.find((q) => q.guid === guid);
+      if (quest) {
+        setActiveQuest(quest);
+        setQuestTitle(quest.title);
+        setQuestDescription(quest.description);
+        setQuestConfig(quest.config);
+        setQuestOrganizer(quest.organizerName ?? "");
+        setActiveView("edit");
+      }
+    }
+  }, [savedQuests, urlParams]);
 
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [collaborators, setCollaborators] = useState<string>(""); // comma separated public keys
