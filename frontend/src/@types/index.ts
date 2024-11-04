@@ -170,5 +170,6 @@ export interface OnboardingQuestion {
 export interface IQuestConfig {
   onboardingQuestions?: OnboardingQuestion[];
   prompts?: Prompt[];
-  experiments?: IExperiment[];
+  collaborators?: string; // comma separated public keys
+  experimentConfig?: string; // html code for the experiment
 }
