@@ -7,7 +7,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Pencil, Plus, Trash } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
 import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
@@ -29,30 +29,40 @@ const QuestsPage: NextPage = () => {
   const [experimentConfig, setExperimentConfig] = React.useState<string>("");
   const [showExperimentEditor, setShowExperimentEditor] = React.useState<boolean>(false);
 
+  const buildQuestRequestBody = (isEdit: boolean = false, guid: string = "") => {
+    const questObject: {
+      title: string;
+      description: string;
+      organizerName: string;
+      config: string;
+      guid?: string;
+    } = {
+      title: questTitle,
+      description: questDescription,
+      organizerName: questOrganizer,
+      config: JSON.stringify({
+        prompts: prompts,
+        onboardingQuestions: onboardingQuestions,
+        collaborators: collaborators, // comma separated public keys
+        experimentConfig: experimentConfig, // it's the code for the experiment in html format
+      }),
+      ...(isEdit ? { guid } : {}),
+    };
+
+    return questObject;
+  };
+
   const saveQuest = async () => {
     if (!questTitle.trim() || !questDescription.trim() || !questOrganizer.trim() || prompts.length === 0) {
       alert("All fields must be filled and at least one prompt must be added");
       return;
     }
     try {
-      const res = await api.post(
-        "/quest",
-        {
-          title: questTitle,
-          description: questDescription,
-          organizerName: questOrganizer,
-          config: JSON.stringify({
-            prompts: prompts,
-            onboardingQuestions: onboardingQuestions,
-            collaborators: collaborators,
-          }),
+      const res = await api.post("/quest", buildQuestRequestBody(), {
+        headers: {
+          Authorization: `Bearer ${session.data?.user?.authToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${session.data?.user?.authToken}`,
-          },
-        }
-      );
+      });
 
       if (res.status === 201) {
         console.log("Quest saved successfully");
@@ -75,21 +85,11 @@ const QuestsPage: NextPage = () => {
       return;
     }
     try {
-      const res = await api.post(
-        "/quest/edit",
-        {
-          title: questTitle,
-          description: questDescription,
-          organizerName: questOrganizer,
-          config: JSON.stringify({ prompts: prompts }),
-          guid: activeQuest?.guid,
+      const res = await api.post("/quest/edit", buildQuestRequestBody(true, activeQuest?.guid ?? ""), {
+        headers: {
+          Authorization: `Bearer ${session.data?.user?.authToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${session.data?.user?.authToken}`,
-          },
-        }
-      );
+      });
 
       if (res.status === 200) {
         console.log("Quest edited successfully");
@@ -174,7 +174,7 @@ const QuestsPage: NextPage = () => {
   }, [activeQuest]);
 
   const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [collaborators, setCollaborators] = useState<FusionUser[]>([]);
+  const [collaborators, setCollaborators] = useState<string>(""); // comma separated public keys
   const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
   const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
   const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
@@ -242,6 +242,8 @@ const QuestsPage: NextPage = () => {
       } else if (parsedConfig) {
         setPrompts(parsedConfig.prompts ?? []);
         setOnboardingQuestions(parsedConfig.onboardingQuestions ?? []);
+        setCollaborators(parsedConfig.collaborators ?? "");
+        setExperimentConfig(parsedConfig.experimentConfig ?? "");
       }
     }
   }, [questConfig]);
@@ -320,9 +322,9 @@ const QuestsPage: NextPage = () => {
                 size="lg"
                 fullWidth
                 placeholder="Enter Fusion public keys of collaborators (comma-separated)"
-                value={collaborators.map((user) => user.publicKey).join(", ")}
+                value={collaborators}
                 className="mb-2"
-                onChange={(e) => setCollaborators(e.target.value.split(",").map((key) => ({ publicKey: key.trim() })))}
+                onChange={(e) => setCollaborators(e.target.value)}
               />
 
               <div className="mt-4">
@@ -413,7 +415,7 @@ const QuestsPage: NextPage = () => {
               {/* Include experiments you want people to run */}
               <div className="mt-5">
                 <Input
-                  label="Include experiments you want people to run"
+                  label="Configure experiments you want people to run"
                   type="text"
                   size="lg"
                   fullWidth
@@ -423,19 +425,31 @@ const QuestsPage: NextPage = () => {
                   onChange={(e) => setExperimentConfig(e.target.value)}
                 />
 
-                <Button
-                  onClick={() => {
-                    setShowExperimentEditor(true);
-                  }}
-                  leftIcon={<Plus />}
-                >
-                  Add Experiment
-                </Button>
+                <div className="flex flex-row items-center gap-2">
+                  <Button
+                    onClick={() => {
+                      setShowExperimentEditor(true);
+                    }}
+                    leftIcon={<Pencil />}
+                  >
+                    {experimentConfig ? "Edit Experiment" : "Create Experiment"}
+                  </Button>
+
+                  {experimentConfig && (
+                    <Button intent="outlined" leftIcon={<Trash />} onClick={() => setExperimentConfig("")}>
+                      Delete Experiment
+                    </Button>
+                  )}
+                </div>
 
                 {showExperimentEditor && (
                   <div className="mt-2">
-                    <Button onClick={() => setShowExperimentEditor(false)}>Close</Button>
-                    <ExperimentEditor />
+                    <ExperimentEditor
+                      experimentCode={experimentConfig}
+                      setExperimentCode={setExperimentConfig}
+                      isOpen={showExperimentEditor}
+                      onClose={() => setShowExperimentEditor(false)}
+                    />
                   </div>
                 )}
               </div>
