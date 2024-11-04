@@ -7,7 +7,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input } 
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Pencil, Plus, Save, Trash } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
 import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
@@ -465,8 +465,9 @@ const QuestsPage: NextPage = () => {
                     await saveQuest();
                   }
                 }}
+                leftIcon={<Save />}
               >
-                Save Quest
+                {activeView === "edit" ? "Update Quest" : "Save Quest"}
               </Button>
             </div>
           </div>
