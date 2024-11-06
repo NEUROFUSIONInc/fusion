@@ -136,13 +136,13 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
             />
 
             {previewOpen && (
-              <div className="h-[60vh] border border-slate-200 rounded">
+              <div className="h-[60vh] border border-slate-200 rounded overflow-auto">
                 <Experiment
                   id={0}
                   name="Preview"
                   description="Preview of experiment"
                   code={fileContent}
-                  showLogs={false}
+                  showLogs={true}
                 />
               </div>
             )}

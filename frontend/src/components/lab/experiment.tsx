@@ -271,7 +271,15 @@ export const Experiment: FC<IExperiment> = (experiment) => {
         {(experiment.url || experiment.code) && (
           <div className="m-3">
             <iframe
-              src={experiment.url || `data:text/html;charset=utf-8,${encodeURIComponent(experiment.code || "")}`}
+              ref={(frame) => {
+                if (frame) {
+                  if (experiment.url) {
+                    frame.src = experiment.url;
+                  } else if (experiment.code) {
+                    frame.srcdoc = experiment.code;
+                  }
+                }
+              }}
               style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
               title={experiment.name}
               allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
@@ -285,7 +293,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                     if (experiment.url) {
                       iframe.src = iframe.src;
                     } else if (experiment.code) {
-                      iframe.src = `data:text/html;charset=utf-8,${encodeURIComponent(experiment.code)}`;
+                      iframe.srcdoc = experiment.code;
                     }
                   }
                 }}
