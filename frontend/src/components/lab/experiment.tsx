@@ -284,6 +284,20 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               title={experiment.name}
               allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; microphone; payment; usb; xr-spatial-tracking"
               sandbox="allow-forms allow-downloads allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+              tabIndex={0}
+              onFocus={() => {
+                const iframe = document.querySelector("iframe");
+                if (iframe) {
+                  iframe.style.outline = "2px solid #4f46e5";
+                  iframe.contentWindow?.focus(); // Focus the iframe content window
+                }
+              }}
+              onBlur={() => {
+                const iframe = document.querySelector("iframe");
+                if (iframe) {
+                  iframe.style.outline = "none";
+                }
+              }}
             ></iframe>
             <div className="mt-3 flex justify-end">
               <Button
