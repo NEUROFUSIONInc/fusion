@@ -23,17 +23,92 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
   isOpen,
   onClose,
 }) => {
-  const defaultCode = `
-<!DOCTYPE html>
+  const defaultCode = `<!DOCTYPE html>
 <html>
   <head>
-    <!-- YOUR CODE GOES HERE -->
+    <meta charset="UTF-8">
+    <title>Sample Cognitive Experiment</title>
+
+    <!-- JSPsych Core -->
+    <script src="https://unpkg.com/jspsych@8.0.3"></script>
+    <link href="https://unpkg.com/jspsych@8.0.3/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+    <!-- Plugins -->
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.2"></script>
+
+    <!-- Styles -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      #jspsych-container {
+        position: relative;
+        overflow: none;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
-    <!-- YOUR CODE GOES HERE -->
+    <div id="jspsych-container"></div>
+    <script>
+      const jsPsych = initJsPsych({
+        on_finish: function() {
+          window.parent.postMessage(jsPsych.data.get(), "*");
+        },
+        on_trial_start: function(trial) {
+          if (!trial.data) {
+            trial.data = {};
+          }
+          trial.data.unixTimestamp = Date.now();
+        },
+        display_element: "jspsych-container"
+      });
+
+      // Add your experiment code here
+      const timeline = [];
+      
+      // Example instructions
+      const instructions = {
+        type: jsPsychInstructions,
+        pages: [
+          'Welcome to the experiment',
+          'Press next to begin'
+        ],
+        show_clickable_nav: true
+      };
+
+      // Example trial
+      const trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p style="font-size: 48px;">+</p>',
+        choices: "NO_KEYS",
+        trial_duration: 1000,
+        data: {
+          task: 'fixation'
+        }
+      };
+
+      timeline.push(instructions);
+      timeline.push(trial);
+      
+      jsPsych.run(timeline);
+    </script>
   </body>
-</html>
-    `;
+</html>`;
 
   const [fileContent, setFileContent] = useState<string>(experimentCode || defaultCode);
 
