@@ -38,7 +38,7 @@ export const Logo: FC<LinkProps> = ({ withText, size, className, neuro }) => {
       />
       {withText && (
         <h2 className="ml-2 font-heading text-2xl font-medium leading-10 text-primary-900 dark:text-white">
-          {neuro ? "NEUROFUSION" : "FUSION"}
+          NEUROFUSION
         </h2>
       )}
     </Link>

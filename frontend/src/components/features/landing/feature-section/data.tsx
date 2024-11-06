@@ -5,8 +5,8 @@ import { IFusionFeature } from "./types";
 export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
-    pretitle: "Your",
-    title: "personal copilot",
+    pretitle: "Use",
+    title: "fusion copilot to",
     description: "Understand changes in your behavior over time with personalized prompts.",
     featuresList: [
       "Get recommendations to meet your daily goals",
