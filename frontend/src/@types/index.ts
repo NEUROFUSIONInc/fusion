@@ -17,6 +17,8 @@ export interface IExperiment {
   url?: string;
   tags?: string[];
   duration?: number;
+  code?: string;
+  showLogs?: boolean;
 }
 
 export interface EventData {

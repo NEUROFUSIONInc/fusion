@@ -1,8 +1,9 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Eye, Play, Save, X } from "lucide-react";
+import { Eye, EyeOff, Pause, Play, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button/button";
 import { Editor } from "@monaco-editor/react";
+import { Experiment } from "./experiment";
 
 interface IExperimentEditorProps {
   experimentCode: string;
@@ -42,6 +43,7 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
     <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.2"></script>
@@ -75,7 +77,7 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
           }
           trial.data.unixTimestamp = Date.now();
         },
-        display_element: "jspsych-container"
+        display_element: "jspsych-container",
       });
 
       // Add your experiment code here
@@ -112,6 +114,8 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
 
   const [fileContent, setFileContent] = useState<string>(experimentCode || defaultCode);
 
+  const [previewOpen, setPreviewOpen] = useState<boolean>(true);
+
   return (
     <Dialog.Root open={isOpen}>
       <Dialog.Portal>
@@ -121,18 +125,36 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
             Experiment Editor
           </Dialog.Title>
 
-          <Editor
-            height="60vh"
-            defaultLanguage="html"
-            defaultValue={fileContent}
-            onChange={(value) => {
-              setFileContent(value ?? "");
-            }}
-          />
+          <div className={`grid ${previewOpen ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
+            <Editor
+              height="60vh"
+              defaultLanguage="html"
+              defaultValue={fileContent}
+              onChange={(value) => {
+                setFileContent(value ?? "");
+              }}
+            />
+
+            {previewOpen && (
+              <div className="h-[60vh] border border-slate-200 rounded">
+                <Experiment
+                  id={0}
+                  name="Preview"
+                  description="Preview of experiment"
+                  code={fileContent}
+                  showLogs={false}
+                />
+              </div>
+            )}
+          </div>
 
           <div className="flex justify-end mt-4 gap-4">
-            <Button leftIcon={<Play />} intent="outlined">
-              Preview
+            <Button
+              leftIcon={previewOpen ? <EyeOff /> : <Eye />}
+              intent="outlined"
+              onClick={() => setPreviewOpen(!previewOpen)}
+            >
+              {previewOpen ? "Hide Preview" : "Show Preview"}
             </Button>
             <Button
               leftIcon={<Save />}

@@ -7,7 +7,7 @@ import { Button } from "../ui/button/button";
 
 import { connectToNeurosityDevice, useNeurosityState } from "~/hooks";
 import { neurosityService, neurosity } from "~/services";
-import { PlugZap, RotateCw } from "lucide-react";
+import { List, PlugZap, RotateCw } from "lucide-react";
 import { appInsights } from "~/utils/appInsights";
 import { IExperiment, EventData } from "~/@types";
 import SignalQuality from "./signalquality";
@@ -268,10 +268,10 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           </>
         )}
 
-        {experiment.url && (
+        {(experiment.url || experiment.code) && (
           <div className="m-3">
             <iframe
-              src={experiment.url}
+              src={experiment.url || `data:text/html;charset=utf-8,${encodeURIComponent(experiment.code || "")}`}
               style={{ width: "100%", height: "500px", border: "0", borderRadius: "4px", overflow: "hidden" }}
               title={experiment.name}
               allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking; download; fullscreen;"
@@ -280,10 +280,12 @@ export const Experiment: FC<IExperiment> = (experiment) => {
             <div className="mt-3 flex justify-end">
               <Button
                 onClick={() => {
-                  if (experiment.url) {
-                    const iframe = document.querySelector("iframe") as HTMLIFrameElement;
-                    if (iframe) {
+                  const iframe = document.querySelector("iframe") as HTMLIFrameElement;
+                  if (iframe) {
+                    if (experiment.url) {
                       iframe.src = iframe.src;
+                    } else if (experiment.code) {
+                      iframe.src = `data:text/html;charset=utf-8,${encodeURIComponent(experiment.code)}`;
                     }
                   }
                 }}
@@ -293,6 +295,12 @@ export const Experiment: FC<IExperiment> = (experiment) => {
               >
                 Restart Experiment
               </Button>
+
+              {experiment.showLogs && (
+                <Button intent="dark" size="sm" leftIcon={<List />}>
+                  Show Logs
+                </Button>
+              )}
             </div>
           </div>
         )}
