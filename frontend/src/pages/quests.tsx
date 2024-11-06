@@ -13,17 +13,18 @@ import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/
 import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ShareModal } from "~/components/quests/share-modal";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
+  const router = useRouter();
   const urlParams = useSearchParams();
   const [questTitle, setQuestTitle] = React.useState<string>("");
   const [questDescription, setQuestDescription] = React.useState<string>("");
   const [questOrganizer, setQuestOrganizer] = React.useState<string>("");
   const [questConfig, setQuestConfig] = React.useState<string>("");
-  const [activeView, setActiveView] = React.useState<"create" | "view" | "edit">("create");
+  const [activeView, setActiveView] = React.useState<"create" | "view" | "edit" | undefined>();
   const [displayShareModal, setDisplayShareModal] = React.useState<boolean>(false);
   const [savedQuests, setSavedQuests] = React.useState<IQuest[]>([]);
   const [activeQuest, setActiveQuest] = React.useState<IQuest | null>(null);
@@ -158,6 +159,10 @@ const QuestsPage: NextPage = () => {
   };
 
   React.useEffect(() => {
+    // Check if we're on the base /quests path with no parameters
+    if (window.location.pathname === "/quests" && !urlParams.toString()) {
+      setActiveView("view");
+    }
     getSavedQuests();
   }, []);
 
@@ -180,11 +185,16 @@ const QuestsPage: NextPage = () => {
   React.useEffect(() => {
     if (activeView == "view" || activeView == "create") {
       getSavedQuests();
-      // Clear URL params when returning to view
-      const url = new URL(window.location.href);
-      url.searchParams.delete("guid");
-      url.searchParams.delete("action");
-      window.history.pushState({}, "", url);
+      // Clear all form entries and URL params
+      setQuestTitle("");
+      setQuestDescription("");
+      setQuestOrganizer("");
+      setQuestConfig("");
+      setPrompts([]);
+      setCollaborators("");
+      setExperimentConfig("");
+      setOnboardingQuestions([]);
+      router.replace(window.location.pathname);
     }
     if (activeView == "edit" && activeQuest) {
       // Set URL params for guid and action
@@ -314,7 +324,7 @@ const QuestsPage: NextPage = () => {
           Create Quest
         </Button>
       </div>
-      {["create", "edit"].includes(activeView) && (
+      {activeView && ["create", "edit"].includes(activeView) && (
         <>
           <p className="mb-5 mt-5 text-lg dark:text-slate-400">
             Create a new quest that you want other participants to run
