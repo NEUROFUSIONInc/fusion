@@ -1,5 +1,6 @@
 const dayjs = require("dayjs");
 const db = require("../models/index");
+const { nip19 } = require("nostr-tools");
 
 exports.saveQuest = async (req, res) => {
   try {
@@ -32,9 +33,23 @@ exports.saveQuest = async (req, res) => {
 
 exports.getCreatorQuests = async (req, res) => {
   try {
+    // Check if userPubkey is already npub encoded
+    let userPubkey = req.user.userPubkey;
+    if (!userPubkey.startsWith('npub1')) {
+      userPubkey = nip19.npubEncode(userPubkey);
+    }
+
+    /**
+     * This fetches quest the user created or the user is a collaborator on
+     */
     const quests = await db.Quest.findAll({
       where: {
-        userGuid: req.user.userGuid,
+        [db.Sequelize.Op.or]: [
+          { userGuid: req.user.userGuid },
+          db.Sequelize.literal(
+            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${userPubkey}%')`
+          ),
+        ],
       },
     });
 
@@ -49,6 +64,7 @@ exports.getCreatorQuests = async (req, res) => {
       quests,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       error: "Error getting quests",
     });
@@ -82,15 +98,32 @@ exports.getQuestByCode = async (req, res) => {
 
 exports.editQuest = async (req, res) => {
   try {
-    const quest = await db.Quest.findOne({
+    // check if the user is the creator of the quest
+    const existingQuest = await db.Quest.findOne({
       where: {
         guid: req.body.guid,
-      },
+        [db.Sequelize.Op.or]: [
+          { userId: req.user.id },
+          db.Sequelize.literal(
+            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${req.user.publicKey}%')`
+          )
+        ]
+      }
     });
 
+    if (!existingQuest) {
+      res.status(403).json({
+        error: "Unauthorized - you must be the creator or a collaborator to edit this quest"
+      });
+      return;
+    }
+
+    const quest = existingQuest
+
+    // Check if quest exists
     if (!quest) {
       res.status(404).json({
-        error: "Quest not found",
+        error: "Quest not found"
       });
       return;
     }

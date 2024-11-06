@@ -178,6 +178,7 @@ const QuestsPage: NextPage = () => {
   // handle edit from create page
   React.useEffect(() => {
     if (activeView == "view" || activeView == "create") {
+      getSavedQuests();
       // Clear URL params when returning to view
       const url = new URL(window.location.href);
       url.searchParams.delete("guid");

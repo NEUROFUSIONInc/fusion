@@ -147,6 +147,6 @@ app.listen(port, async () => {
   console.log("Database connected");
 
   // Schedule cron jobs after db is connected (for jobs that require db query)
-  cron.schedule(magicFlowCron.expression, magicFlowCron.job);
+  // cron.schedule(magicFlowCron.expression, magicFlowCron.job);
   // cron.schedule(vitalCron.expression, vitalCron.job);
 });
