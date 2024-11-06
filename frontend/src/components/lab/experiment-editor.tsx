@@ -35,19 +35,19 @@ export const ExperimentEditor: React.FC<IExperimentEditorProps> = ({
     <link href="https://unpkg.com/jspsych@8.0.3/css/jspsych.css" rel="stylesheet" type="text/css" />
 
     <!-- Plugins -->
-    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.3"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.0.0"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-video-button-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.2"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-button-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-call-function@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.0.0"></script>
 
     <!-- Styles -->
     <style>
