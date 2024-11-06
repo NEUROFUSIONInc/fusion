@@ -99,9 +99,11 @@ const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGet
           </ul>
         </DialogDescription>
         <div className="flex justify-end mt-4">
-          <Button onClick={onPrevious}>Previous</Button>
-          <Button intent="dark" onClick={onGetStarted} className="ml-2">
+          <Button intent="primary" onClick={onGetStarted} className="ml-2">
             Get Started
+          </Button>
+          <Button intent="dark" onClick={onPrevious}>
+            Previous
           </Button>
         </div>
       </DialogContent>
