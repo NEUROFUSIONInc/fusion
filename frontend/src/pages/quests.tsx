@@ -14,6 +14,7 @@ import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
 import { useSearchParams } from "next/navigation";
+import { ShareModal } from "~/components/quests/share-modal";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -565,23 +566,11 @@ const QuestsPage: NextPage = () => {
       )}
       {/* Display Share Modal */}
       {activeQuest && (
-        <Dialog open={displayShareModal} onOpenChange={() => setDisplayShareModal(!displayShareModal)}>
-          <DialogContent>
-            <DialogTitle>Share Quest</DialogTitle>
-            <div>
-              <div>Active Participants: {questSubscribers.length}</div>
-            </div>
-            <DialogDescription>
-              Share the code with your participants to join this quest using the Fusion mobile app
-            </DialogDescription>
-            <div className="flex flex-col space-y-4">
-              <Input label="Join Code" type="text" size="lg" value={activeQuest?.joinCode} readOnly />
-              <Button size="lg" fullWidth>
-                Copy Join Code
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ShareModal
+          quest={activeQuest}
+          displayShareModal={displayShareModal}
+          setDisplayShareModal={setDisplayShareModal}
+        />
       )}
 
       {/* Prompt Create/Edit Modal */}
