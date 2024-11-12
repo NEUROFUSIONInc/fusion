@@ -2,7 +2,7 @@ require("websocket-polyfill");
 
 const { Magic } = require("@magic-sdk/admin");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+global.crypto = require("crypto");
 const {
   getEventHash,
   getSignature,
