@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 
+import { promptService } from "./prompt.service";
+
 import { Quest, Prompt, QuestPrompt } from "~/@types";
 import { db } from "~/lib";
 import { buildHealthDataset, getApiService } from "~/utils";
@@ -212,7 +214,8 @@ class QuestService {
               (_, { rows }) => {
                 const quest = rows._array[0] as Quest;
                 if (quest) {
-                  quest.prompts = JSON.parse(quest.config!) as Prompt[];
+                  const configObject = JSON.parse(quest.config!);
+                  quest.prompts = configObject?.prompts as Prompt[];
                   resolve(quest);
                 } else {
                   resolve(null);
@@ -235,23 +238,29 @@ class QuestService {
   }
 
   async fetchRemoteSubscriptionStatus(questId: string) {
-    console.log("Quest is not saved locally, checking subscription status");
-    const apiService = await getApiService();
-    if (apiService === null) {
-      throw new Error("Failed to get api service");
-    }
+    try {
+      console.log("Quest is not saved locally, checking subscription status");
+      const apiService = await getApiService();
+      if (apiService === null) {
+        throw new Error("Failed to get api service");
+      }
 
-    const response = await apiService.get(`/quest/userSubscription`, {
-      params: {
-        questId,
-      },
-    });
+      const response = await apiService.get(`/quest/userSubscription`, {
+        params: {
+          questId,
+        },
+      });
 
-    if (response.status >= 200 && response.status < 300) {
-      console.log("Subscription status", response.data);
-      return response.data;
-    } else {
-      console.log(response.status);
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Subscription status", response.data);
+        return response.data;
+      } else {
+        console.log(response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   }
 
@@ -294,6 +303,38 @@ class QuestService {
     // remove quest_prompts
     // remove prompt
     // remove quest
+    try {
+      const questPrompts = await this.fetchQuestPrompts(questId);
+      // delete prompts
+      await Promise.all(
+        questPrompts.map((questPrompt) =>
+          promptService.deletePrompt(questPrompt.promptId)
+        )
+      );
+      // delete quest
+      const deleteQuest = () =>
+        new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              `DELETE FROM quests WHERE guid = ?`,
+              [questId],
+              (_, { rowsAffected }) => {
+                if (rowsAffected > 0) {
+                  resolve(true);
+                } else {
+                  resolve(false);
+                }
+              }
+            );
+          });
+        });
+
+      const deleteStatus = await deleteQuest();
+      return deleteStatus;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   async uploadQuestDataset(questId: string) {

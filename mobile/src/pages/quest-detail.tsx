@@ -17,7 +17,6 @@ import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
 import { useCreatePrompt, useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
-import { promptService } from "~/services";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
 
@@ -26,68 +25,49 @@ export function QuestDetailScreen() {
 
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
-  const [, setAddQuestPrompts] = React.useState<Prompt[]>([]);
-
   const { mutateAsync: createQuest } = useCreateQuest();
-
   const { mutateAsync: createPrompt } = useCreatePrompt();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [quest, setQuest] = React.useState<Quest | undefined>(
     route.params.quest
   );
 
   /**
-   * Fetch quest details from remote server and updates the data cache after a period of time
+   * Fetch quest details from remote server and
+   * updates the data cache after a period of time
    */
   const handleFetchQuestFromRemote = async () => {
     try {
       const apiService = await getApiService();
       if (apiService === null) {
+        console.log("apiService is null");
         return;
       }
       const response = await apiService.get(`/quest/detail`, {
         params: { questId: route.params.quest.guid },
       });
-      const updatedQuest = response?.data?.quest as Quest;
+      const updatedQuest = {
+        ...response?.data?.quest,
+        prompts: JSON.parse(response?.data?.quest?.config)?.prompts,
+      } as Quest;
 
-      const savedQuest = await questService.saveQuest(updatedQuest);
-
-      if (savedQuest) {
-        setQuest(savedQuest);
+      if (
+        quest?.title !== updatedQuest.title ||
+        quest?.description !== updatedQuest.description ||
+        quest?.config !== updatedQuest.config
+      ) {
+        setQuest(updatedQuest);
+        // only save if the user is subscribed
+        if (isSubscribed) {
+          await questService.saveQuest(updatedQuest);
+        }
       }
     } catch (error) {
       console.log("error --->", error);
-    }
-  };
-
-  /**
-   * Fetch the prompts user has saved for this quest
-   */
-  const handleFetchQuestPrompts = async () => {
-    const questPrompts = await questService.fetchQuestPrompts(
-      route.params.quest.guid
-    );
-    if (questPrompts) {
-      // it'll be slow for now but find prompt from db & set it
-      const fetchPrompts = async () => {
-        const fetchedPrompts = await Promise.all(
-          questPrompts.map(async (qp) => {
-            const prompt = await promptService.getPrompt(qp.promptId);
-            if (prompt) {
-              return prompt;
-            }
-          })
-        );
-        const filteredPrompts = fetchedPrompts.filter(
-          (prompt) => prompt !== undefined
-        );
-        if (filteredPrompts) setAddQuestPrompts(filteredPrompts);
-      };
-
-      fetchPrompts();
     }
   };
 
@@ -95,37 +75,52 @@ export function QuestDetailScreen() {
     appInsights.trackPageView({
       name: "QuestDetail",
       properties: {
+        questGuid: quest?.guid,
         userNpub: accountContext?.userNpub,
       },
     });
 
-    // TODO: fix this!
-    getQuestSubscriptionStatus();
-    handleFetchQuestFromRemote();
-    handleFetchQuestPrompts();
-    pushQuestData();
-  }, []);
+    if (quest) {
+      quest.prompts = JSON.parse(quest?.config ?? "{}")?.prompts;
+    }
 
+    getQuestSubscriptionStatus();
+  }, [quest]);
+
+  useEffect(() => {
+    if (isSubscribed) {
+      (async () => {
+        await handleFetchQuestFromRemote();
+        await pushQuestData();
+      })();
+    }
+  }, [isSubscribed]);
+
+  /**
+   * Push quest data to remote storage if the user is subscribed
+   */
   const pushQuestData = async () => {
-    if (quest?.guid) {
+    if (quest?.guid && isSubscribed) {
       await questService.uploadQuestDataset(quest.guid);
     }
   };
 
   const getQuestSubscriptionStatus = async () => {
-    /**
-     * Combination of it quest is saved locally & if api returns user subscription status
-     */
     try {
-      const getQuest = await questService.getSingleQuest(
-        route.params.quest.guid
-      );
-      if (getQuest) {
-        console.log("Quest is saved locally so user is subscribed", getQuest);
+      setIsLoading(true);
+      const questSubscriptionStatus =
+        await questService.fetchRemoteSubscriptionStatus(
+          route.params.quest.guid
+        );
+      if (questSubscriptionStatus) {
         setIsSubscribed(true);
+      } else {
+        setIsSubscribed(false);
       }
     } catch (error) {
       console.error("Failed to get quest subscription status", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -266,7 +261,6 @@ export function QuestDetailScreen() {
             )}
             <HealthCard />
             <View className="mt-5">
-              {/* TODO: display the list of prompts that are required for the quest */}
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
               {quest?.prompts &&
                 quest.prompts.length > 0 &&
@@ -276,12 +270,6 @@ export function QuestDetailScreen() {
                       prompt={prompt}
                       variant="detail"
                       displayFrequency
-                      onClick={() => {
-                        if (isSubscribed !== false) {
-                          handlePromptExpandSheet(prompt);
-                          // handle prompt bottom sheet
-                        }
-                      }}
                     />
                   </View>
                 ))}
@@ -294,7 +282,7 @@ export function QuestDetailScreen() {
       </ScrollView>
 
       {/* if the user is not subscribed, show 'Get Started' */}
-      {isSubscribed === false && (
+      {isLoading === false && isSubscribed === false && (
         <View className="mt-5">
           <Button
             title="Complete Onboarding"
@@ -306,7 +294,7 @@ export function QuestDetailScreen() {
         </View>
       )}
 
-      {isSubscribed && (
+      {isLoading === false && isSubscribed && (
         <View className="mt-5 space-y-2">
           <Button
             title="View Leaderboard"
