@@ -139,6 +139,7 @@ exports.editQuest = async (req, res) => {
       quest,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       error: "Error updating quest",
     });
