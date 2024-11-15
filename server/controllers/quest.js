@@ -33,7 +33,7 @@ exports.saveQuest = async (req, res) => {
 
 exports.getCreatorQuests = async (req, res) => {
   try {
-    // Check if userPubkey is already npub encoded
+    // Check if userPubkey is already npub encoded if not, encode it
     let userPubkey = req.user.userPubkey;
     if (!userPubkey.startsWith('npub1')) {
       userPubkey = nip19.npubEncode(userPubkey);
@@ -98,14 +98,20 @@ exports.getQuestByCode = async (req, res) => {
 
 exports.editQuest = async (req, res) => {
   try {
-    // check if the user is the creator of the quest
+    // Check if userPubkey is already npub encoded if not, encode it
+    let userPubkey = req.user.userPubkey;
+    if (!userPubkey.startsWith('npub1')) {
+      userPubkey = nip19.npubEncode(userPubkey);
+    }
+
+    // check if the user is the creator/collaborator of the quest
     const existingQuest = await db.Quest.findOne({
       where: {
         guid: req.body.guid,
         [db.Sequelize.Op.or]: [
-          { userId: req.user.id },
+          { userGuid: req.user.userGuid },
           db.Sequelize.literal(
-            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${req.user.publicKey}%')`
+            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${userPubkey}%')`
           )
         ]
       }
