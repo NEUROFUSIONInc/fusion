@@ -20,7 +20,7 @@ I also discuss the importance of context when interpreting EEG data, the advanta
 
 ## Video
 
-<iframe width="100%" height="375px" src="https://www.youtube-nocookie.com/embed/vZ9qWYK2Z4M?si=R8HbJgf6vUFMLYq3" title="Decoding the Brain: Understanding Brain Activity with EEGs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="100%" height="375px" src="https://www.youtube.com/embed/vZ9qWYK2Z4M?si=R8HbJgf6vUFMLYq3" title="Decoding the Brain: Understanding Brain Activity with EEGs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Pictures
 

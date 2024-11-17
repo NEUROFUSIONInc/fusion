@@ -14,7 +14,7 @@ We hosted our first community event, in Lagos! Although, a heavy rain tried to s
 
 > I love how the personalized prompts push me to be more productive and understand myself better. - Grace (Fusion user)
 
-<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/tC-qBco_N1k" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/tC-qBco_N1k" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Event Highlights
 

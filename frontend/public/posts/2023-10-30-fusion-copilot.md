@@ -41,7 +41,7 @@ Fusion Copilot marks the beginning of our premium offerings. You’ll always be 
 - Share custom reports
 - Pair Fusion with your sleep, activity trackers, music listening history & screen time.
 
-<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/P5wWX7DaiX4?si=U2CiUFYUpR50zidZ" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/P5wWX7DaiX4?si=U2CiUFYUpR50zidZ" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## We want your Feedback
 

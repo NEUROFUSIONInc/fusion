@@ -51,7 +51,7 @@ With this you can choose the format that best suits the nature of your prompt.
 
 ## Walkthrough Video for Setting up Prompts
 
-<iframe width="100%" height="400" src="https://www.youtube-nocookie.com/embed/OzhOQWUiZcM?si=qQ5YwRiwZKKA30zP" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/OzhOQWUiZcM?si=qQ5YwRiwZKKA30zP" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Responding to Prompts with Fusion.
 
