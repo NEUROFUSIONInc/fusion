@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Pencil, Plus, Save, Trash } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
-import { FusionUser, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
+import { healthDataCategories, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
@@ -49,6 +49,7 @@ const QuestsPage: NextPage = () => {
         onboardingQuestions: onboardingQuestions,
         collaborators: collaborators, // comma separated public keys
         experimentConfig: experimentConfig, // it's the code for the experiment in html format
+        healthDataConfig: healthDataConfig,
       }),
       ...(isEdit ? { guid } : {}),
     };
@@ -194,6 +195,12 @@ const QuestsPage: NextPage = () => {
       setCollaborators("");
       setExperimentConfig("");
       setOnboardingQuestions([]);
+      setHealthDataConfig(
+        healthDataCategories.reduce((acc: { [key: string]: boolean }, category) => {
+          acc[category.value] = false;
+          return acc;
+        }, {})
+      );
       router.replace(window.location.pathname);
     }
     if (activeView == "edit" && activeQuest) {
@@ -226,10 +233,25 @@ const QuestsPage: NextPage = () => {
 
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [collaborators, setCollaborators] = useState<string>(""); // comma separated public keys
-  const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
-  const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
-  const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
 
+  /* Health Data Configuration - Start */
+  const [healthDataConfig, setHealthDataConfig] = useState<{ [key: string]: boolean }>(
+    healthDataCategories.reduce((acc: { [key: string]: boolean }, category) => {
+      acc[category.value] = false;
+      return acc;
+    }, {})
+  );
+
+  const handleHealthDataConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setHealthDataConfig((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+  };
+  /* Health Data Configuration - End */
+
+  /* Onboarding Questions - Start */
   const [activeOnboardingQuestion, setActiveOnboardingQuestion] = useState<OnboardingQuestion | null>(null);
   const [onboardingQuestions, setOnboardingQuestions] = useState<OnboardingQuestion[]>([]);
   const [editingOnboardingQuestionIndex, setEditingOnboardingQuestionIndex] = useState<number | null>(null);
@@ -254,6 +276,12 @@ const QuestsPage: NextPage = () => {
   const handleDeleteOnboardingQuestion = (index: number) => {
     setOnboardingQuestions((prevQuestions) => prevQuestions.filter((_, i) => i !== index));
   };
+  /* Onboarding Questions - End */
+
+  /* Prompt Configuration - Start */
+  const [activePrompt, setActivePrompt] = useState<Prompt | null>(null);
+  const [displayAddPromptModal, setDisplayAddPromptModal] = useState(false);
+  const [editingPromptIndex, setEditingPromptIndex] = useState<number | null>(null);
 
   const handleAddPromptModal = () => {
     const newPrompt: Prompt = {
@@ -280,8 +308,9 @@ const QuestsPage: NextPage = () => {
   const handleDeletePrompt = (index: number) => {
     setPrompts((prevPrompts) => prevPrompts.filter((_, i) => i !== index));
   };
+  /* Prompt Configuration - End */
 
-  // preload the prompts from questConfig
+  // preload data from questConfig
   React.useEffect(() => {
     if (questConfig) {
       console.log("questConfig", questConfig);
@@ -295,6 +324,13 @@ const QuestsPage: NextPage = () => {
         setOnboardingQuestions(parsedConfig.onboardingQuestions ?? []);
         setCollaborators(parsedConfig.collaborators ?? "");
         setExperimentConfig(parsedConfig.experimentConfig ?? "");
+        setHealthDataConfig(
+          parsedConfig.healthDataConfig ??
+            healthDataCategories.reduce((acc: { [key: string]: boolean }, category) => {
+              acc[category.value] = false;
+              return acc;
+            }, {})
+        );
       }
     }
   }, [questConfig]);
@@ -461,6 +497,28 @@ const QuestsPage: NextPage = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div className="mt-4">
+                <p className="mb-1 md:text-md block pl-1 text-sm font-semibold">
+                  Choose health data types you want to collect
+                </p>
+
+                <div className="flex flex-row space-x-2">
+                  {healthDataCategories.map((category) => (
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={category.value}
+                        name={category.value}
+                        className="text-primary-600 focus:ring-primary-500"
+                        checked={healthDataConfig[category.value]}
+                        onChange={handleHealthDataConfigChange}
+                      />
+                      <label htmlFor={category.value}>{category.name}</label>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Include experiments you want people to run */}

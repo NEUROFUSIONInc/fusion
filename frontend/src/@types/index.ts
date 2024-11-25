@@ -174,4 +174,20 @@ export interface IQuestConfig {
   prompts?: Prompt[];
   collaborators?: string; // comma separated public keys
   experimentConfig?: string; // html code for the experiment
+  healthDataConfig?: { [key: string]: boolean };
 }
+
+export const healthDataCategories: DisplayCategory[] = [
+  {
+    name: "Steps",
+    value: "steps",
+  },
+  {
+    name: "Sleep",
+    value: "sleep",
+  },
+  {
+    name: "Heart Rate",
+    value: "heart_rate",
+  },
+];
