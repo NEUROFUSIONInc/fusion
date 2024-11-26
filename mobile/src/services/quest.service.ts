@@ -4,7 +4,7 @@ import { promptService } from "./prompt.service";
 
 import { Quest, Prompt, QuestPrompt } from "~/@types";
 import { db } from "~/lib";
-import { buildHealthDataset, getApiService } from "~/utils";
+import { appInsights, buildHealthDataset, getApiService } from "~/utils";
 
 class QuestService {
   async saveQuest(quest: Quest) {
@@ -361,6 +361,51 @@ class QuestService {
     }
   }
 
+  async uploadQuestPromptResponses(questId: string, promptId: string) {
+    // upload the prompt responses
+    // get the responses for the prompt
+    // upload the responses
+    const questPrompts = await questService.fetchQuestPrompts(questId);
+
+    const promptResponses = await Promise.all(
+      questPrompts.map(async (questPrompt) => {
+        // TODO: fetch the responses for each of the prompts
+        const res = await promptService.getPromptResponses(
+          questPrompt.promptId
+        );
+        return { prompt: questPrompt, responses: res };
+      })
+    );
+
+    try {
+      const apiService = await getApiService();
+      const response = await apiService!.post(`/quest/dataset`, {
+        questId,
+        type: "prompt_responses",
+        value: promptResponses,
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Prompt responses uploaded successfully");
+        return true;
+      } else {
+        console.log("Failed to upload prompt responses", response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    } finally {
+      appInsights.trackEvent({
+        name: "quest_prompt_response_upload_triggered",
+        properties: {
+          questId,
+          promptId,
+        },
+      });
+    }
+  }
+
   async uploadQuestDataset(questId: string) {
     /**
      * 1. get the health dataset
@@ -388,20 +433,6 @@ class QuestService {
       }
     };
     const healthDataset = await getHealthDataset();
-
-    // const questPrompts = await questService.fetchQuestPrompts(questId);
-    // const promptResponses = await Promise.all(
-    //   questPrompts.map(async (questPrompt) => {
-    //     // TODO: fetch the responses for each of the prompts
-    //     const res = await promptService.getPromptResponses(
-    //       questPrompt.promptId
-    //     );
-    //     return { prompt: questPrompt, responses: res };
-    //   })
-    // );
-
-    // get the prompt responses
-    // { prompt, responses[] }[]
 
     // upload the health dataset
     try {

@@ -402,6 +402,8 @@ class PromptService {
 
       await streakService.updateStreakScore("increment");
 
+      this.checkIfPromptInQuestAndUploadResponses(responseObj.promptUuid);
+
       if (queryClient) {
         await queryClient.invalidateQueries({ queryKey: ["streaks", -1] });
       }
@@ -804,6 +806,23 @@ class PromptService {
       });
     } catch (error) {
       console.log("error resetting device notifications", error);
+    }
+  };
+
+  public checkIfPromptInQuestAndUploadResponses = async (
+    promptUuid: string
+  ) => {
+    const prompt = await this.getPrompt(promptUuid);
+    if (!prompt) {
+      return;
+    }
+
+    if (prompt.additionalMeta?.questId) {
+      console.log("prompt is in quest, uploading responses");
+      await questService.uploadQuestPromptResponses(
+        prompt.additionalMeta.questId,
+        promptUuid
+      );
     }
   };
 }
