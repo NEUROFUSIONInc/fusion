@@ -253,8 +253,8 @@ export function HomeScreen() {
             />
           )}
 
-          {/* Fusion Copilot Card */}
           <>
+            {/* Fusion Copilot Card */}
             <View className="flex flex-row w-full justify-between p-5 items-center">
               <Text className="text-base font-sans-bold text-white justify">
                 Fusion Copilot
@@ -293,6 +293,29 @@ export function HomeScreen() {
             {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
             <View className="flex flex-col w-full bg-secondary-900 rounded">
               <View>
+                {/* Enable Copliot */}
+                {!accountContext?.userLoading &&
+                  accountContext?.userPreferences.enableCopilot !== true && (
+                    <View className="flex flex-row w-full justify-between p-5">
+                      <Button
+                        onPress={async () => {
+                          // call bottom sheet
+                          const consentStatus = await requestCopilotConsent(
+                            accountContext!.userNpub
+                          );
+                          accountContext?.setUserPreferences({
+                            ...accountContext.userPreferences,
+                            enableCopilot: consentStatus,
+                          });
+                        }}
+                        title="Turn on personalized recommendations"
+                        className="px-4 py-2 self-center"
+                        fullWidth
+                      />
+                    </View>
+                  )}
+
+                {/* Summary Text */}
                 <Text
                   ellipsizeMode="tail"
                   className="font-sans flex flex-wrap text-white text-base font-medium m-5"
@@ -393,28 +416,6 @@ export function HomeScreen() {
 
             {/* Contextual action buttons */}
             <View className="flex justify-between mb-5 mt-5">
-              {/* Enable Copliot */}
-              {!accountContext?.userLoading &&
-                accountContext?.userPreferences.enableCopilot !== true && (
-                  <Button
-                    onPress={async () => {
-                      // call bottom sheet
-                      const consentStatus = await requestCopilotConsent(
-                        accountContext!.userNpub
-                      );
-                      accountContext?.setUserPreferences({
-                        ...accountContext.userPreferences,
-                        enableCopilot: consentStatus,
-                      });
-                    }}
-                    title="Enable Fusion Copilot"
-                    fullWidth
-                    className="bg-secondary-900 mb-2 flex justify-between"
-                    variant="secondary"
-                    rightIcon={<ChevronRight />}
-                  />
-                )}
-
               {/* Connect with data source */}
               {savedPrompts && savedPrompts.length > 0 && (
                 <Button

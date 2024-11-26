@@ -108,11 +108,13 @@ export const HealthCard = () => {
         </Text>
         <View className="flex flex-row w-full items-end justify-between">
           <Text className="font-sans text-2xl text-white opacity-60">
-            {Math.floor(
-              healthDataset.find(
-                (data) => data.date === dayjs().format("YYYY-MM-DD")
-              )?.stepSummary.totalSteps ?? 0
-            ) ?? "----"}{" "}
+            {(
+              Math.floor(
+                healthDataset.find(
+                  (data) => data.date === dayjs().format("YYYY-MM-DD")
+                )?.stepSummary.totalSteps ?? 0
+              ) ?? "----"
+            ).toLocaleString()}{" "}
             steps
           </Text>
           <View className="items-start h-16">
