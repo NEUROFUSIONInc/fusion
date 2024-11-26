@@ -25,6 +25,7 @@ export const AccountContextProvider = ({
     enableCopilot: false,
     enableHealthConnect: false,
     lastActiveCategory: "",
+    activeQuestGuid: "",
   });
 
   const isFirstRender = useRef(true);

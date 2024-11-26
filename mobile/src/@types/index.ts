@@ -78,6 +78,7 @@ export interface UserPreferences {
   enableCopilot: boolean;
   enableHealthConnect: boolean;
   lastActiveCategory: string;
+  activeQuestGuid: string;
 }
 
 export interface StreakEntry {

@@ -1,6 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
-import React, { useContext } from "react";
+import React from "react";
 import { Text, View, Image, Pressable } from "react-native";
 
 import {
@@ -10,7 +10,6 @@ import {
   JoinQuestSheet,
   VerticalMenu,
 } from "~/components";
-import { AccountContext } from "~/contexts";
 import { useQuestsQuery } from "~/hooks";
 import { colors } from "~/theme";
 
@@ -20,7 +19,6 @@ export function QuestsScreen() {
     () => bottomSheetRef.current?.expand(),
     []
   );
-  const accountContext = useContext(AccountContext);
 
   const navigation = useNavigation();
 

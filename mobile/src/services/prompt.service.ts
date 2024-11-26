@@ -216,7 +216,10 @@ class PromptService {
      */
     const prompt = {
       ...promptEntry,
-      uuid: promptEntry.uuid ?? uuidv4(),
+      uuid:
+        !promptEntry.uuid || promptEntry.uuid === ""
+          ? uuidv4()
+          : promptEntry.uuid.trim(),
     };
 
     try {
@@ -296,6 +299,8 @@ class PromptService {
           console.log("checking if prompt is part of a quest");
           if (prompt.additionalMeta["questId"]) {
             console.log("about to save quest prompt");
+            console.log("quest id", prompt.additionalMeta.questId);
+            console.log("prompt uuid", prompt.uuid);
             const res = await questService.saveQuestPrompt(
               prompt.additionalMeta.questId,
               prompt.uuid

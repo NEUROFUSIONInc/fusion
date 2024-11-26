@@ -13,7 +13,6 @@ import {
   PromptOptionsSheet,
   Screen,
 } from "~/components";
-import { HealthCard } from "~/components/health-details";
 import { AccountContext } from "~/contexts";
 import { useCreatePrompt, useCreateQuest } from "~/hooks";
 import { RouteProp } from "~/navigation";
@@ -31,6 +30,7 @@ export function QuestDetailScreen() {
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [questIsSavedLocally, setQuestIsSavedLocally] = React.useState(false);
 
   const [quest, setQuest] = React.useState<Quest | undefined>(
     route.params.quest
@@ -72,6 +72,18 @@ export function QuestDetailScreen() {
   };
 
   React.useEffect(() => {
+    questService
+      .getSingleQuestFromLocal(route.params.quest.guid)
+      .then((quest) => {
+        if (quest) {
+          setQuestIsSavedLocally(true);
+        } else {
+          setQuestIsSavedLocally(false);
+        }
+      });
+  }, []);
+
+  React.useEffect(() => {
     appInsights.trackPageView({
       name: "QuestDetail",
       properties: {
@@ -82,6 +94,10 @@ export function QuestDetailScreen() {
 
     if (quest) {
       quest.prompts = JSON.parse(quest?.config ?? "{}")?.prompts;
+      accountContext?.setUserPreferences({
+        ...accountContext?.userPreferences,
+        activeQuestGuid: quest.guid,
+      });
     }
 
     getQuestSubscriptionStatus();
@@ -164,6 +180,8 @@ export function QuestDetailScreen() {
           throw new Error("Failed to save quest locally");
         }
 
+        setQuestIsSavedLocally(true);
+
         // save prompts locally
         if (route.params.quest.prompts) {
           const res = await Promise.all(
@@ -214,6 +232,7 @@ export function QuestDetailScreen() {
     }
   };
 
+  /** Prompt Sheet Functions */
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
   const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
   // Bottom sheet for prompt options when user has a list of prompts
@@ -244,6 +263,7 @@ export function QuestDetailScreen() {
       };
     }
   }, [activePrompt]);
+  /** End Prompt Sheet Functions */
 
   return (
     <Screen>
@@ -259,7 +279,10 @@ export function QuestDetailScreen() {
                 Organized by {quest.organizerName}
               </Text>
             )}
-            <HealthCard />
+
+            {/* TODO: only show based on healthDataConfig */}
+            {/* <HealthCard /> */}
+
             <View className="mt-5">
               <Text className="text-white font-sans text-lg px-5">Prompts</Text>
               {quest?.prompts &&
@@ -282,7 +305,8 @@ export function QuestDetailScreen() {
       </ScrollView>
 
       {/* if the user is not subscribed, show 'Get Started' */}
-      {isLoading === false && isSubscribed === false && (
+      {((isLoading === false && isSubscribed === false) ||
+        questIsSavedLocally === false) && (
         <View className="mt-5">
           <Button
             title="Complete Onboarding"
@@ -294,7 +318,7 @@ export function QuestDetailScreen() {
         </View>
       )}
 
-      {isLoading === false && isSubscribed && (
+      {isLoading === false && isSubscribed && questIsSavedLocally && (
         <View className="mt-5 space-y-2">
           <Button
             title="View Leaderboard"

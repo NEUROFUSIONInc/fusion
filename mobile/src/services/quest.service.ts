@@ -202,7 +202,7 @@ class QuestService {
     }
   }
 
-  async getSingleQuest(questId: string) {
+  async getSingleQuestFromLocal(questId: string) {
     // fetch single quest by id
     try {
       const fetchQuest = () =>
@@ -300,11 +300,9 @@ class QuestService {
   }
 
   async deleteQuest(questId: string) {
-    // remove quest_prompts
-    // remove prompt
-    // remove quest
+    // remove quest_prompts -> prompts -> quest
     try {
-      const questPrompts = await this.fetchQuestPrompts(questId);
+      const questPrompts = await questService.fetchQuestPrompts(questId);
       // delete prompts
       await Promise.all(
         questPrompts.map((questPrompt) =>
@@ -338,7 +336,13 @@ class QuestService {
   }
 
   async uploadQuestDataset(questId: string) {
-    // start from the current instant and do a dump
+    /**
+     * 1. get the health dataset
+     * 2. get the prompt responses
+     * 3. upload the dataset
+     *
+     * Lookback for updating health data is one week
+     */
     const getHealthDataset = async () => {
       // get data from health service
       // build the health dataset
@@ -359,17 +363,21 @@ class QuestService {
     };
     const healthDataset = await getHealthDataset();
 
-    const questPrompts = await this.fetchQuestPrompts(questId);
-    const promptResponses = await Promise.all(
-      questPrompts.map(async (questPrompt) => {
-        // TODO: fetch the responses for each of the prompts
-      })
-    );
+    // const questPrompts = await questService.fetchQuestPrompts(questId);
+    // const promptResponses = await Promise.all(
+    //   questPrompts.map(async (questPrompt) => {
+    //     // TODO: fetch the responses for each of the prompts
+    //     const res = await promptService.getPromptResponses(
+    //       questPrompt.promptId
+    //     );
+    //     return { prompt: questPrompt, responses: res };
+    //   })
+    // );
 
     // get the prompt responses
     // { prompt, responses[] }[]
 
-    // upload the dataset
+    // upload the health dataset
     try {
       const apiService = await getApiService();
       const response = await apiService!.post(`/quest/dataset`, {

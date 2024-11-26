@@ -1,15 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import ContextMenu from "react-native-context-menu-view";
 
 import { Button } from "../../button";
 import { LeftArrow, VerticalMenu } from "../../icons";
 
+import { AccountContext } from "~/contexts";
+import { useDeleteQuest } from "~/hooks";
 import { handleSendFeeback } from "~/services";
 
 export const QuestDetailHeader = () => {
   const navigation = useNavigation();
+  const accountContext = React.useContext(AccountContext);
+  const { mutate: deleteQuest } = useDeleteQuest();
 
   const handleGoBack = () => {
     // TODO: send the user back to the quest list page
@@ -37,6 +41,31 @@ export const QuestDetailHeader = () => {
           if (e.nativeEvent.index === 0) {
             return handleSendFeeback("");
           } else if (e.nativeEvent.index === 1) {
+            // confirm delete
+            Alert.alert(
+              "Leave Quest",
+              "Are you sure you want to leave this quest? This action cannot be undone.",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Leave",
+                  style: "destructive",
+                  onPress: async () => {
+                    try {
+                      await deleteQuest(
+                        accountContext?.userPreferences?.activeQuestGuid!
+                      );
+                      navigation.goBack();
+                    } catch (error) {
+                      console.error("Failed to leave quest", error);
+                    }
+                  },
+                },
+              ]
+            );
           }
         }}
       >
