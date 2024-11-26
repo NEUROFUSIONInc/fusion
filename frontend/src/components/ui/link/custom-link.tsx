@@ -133,7 +133,7 @@ export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", clas
         };
       case "discord":
         return {
-          href: "https://discord.gg/hzt6cAtwGE",
+          href: "https://discord.gg/ndcf3b5cyU",
           icon: (
             <svg
               width="20"

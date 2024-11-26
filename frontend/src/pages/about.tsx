@@ -102,8 +102,8 @@ export default function About() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Build with us!</h2>
           <p className="mb-4">
-            Join our discord with 70+ other people interested in brain and behavior research! Here's how to get
-            involved:
+            Join our <a href="https://discord.gg/ndcf3b5cyU">discord</a> with 70+ other people interested in brain and
+            behavior research! Here's how to get involved:
           </p>
           <ul className="list-disc pl-6 space-y-2">
             <li>Give feedback on your experience using Fusion</li>

@@ -77,7 +77,7 @@ In summary, these visualizations provide valuable insights into the dynamic and 
 <aside>
 🧠 Have more questions / curious about self experimentation?
 
-- [Join our community discord!](https://discord.gg/PCjdaJuySU)
+- [Join our community discord!](https://discord.gg/ndcf3b5cyU)
 - [Reach out contact@usefusion.app](mailto:contact@usefusion.app)
 - [Download the Fusion app to monitor and understanding changes in behavior over time the impact of lifestyle choices!](https://usefusion.app)
 </aside>

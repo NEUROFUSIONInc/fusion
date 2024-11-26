@@ -47,7 +47,7 @@ We build tools to accelerate the adoption of neurotechnology and behavior resear
 
 We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc/fusion/issues) for features we're actively developing.
 
-- [Join the NeuroFusion Community](https://discord.gg/3wCNJ6X4RF)
+- [Join the NeuroFusion Community](https://discord.gg/ndcf3b5cyU)
 
 - If you see any parts of the code you think needs updating, please
 - Consider creating a pull requests [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
@@ -55,7 +55,7 @@ We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc
 
 - Things you can do to contribute
   - Ask questions! Tell us why you're interested in technology like Fusion
-  - [Join an open data recording/curation effort](https://discord.gg/zeEspvz8jw)
+  - [Join an open data recording/curation effort](https://discord.gg/ndcf3b5cyU)
   - Data Science & Machine Learning
     - Have our first EEG model hosted as an api - EEGFormer / DreamDiffusion ..
   - Contributing to Fusion's design. [See Figma](https://www.figma.com/file/jGgUXb08g5wudV6ey9bG89/%F0%9F%9B%B8-Fusion?type=design&node-id=0%3A1&mode=design&t=J5iWqbK6FfqInnl7-1)
@@ -69,4 +69,4 @@ We welcome all contributions! See the [issues](https://github.com/NEUROFUSIONInc
 
 ## I want to talk to someone on the team for help or discuss collaboration together?
 
-If you need help, you can ask questions on our [Discord](https://discord.gg/DXyHcqvw3C), or send an email to [contact@usefusion.app](mailto:contact@usefusion.app).
+If you need help, you can ask questions on our [Discord](https://discord.gg/ndcf3b5cyU), or send an email to [contact@usefusion.app](mailto:contact@usefusion.app).

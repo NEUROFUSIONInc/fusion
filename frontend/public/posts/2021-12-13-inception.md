@@ -87,7 +87,7 @@ This, however, is subject to change depending on the input of our community memb
 
 We have accomplished quite a bit as a small team of two, but we still need some help - that’s where you come in.
 
-We are looking for community members who are passionate about using data to improve themselves. We are still in the super early stages of our product, so input from these community members will be key. If this is you, [Join us on Discord](https://discord.gg/nVdMxZFA4n)
+We are looking for community members who are passionate about using data to improve themselves. We are still in the super early stages of our product, so input from these community members will be key. If this is you, [Join us on Discord](https://discord.gg/ndcf3b5cyU)
 
 It’s time to build.
 
