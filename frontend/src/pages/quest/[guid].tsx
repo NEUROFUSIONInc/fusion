@@ -106,6 +106,11 @@ const QuestDetailPage: NextPage = () => {
   };
 
   const [questDatasets, setQuestDatasets] = React.useState<FusionQuestDataset[]>([]);
+
+  const [questPromptResponses, setQuestPromptResponses] = React.useState<FusionQuestDataset[]>([]);
+  const [questOnboardingResponses, setQuestOnboardingResponses] = React.useState<FusionQuestDataset[]>([]);
+  const [displayTableView, setDisplayTableView] = React.useState(false);
+
   const getQuestDatasets = async (questId: string) => {
     try {
       const res = await api.get(
@@ -146,12 +151,70 @@ const QuestDetailPage: NextPage = () => {
       if (questDatasets) {
         setQuestDatasets(questDatasets);
       }
+
+      // parse the prompt responses & onboarding responses
+      const promptResponses = questDatasets.filter((dataset: any) => dataset.type === "prompt_responses");
+      const onboardingResponses = questDatasets.filter((dataset: any) => dataset.type === "onboarding_responses");
+
+      if (promptResponses) {
+        setQuestPromptResponses(promptResponses);
+      }
+      if (onboardingResponses) {
+        setQuestOnboardingResponses(onboardingResponses);
+      }
     }
   }, [questId]);
 
   const [category, setCategory] = React.useState<DisplayCategory>(categories[0]);
 
   const [displayShareModal, setDisplayShareModal] = React.useState(false);
+
+  const downloadCSV = async () => {
+    try {
+      // Combine all datasets
+      const allDatasets: FusionQuestDataset[] = [
+        ...questDatasets,
+        ...questPromptResponses,
+        ...questOnboardingResponses
+      ];
+
+      // Convert to CSV format
+      const csvRows = [];
+      
+      // Add headers
+      const headers = ['userGuid', 'questGuid', 'timestamp', 'type', 'value'];
+      csvRows.push(headers.join(','));
+
+      // Add data rows
+      allDatasets.forEach(dataset => {
+        const row = [
+          dataset.userGuid,
+          dataset.questGuid,
+          dataset.timestamp,
+          dataset.type,
+          // Stringify value field to handle both array and string types
+          JSON.stringify(dataset.value)
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      // Create CSV content
+      const csvContent = csvRows.join('\n');
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `quest_${questId}_data.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Failed to download CSV:', error);
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -189,9 +252,20 @@ const QuestDetailPage: NextPage = () => {
           Share Quest
         </Button>
         {/* // TODO: gate this with zupass */}
-        {/* <Button intent="primary" className="">
-          Download Data
-        </Button> */}
+        <Button intent="primary" onClick={() => setDisplayTableView(true)}>
+          Table View
+        </Button>
+
+        {displayTableView && (
+          <Button intent="primary" onClick={() => downloadCSV()}>
+            Download CSV
+          </Button>
+        )}
+        <Button intent="primary" onClick={() => setDisplayTableView(false)}>
+            Graph View
+          </Button>
+        )}
+
         <Button className="" intent="primary" onClick={updateQuestDatasets}>
           Refresh
         </Button>
@@ -202,7 +276,7 @@ const QuestDetailPage: NextPage = () => {
         {/* category selection */}
 
         {/* display the graph */}
-        {questDatasets && questDatasets.length > 0 && (
+        {!displayTableView && questDatasets && questDatasets.length > 0 && (
           <>
             <div className="mt-5">
               <div className="mb-4">
@@ -233,6 +307,61 @@ const QuestDetailPage: NextPage = () => {
             </div>
           </>
         )}
+
+        {displayTableView &&
+          ((questPromptResponses && questPromptResponses.length > 0) ||
+            (questOnboardingResponses && questOnboardingResponses.length > 0)) && (
+            <>
+              <h3 className="text-xl mb-2">Participant Responses</h3>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        User
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Timestamp
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Value
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+                    {[...(questPromptResponses || []), ...(questOnboardingResponses || [])].map((response, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {response.userGuid}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {response.type}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {dayjs(response.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                          <pre className="whitespace-pre-wrap">
+                            {typeof response.value === 'string' 
+                              ? response.value 
+                              : JSON.stringify(response.value, null, 2)}
+                          </pre>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+
+
+          </>
+        )}
+
 
         {quest && (
           <ShareModal

@@ -83,7 +83,7 @@ export interface FusionQuestDataset {
   userGuid: string;
   questGuid: string;
   timestamp: number;
-  value: FusionHealthDataset[];
+  value: FusionHealthDataset[] | string;
   type: string;
 }
 
