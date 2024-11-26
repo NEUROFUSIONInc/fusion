@@ -272,7 +272,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           <div className="m-3">
             <iframe
               ref={(frame) => {
-                if (frame) {
+                if (frame && !frame.src && !frame.srcdoc) {
                   if (experiment.url) {
                     frame.src = experiment.url;
                   } else if (experiment.code) {
