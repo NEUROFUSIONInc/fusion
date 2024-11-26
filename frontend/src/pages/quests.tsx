@@ -585,51 +585,73 @@ const QuestsPage: NextPage = () => {
       {activeView === "view" && (
         <>
           <p className="mb-5 mt-5 text-lg dark:text-slate-400">View all quests that you have created</p>
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {savedQuests.map((quest) => (
-                <tr key={quest.guid}>
-                  <Link href={`/quest/${quest.guid}`}>
-                    <td className="underline">{quest.title}</td>
-                  </Link>
-                  <td>{quest.description}</td>
-                  {quest.prompts && <td></td>}
-                  <td className="flex justify-center">
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        setActiveQuest(quest);
-                        setDisplayShareModal(true);
-                      }}
-                    >
-                      Share
-                    </Button>
-                    <Button
-                      size="sm"
-                      intent="ghost"
-                      onClick={() => {
-                        setActiveQuest(quest);
-                        setQuestTitle(quest.title);
-                        setQuestDescription(quest.description);
-                        setQuestConfig(quest.config);
-                        setQuestOrganizer(quest.organizerName ?? "");
-                        setActiveView("edit");
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    Title
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    Description
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+                {savedQuests.map((quest) => (
+                  <tr key={quest.guid}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <Link href={`/quest/${quest.guid}`}>
+                        <span className="underline">{quest.title}</span>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      {quest.description}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setActiveQuest(quest);
+                            setDisplayShareModal(true);
+                          }}
+                        >
+                          Share
+                        </Button>
+                        <Button
+                          size="sm"
+                          intent="ghost"
+                          onClick={() => {
+                            setActiveQuest(quest);
+                            setQuestTitle(quest.title);
+                            setQuestDescription(quest.description);
+                            setQuestConfig(quest.config);
+                            setQuestOrganizer(quest.organizerName ?? "");
+                            setActiveView("edit");
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
       {/* Display Share Modal */}
