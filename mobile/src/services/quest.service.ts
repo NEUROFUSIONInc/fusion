@@ -345,7 +345,7 @@ class QuestService {
       const response = await apiService!.post(`/quest/dataset`, {
         questId,
         type: "onboarding_responses",
-        value: JSON.stringify(responses),
+        value: responses,
       });
 
       if (response.status >= 200 && response.status < 300) {
