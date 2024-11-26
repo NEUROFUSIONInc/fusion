@@ -135,9 +135,11 @@ const QuestDetailPage: NextPage = () => {
   const updateQuestDatasets = useCallback(async () => {
     if (questId) {
       const questDatasets = await getQuestDatasets(questId);
-      questDatasets.map((dataset: any) => {
-        dataset.value = JSON.parse(dataset.value) as FusionHealthDataset[];
-      });
+      questDatasets
+        .filter((dataset: any) => dataset.type === "health")
+        .map((dataset: any) => {
+          dataset.value = JSON.parse(dataset.value) as FusionHealthDataset[];
+        });
 
       console.log("updated quest object", questDatasets);
 
