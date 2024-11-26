@@ -335,6 +335,32 @@ class QuestService {
     }
   }
 
+  async uploadOnboardingResponses(
+    questId: string,
+    responses: Record<string, string>
+  ) {
+    // upload to the api
+    try {
+      const apiService = await getApiService();
+      const response = await apiService!.post(`/quest/dataset`, {
+        questId,
+        type: "onboarding_responses",
+        value: JSON.stringify(responses),
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Onboarding responses uploaded successfully");
+        return true;
+      } else {
+        console.log("Failed to upload onboarding responses", response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   async uploadQuestDataset(questId: string) {
     /**
      * 1. get the health dataset

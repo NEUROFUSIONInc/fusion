@@ -56,7 +56,7 @@ export const QuestDetailHeader = () => {
                   onPress: async () => {
                     try {
                       await deleteQuest(
-                        accountContext?.userPreferences?.activeQuestGuid!
+                        accountContext?.userPreferences?.activeQuest!.guid!
                       );
                       navigation.goBack();
                     } catch (error) {

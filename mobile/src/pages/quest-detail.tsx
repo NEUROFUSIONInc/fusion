@@ -11,6 +11,7 @@ import {
   Button,
   PromptDetails,
   PromptOptionsSheet,
+  QuestOnboardingSheet,
   Screen,
 } from "~/components";
 import { AccountContext } from "~/contexts";
@@ -31,7 +32,7 @@ export function QuestDetailScreen() {
   const [joiningQuest, setJoiningQuest] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [questIsSavedLocally, setQuestIsSavedLocally] = React.useState(false);
-
+  const [onboardingComplete, setOnboardingComplete] = React.useState(false);
   const [quest, setQuest] = React.useState<Quest | undefined>(
     route.params.quest
   );
@@ -71,6 +72,9 @@ export function QuestDetailScreen() {
     }
   };
 
+  /**
+   * Check if the quest is saved locally
+   */
   React.useEffect(() => {
     questService
       .getSingleQuestFromLocal(route.params.quest.guid)
@@ -83,6 +87,9 @@ export function QuestDetailScreen() {
       });
   }, []);
 
+  /**
+   * Log page view, parse quest prompts, set active quest
+   */
   React.useEffect(() => {
     appInsights.trackPageView({
       name: "QuestDetail",
@@ -96,13 +103,16 @@ export function QuestDetailScreen() {
       quest.prompts = JSON.parse(quest?.config ?? "{}")?.prompts;
       accountContext?.setUserPreferences({
         ...accountContext?.userPreferences,
-        activeQuestGuid: quest.guid,
+        activeQuest: quest,
       });
     }
 
     getQuestSubscriptionStatus();
   }, [quest]);
 
+  /**
+   * If the user is subscribed, fetch quest data from remote and push to remote storage
+   */
   useEffect(() => {
     if (isSubscribed) {
       (async () => {
@@ -120,6 +130,17 @@ export function QuestDetailScreen() {
       await questService.uploadQuestDataset(quest.guid);
     }
   };
+
+  /**
+   * When onboarding is complete, trigger addUserToQuest
+   */
+  useEffect(() => {
+    if (onboardingComplete) {
+      (async () => {
+        await addUserToQuest();
+      })();
+    }
+  }, [onboardingComplete]);
 
   const getQuestSubscriptionStatus = async () => {
     try {
@@ -161,10 +182,6 @@ export function QuestDetailScreen() {
       }
       const addUserResponse = await apiService.post(`/quest/join`, {
         questId: route.params.quest.guid,
-        data: {
-          consentClaims: ["I agree to participate in this quest"],
-          displayName: "Test User",
-        },
       });
 
       // set: is subscribed.. event
@@ -265,6 +282,12 @@ export function QuestDetailScreen() {
   }, [activePrompt]);
   /** End Prompt Sheet Functions */
 
+  const questOnboardingBottomSheetRef = React.useRef<RNBottomSheet>(null);
+  const handleExpandQuestOnboardingSheet = React.useCallback(
+    () => questOnboardingBottomSheetRef.current?.expand(),
+    []
+  );
+
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -312,7 +335,7 @@ export function QuestDetailScreen() {
             title="Complete Onboarding"
             fullWidth
             className="mb-5"
-            onPress={addUserToQuest}
+            onPress={handleExpandQuestOnboardingSheet}
             loading={joiningQuest}
           />
         </View>
@@ -349,6 +372,12 @@ export function QuestDetailScreen() {
             allowEdit={false}
           />
         )}
+
+        <QuestOnboardingSheet
+          bottomSheetRef={questOnboardingBottomSheetRef}
+          quest={accountContext?.userPreferences?.activeQuest!}
+          callback={() => setOnboardingComplete(true)}
+        />
       </Portal>
     </Screen>
   );

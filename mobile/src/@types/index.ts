@@ -78,7 +78,7 @@ export interface UserPreferences {
   enableCopilot: boolean;
   enableHealthConnect: boolean;
   lastActiveCategory: string;
-  activeQuestGuid: string;
+  activeQuest: Quest | null;
 }
 
 export interface StreakEntry {
@@ -109,3 +109,15 @@ export interface QuestPrompt {
   questId: string;
   promptId: string;
 }
+
+export interface OnboardingQuestion {
+  question: string;
+  options?: string[];
+  required?: boolean;
+  type: PromptResponseType;
+}
+
+export const yesNoOptions = [
+  { label: "Yes", value: "Yes" },
+  { label: "No", value: "No" },
+];

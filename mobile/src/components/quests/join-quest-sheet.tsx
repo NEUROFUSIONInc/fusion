@@ -24,12 +24,11 @@ import { Prompt, Quest } from "~/@types";
 import { IS_IOS } from "~/config";
 import { getApiService } from "~/utils";
 
-interface AddPromptSheetProps {
+interface JoinQuestSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;
-  selectedCategory?: string;
 }
 
-export const JoinQuestSheet: FC<AddPromptSheetProps> = ({ bottomSheetRef }) => {
+export const JoinQuestSheet: FC<JoinQuestSheetProps> = ({ bottomSheetRef }) => {
   const navigation = useNavigation();
   const [joinCode, setJoinCode] = useState("");
 
