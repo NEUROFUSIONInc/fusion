@@ -193,7 +193,8 @@ const QuestDetailPage: NextPage = () => {
           dataset.timestamp,
           dataset.type,
           // Stringify value field to handle both array and string types
-          JSON.stringify(dataset.value),
+          // Escape any commas and quotes in the value to maintain CSV format
+          JSON.stringify(dataset.value).replace(/"/g, '""'),
         ];
         csvRows.push(row.join(","));
       });
