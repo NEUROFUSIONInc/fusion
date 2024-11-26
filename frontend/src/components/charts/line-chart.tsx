@@ -23,7 +23,8 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
   const [chartOptions, setChartOptions] = React.useState<any>({});
 
   React.useEffect(() => {
-    // console.log(JSON.parse(seriesData[0].value) as FusionHealthDataset[]);
+    if (!seriesData || seriesData.length === 0) return;
+
     const dates = (seriesData[0].value as FusionHealthDataset[]).map((item) => item.date);
     console.log("dates", dates);
     const chartOptions = {

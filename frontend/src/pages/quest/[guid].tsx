@@ -105,8 +105,7 @@ const QuestDetailPage: NextPage = () => {
     }
   };
 
-  const [questDatasets, setQuestDatasets] = React.useState<FusionQuestDataset[]>([]);
-
+  const [healthDatasets, setHealthDatasets] = React.useState<FusionQuestDataset[]>([]);
   const [questPromptResponses, setQuestPromptResponses] = React.useState<FusionQuestDataset[]>([]);
   const [questOnboardingResponses, setQuestOnboardingResponses] = React.useState<FusionQuestDataset[]>([]);
   const [displayTableView, setDisplayTableView] = React.useState(false);
@@ -140,16 +139,17 @@ const QuestDetailPage: NextPage = () => {
   const updateQuestDatasets = useCallback(async () => {
     if (questId) {
       const questDatasets = await getQuestDatasets(questId);
-      questDatasets
+      const healthDatasets = questDatasets
         .filter((dataset: any) => dataset.type === "health")
         .map((dataset: any) => {
           dataset.value = JSON.parse(dataset.value) as FusionHealthDataset[];
+          return dataset;
         });
 
       console.log("updated quest object", questDatasets);
 
       if (questDatasets) {
-        setQuestDatasets(questDatasets);
+        setHealthDatasets(healthDatasets);
       }
 
       // parse the prompt responses & onboarding responses
@@ -173,7 +173,7 @@ const QuestDetailPage: NextPage = () => {
     try {
       // Combine all datasets
       const allDatasets: FusionQuestDataset[] = [
-        ...questDatasets,
+        ...healthDatasets,
         ...questPromptResponses,
         ...questOnboardingResponses,
       ];
@@ -277,7 +277,7 @@ const QuestDetailPage: NextPage = () => {
         {/* category selection */}
 
         {/* display the graph */}
-        {!displayTableView && questDatasets && questDatasets.length > 0 && (
+        {!displayTableView && healthDatasets && healthDatasets.length > 0 && (
           <>
             <div className="mt-5">
               <div className="mb-4">
@@ -300,7 +300,7 @@ const QuestDetailPage: NextPage = () => {
               <p>{category?.name} in the past week</p>
               <FusionLineChart
                 key={`${category?.value}-${Math.random()}`}
-                seriesData={questDatasets}
+                seriesData={healthDatasets}
                 timePeriod="week"
                 startDate={dayjs().startOf("day")}
                 category={category}
@@ -355,7 +355,7 @@ const QuestDetailPage: NextPage = () => {
                           {response.type}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {dayjs(response.timestamp).format("YYYY-MM-DD HH:mm:ss")}
+                          {dayjs.unix(response.timestamp).format("YYYY-MM-DD HH:mm:ss")}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                           <pre className="whitespace-pre-wrap">
