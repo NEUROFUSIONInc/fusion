@@ -69,11 +69,13 @@ export const AddOnboardingQuestionModal: React.FC<AddOnboardingQuestionModalProp
                 <option value="" disabled>
                   Select a response type
                 </option>
-                {responseTypes.map((item, index) => (
-                  <option key={index} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
+                {responseTypes
+                  .filter((item) => item.value !== "customOptions")
+                  .map((item, index) => (
+                    <option key={index} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
