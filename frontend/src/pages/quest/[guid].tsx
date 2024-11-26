@@ -175,46 +175,46 @@ const QuestDetailPage: NextPage = () => {
       const allDatasets: FusionQuestDataset[] = [
         ...questDatasets,
         ...questPromptResponses,
-        ...questOnboardingResponses
+        ...questOnboardingResponses,
       ];
 
       // Convert to CSV format
       const csvRows = [];
-      
+
       // Add headers
-      const headers = ['userGuid', 'questGuid', 'timestamp', 'type', 'value'];
-      csvRows.push(headers.join(','));
+      const headers = ["userGuid", "questGuid", "timestamp", "type", "value"];
+      csvRows.push(headers.join(","));
 
       // Add data rows
-      allDatasets.forEach(dataset => {
+      allDatasets.forEach((dataset) => {
         const row = [
           dataset.userGuid,
           dataset.questGuid,
           dataset.timestamp,
           dataset.type,
           // Stringify value field to handle both array and string types
-          JSON.stringify(dataset.value)
+          JSON.stringify(dataset.value),
         ];
-        csvRows.push(row.join(','));
+        csvRows.push(row.join(","));
       });
 
       // Create CSV content
-      const csvContent = csvRows.join('\n');
+      const csvContent = csvRows.join("\n");
 
       // Create blob and download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `quest_${questId}_data.csv`);
-      link.style.visibility = 'hidden';
+      link.setAttribute("href", url);
+      link.setAttribute("download", `quest_${questId}_data.csv`);
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Failed to download CSV:', error);
+      console.error("Failed to download CSV:", error);
     }
-  }
+  };
 
   return (
     <DashboardLayout>
@@ -257,13 +257,14 @@ const QuestDetailPage: NextPage = () => {
         </Button>
 
         {displayTableView && (
-          <Button intent="primary" onClick={() => downloadCSV()}>
-            Download CSV
-          </Button>
-        )}
-        <Button intent="primary" onClick={() => setDisplayTableView(false)}>
-            Graph View
-          </Button>
+          <>
+            <Button intent="primary" onClick={() => downloadCSV()}>
+              Download CSV
+            </Button>
+            <Button intent="primary" onClick={() => setDisplayTableView(false)}>
+              Graph View
+            </Button>
+          </>
         )}
 
         <Button className="" intent="primary" onClick={updateQuestDatasets}>
@@ -318,16 +319,28 @@ const QuestDetailPage: NextPage = () => {
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                      >
                         User
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                      >
                         Type
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                      >
                         Timestamp
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                      >
                         Value
                       </th>
                     </tr>
@@ -342,12 +355,12 @@ const QuestDetailPage: NextPage = () => {
                           {response.type}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {dayjs(response.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                          {dayjs(response.timestamp).format("YYYY-MM-DD HH:mm:ss")}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                           <pre className="whitespace-pre-wrap">
-                            {typeof response.value === 'string' 
-                              ? response.value 
+                            {typeof response.value === "string"
+                              ? response.value
                               : JSON.stringify(response.value, null, 2)}
                           </pre>
                         </td>
@@ -356,12 +369,8 @@ const QuestDetailPage: NextPage = () => {
                   </tbody>
                 </table>
               </div>
-
-
-
-          </>
-        )}
-
+            </>
+          )}
 
         {quest && (
           <ShareModal

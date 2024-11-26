@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 const ReactEcharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import React, { FC } from "react";
-import { DisplayCategory, FusionQuestDataset } from "~/@types";
+import { DisplayCategory, FusionHealthDataset, FusionQuestDataset } from "~/@types";
 import dynamic from "next/dynamic";
 
 export interface LineChartProps {
@@ -24,7 +24,7 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
 
   React.useEffect(() => {
     // console.log(JSON.parse(seriesData[0].value) as FusionHealthDataset[]);
-    const dates = seriesData[0].value.map((item) => item.date);
+    const dates = (seriesData[0].value as FusionHealthDataset[]).map((item) => item.date);
     console.log("dates", dates);
     const chartOptions = {
       tooltip: {
@@ -80,7 +80,7 @@ export const FusionLineChart: FC<LineChartProps> = ({ seriesData, startDate, tim
         itemStyle: {
           color: "#" + Math.floor(Math.random() * 16777215).toString(16),
         },
-        data: data.value.map((item) => {
+        data: (data.value as FusionHealthDataset[]).map((item) => {
           if (category.name.toLowerCase() === "sleep") {
             return [item.sleepSummary.date, item.sleepSummary.duration];
           } else if (category.name.toLowerCase() === "steps") {
