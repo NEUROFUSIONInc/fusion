@@ -108,7 +108,7 @@ const QuestDetailPage: NextPage = () => {
   const [healthDatasets, setHealthDatasets] = React.useState<FusionQuestDataset[]>([]);
   const [questPromptResponses, setQuestPromptResponses] = React.useState<FusionQuestDataset[]>([]);
   const [questOnboardingResponses, setQuestOnboardingResponses] = React.useState<FusionQuestDataset[]>([]);
-  const [displayTableView, setDisplayTableView] = React.useState(false);
+  const [displayTableView, setDisplayTableView] = React.useState(true);
 
   const getQuestDatasets = async (questId: string) => {
     try {
@@ -258,11 +258,11 @@ const QuestDetailPage: NextPage = () => {
 
         {displayTableView && (
           <>
-            <Button intent="primary" onClick={() => downloadCSV()}>
-              Download CSV
-            </Button>
             <Button intent="primary" onClick={() => setDisplayTableView(false)}>
               Graph View
+            </Button>
+            <Button intent="primary" onClick={() => downloadCSV()}>
+              Download CSV
             </Button>
           </>
         )}
