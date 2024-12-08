@@ -172,11 +172,11 @@ class QuestService {
     }
   }
 
-  async fetchQuestPrompts(questId: string) {
+  async fetchQuestPromptDetails(questId: string) {
     // fetch prompts for a quest - this will return any saved ones ..
     // vs. in the config
     try {
-      const fetchPrompts = () =>
+      const queryDb = () =>
         new Promise<QuestPrompt[]>((resolve, reject) => {
           db.transaction((tx) => {
             tx.executeSql(
@@ -194,8 +194,22 @@ class QuestService {
           });
         });
 
-      const prompts = (await fetchPrompts()) ?? [];
-      return prompts;
+      const questPrompts = await queryDb();
+
+      if (questPrompts.length > 0) {
+        // get the details for all the prompts
+        const prompts = (
+          await Promise.all(
+            questPrompts.map((questPrompt) =>
+              promptService.getPrompt(questPrompt.promptId)
+            )
+          )
+        ).filter((prompt): prompt is Prompt => prompt !== null);
+
+        return prompts;
+      } else {
+        return [];
+      }
     } catch (error) {
       console.error(error);
       return [];
@@ -302,11 +316,13 @@ class QuestService {
   async deleteQuest(questId: string) {
     // remove quest_prompts -> prompts -> quest
     try {
-      const questPrompts = await questService.fetchQuestPrompts(questId);
+      const questPromptsDetails = await questService.fetchQuestPromptDetails(
+        questId
+      );
       // delete prompts
       await Promise.all(
-        questPrompts.map((questPrompt) =>
-          promptService.deletePrompt(questPrompt.promptId)
+        questPromptsDetails.map((prompt) =>
+          promptService.deletePrompt(prompt.uuid)
         )
       );
       // delete quest
@@ -365,15 +381,14 @@ class QuestService {
     // upload the prompt responses
     // get the responses for the prompt
     // upload the responses
-    const questPrompts = await questService.fetchQuestPrompts(questId);
+    const questPromptsDetails = await questService.fetchQuestPromptDetails(
+      questId
+    );
 
     const promptResponses = await Promise.all(
-      questPrompts.map(async (questPrompt) => {
-        // TODO: fetch the responses for each of the prompts
-        const res = await promptService.getPromptResponses(
-          questPrompt.promptId
-        );
-        return { prompt: questPrompt, responses: res };
+      questPromptsDetails.map(async (prompt) => {
+        const res = await promptService.getPromptResponses(prompt.uuid);
+        return { prompt, responses: res };
       })
     );
 
@@ -454,6 +469,21 @@ class QuestService {
       console.error("Failed to upload dataset", error);
       return false;
     }
+  }
+
+  async getMissedPrompts(questId: string) {
+    const questPromptsDetails = await questService.fetchQuestPromptDetails(
+      questId
+    );
+
+    const missedQuestPrompts = (
+      await promptService.getMissedPromptsToday()
+    ).filter((prompt) =>
+      questPromptsDetails.some((qp) => qp.uuid === prompt.uuid)
+    );
+
+    // from this return the quest
+    return missedQuestPrompts;
   }
 }
 

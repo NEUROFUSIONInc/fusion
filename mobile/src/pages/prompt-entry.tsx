@@ -26,7 +26,7 @@ import { Button, Calendar, Input, Tag } from "~/components";
 import { AccountContext } from "~/contexts/account.context";
 import { usePrompt } from "~/hooks";
 import { RouteProp } from "~/navigation/types.js";
-import { notificationService, promptService } from "~/services";
+import { notificationService, promptService, questService } from "~/services";
 import { maskPromptId, appInsights } from "~/utils";
 
 const yesNoOptions = [
@@ -42,6 +42,10 @@ export function PromptEntryScreen() {
   const queryClient = useQueryClient();
 
   const { data: prompt } = usePrompt(route.params.promptUuid);
+  const [promptQueue, setPromptQueue] = React.useState<Prompt[]>(
+    route.params.prompts ?? []
+  );
+
   const accountContext = React.useContext(AccountContext);
 
   const [userResponse, setUserResponse] = React.useState(
@@ -66,6 +70,23 @@ export function PromptEntryScreen() {
     const customOptions = prompt?.additionalMeta?.customOptionText;
     if (prompt?.responseType === "customOptions" && customOptions) {
       setCustomOptions(customOptions.split(";"));
+    }
+
+    // if prompt is part of quest, fetch all the missed prompts in the quest
+    if (prompt?.additionalMeta?.questId) {
+      (async () => {
+        const promptQueue = (
+          await questService.getMissedPrompts(prompt.additionalMeta.questId!)
+        ).filter((p) => p.uuid !== prompt.uuid);
+        setPromptQueue(promptQueue);
+      })();
+    } else {
+      (async () => {
+        const promptQueue = (
+          await promptService.getMissedPromptsToday()
+        ).filter((p) => p.uuid !== prompt?.uuid);
+        setPromptQueue(promptQueue);
+      })();
     }
 
     // write event to app insights
@@ -175,13 +196,8 @@ export function PromptEntryScreen() {
         prompt.uuid as unknown as string
       );
       // navigate to prompt responses screen or the next prompt
-      if (
-        route.params.prompts &&
-        route.params.index !== undefined &&
-        route.params.index + 1 < route.params.prompts.length
-      ) {
-        // console.log("showing the next prompt");
-        // clear stack history first
+      if (promptQueue.length > 0) {
+        // show the next prompt in the queue
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -193,10 +209,9 @@ export function PromptEntryScreen() {
                     {
                       name: "PromptEntry",
                       params: {
-                        promptUuid:
-                          route.params.prompts[route.params.index + 1].uuid,
-                        prompts: route.params.prompts,
-                        index: route.params.index + 1,
+                        promptUuid: promptQueue[0].uuid,
+                        prompts: promptQueue,
+                        index: 0,
                       },
                     },
                   ],
@@ -206,7 +221,7 @@ export function PromptEntryScreen() {
           })
         );
       } else {
-        // clear stack history first
+        // show the insights page
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
