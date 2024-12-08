@@ -1,7 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useRoute } from "@react-navigation/native";
-import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
@@ -337,27 +336,6 @@ export function QuestDetailScreen() {
             className="mb-5"
             onPress={handleExpandQuestOnboardingSheet}
             loading={joiningQuest}
-          />
-        </View>
-      )}
-
-      {isLoading === false && isSubscribed && questIsSavedLocally && (
-        <View className="mt-5 space-y-2">
-          <Button
-            title="View Leaderboard"
-            fullWidth
-            className="mb-5"
-            onPress={async () => {
-              // push data to remote (this storage)
-              if (quest?.guid) {
-                await questService.uploadQuestDataset(quest.guid);
-              }
-
-              // send the user to the quest page
-              await WebBrowser.openBrowserAsync(
-                `https://usefusion.ai/quest/${quest?.guid}`
-              );
-            }}
           />
         </View>
       )}
