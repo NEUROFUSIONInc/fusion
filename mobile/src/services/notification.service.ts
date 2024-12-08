@@ -80,7 +80,7 @@ export class NotificationService {
 
     const triggerObject: NotificationTriggerInput = {};
     const contentObject: NotificationContentInput = {
-      title: `Fusion: ${prompt.promptText}`,
+      title: `${prompt.promptText}`,
     };
 
     // if platform is android assign channel
