@@ -8,12 +8,11 @@ import { Button } from "~/components/ui";
 import React, { useCallback } from "react";
 import { api } from "~/config";
 import { useSession } from "next-auth/react";
-import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IExperiment, IQuest } from "~/@types";
+import { DisplayCategory, FusionHealthDataset, FusionQuestDataset, IQuest } from "~/@types";
 import { usePathname } from "next/navigation";
 import { FusionLineChart } from "~/components/charts";
 import dayjs from "dayjs";
 import { ShareModal } from "~/components/quests";
-import { Experiment } from "~/components/lab";
 
 const categories: DisplayCategory[] = [
   {
@@ -42,7 +41,6 @@ export interface FusionQuestSubscriber {
 
 const QuestDetailPage: NextPage = () => {
   const [quest, setQuest] = React.useState<IQuest | null>(null);
-  const [experiment, setExperiment] = React.useState<IExperiment | null>(null);
   const pathname = usePathname();
 
   // get the last part of the pathname
@@ -192,9 +190,10 @@ const QuestDetailPage: NextPage = () => {
           dataset.questGuid,
           dataset.timestamp,
           dataset.type,
-          // Stringify value field to handle both array and string types
-          // Escape any commas and quotes in the value to maintain CSV format
-          JSON.stringify(dataset.value).replace(/"/g, '""'),
+          // Properly escape value field for CSV format
+          typeof dataset.value === "string"
+            ? `"${dataset.value.replace(/"/g, '""')}"`
+            : `"${JSON.stringify(dataset.value).replace(/"/g, '""')}"`,
         ];
         csvRows.push(row.join(","));
       });
@@ -235,14 +234,6 @@ const QuestDetailPage: NextPage = () => {
         <p className="mt-2">Active Participants: {questSubscribers.length}</p>
       </div>
 
-      {/* if the quest contains an experiment link, embed it */}
-      {experiment && (
-        <div className="mt-5">
-          <h3 className="text-xl mb-2">Experiment</h3>
-          <Experiment {...experiment} />
-        </div>
-      )}
-
       <div className="flex space-x-2 gap-x-2 mt-4">
         <Button
           className=""
@@ -263,7 +254,7 @@ const QuestDetailPage: NextPage = () => {
               Graph View
             </Button>
             <Button intent="primary" onClick={() => downloadCSV()}>
-              Download CSV
+              Download Dataset
             </Button>
           </>
         )}
