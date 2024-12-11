@@ -13,6 +13,7 @@ interface SignalViewerProps {
 
 export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, channelNames, rangeMicrovolts = 50 }) => {
   const echartsRef = useRef<any>(null);
+  const [scale, setScale] = useState(50);
 
   const getOption = () => ({
     title: {
@@ -48,8 +49,8 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
     yAxis: {
       type: "value",
       name: "Amplitude (uV)",
-      min: -rangeMicrovolts,
-      max: rangeMicrovolts,
+      min: -scale,
+      max: scale,
     },
     series: channelNames.map((channelName) => ({
       name: channelName,
@@ -74,6 +75,18 @@ export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, chann
 
   return (
     <div>
+      <div className="flex justify-end">
+        <select
+          value={scale}
+          onChange={(e) => setScale(Number(e.target.value))}
+          className="mb-2 block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          aria-label="Select amplitude scale"
+        >
+          <option value={50}>±50 μV</option>
+          <option value={100}>±100 μV</option>
+          <option value={200}>±200 μV</option>
+        </select>
+      </div>
       <ReactEcharts
         ref={echartsRef}
         option={getOption()}
