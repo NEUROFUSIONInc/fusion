@@ -13,7 +13,7 @@ interface SignalViewerProps {
 
 export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, channelNames, rangeMicrovolts = 50 }) => {
   const echartsRef = useRef<any>(null);
-  const [scale, setScale] = useState(50);
+  const [scale, setScale] = useState(rangeMicrovolts ?? 50);
 
   const getOption = () => ({
     title: {

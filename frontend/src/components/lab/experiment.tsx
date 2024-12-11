@@ -36,6 +36,8 @@ export const Experiment: FC<IExperiment> = (experiment) => {
 
   const [experimentInfo, setExperimentInfo] = useState<IExperiment>(experiment);
 
+  const [showSignalViewer, setShowSignalViewer] = useState(true);
+
   const session = useSession();
 
   useEffect(() => {
@@ -453,16 +455,26 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                   Start Muse EEG Recording
                 </Button>
               ) : (
-                <Button
-                  className="w-fit"
-                  onClick={async () => {
-                    stopMuseRecording();
-                  }}
-                >
-                  Stop Muse EEG Recording
-                </Button>
+                <>
+                  <Button
+                    className="w-fit"
+                    onClick={async () => {
+                      stopMuseRecording();
+                    }}
+                  >
+                    Stop Muse EEG Recording
+                  </Button>
+                  <Button
+                    className="w-fit mt-2"
+                    onClick={() => {
+                      setShowSignalViewer(!showSignalViewer);
+                    }}
+                  >
+                    {showSignalViewer ? "Hide" : "Show"} Signal Viewer
+                  </Button>
+                </>
               )}
-              {museBrainwaves && (
+              {museBrainwaves && showSignalViewer && (
                 <div className="w-full mt-3">
                   <SignalViewer
                     rawBrainwaves={museBrainwaves}
