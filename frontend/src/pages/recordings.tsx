@@ -38,9 +38,9 @@ const RecordingsPage: NextPage = () => {
     <DashboardLayout>
       <Meta
         meta={{
-          title: "Brain Recordings | NeuroFusion",
+          title: "Brain Recordings | NeuroFusion Explorer",
           description:
-            "The simplest way to record and analyze your brain activity. Choose from a variety of cognitive experiments to record your brain activity and see results.",
+            "Record and analyze brain activity through cognitive experiments. Get real-time visualization, data export, and detailed analysis of your brain's responses.",
           image: "https://usefusion.app/images/features/neurofusion_experiment.png",
         }}
       />
