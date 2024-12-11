@@ -283,7 +283,7 @@ def process_eeg_fooof():
             raw.set_montage('standard_1020')
 
             events = mne.make_fixed_length_events(raw, duration=5)
-            epochs = mne.Epochs(raw, events, tmin=0, tmax=0.5, baseline=None)
+            epochs = mne.Epochs(raw, events, tmin=0, tmax=0.5, baseline=None, reject={'eeg': 100e-3})
 
             epochsSpectrum = epochs.compute_psd(fmin=1, fmax=40, method='welch', verbose=False)
             
@@ -342,6 +342,35 @@ def process_eeg_fooof():
                     "value": f"data:image/png;base64,{img_str}",
                     "summary": results_str
                 })
+            
+            # Plot and save topomap
+            # Create a figure with exactly 5 subplots arranged in a 2x3 grid
+            fig = plt.figure(figsize=(15, 10))
+            gs = plt.GridSpec(2, 3)
+            axes = [
+                plt.subplot(gs[0, 0]),
+                plt.subplot(gs[0, 1]), 
+                plt.subplot(gs[0, 2]),
+                plt.subplot(gs[1, 0]),
+                plt.subplot(gs[1, 1])
+            ]
+            raw.compute_psd().plot_topomap(normalize=True, cmap='viridis', axes=axes, show=False)
+            
+            # Save the topomap plot to a BytesIO object
+            topomap_buffer = io.BytesIO()
+            fig.savefig(topomap_buffer, format='png')
+            topomap_buffer.seek(0)
+            plt.close(fig)
+            
+            # Encode the topomap to base64
+            topomap_str = base64.b64encode(topomap_buffer.getvalue()).decode()
+            
+            # Add the topomap to the images list
+            images.append({
+                "key": "Power Spectrum Topomap",
+                "value": f"data:image/png;base64,{topomap_str}",
+                "summary": "Topographic map of power spectrum distribution across channels"
+            })
             
             return jsonify({"images": images, "summary": "FOOOF Results"}), 200
         
