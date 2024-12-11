@@ -3,94 +3,83 @@ import ReactEcharts from "echarts-for-react";
 import * as echarts from "echarts";
 
 import { NeuroFusionParsedEEG } from "~/services/integrations/muse.service";
+import dayjs from "dayjs";
 
 interface SignalViewerProps {
   rawBrainwaves: NeuroFusionParsedEEG[];
   channelNames: string[];
+  rangeMicrovolts: number;
 }
 
-export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, channelNames }) => {
-  const echartsRefs = useRef<any>([]);
+export const SignalViewer: React.FC<SignalViewerProps> = ({ rawBrainwaves, channelNames, rangeMicrovolts = 50 }) => {
+  const echartsRef = useRef<any>(null);
 
-  useEffect(() => {
-    console.log("re-render");
-    const syncZoom = (param: { chartId: string; batch: { start: any; end: any }[] }) => {
-      if (!param.batch || param.batch.length === 0) return;
-
-      const zoomedChart = echarts.getInstanceById(param.chartId);
-      const { start, end } = param.batch[0];
-
-      //@ts-ignore
-      echartsRefs.current.forEach((echartRef) => {
-        if (echartRef && echartRef.getEchartsInstance() !== zoomedChart) {
-          echartRef.getEchartsInstance().dispatchAction({
-            type: "dataZoom",
-            start,
-            end,
-            xAxisIndex: 0,
-          });
-        }
-      });
-    };
-
-    //@ts-ignore
-    echartsRefs.current.forEach((echartRef) => {
-      if (echartRef) {
-        echartRef.getEchartsInstance().on("dataZoom", syncZoom);
-      }
-    });
-
-    return () => {
-      //@ts-ignore
-      echartsRefs.current.forEach((echartRef) => {
-        if (echartRef) {
-          echartRef.getEchartsInstance().off("dataZoom", syncZoom);
-        }
-      });
-    };
-  }, [channelNames, rawBrainwaves]);
-
-  const getOption = (channelName: string) => ({
+  const getOption = () => ({
     title: {
-      text: `EEG Channel: ${channelName}`,
+      text: "EEG Channels",
     },
     tooltip: {
       trigger: "axis",
     },
+    legend: {
+      data: channelNames,
+      orient: "vertical",
+      right: 10,
+      top: "middle",
+      title: {
+        text: "Channel Names",
+      },
+    },
+    grid: {
+      right: "15%",
+    },
     xAxis: {
       type: "time",
       boundaryGap: false,
+      name: "Time",
+      splitNumber: 10,
       axisLabel: {
-        show: false, // This will hide the x-axis labels
+        formatter: (value: number) => {
+          return dayjs(value).format("HH:mm:ss");
+        },
       },
+      minInterval: 1000, // Force 1 second intervals
     },
     yAxis: {
       type: "value",
-      name: `${channelName} (uV)`,
+      name: "Amplitude (uV)",
+      min: -rangeMicrovolts,
+      max: rangeMicrovolts,
     },
-    series: [
+    series: channelNames.map((channelName) => ({
+      name: channelName,
+      type: "line",
+      data: rawBrainwaves
+        .sort((a, b) => a.unixTimestamp - b.unixTimestamp)
+        .map((item) => [item.unixTimestamp, item[channelName]]),
+      showSymbol: false,
+    })),
+    dataZoom: [
       {
-        name: channelName,
-        type: "line",
-        data: rawBrainwaves
-          .sort((a, b) => a.unixTimestamp - b.unixTimestamp)
-          .map((item) => [item.unixTimestamp, item[channelName]]),
-        showSymbol: false,
+        type: "inside",
+        start: 0,
+        end: 100,
+      },
+      {
+        start: 0,
+        end: 100,
       },
     ],
   });
 
   return (
     <div>
-      {channelNames.map((channelName, index) => (
-        <ReactEcharts
-          key={channelName}
-          ref={(e) => (echartsRefs.current[index] = e)}
-          option={getOption(channelName)}
-          style={{ height: "200px", width: "1200px" }}
-          opts={{ renderer: "canvas" }}
-        />
-      ))}
+      <ReactEcharts
+        ref={echartsRef}
+        option={getOption()}
+        style={{ height: "500px", width: "100%" }}
+        opts={{ renderer: "canvas" }}
+      />
     </div>
   );
 };

@@ -144,7 +144,7 @@ class NeurosityService {
         for (index; index < samples; index++) {
           const brainwaveEntry: any = {};
           brainwaveEntry.index = index;
-          brainwaveEntry.unixTimestamp = epochData.info.startTime + index + (1 / epochData.info.samplingRate) * 1000;
+          brainwaveEntry.unixTimestamp = epochData.info.startTime + (index / epochData.info.samplingRate) * 1000;
 
           let chIndex = 0;
           for (chIndex; chIndex < channelNames.length; chIndex++) {

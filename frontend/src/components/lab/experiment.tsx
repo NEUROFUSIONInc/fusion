@@ -213,7 +213,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     const unsubscribe = neurosityService.onUpdate((data) => {
       // Handle the new data
       console.log("neurosity data", data);
-      const last1000Brainwaves = data.slice(-2500);
+      const last1000Brainwaves = data.slice(-1000);
       setNeurosityBrainwaves(last1000Brainwaves);
     });
 
@@ -398,7 +398,11 @@ export const Experiment: FC<IExperiment> = (experiment) => {
                 {showSignalQuality && (
                   <>
                     {neurosityBrainwaves && (
-                      <SignalViewer rawBrainwaves={neurosityBrainwaves} channelNames={connectedDevice.channelNames!} />
+                      <SignalViewer
+                        rawBrainwaves={neurosityBrainwaves}
+                        channelNames={connectedDevice.channelNames!}
+                        rangeMicrovolts={50}
+                      />
                     )}
 
                     <SignalQuality channelNames={connectedDevice?.channelNames} deviceStatus={deviceStatus} />
@@ -435,44 +439,38 @@ export const Experiment: FC<IExperiment> = (experiment) => {
           </div>
 
           {museContext?.museClient && (
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col">
               <p>Active Muse Device: {museContext?.museClient?.deviceName}</p>
-
               {/* display live eeg */}
-              <div className="flex gap-x-5 mt-3">
-                {!isMuseRecording ? (
-                  <>
-                    <Button
-                      onClick={() => {
-                        startMuseRecording();
-                      }}
-                    >
-                      Start Muse EEG Recording
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={async () => {
-                        stopMuseRecording();
-                      }}
-                    >
-                      Stop Muse EEG Recording
-                    </Button>
-                  </>
-                )}
 
-                <div>
-                  {museBrainwaves && (
-                    <>
-                      <SignalViewer
-                        rawBrainwaves={museBrainwaves}
-                        channelNames={museContext.museService?.channelNames!}
-                      />
-                    </>
-                  )}
+              {!isMuseRecording ? (
+                <Button
+                  className="w-fit"
+                  onClick={() => {
+                    startMuseRecording();
+                  }}
+                >
+                  Start Muse EEG Recording
+                </Button>
+              ) : (
+                <Button
+                  className="w-fit"
+                  onClick={async () => {
+                    stopMuseRecording();
+                  }}
+                >
+                  Stop Muse EEG Recording
+                </Button>
+              )}
+              {museBrainwaves && (
+                <div className="w-full mt-3">
+                  <SignalViewer
+                    rawBrainwaves={museBrainwaves}
+                    channelNames={museContext.museService?.channelNames!}
+                    rangeMicrovolts={100}
+                  />
                 </div>
-              </div>
+              )}
             </div>
           )}
         </>
