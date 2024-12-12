@@ -60,6 +60,7 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   }
 
   async function stopNeurosityRecording() {
+    setIsNeurosityRecording(false);
     appInsights.trackEvent({
       name: "stop_neurosity_recording",
       properties: {
@@ -171,6 +172,15 @@ export const Experiment: FC<IExperiment> = (experiment) => {
     if (sandboxData !== "") {
       (async () => {
         await downloadSandboxData(sandboxData, experiment.name, dayjs().unix());
+
+        // Stop ongoing brain recording also
+        if (isNeurosityRecording) {
+          await stopNeurosityRecording();
+        }
+
+        if (isMuseRecording) {
+          await stopMuseRecording();
+        }
       })();
     }
   }, [sandboxData]);
