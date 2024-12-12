@@ -243,6 +243,128 @@ def process_visual_oddball():
     except Exception as e:
         return jsonify({'error': 'error processing', 'message': e}), 500
 
+# Eyes closed Eyes Open Analysis
+# Does this line below need to change to indicate its a different analysis being run?
+@app.route('/api/v1/process_eyesopen_eyesclosed', methods=['POST'])
+@validate_eeg_file
+def process_eyesclosed_eyesopen():
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import mne
+    import json
+    import io
+    try:
+        eegFile = request.files['eegFile']
+        samplingFrequency = int(request.form['samplingFrequency'])
+        stimulusFile = request.files['stimulusFile']
+
+        # assumptions, eeg file is csv.. situmuls file is .json
+        eeg_df = pd.read_csv(eegFile)
+        eeg_df.drop(columns=['index'], inplace=True)
+        sfreq = samplingFrequency
+
+        # Find periods of interest that overlap both eeg and stimulus
+        eeg_timestamps = eeg_df['unixTimestamp'].tolist()
+        eeg_timestamps_range = (min(eeg_timestamps), max(eeg_timestamps))
+        stimulus_json = json.loads(stimulusFile.read().decode('utf-8'))
+        filtered_json_events = [trial for trial in stimulus_json['trials'] if 'unixTimestamp' in trial and 
+                            eeg_timestamps_range[0] <= trial['unixTimestamp'] <= eeg_timestamps_range[1]]
+        if len(filtered_json_events) == 0:
+            raise ValueError("No valid events found after filtering with the CSV timestamps range.")
+        
+        # Create MNE events array from filtered JSON events
+        event_id = {'+': 1, 'close your eyes': 2}
+        events = []
+        start_time = eeg_timestamps[0] / 1e3  # Convert to seconds #TODO: check if it's in milliseconds first
+        for trial in filtered_json_events:
+            if 'value' in trial:
+                if '+' in trial['value']:
+                    event_type = event_id['+']
+                elif 'close your eyes' in trial['value']:
+                    event_type = event_id['close your eyes']
+                else:
+                    continue
+                event_time = trial['unixTimestamp'] / 1e3  # Convert to seconds
+                event_sample = int((event_time - start_time) * sfreq)
+                events.append([event_sample, 0, event_type])
+
+        events = np.array(events)
+        if len(events) == 0:
+            raise ValueError("No valid events found for creating epochs.")
+        
+        # Create MNE Raw object
+        info = mne.create_info(ch_names=list(eeg_df.columns[1:]), sfreq=sfreq, ch_types='eeg')
+        eeg_df = eeg_df.values[:, 1:].T
+        eeg_df *= 1e-6 # convert from uV to V
+        raw = mne.io.RawArray(eeg_df, info)
+        raw.set_montage('standard_1020')
+
+        lfreq = 1
+        ufreq = 40
+
+        # Filter the data
+        raw.filter(lfreq, ufreq, fir_design='firwin')
+
+        # Create epochs
+        epochs = mne.Epochs(raw, events, event_id, tmin=-0.2, tmax=0.8, baseline=(None, 0), preload=True)
+        
+        # Compute the average ERP for each condition
+        evoked_eyesopen = epochs['+'].average()
+        evoked_eyesclosed = epochs['close your eyes'].average()
+
+        print("ERP data computed.")
+
+        # Plot the ERP for the eyes open and eyes closed condition
+        print("Plotting ERP for Eyes Open and Eyes Closed Condition...")
+        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+        fig.suptitle('ERP for Eyes Open and Eyes Closed Condition')
+        
+        for idx, ch_name in enumerate(evoked_standard.ch_names):
+            ax = axes[idx // 2, idx % 2]
+            
+            # Plot eyes open ERP
+            ax.plot(evoked_eyesopen.times, evoked_eyesopen.data[idx], 
+                    label='Eyes Open', color='blue')
+
+            # Plot eyes closed ERP
+            ax.plot(evoked_eyesclosed.times, evoked_eyesclosed.data[idx], 
+                    label='Eyes Closed', color='red')
+
+            # Calculate and plot the difference waveform (Eyes Open - Eyes Closed)
+            # difference_wave = evoked_eyesopen.data[idx] - evoked_eyesclosed.data[idx]
+            # ax.plot(evoked_eyesopen.times, difference_wave, 
+            #         label='Difference (Eyes Open - Eyes Closed)', color='green')
+            
+            ax.axvline(0, color='k', linestyle='--', label='Stimulus Onset')
+            ax.set_title(f'Channel: {ch_name}')
+            ax.set_xlabel('Time (s)')
+            ax.set_ylabel('Amplitude (µV)')
+            ax.legend()
+            ax.grid(True)
+        
+        plt.tight_layout()
+        
+        # Save the plot to a BytesIO object
+        img_buffer = io.BytesIO()
+        plt.savefig(img_buffer, format='png')
+        img_buffer.seek(0)
+        
+        # Encode the image to base64
+        img_str = base64.b64encode(img_buffer.getvalue()).decode()
+        
+        # Create a dictionary with the image data
+        erp_plot = {
+            "key": "ERP Eyes Open vs Eyes Closed (All Channels)",
+            "value": f"data:image/png;base64,{img_str}",
+            "summary": "ERP plot for eyes open and eyes closed conditions across all channels.\n Filtered between 1 and 40 Hz. Using MNE firwin"
+        }
+        plt.close() 
+
+        return jsonify({'images': [erp_plot], 'summary': "ERP Eyes Open vs Eyes Closed (All Channels)"}), 200
+    except Exception as e:
+        return jsonify({'error': 'error processing', 'message': e}), 500
+        
 @app.route('/api/v1/process_eeg_fooof', methods=['POST'])
 def process_eeg_fooof():
     """
