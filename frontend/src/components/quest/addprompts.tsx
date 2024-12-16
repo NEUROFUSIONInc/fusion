@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input } from "~/components/ui";
 import { categories, promptSelectionDays, responseTypes } from "~/config/data";
-import { Prompt, PromptResponseType } from "~/@types";
+import { Prompt, PromptNotifyCondition, PromptNotifyOperator, PromptResponseType } from "~/@types";
 import { TimePicker } from "./timepicker";
 import dayjs from "dayjs";
 
@@ -10,6 +10,7 @@ interface AddPromptModalProps {
   setPrompt: (prompt: Prompt) => void;
   onSave: (prompt: Prompt) => void;
   onClose: () => void;
+  savedPrompts?: Prompt[];
 }
 
 export function getDayjsFromTimeString(timeString: string) {
@@ -21,7 +22,7 @@ export function getDayjsFromTimeString(timeString: string) {
   return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
 }
 
-const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSave, onClose }) => {
+const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSave, onClose, savedPrompts }) => {
   const [promptText, setPromptText] = useState(prompt.promptText);
   const [customOptions, setCustomOptions] = useState<string[]>(
     prompt.additionalMeta.customOptionText ? prompt.additionalMeta.customOptionText.split(";") : []
@@ -33,9 +34,21 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
   const [start, setStart] = useState(getDayjsFromTimeString("08:00"));
   const [end, setEnd] = useState(getDayjsFromTimeString("22:00"));
 
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [addCondition, setAddCondition] = useState(!!prompt.additionalMeta?.notifyCondition);
+  const [notifyCondition, setNotifyCondition] = useState<PromptNotifyCondition>(
+    prompt.additionalMeta?.notifyCondition ?? {
+      sourcePromptUuid: "",
+      operator: PromptNotifyOperator.equals,
+      value: "",
+    }
+  );
+
   const updatePrompt = () => {
-    const updatedPrompt = {
+    const updatedPrompt: Prompt = {
       ...prompt,
+      uuid: prompt.uuid === "" ? crypto.randomUUID() : prompt.uuid,
       promptText,
       responseType: responseType ?? "text", // Default to "text" if null
       notificationConfig_days: days,
@@ -47,6 +60,14 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
         customOptionText: customOptions.join(";"),
       }, // Initialize with an empty object
     };
+
+    // Include notify condition if addCondition is set
+    if (addCondition) {
+      updatedPrompt.additionalMeta = {
+        ...updatedPrompt.additionalMeta,
+        notifyCondition: notifyCondition,
+      };
+    }
     console.log("updatedPrompt", updatedPrompt);
     setPrompt(updatedPrompt);
     onSave(updatedPrompt);
@@ -77,9 +98,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
               }}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
             >
-              <option value="" disabled>
-                Select a category
-              </option>
+              <option value="">Select a category</option>
               {categories.map((item, index) => (
                 <option key={index} value={item.name}>
                   {item.name}
@@ -102,7 +121,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
           </div>
 
           <label htmlFor="activity" className="my-2 block text-sm font-medium text-gray-900 dark:text-white mt-4">
-            Response Type:
+            Response Type
             <select
               value={responseType ?? ""}
               onChange={(e) => {
@@ -120,7 +139,6 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
                 </option>
               ))}
             </select>
-            {/* TODO: Add Custom Options Component */}
             {responseType === "customOptions" && (
               <div>
                 <Input
@@ -149,6 +167,93 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
 
           {/* Add Times Component */}
           <TimePicker start={start} setStart={setStart} end={end} setEnd={setEnd} days={days} setDays={setDays} />
+
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex items-center text-sm text-gray-500 hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              <svg
+                className={`mr-2 h-4 w-4 transform transition-transform ${showAdvanced ? "rotate-90" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              Advanced Settings
+            </button>
+
+            {showAdvanced && (
+              <div className="mt-4  space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Notify if</span>
+                    <Button
+                      size="sm"
+                      intent="ghost"
+                      className="underline"
+                      onClick={() => setAddCondition(!addCondition)}
+                    >
+                      {addCondition ? "- Remove" : "+ Add"} Condition
+                    </Button>
+                  </div>
+
+                  {addCondition && (
+                    <>
+                      <label htmlFor="promptSelect" className="block text-sm font-medium text-gray-900 dark:text-white">
+                        Prompt
+                      </label>
+                      <select
+                        id="promptSelect"
+                        value={notifyCondition.sourcePromptUuid}
+                        onChange={(e) => setNotifyCondition({ ...notifyCondition, sourcePromptUuid: e.target.value })}
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                      >
+                        <option value="">Select a prompt</option>
+                        {savedPrompts?.map(
+                          (p) =>
+                            p.uuid !== prompt?.uuid && (
+                              <option key={p.uuid} value={p.uuid}>
+                                {p.promptText}
+                              </option>
+                            )
+                        )}
+                      </select>
+
+                      <label htmlFor="operator" className="block text-sm font-medium text-gray-900 dark:text-white">
+                        Operator
+                      </label>
+                      <select
+                        id="operator"
+                        value={notifyCondition.operator}
+                        onChange={(e) =>
+                          setNotifyCondition({ ...notifyCondition, operator: e.target.value as PromptNotifyOperator })
+                        }
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                      >
+                        <option value={PromptNotifyOperator.equals}>equals</option>
+                        <option value={PromptNotifyOperator.not_equals}>not equals</option>
+                        <option value={PromptNotifyOperator.greater_than}>greater than</option>
+                        <option value={PromptNotifyOperator.less_than}>less than</option>
+                      </select>
+
+                      <Input
+                        label="Value"
+                        id="value"
+                        type="text"
+                        value={notifyCondition.value}
+                        onChange={(e) => setNotifyCondition({ ...notifyCondition, value: e.target.value })}
+                        className="mt-1 w-full"
+                        placeholder="Enter value"
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </DialogDescription>
         <div className="mt-4 flex justify-end gap-4">
           <Button disabled={false} onClick={updatePrompt}>

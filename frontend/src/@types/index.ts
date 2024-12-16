@@ -137,6 +137,7 @@ export type PromptAdditionalMeta = {
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
   questId?: string;
+  notifyCondition?: PromptNotifyCondition;
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
@@ -191,3 +192,15 @@ export const healthDataCategories: DisplayCategory[] = [
     value: "heart_rate",
   },
 ];
+
+export enum PromptNotifyOperator {
+  equals = "equals",
+  not_equals = "not_equals",
+  greater_than = "greater_than",
+  less_than = "less_than",
+}
+export interface PromptNotifyCondition {
+  sourcePromptUuid: string;
+  operator: PromptNotifyOperator;
+  value: string;
+}

@@ -15,6 +15,7 @@ import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShareModal } from "~/components/quests/share-modal";
+// import { NotebookEditor } from "~/components/lab/notebook-editor";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -32,6 +33,9 @@ const QuestsPage: NextPage = () => {
 
   const [experimentConfig, setExperimentConfig] = React.useState<string>("");
   const [showExperimentEditor, setShowExperimentEditor] = React.useState<boolean>(false);
+
+  // const [scriptConfig, setScriptConfig] = React.useState<string>("");
+  // const [showScriptEditor, setShowScriptEditor] = React.useState<boolean>(false);
 
   const buildQuestRequestBody = (isEdit: boolean = false, guid: string = "") => {
     const questObject: {
@@ -285,7 +289,7 @@ const QuestsPage: NextPage = () => {
 
   const handleAddPromptModal = () => {
     const newPrompt: Prompt = {
-      uuid: "",
+      uuid: crypto.randomUUID(),
       promptText: "",
       responseType: "text", // Assuming "text" is a valid PromptResponseType
       notificationConfig_days: promptSelectionDays,
@@ -524,7 +528,7 @@ const QuestsPage: NextPage = () => {
               {/* Include experiments you want people to run */}
               <div className="mt-5">
                 <Input
-                  label="Configure experiments you want people to run"
+                  label="Configure experiment you want people to run"
                   type="text"
                   size="lg"
                   fullWidth
@@ -562,6 +566,44 @@ const QuestsPage: NextPage = () => {
                   </div>
                 )}
               </div>
+
+              {/* allow user to add a script (notebook) */}
+              {/* <div className="flex flex-col space-y-2">
+                <Input
+                  label="Add a script (notebook) to run after data is collected"
+                  type="text"
+                  size="lg"
+                  fullWidth
+                  placeholder="Enter Script Config (JSON)"
+                  value={scriptConfig}
+                  className="h-40  hidden"
+                  onChange={(e) => setScriptConfig(e.target.value)}
+                />
+
+                <div className="flex flex-row space-x-2">
+                  <Button leftIcon={<Plus />} onClick={() => setShowScriptEditor(true)}>
+                    Add Script (.py)
+                  </Button>
+                  {scriptConfig && (
+                    <Button intent="outlined" leftIcon={<Trash />} onClick={() => setScriptConfig("")}>
+                      Delete Script
+                    </Button>
+                  )}
+
+                  {showScriptEditor && (
+                    <div className="mt-2">
+                      <NotebookEditor
+                        scriptCode={scriptConfig}
+                        setScriptCode={setScriptConfig}
+                        isOpen={showScriptEditor}
+                        onClose={() => setShowScriptEditor(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div> */}
+
+              <div className="flex flex-row space-x-2"></div>
               <Button
                 type="submit"
                 size="lg"
@@ -642,6 +684,7 @@ const QuestsPage: NextPage = () => {
                             setQuestOrganizer(quest.organizerName ?? "");
                             setActiveView("edit");
                           }}
+                          className="underline"
                         >
                           Edit
                         </Button>
@@ -691,6 +734,7 @@ const QuestsPage: NextPage = () => {
             setActivePrompt(null);
             setDisplayAddPromptModal(false);
           }}
+          savedPrompts={prompts}
         />
       )}
 
