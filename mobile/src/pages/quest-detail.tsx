@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
-import { Prompt, Quest } from "~/@types";
+import { Prompt, PromptOptionKey, Quest } from "~/@types";
 import {
   Button,
   PromptDetails,
@@ -315,6 +315,7 @@ export function QuestDetailScreen() {
                       prompt={prompt}
                       variant="detail"
                       displayFrequency
+                      onClick={() => handlePromptExpandSheet(prompt)}
                     />
                   </View>
                 ))}
@@ -348,6 +349,7 @@ export function QuestDetailScreen() {
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
             allowEdit={false}
+            optionsList={[PromptOptionKey.record, PromptOptionKey.previous]}
           />
         )}
 

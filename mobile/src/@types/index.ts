@@ -121,3 +121,20 @@ export const yesNoOptions = [
   { label: "Yes", value: "Yes" },
   { label: "No", value: "No" },
 ];
+
+export enum PromptOptionKey {
+  record = "record",
+  previous = "previous",
+  edit = "edit",
+  notification = "notification",
+  delete = "delete",
+  share = "share",
+}
+
+export const allPromptOptionKeys = [
+  PromptOptionKey.record,
+  PromptOptionKey.previous,
+  PromptOptionKey.notification,
+  PromptOptionKey.edit,
+  PromptOptionKey.delete,
+];

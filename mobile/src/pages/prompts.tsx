@@ -12,7 +12,7 @@ import {
 import { Image, Platform, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { Prompt } from "~/@types";
+import { allPromptOptionKeys, Prompt, PromptOptionKey } from "~/@types";
 import {
   Button,
   CategoryTag,
@@ -173,6 +173,11 @@ export const PromptsScreen = () => {
             promptId={activePrompt?.uuid!}
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
+            optionsList={
+              activePrompt?.additionalMeta?.questId
+                ? [PromptOptionKey.record, PromptOptionKey.previous]
+                : allPromptOptionKeys
+            }
           />
         )}
       </Portal>

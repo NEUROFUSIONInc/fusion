@@ -11,7 +11,7 @@ import { BottomSheet } from "../../../bottom-sheet";
 import { Notebook, Pause, Pencil, Trash } from "../../../icons";
 import { PromptOption } from "../../prompt-option";
 
-import { Prompt } from "~/@types";
+import { allPromptOptionKeys, Prompt, PromptOptionKey } from "~/@types";
 import { Button } from "~/components/button";
 import { AccountContext } from "~/contexts/account.context";
 import {
@@ -27,20 +27,11 @@ interface PromptOptionsSheetProps {
   onBottomSheetClose: () => void;
   promptId: string;
   defaultPrompt?: Prompt;
-  showLimitedOptions?: boolean;
   allowEdit?: boolean;
+  optionsList?: PromptOptionKey[];
 }
 
-enum PromptOptionKey {
-  record = "record",
-  previous = "previous",
-  edit = "edit",
-  notification = "notification",
-  delete = "delete",
-  share = "share",
-}
-
-interface PromptOption {
+interface IPromptOption {
   key: PromptOptionKey;
   option: string;
   icon: React.ReactElement;
@@ -52,8 +43,8 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   defaultPrompt,
   promptOptionsSheetRef,
   onBottomSheetClose,
-  showLimitedOptions = false,
   allowEdit = true,
+  optionsList = allPromptOptionKeys,
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
   const navigation = useNavigation<PromptScreenNavigationProp>();
@@ -136,7 +127,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     }
   };
 
-  const promptOptions: PromptOption[] = [
+  const promptOptions: IPromptOption[] = [
     {
       key: PromptOptionKey.record,
       option: "Record Response",
@@ -155,7 +146,7 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     },
     {
       key: PromptOptionKey.previous,
-      option: "Previous Responses",
+      option: "View Previous Responses",
       icon: <FontAwesome5 name="history" size={18} color="white" />,
       onPress: () => {
         onBottomSheetClose?.();
@@ -210,15 +201,14 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
     // },
   ];
 
-  // Limited options: Delete Prompt,  Share Prompt
-
-  const limitedOptions = promptOptions.slice(4, 5);
   const optionsToShow = useMemo(() => {
-    const options = showLimitedOptions ? limitedOptions : promptOptions;
-    return !allowEdit
-      ? options.filter((option) => option.key !== PromptOptionKey.edit)
-      : options;
-  }, [showLimitedOptions]);
+    const options = promptOptions.filter(
+      (option) =>
+        optionsList.includes(option.key) &&
+        (allowEdit || option.key !== PromptOptionKey.edit)
+    );
+    return options;
+  }, [optionsList, allowEdit]);
 
   return (
     <BottomSheet

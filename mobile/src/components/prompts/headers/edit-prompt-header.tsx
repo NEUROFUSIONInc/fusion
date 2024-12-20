@@ -8,6 +8,7 @@ import { Button } from "../../button";
 import { LeftArrow, VerticalMenu } from "../../icons";
 import { PromptOptionsSheet } from "../prompt-details/sheets";
 
+import { PromptOptionKey } from "~/@types";
 import { RouteProp } from "~/navigation";
 
 export const EditPromptHeader = () => {
@@ -36,7 +37,7 @@ export const EditPromptHeader = () => {
           promptOptionsSheetRef={promptOptionsSheet}
           promptId={isEdit ? route.params.promptId : ""}
           onBottomSheetClose={handleBottomSheetClose}
-          showLimitedOptions
+          optionsList={[PromptOptionKey.delete]}
         />
       </Portal>
     );
