@@ -67,6 +67,15 @@ export function PromptEntryScreen() {
     : Math.floor(dayjs().unix());
 
   React.useEffect(() => {
+    // write event to app insights
+    appInsights.trackPageView({
+      name: "PromptEntry",
+      properties: {
+        identifier: maskPromptId(prompt?.uuid!),
+        userNpub: accountContext?.userNpub,
+      },
+    });
+
     const customOptions = prompt?.additionalMeta?.customOptionText;
     if (prompt?.responseType === "customOptions" && customOptions) {
       setCustomOptions(customOptions.split(";"));
@@ -78,6 +87,78 @@ export function PromptEntryScreen() {
         const promptQueue = (
           await questService.getMissedPrompts(prompt.additionalMeta.questId!)
         ).filter((p) => p.uuid !== prompt.uuid);
+        const notifyCondition = prompt.additionalMeta.notifyCondition!;
+        if (notifyCondition && notifyCondition.sourceType === "prompt") {
+          (async () => {
+            // Responses for the source prompt in current day
+            const sourcePromptResponsesToday =
+              await promptService.getPromptResponses(
+                notifyCondition.sourceId!,
+                dayjs().startOf("day").unix()
+              );
+            // Find the source prompt in the promptQueue
+            const isSourcePromptInMissedPrompts = promptQueue.find(
+              (p) => p.uuid === notifyCondition.sourceId
+            );
+
+            //  go to the source prompt if it hasn't been responded to
+            if (
+              sourcePromptResponsesToday.length < 1 ||
+              isSourcePromptInMissedPrompts
+            ) {
+              // Navigate to source prompt if it hasn't been responded to
+              await goToNextItemInPromptQueueorInsightsPage(
+                promptQueue,
+                isSourcePromptInMissedPrompts?.uuid!
+              );
+            } else if (
+              sourcePromptResponsesToday.length > 0 &&
+              !isSourcePromptInMissedPrompts
+            ) {
+              // this means the source prompt has been responded to. So decide whether to show based on the last response
+              const latestSourcePromptResponse =
+                sourcePromptResponsesToday.reduce((latest, current) => {
+                  return !latest ||
+                    current.responseTimestamp > latest.responseTimestamp
+                    ? current
+                    : latest;
+                });
+
+              const sourceValue =
+                latestSourcePromptResponse.value.toLowerCase();
+              const targetValue = notifyCondition.value.toLowerCase();
+
+              let shouldShowPrompt = false;
+
+              switch (notifyCondition.operator) {
+                case "equals":
+                  shouldShowPrompt = sourceValue === targetValue;
+                  break;
+                case "not_equals":
+                  shouldShowPrompt = sourceValue !== targetValue;
+                  break;
+                case "greater_than":
+                  shouldShowPrompt =
+                    Number(latestSourcePromptResponse.value) >
+                    Number(notifyCondition.value);
+                  break;
+                case "less_than":
+                  shouldShowPrompt =
+                    Number(latestSourcePromptResponse.value) <
+                    Number(notifyCondition.value);
+                  break;
+                default:
+                  shouldShowPrompt = true;
+              }
+
+              if (!shouldShowPrompt) {
+                // go to next item in queue
+                await goToNextItemInPromptQueueorInsightsPage(promptQueue);
+              }
+            }
+          })();
+        }
+
         setPromptQueue(promptQueue);
       })();
     } else {
@@ -88,15 +169,6 @@ export function PromptEntryScreen() {
         setPromptQueue(promptQueue);
       })();
     }
-
-    // write event to app insights
-    appInsights.trackPageView({
-      name: "PromptEntry",
-      properties: {
-        identifier: maskPromptId(prompt?.uuid!),
-        userNpub: accountContext?.userNpub,
-      },
-    });
   }, [prompt]);
 
   const handleCustomOptionChange = (option: string) => {
@@ -195,54 +267,9 @@ export function PromptEntryScreen() {
       await notificationService.removeNotificationsForPromptFromTray(
         prompt.uuid as unknown as string
       );
+
       // navigate to prompt responses screen or the next prompt
-      if (promptQueue.length > 0) {
-        // show the next prompt in the queue
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: "PromptNavigator",
-                state: {
-                  routes: [
-                    {
-                      name: "PromptEntry",
-                      params: {
-                        promptUuid: promptQueue[0].uuid,
-                        prompts: promptQueue,
-                        index: 0,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          })
-        );
-      } else {
-        // show the insights page
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: "InsightsNavigator",
-                state: {
-                  routes: [
-                    {
-                      name: "InsightsPage",
-                      params: {
-                        promptUuid: prompt.uuid,
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          })
-        );
-      }
+      await goToNextItemInPromptQueueorInsightsPage();
     }
   };
 
@@ -360,6 +387,64 @@ export function PromptEntryScreen() {
       })
     );
   };
+
+  const goToNextItemInPromptQueueorInsightsPage = React.useCallback(
+    async (
+      promptList: Prompt[] | null = null,
+      promptId: string | null = null
+    ) => {
+      const promptSet = promptList ?? promptQueue;
+
+      if (!promptSet || promptSet.length < 1) {
+        // go to insight page
+        // show the insights page
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "InsightsNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "InsightsPage",
+                      params: {
+                        promptUuid: prompt!.uuid,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "PromptNavigator",
+                state: {
+                  routes: [
+                    {
+                      name: "PromptEntry",
+                      params: {
+                        promptUuid: promptId ?? promptSet[0].uuid,
+                        prompts: promptSet,
+                        index: 0,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      }
+    },
+    [promptQueue, prompt, navigation]
+  );
 
   return (
     <KeyboardAvoidingView

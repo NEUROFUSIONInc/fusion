@@ -11,11 +11,25 @@ export interface Prompt {
   additionalMeta: PromptAdditionalMeta;
 }
 
+export enum PromptNotifyOperator {
+  equals = "equals",
+  not_equals = "not_equals",
+  greater_than = "greater_than",
+  less_than = "less_than",
+}
+export interface PromptNotifyCondition {
+  sourceType: "prompt" | "onboardingQuestion";
+  sourceId: string;
+  operator: PromptNotifyOperator;
+  value: string;
+}
+
 export type PromptAdditionalMeta = {
   category?: string;
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
   questId?: string;
+  notifyCondition?: PromptNotifyCondition;
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {

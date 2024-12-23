@@ -627,7 +627,8 @@ class PromptService {
       // if notification is not active, skip
       if (
         !prompt.additionalMeta ||
-        prompt.additionalMeta?.isNotificationActive === false
+        (prompt.additionalMeta?.isNotificationActive === false &&
+          !prompt.additionalMeta?.questId)
       ) {
         continue;
       }

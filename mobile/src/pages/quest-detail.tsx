@@ -162,16 +162,12 @@ export function QuestDetailScreen() {
 
   const addUserToQuest = async () => {
     /**
-     * 1. Display consent dialog
-     * 2. Add user to quest
+     * This runs after user completes onboarding (include consent)
+     * - makes api call for a user to join a quest
      * 3. Save prompts in db - if they exist (rec) 1 prompt
      * 4. Fetch health data - if required
      * 5. Show success toast
      */
-    // TODO: display consent dialog
-    // consent - ['I agree to participate in this quest',
-    // 'I agree to share data I collect with the quest organizer',
-    //  'I want to share my data anoymously with the research community']
     try {
       setJoiningQuest(true);
       // remote call to add user to quest
@@ -199,11 +195,29 @@ export function QuestDetailScreen() {
         setQuestIsSavedLocally(true);
 
         // save prompts locally
+        // TODO: this logic should be moved to createQuest hook
         if (route.params.quest.prompts) {
           const res = await Promise.all(
             route.params.quest.prompts.map(async (prompt) => {
               // link prompt to quest
               prompt.additionalMeta["questId"] = route.params.quest.guid;
+
+              const promptNotifyCondition =
+                prompt.additionalMeta["notifyCondition"];
+
+              if (
+                promptNotifyCondition &&
+                promptNotifyCondition.sourceType === "onboardingQuestion"
+              ) {
+                // TODO: check what the reponse it and decide whether to just skip the prompt from the loop
+              }
+
+              if (
+                promptNotifyCondition &&
+                promptNotifyCondition.sourceType === "prompt"
+              ) {
+                prompt.additionalMeta["isNotificationActive"] = false;
+              }
               const promptRes = await createPrompt(prompt);
               return promptRes;
             })
