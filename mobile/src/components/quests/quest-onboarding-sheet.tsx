@@ -40,11 +40,21 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
   callback,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [sheetHeight, setSheetHeight] = useState(["60%"]);
+
   const [onboardingQuestions, setOnboardingQuestions] = useState<
     OnboardingQuestion[]
-  >(JSON.parse(quest?.config ?? "{}").onboardingQuestions ?? []);
+  >([]);
+  const [onboardingResponses, setOnboardingResponses] = useState<
+    OnboardingResponse[]
+  >([]);
 
-  const [sheetHeight, setSheetHeight] = useState(["60%"]);
+  // initializes the onboarding questions state
+  useEffect(() => {
+    if (quest?.config) {
+      setOnboardingQuestions(JSON.parse(quest.config).onboardingQuestions);
+    }
+  }, [quest]);
 
   const handleSaveResponses = async () => {
     try {
@@ -95,8 +105,8 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
     }
   };
 
+  // updates the onboarding responses state
   const handleInputChange = (question: OnboardingQuestion, value: string) => {
-    // TODO: save responses to db
     setOnboardingResponses(
       onboardingResponses.map((response) => {
         if (response.guid === question.guid) {
@@ -111,21 +121,17 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
     );
   };
 
-  const [onboardingResponses, setOnboardingResponses] = useState<
-    OnboardingResponse[]
-  >(
-    onboardingQuestions.map((question) => ({
-      ...question,
-      responseValue: "",
-      responseTimestamp: 0,
-    }))
-  );
-
+  // initializes the onboarding responses state
   useEffect(() => {
-    if (quest?.config) {
-      setOnboardingQuestions(JSON.parse(quest.config).onboardingQuestions);
-    }
-  }, [quest]);
+    setOnboardingResponses(
+      onboardingQuestions.map((question) => ({
+        ...question,
+        responseValue: "",
+        responseTimestamp: 0,
+      }))
+    );
+  }, [onboardingQuestions]);
+
   return (
     <Portal>
       <BottomSheet ref={bottomSheetRef} snapPoints={sheetHeight}>
