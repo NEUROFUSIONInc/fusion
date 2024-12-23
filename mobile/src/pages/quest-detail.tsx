@@ -5,7 +5,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
-import { Prompt, PromptOptionKey, Quest } from "~/@types";
+import {
+  OnboardingResponse,
+  Prompt,
+  PromptNotifyOperator,
+  PromptOptionKey,
+  Quest,
+} from "~/@types";
 import {
   Button,
   PromptDetails,
@@ -32,6 +38,9 @@ export function QuestDetailScreen() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [questIsSavedLocally, setQuestIsSavedLocally] = React.useState(false);
   const [onboardingComplete, setOnboardingComplete] = React.useState(false);
+  const [onboardingResponses, setOnboardingResponses] = React.useState<
+    OnboardingResponse[]
+  >([]);
   const [quest, setQuest] = React.useState<Quest | undefined>(
     route.params.quest
   );
@@ -209,7 +218,40 @@ export function QuestDetailScreen() {
                 promptNotifyCondition &&
                 promptNotifyCondition.sourceType === "onboardingQuestion"
               ) {
-                // TODO: check what the reponse it and decide whether to just skip the prompt from the loop
+                const response = onboardingResponses.find(
+                  (r) => r.guid === promptNotifyCondition.sourceId
+                );
+                if (response) {
+                  let shouldSavePrompt = true;
+                  switch (promptNotifyCondition.operator) {
+                    case PromptNotifyOperator.equals:
+                      shouldSavePrompt =
+                        response.responseValue.toLowerCase() ===
+                        promptNotifyCondition.value.toLowerCase();
+                      break;
+                    case PromptNotifyOperator.not_equals:
+                      shouldSavePrompt =
+                        response.responseValue.toLowerCase() !==
+                        promptNotifyCondition.value.toLowerCase();
+                      break;
+                    case PromptNotifyOperator.greater_than:
+                      shouldSavePrompt =
+                        Number(response.responseValue) >
+                        Number(promptNotifyCondition.value);
+                      break;
+                    case PromptNotifyOperator.less_than:
+                      shouldSavePrompt =
+                        Number(response.responseValue) <
+                        Number(promptNotifyCondition.value);
+                      break;
+                    default:
+                      shouldSavePrompt = true;
+                  }
+
+                  if (!shouldSavePrompt) {
+                    return false;
+                  }
+                }
               }
 
               if (
@@ -370,7 +412,10 @@ export function QuestDetailScreen() {
         <QuestOnboardingSheet
           bottomSheetRef={questOnboardingBottomSheetRef}
           quest={accountContext?.userPreferences?.activeQuest!}
-          callback={() => setOnboardingComplete(true)}
+          callback={(onboardingResponses: OnboardingResponse[]) => {
+            setOnboardingResponses(onboardingResponses);
+            setOnboardingComplete(true);
+          }}
         />
       </Portal>
     </Screen>

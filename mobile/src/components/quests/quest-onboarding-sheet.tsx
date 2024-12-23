@@ -1,5 +1,6 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
+import dayjs from "dayjs";
 import { FC, RefObject, useEffect, useState } from "react";
 import {
   View,
@@ -18,14 +19,19 @@ import { ChevronRight } from "../icons";
 import { Input } from "../input";
 import { Tag } from "../tag";
 
-import { OnboardingQuestion, Quest, yesNoOptions } from "~/@types";
+import {
+  OnboardingQuestion,
+  OnboardingResponse,
+  Quest,
+  yesNoOptions,
+} from "~/@types";
 import { IS_IOS } from "~/config";
 import { questService } from "~/services";
 
 interface QuestOnboardingSheetProps {
   bottomSheetRef: RefObject<RNBottomSheet>;
   quest: Quest;
-  callback: () => void;
+  callback: (onboardingResponses: OnboardingResponse[]) => void;
 }
 
 export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
@@ -46,7 +52,12 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
       // Validate required fields
       const missingRequired = onboardingQuestions
         .filter((q) => q.required)
-        .find((q) => !onboardingResponses[q.question]?.trim());
+        .find(
+          (q) =>
+            !onboardingResponses
+              .find((r) => r.guid === q.guid)
+              ?.responseValue?.trim()
+        );
 
       if (missingRequired) {
         Alert.alert(
@@ -71,7 +82,7 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
       });
 
       // call the method that adds user to quest
-      callback?.();
+      callback(onboardingResponses);
       bottomSheetRef.current?.close();
     } catch (error) {
       console.error("Failed to save responses", error);
@@ -86,15 +97,29 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
 
   const handleInputChange = (question: OnboardingQuestion, value: string) => {
     // TODO: save responses to db
-    setOnboardingResponses({
-      ...onboardingResponses,
-      [question.question]: value,
-    });
+    setOnboardingResponses(
+      onboardingResponses.map((response) => {
+        if (response.guid === question.guid) {
+          return {
+            ...response,
+            responseValue: value,
+            responseTimestamp: dayjs().unix(),
+          };
+        }
+        return response;
+      })
+    );
   };
 
   const [onboardingResponses, setOnboardingResponses] = useState<
-    Record<string, string>
-  >({});
+    OnboardingResponse[]
+  >(
+    onboardingQuestions.map((question) => ({
+      ...question,
+      responseValue: "",
+      responseTimestamp: 0,
+    }))
+  );
 
   useEffect(() => {
     if (quest?.config) {
@@ -115,7 +140,11 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
                 return (
                   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                     <Input
-                      value={onboardingResponses[question.question] || ""}
+                      value={
+                        onboardingResponses.find(
+                          (r) => r.guid === question.guid
+                        )?.responseValue ?? ""
+                      }
                       onChangeText={(value) =>
                         handleInputChange(question, value)
                       }
@@ -143,7 +172,11 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
                         onChangeText={(value) =>
                           handleInputChange(question, value)
                         }
-                        value={onboardingResponses[question.question] || ""}
+                        value={
+                          onboardingResponses.find(
+                            (r) => r.guid === question.guid
+                          )?.responseValue ?? ""
+                        }
                         className="h-[50] leading-1.5 mx-4"
                         onTouchStart={() => {
                           setSheetHeight(["100%"]);
@@ -170,7 +203,9 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
                             key={label}
                             title={label}
                             isActive={
-                              onboardingResponses[question.question] === value
+                              onboardingResponses.find(
+                                (r) => r.guid === question.guid
+                              )?.responseValue === value
                             }
                             handleValueChange={(checked) => {
                               console.log("checked", checked);

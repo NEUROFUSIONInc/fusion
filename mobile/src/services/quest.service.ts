@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 import { promptService } from "./prompt.service";
 
-import { Quest, Prompt, QuestPrompt } from "~/@types";
+import { Quest, Prompt, QuestPrompt, OnboardingResponse } from "~/@types";
 import { db } from "~/lib";
 import { appInsights, buildHealthDataset, getApiService } from "~/utils";
 
@@ -353,7 +353,7 @@ class QuestService {
 
   async uploadOnboardingResponses(
     questId: string,
-    responses: Record<string, string>
+    responses: OnboardingResponse[]
   ) {
     // upload to the api
     try {

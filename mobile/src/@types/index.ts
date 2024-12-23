@@ -128,8 +128,13 @@ export interface OnboardingQuestion {
   guid: string;
   question: string;
   options?: string[];
-  required?: boolean;
+  required: boolean;
   type: PromptResponseType;
+}
+
+export interface OnboardingResponse extends OnboardingQuestion {
+  responseValue: string;
+  responseTimestamp: number;
 }
 
 export const yesNoOptions = [
