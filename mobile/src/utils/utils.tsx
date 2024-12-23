@@ -152,7 +152,7 @@ export function interpretDaySelection(days: NotificationConfigDays): string {
   }
 
   if (numSelectedDays === 7) {
-    return "Everyday";
+    return "Daily";
   }
 
   if (numSelectedDays === 1) {

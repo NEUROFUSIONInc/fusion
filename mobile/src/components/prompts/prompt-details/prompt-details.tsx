@@ -12,6 +12,7 @@ interface PromptDetailsProps {
   prompt: Prompt;
   displayFrequency?: boolean;
   onClick?: () => void;
+  showFrequencyLabel?: boolean;
 }
 
 export const PromptDetails: FC<PromptDetailsProps> = ({
@@ -19,6 +20,7 @@ export const PromptDetails: FC<PromptDetailsProps> = ({
   prompt,
   displayFrequency = true,
   onClick,
+  showFrequencyLabel = true,
 }) => {
   const days = prompt.notificationConfig_days;
 
@@ -43,30 +45,30 @@ export const PromptDetails: FC<PromptDetailsProps> = ({
         </Text>
         {displayFrequency &&
           (prompt.additionalMeta?.isNotificationActive === false ? (
-            <View className="flex flex-row items-center">
-              <Text className="font-sans text-sm text-white opacity-60">
-                Paused
-              </Text>
-            </View>
+            <></>
           ) : (
             <View className="flex flex-row gap-x-2 items-center">
               <Text className="font-sans text-sm text-white opacity-60">
                 {interpretDaySelection(days)}
               </Text>
               <View className="flex flex-row items-center">
-                <View className="w-1 h-1 bg-white opacity-60" />
-                {frequencyLabel === "Once" ? (
-                  <Text className="font-sans text-sm text-white opacity-60 pl-2">
-                    {frequencyLabel +
-                      " at " +
-                      convertTime(prompt.notificationConfig_startTime)}
-                  </Text>
-                ) : (
-                  <Text className="font-sans text-sm text-white opacity-60 pl-2 over">
-                    {frequencyLabel +
-                      " from " +
-                      convertTime(prompt.notificationConfig_startTime)}
-                  </Text>
+                {showFrequencyLabel && (
+                  <>
+                    <View className="w-1 h-1 bg-white opacity-60" />
+                    {frequencyLabel === "Once" ? (
+                      <Text className="font-sans text-sm text-white opacity-60 pl-2">
+                        {frequencyLabel +
+                          " at " +
+                          convertTime(prompt.notificationConfig_startTime)}
+                      </Text>
+                    ) : (
+                      <Text className="font-sans text-sm text-white opacity-60 pl-2">
+                        {frequencyLabel +
+                          " from " +
+                          convertTime(prompt.notificationConfig_startTime)}
+                      </Text>
+                    )}
+                  </>
                 )}
               </View>
             </View>

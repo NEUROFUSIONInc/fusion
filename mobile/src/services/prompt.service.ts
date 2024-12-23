@@ -831,6 +831,8 @@ class PromptService {
   public promptMeetsNotifyCondition = async (prompt: Prompt) => {
     /**
      * Returns true if the prompt meets its notify condition else false
+     *
+     * TODO: include request to "missedPromptsToday" and checking if sourcePrompt is in missedPromptsToday
      */
     const promptNotifyCondition = prompt.additionalMeta?.notifyCondition;
 

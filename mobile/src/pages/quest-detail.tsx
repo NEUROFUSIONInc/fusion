@@ -362,24 +362,57 @@ export function QuestDetailScreen() {
             {/* <HealthCard /> */}
 
             <View className="mt-5">
-              <Text className="text-white font-sans text-lg px-5">Prompts</Text>
-              {quest?.prompts &&
-                quest.prompts.length > 0 &&
-                quest.prompts.map((prompt) => (
-                  <View key={Math.random()} className="my-2">
-                    <PromptDetails
-                      prompt={prompt}
-                      variant="detail"
-                      displayFrequency
-                      onClick={() => handlePromptExpandSheet(prompt)}
-                    />
-                  </View>
-                ))}
+              {quest?.prompts && quest.prompts.length > 0 && (
+                <>
+                  {["Morning", "Afternoon", "Evening"].map((timeOfDay) => {
+                    const getTimeRange = (time: string) => {
+                      switch (time) {
+                        case "Morning":
+                          return (hour: number) => hour >= 5 && hour < 12;
+                        case "Afternoon":
+                          return (hour: number) => hour >= 12 && hour < 17;
+                        case "Evening":
+                          return (hour: number) => hour >= 17 || hour < 5;
+                        default:
+                          return () => false;
+                      }
+                    };
+
+                    const timeRange = getTimeRange(timeOfDay);
+                    const promptsInRange = quest?.prompts?.filter((prompt) => {
+                      const startHour = parseInt(
+                        prompt.notificationConfig_startTime.split(":")[0],
+                        10
+                      );
+                      return timeRange(startHour);
+                    });
+
+                    if (!promptsInRange || promptsInRange.length === 0)
+                      return null;
+
+                    return (
+                      <View key={timeOfDay}>
+                        <Text className="text-white font-sans text-base px-5 mt-4 mb-2">
+                          {timeOfDay}
+                        </Text>
+                        {promptsInRange.map((prompt) => (
+                          <View key={prompt.uuid} className="my-2">
+                            <PromptDetails
+                              prompt={prompt}
+                              variant="detail"
+                              displayFrequency
+                              showFrequencyLabel={false}
+                              onClick={() => handlePromptExpandSheet(prompt)}
+                            />
+                          </View>
+                        ))}
+                      </View>
+                    );
+                  })}
+                </>
+              )}
             </View>
           </View>
-
-          {/* sync data, leave quest etc.. */}
-          {/*  */}
         </View>
       </ScrollView>
 
