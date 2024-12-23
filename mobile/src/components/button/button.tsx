@@ -96,7 +96,7 @@ export const Button: FC<ButtonProps> = ({
       fullWidth,
       className,
     })}
-    disabled={disabled}
+    disabled={loading || disabled}
     {...props}
   >
     {loading && <ActivityIndicator size="small" className="mr-2" />}
