@@ -31,7 +31,10 @@ export const useCreateQuest = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["quests", "prompts"],
+        queryKey: ["quests"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["prompts"],
       });
     },
   });
@@ -44,7 +47,7 @@ export const useDeleteQuest = () => {
   const mutation = useMutation({
     mutationFn: questService.deleteQuest,
     onSuccess: async (status, guid) => {
-      await queryClient.cancelQueries({ queryKey: ["quests"] });
+      await queryClient.cancelQueries({ queryKey: ["quests", "prompts"] });
 
       const previousQuests = queryClient.getQueryData<Quest[]>(["quests"]);
 
@@ -66,7 +69,10 @@ export const useDeleteQuest = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["quests", "prompts"],
+        queryKey: ["quests"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["prompts"],
       });
     },
   });
