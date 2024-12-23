@@ -87,76 +87,40 @@ export function PromptEntryScreen() {
         const promptQueue = (
           await questService.getMissedPrompts(prompt.additionalMeta.questId!)
         ).filter((p) => p.uuid !== prompt.uuid);
-        const notifyCondition = prompt.additionalMeta.notifyCondition!;
-        if (notifyCondition && notifyCondition.sourceType === "prompt") {
-          (async () => {
-            // Responses for the source prompt in current day
-            const sourcePromptResponsesToday =
-              await promptService.getPromptResponses(
-                notifyCondition.sourceId!,
-                dayjs().startOf("day").unix()
-              );
-            // Find the source prompt in the promptQueue
-            const isSourcePromptInMissedPrompts = promptQueue.find(
-              (p) => p.uuid === notifyCondition.sourceId
+
+        const shouldShowPrompt = await promptService.promptMeetsNotifyCondition(
+          prompt
+        );
+
+        if (!shouldShowPrompt) {
+          // go to next valid item in queue
+          // Filter out prompts that don't meet their notify conditions
+          const filteredPromptQueue = await Promise.all(
+            promptQueue.map(async (queuedPrompt: Prompt) => {
+              const shouldInclude =
+                await promptService.promptMeetsNotifyCondition(queuedPrompt);
+              return shouldInclude ? queuedPrompt : null;
+            })
+          );
+
+          const validPrompts = filteredPromptQueue.filter(
+            (prompt): prompt is Prompt => prompt !== null
+          );
+
+          // if the source prompt hasn't been responded to, go to the source prompt
+          // Find the source prompt in the promptQueue
+          const isSourcePromptInMissedPrompts = validPrompts.find(
+            (p) => p.uuid === prompt.additionalMeta?.notifyCondition?.sourceId
+          );
+
+          if (isSourcePromptInMissedPrompts) {
+            await goToNextItemInPromptQueueorInsightsPage(
+              validPrompts,
+              isSourcePromptInMissedPrompts?.uuid!
             );
-
-            //  go to the source prompt if it hasn't been responded to
-            if (
-              sourcePromptResponsesToday.length < 1 ||
-              isSourcePromptInMissedPrompts
-            ) {
-              // Navigate to source prompt if it hasn't been responded to
-              await goToNextItemInPromptQueueorInsightsPage(
-                promptQueue,
-                isSourcePromptInMissedPrompts?.uuid!
-              );
-            } else if (
-              sourcePromptResponsesToday.length > 0 &&
-              !isSourcePromptInMissedPrompts
-            ) {
-              // this means the source prompt has been responded to. So decide whether to show based on the last response
-              const latestSourcePromptResponse =
-                sourcePromptResponsesToday.reduce((latest, current) => {
-                  return !latest ||
-                    current.responseTimestamp > latest.responseTimestamp
-                    ? current
-                    : latest;
-                });
-
-              const sourceValue =
-                latestSourcePromptResponse.value.toLowerCase();
-              const targetValue = notifyCondition.value.toLowerCase();
-
-              let shouldShowPrompt = false;
-
-              switch (notifyCondition.operator) {
-                case "equals":
-                  shouldShowPrompt = sourceValue === targetValue;
-                  break;
-                case "not_equals":
-                  shouldShowPrompt = sourceValue !== targetValue;
-                  break;
-                case "greater_than":
-                  shouldShowPrompt =
-                    Number(latestSourcePromptResponse.value) >
-                    Number(notifyCondition.value);
-                  break;
-                case "less_than":
-                  shouldShowPrompt =
-                    Number(latestSourcePromptResponse.value) <
-                    Number(notifyCondition.value);
-                  break;
-                default:
-                  shouldShowPrompt = true;
-              }
-
-              if (!shouldShowPrompt) {
-                // go to next item in queue
-                await goToNextItemInPromptQueueorInsightsPage(promptQueue);
-              }
-            }
-          })();
+          } else {
+            await goToNextItemInPromptQueueorInsightsPage(validPrompts);
+          }
         }
 
         setPromptQueue(promptQueue);

@@ -15,6 +15,7 @@ import {
   NotificationConfigDays,
   Prompt,
   PromptAdditionalMeta,
+  PromptNotifyOperator,
   PromptResponse,
   UserAccount,
 } from "~/@types";
@@ -825,6 +826,56 @@ class PromptService {
         promptUuid
       );
     }
+  };
+
+  public promptMeetsNotifyCondition = async (prompt: Prompt) => {
+    /**
+     * Returns true if the prompt meets its notify condition else false
+     */
+    const promptNotifyCondition = prompt.additionalMeta?.notifyCondition;
+
+    if (!promptNotifyCondition) return true;
+    if (promptNotifyCondition.sourceType !== "prompt") return true;
+
+    // Get today's responses for the source prompt
+    const sourcePromptResponsesToday = await promptService.getPromptResponses(
+      promptNotifyCondition.sourceId!,
+      dayjs().startOf("day").valueOf()
+    );
+
+    if (sourcePromptResponsesToday.length === 0) return false;
+
+    // Get the latest response
+    const latestResponse = sourcePromptResponsesToday.reduce(
+      (latest, current) => {
+        return !latest || current.responseTimestamp > latest.responseTimestamp
+          ? current
+          : latest;
+      }
+    );
+
+    const sourceValue = latestResponse.value.toLowerCase();
+    const targetValue = promptNotifyCondition.value.toLowerCase();
+
+    let shouldInclude = false;
+    switch (promptNotifyCondition.operator) {
+      case PromptNotifyOperator.equals:
+        shouldInclude = sourceValue === targetValue;
+        break;
+      case PromptNotifyOperator.not_equals:
+        shouldInclude = sourceValue !== targetValue;
+        break;
+      case PromptNotifyOperator.greater_than:
+        shouldInclude = Number(sourceValue) > Number(targetValue);
+        break;
+      case PromptNotifyOperator.less_than:
+        shouldInclude = Number(sourceValue) < Number(targetValue);
+        break;
+      default:
+        shouldInclude = true;
+    }
+
+    return shouldInclude;
   };
 }
 
