@@ -262,6 +262,7 @@ const QuestsPage: NextPage = () => {
 
   const handleAddOnboardingQuestionModal = () => {
     const newOnboardingQuestion: OnboardingQuestion = {
+      guid: crypto.randomUUID(),
       question: "",
       type: "yesno",
       required: true,
@@ -735,6 +736,7 @@ const QuestsPage: NextPage = () => {
             setDisplayAddPromptModal(false);
           }}
           savedPrompts={prompts}
+          savedOnboardingQuestions={onboardingQuestions}
         />
       )}
 

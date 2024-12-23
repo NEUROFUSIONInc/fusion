@@ -164,6 +164,7 @@ export interface IQuest {
 }
 
 export interface OnboardingQuestion {
+  guid: string;
   question: string;
   options?: string[];
   required?: boolean;
@@ -200,7 +201,8 @@ export enum PromptNotifyOperator {
   less_than = "less_than",
 }
 export interface PromptNotifyCondition {
-  sourcePromptUuid: string;
+  sourceType: "prompt" | "onboardingQuestion";
+  sourceId: string;
   operator: PromptNotifyOperator;
   value: string;
 }

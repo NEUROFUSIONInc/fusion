@@ -25,6 +25,7 @@ export const AddOnboardingQuestionModal: React.FC<AddOnboardingQuestionModalProp
   const handleSave = () => {
     const updatedQuestion: OnboardingQuestion = {
       ...question,
+      guid: !question.guid || question.guid === "" ? crypto.randomUUID() : question.guid,
       question: questionText,
       type: questionType,
       required: required,

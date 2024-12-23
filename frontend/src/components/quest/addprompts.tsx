@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Input } from "~/components/ui";
 import { categories, promptSelectionDays, responseTypes } from "~/config/data";
-import { Prompt, PromptNotifyCondition, PromptNotifyOperator, PromptResponseType } from "~/@types";
+import { OnboardingQuestion, Prompt, PromptNotifyCondition, PromptNotifyOperator, PromptResponseType } from "~/@types";
 import { TimePicker } from "./timepicker";
 import dayjs from "dayjs";
 
@@ -11,6 +11,7 @@ interface AddPromptModalProps {
   onSave: (prompt: Prompt) => void;
   onClose: () => void;
   savedPrompts?: Prompt[];
+  savedOnboardingQuestions?: OnboardingQuestion[];
 }
 
 export function getDayjsFromTimeString(timeString: string) {
@@ -22,7 +23,14 @@ export function getDayjsFromTimeString(timeString: string) {
   return dayjs().startOf("day").add(hour, "hour").add(minute, "minute");
 }
 
-const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSave, onClose, savedPrompts }) => {
+const AddPromptModal: React.FC<AddPromptModalProps> = ({
+  prompt,
+  setPrompt,
+  onSave,
+  onClose,
+  savedPrompts,
+  savedOnboardingQuestions,
+}) => {
   const [promptText, setPromptText] = useState(prompt.promptText);
   const [customOptions, setCustomOptions] = useState<string[]>(
     prompt.additionalMeta.customOptionText ? prompt.additionalMeta.customOptionText.split(";") : []
@@ -39,7 +47,8 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
   const [addCondition, setAddCondition] = useState(!!prompt.additionalMeta?.notifyCondition);
   const [notifyCondition, setNotifyCondition] = useState<PromptNotifyCondition>(
     prompt.additionalMeta?.notifyCondition ?? {
-      sourcePromptUuid: "",
+      sourceId: "",
+      sourceType: "prompt",
       operator: PromptNotifyOperator.equals,
       value: "",
     }
@@ -48,7 +57,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
   const updatePrompt = () => {
     const updatedPrompt: Prompt = {
       ...prompt,
-      uuid: prompt.uuid === "" ? crypto.randomUUID() : prompt.uuid,
+      uuid: !prompt.uuid || prompt.uuid === "" ? crypto.randomUUID() : prompt.uuid,
       promptText,
       responseType: responseType ?? "text", // Default to "text" if null
       notificationConfig_days: days,
@@ -68,10 +77,34 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
         notifyCondition: notifyCondition,
       };
     }
-    console.log("updatedPrompt", updatedPrompt);
     setPrompt(updatedPrompt);
     onSave(updatedPrompt);
   };
+
+  const sourceList = useMemo(() => {
+    let res = [];
+    if (savedPrompts && savedPrompts?.length > 0) {
+      res.push(
+        ...savedPrompts
+          .filter((p) => p.uuid !== prompt.uuid)
+          .map((p) => ({
+            sourceId: p.uuid,
+            sourceType: "prompt",
+            sourceText: p.promptText,
+          }))
+      );
+    }
+    if (savedOnboardingQuestions && savedOnboardingQuestions?.length > 0) {
+      res.push(
+        ...savedOnboardingQuestions.map((question) => ({
+          sourceId: question.guid,
+          sourceType: "onboardingQuestion",
+          sourceText: question.question,
+        }))
+      );
+    }
+    return res;
+  }, [savedPrompts, savedOnboardingQuestions]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -202,24 +235,28 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({ prompt, setPrompt, onSa
 
                   {addCondition && (
                     <>
-                      <label htmlFor="promptSelect" className="block text-sm font-medium text-gray-900 dark:text-white">
+                      <label htmlFor="sourceSelect" className="block text-sm font-medium text-gray-900 dark:text-white">
                         Prompt
                       </label>
                       <select
-                        id="promptSelect"
-                        value={notifyCondition.sourcePromptUuid}
-                        onChange={(e) => setNotifyCondition({ ...notifyCondition, sourcePromptUuid: e.target.value })}
+                        id="sourceSelect"
+                        value={notifyCondition.sourceId}
+                        onChange={(e) => {
+                          setNotifyCondition({
+                            ...notifyCondition,
+                            sourceId: e.target.value,
+                            sourceType: (sourceList.find((s) => s.sourceId === e.target.value)?.sourceType ??
+                              "prompt") as "prompt" | "onboardingQuestion",
+                          });
+                        }}
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
                       >
-                        <option value="">Select a prompt</option>
-                        {savedPrompts?.map(
-                          (p) =>
-                            p.uuid !== prompt?.uuid && (
-                              <option key={p.uuid} value={p.uuid}>
-                                {p.promptText}
-                              </option>
-                            )
-                        )}
+                        <option value="">Choose a prompt or onboarding question</option>
+                        {sourceList?.map((source) => (
+                          <option key={source.sourceId} value={source.sourceId}>
+                            {source.sourceText}
+                          </option>
+                        ))}
                       </select>
 
                       <label htmlFor="operator" className="block text-sm font-medium text-gray-900 dark:text-white">

@@ -111,6 +111,7 @@ export interface QuestPrompt {
 }
 
 export interface OnboardingQuestion {
+  guid: string;
   question: string;
   options?: string[];
   required?: boolean;
