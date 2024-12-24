@@ -119,6 +119,12 @@ export function PromptEntryScreen() {
               isSourcePromptInMissedPrompts?.uuid!
             );
           } else {
+            if (validPrompts.length === 0) {
+              Alert.alert(
+                "All caught up!",
+                "You've responded to all the prompts you need for now. Look through your insights to see how you're doing."
+              );
+            }
             await goToNextItemInPromptQueueorInsightsPage(validPrompts);
           }
         }
