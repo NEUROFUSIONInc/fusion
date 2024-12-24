@@ -33,9 +33,6 @@
         <data android:scheme="com.neurofusion.fusion"/>
         <data android:scheme="exp+fusion"/>
       </intent-filter>
-      <intent-filter>
-        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
-      </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
   </application>

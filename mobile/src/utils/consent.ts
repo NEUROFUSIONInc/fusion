@@ -16,7 +16,7 @@ export const requestCopilotConsent = async (userNpub: string) => {
         "Fusion Copilot will send you summaries and suggested actions based on your responses over time.\n\n When enabled, your prompt & responses will be sent to Fusion analysis servers for processing. Your data will not be saved.\n\n You can change this in your app settings.",
         [
           {
-            text: "Enable",
+            text: "Use Fusion Copilot",
             onPress: async () => {
               appInsights.trackEvent({
                 name: "copilot_consent",
