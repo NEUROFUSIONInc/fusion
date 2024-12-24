@@ -308,7 +308,7 @@ export function HomeScreen() {
                             enableCopilot: consentStatus,
                           });
                         }}
-                        title="Turn on personalized recommendations"
+                        title="Get personalized recommendations"
                         className="px-4 py-2 self-center"
                         fullWidth
                       />

@@ -89,7 +89,7 @@ export class NotificationService {
     }
     if (Platform.OS === "ios") {
       // apply notification instruction
-      contentObject["body"] = "Press & hold to log";
+      contentObject["body"] = "Press and hold to respond";
     }
 
     const daysObject =
