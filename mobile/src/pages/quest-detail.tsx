@@ -381,7 +381,6 @@ export function QuestDetailScreen() {
                               prompt={prompt}
                               variant="detail"
                               displayFrequency
-                              showFrequencyLabel={false}
                               onClick={
                                 questPrompts.length > 0
                                   ? () => handlePromptExpandSheet(prompt)
