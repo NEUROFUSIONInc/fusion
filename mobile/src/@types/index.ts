@@ -158,3 +158,53 @@ export const allPromptOptionKeys = [
   PromptOptionKey.edit,
   PromptOptionKey.delete,
 ];
+
+export interface FusionHealthDataset {
+  date: string;
+  sleepSummary: FusionSleepSummary;
+  stepSummary: FusionStepSummary;
+  heartRateSummary?: FusionHeartRateSummary;
+}
+
+export interface AppleHealthSleepSample {
+  id: string;
+  endDate: string;
+  sourceId: string;
+  sourceName: string;
+  startDate: string;
+  value: string;
+}
+
+export interface FusionStepSummary {
+  date: string;
+  totalSteps: number;
+}
+
+export interface FusionSleepSummary {
+  date: string;
+  duration: number;
+  source?: HealthDataSource;
+  summaryType?: "overall" | "device";
+  sourceId?: string;
+  sourceName?: string;
+  value?: "awake" | "asleep" | "core" | "rem" | "deep" | "inbed";
+}
+
+export interface FusionHeartRateSummary {
+  date: string;
+  average: number;
+  morning: number;
+  afternoon: number;
+  night: number;
+  min?: number;
+  max?: number;
+  source?: HealthDataSource;
+  summaryType?: "overall" | "device";
+  sourceId?: string;
+  sourceName?: string;
+}
+
+export interface HealthDataSource {
+  sourceName: string;
+  sourceId: string;
+}

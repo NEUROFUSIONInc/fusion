@@ -5,86 +5,27 @@ import AppleHealthKit, {
   HealthValue,
 } from "react-native-health";
 
+import {
+  FusionHealthDataset,
+  FusionSleepSummary,
+  FusionStepSummary,
+  FusionHeartRateSummary,
+  AppleHealthSleepSample,
+} from "../@types";
+
 /* Permission options */
 export const permissions = {
   permissions: {
     read: [
       AppleHealthKit.Constants.Permissions.HeartRate,
-      // AppleHealthKit.Constants.Permissions.HeartbeatSeries,
-      // AppleHealthKit.Constants.Permissions.RestingHeartRate,
-      // AppleHealthKit.Constants.Permissions.HeartRateVariability,
-      // AppleHealthKit.Constants.Permissions.WalkingHeartRateAverage,
-      // AppleHealthKit.Constants.Permissions.OxygenSaturation,
-      // AppleHealthKit.Constants.Permissions.BodyTemperature,
-      // AppleHealthKit.Constants.Permissions.BloodPressureSystolic,
-      // AppleHealthKit.Constants.Permissions.BloodPressureDiastolic,
-      // AppleHealthKit.Constants.Permissions.RespiratoryRate,
-      // AppleHealthKit.Constants.Permissions.BloodGlucose,
-      // Sleep
       AppleHealthKit.Constants.Permissions.SleepAnalysis,
-      // Activity
       AppleHealthKit.Constants.Permissions.ActivitySummary,
       AppleHealthKit.Constants.Permissions.Steps,
       AppleHealthKit.Constants.Permissions.StepCount,
-      // AppleHealthKit.Constants.Permissions.DistanceWalkingRunning,
-      // AppleHealthKit.Constants.Permissions.DistanceCycling,
-      // AppleHealthKit.Constants.Permissions.DistanceSwimming,
-      // AppleHealthKit.Constants.Permissions.BasalEnergyBurned,
-      // AppleHealthKit.Constants.Permissions.Workout,
-      // Mindfulness
-      // AppleHealthKit.Constants.Permissions.MindfulSession,
     ],
     write: [],
   },
 };
-
-export interface FusionHealthDataset {
-  date: string;
-  sleepSummary: FusionSleepSummary;
-  stepSummary: FusionStepSummary;
-  heartRateSummary?: FusionHeartRateSummary;
-}
-
-interface AppleHealthSleepSample {
-  id: string; // The universally unique identifier (UUID) for this HealthKit object.
-  endDate: string;
-  sourceId: string;
-  sourceName: string;
-  startDate: string;
-  value: string;
-}
-
-interface FusionStepSummary {
-  date: string;
-  totalSteps: number;
-}
-interface FusionSleepSummary {
-  date: string;
-  duration: number;
-  // sleepStartTime: string;
-  // sleepEndTime: string;
-  source?: dataSource;
-  summaryType?: "overall" | "device";
-  sourceId?: string;
-  sourceName?: string;
-  value?: "awake" | "asleep" | "core" | "rem" | "deep" | "inbed";
-}
-
-interface FusionHeartRateSummary {
-  date: string;
-  average: number;
-  min?: number;
-  max?: number;
-  source?: dataSource;
-  summaryType?: "overall" | "device";
-  sourceId?: string;
-  sourceName?: string;
-}
-
-interface dataSource {
-  sourceName: string;
-  sourceId: string;
-}
 
 // build dataset for querying
 export const buildHealthDataset = async (startDate: Dayjs, endDate: Dayjs) => {
@@ -124,6 +65,7 @@ export const getAppleHealthSleepSummary = async (
     endDate && (options.endDate = endDate.toISOString());
 
     let sleepSummary: FusionSleepSummary[] = [];
+
     const sleepSummaryMap: { [date: string]: FusionSleepSummary } = {};
     AppleHealthKit.getSleepSamples(
       options,
@@ -132,6 +74,8 @@ export const getAppleHealthSleepSummary = async (
           reject(err);
           return;
         }
+
+        // console.log("results", results);
 
         // store the total for each day
         // get the difference between the start and end time for the duration of activity in each sample
@@ -268,8 +212,9 @@ export const getAppleHealthHeartRateSummary = async (
     };
     endDate && (options.endDate = endDate.toISOString());
 
-    const heartRateSummary: FusionHeartRateSummary[] = [];
-    const heartRateSummaryMap: { [date: string]: FusionHeartRateSummary } = {};
+    const heartRateSummaryMap: {
+      [date: string]: { value: number; startDate: string }[];
+    } = {};
 
     AppleHealthKit.getHeartRateSamples(
       options,
@@ -277,14 +222,72 @@ export const getAppleHealthHeartRateSummary = async (
         if (err) {
           console.error("Error fetching heart rate samples:", err);
           reject(err);
+          return;
         }
 
-        // sum them up to get the total steps but split by day
-        // TODO: generate heart rate summary based on days `dateArray`
+        // Initialize empty arrays for each date
+        dateArray.forEach((date) => {
+          heartRateSummaryMap[date] = [];
+        });
+
+        // Group heart rate values by date
+        for (const entry of results) {
+          const { startDate, value } = entry;
+          const date = dayjs(startDate).format("YYYY-MM-DD");
+
+          if (heartRateSummaryMap[date]) {
+            heartRateSummaryMap[date].push({ value, startDate });
+          }
+        }
+
+        // Calculate summaries for each date
+        const heartRateSummary = dateArray.map((date) => {
+          const dayStart = dayjs(date).startOf("day");
+          const samples = heartRateSummaryMap[date];
+
+          const morning = samples.filter((s) => {
+            const time = dayjs(s.startDate);
+            return (
+              time.isAfter(dayStart.add(6, "hour")) &&
+              time.isBefore(dayStart.add(12, "hour"))
+            );
+          });
+
+          const afternoon = samples.filter((s) => {
+            const time = dayjs(s.startDate);
+            return (
+              time.isAfter(dayStart.add(12, "hour")) &&
+              time.isBefore(dayStart.add(18, "hour"))
+            );
+          });
+
+          const night = samples.filter((s) => {
+            const time = dayjs(s.startDate);
+            return (
+              time.isAfter(dayStart.add(18, "hour")) ||
+              time.isBefore(dayStart.add(6, "hour"))
+            );
+          });
+
+          return {
+            date,
+            average:
+              samples.reduce((acc, s) => acc + s.value, 0) / samples.length ||
+              0,
+            morning:
+              morning.reduce((acc, s) => acc + s.value, 0) / morning.length ||
+              0,
+            afternoon:
+              afternoon.reduce((acc, s) => acc + s.value, 0) /
+                afternoon.length || 0,
+            night:
+              night.reduce((acc, s) => acc + s.value, 0) / night.length || 0,
+          };
+        });
+
+        resolve(heartRateSummary);
       }
     );
-
-    resolve(heartRateSummary);
   });
 };
 
@@ -307,26 +310,19 @@ export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
       if (error) {
         Alert.alert("Missing permissions", "Cannot grant permissions!");
       }
-      /* Can now read or write to HealthKit */
+
       const options: HealthInputOptions = {
         startDate: startDate.toISOString(),
       };
-
       endDate && (options.endDate = endDate.toISOString());
 
       // get sleep summary
       const sleepSummary = await getAppleHealthSleepSummary(startDate, endDate);
       const stepSummary = await getAppleHealthStepsSummary(startDate, endDate);
-
-      // avg_heartrate_[morning…night],
-      // AppleHealthKit.getHeartRateSamples(
-      //   options,
-      //   async (err: any, results: HealthValue[]) => {
-      //     if (err) {
-      //     }
-      //     // console.log(results);
-      //   }
-      // );
+      const heartRateSummary = await getAppleHealthHeartRateSummary(
+        startDate,
+        endDate
+      );
 
       // build the health dataset
       for (const date of dateArray) {
@@ -336,15 +332,21 @@ export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
         const stepSummaryForDate = stepSummary.find(
           (summary) => summary.date === date
         );
-
-        console.log("date", date);
-        console.log("sleep summary", sleepSummaryForDate);
-        console.log("step summary", stepSummaryForDate);
+        const heartRateSummaryForDate = heartRateSummary.find(
+          (summary) => summary.date === date
+        );
 
         dataset.push({
           date,
           sleepSummary: sleepSummaryForDate ?? { date, duration: 0 },
           stepSummary: stepSummaryForDate ?? { date, totalSteps: 0 },
+          heartRateSummary: heartRateSummaryForDate ?? {
+            date,
+            average: 0,
+            morning: 0,
+            afternoon: 0,
+            night: 0,
+          },
         });
       }
 

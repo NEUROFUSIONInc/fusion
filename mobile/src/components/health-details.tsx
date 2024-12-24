@@ -8,17 +8,9 @@ import { Button } from "./button";
 import { FusionPreviewBarChart } from "./charts";
 import { Reload } from "./icons";
 
-/**
- *
- */
-
+import { FusionHealthDataset } from "~/@types";
 import { AccountContext } from "~/contexts";
-import {
-  buildHealthDataset,
-  connectAppleHealth,
-  FusionHealthDataset,
-  secondsToHms,
-} from "~/utils";
+import { buildHealthDataset, connectAppleHealth, secondsToHms } from "~/utils";
 
 export const HealthCard = () => {
   const navigation = useNavigation();
@@ -29,9 +21,6 @@ export const HealthCard = () => {
   const [timePeriod, setTimePeriod] = React.useState<"day" | "week">("week");
 
   useEffect(() => {
-    console.log("user loading", accountContext?.userLoading);
-    console.log("user preferences", accountContext?.userPreferences);
-
     (async () => {
       if (accountContext?.userPreferences["enableHealthConnect"] === true) {
         await syncHealthData();
