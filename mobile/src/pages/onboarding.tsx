@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
-import { View, Text, Pressable, Image, Alert, Platform } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import prompt from "react-native-prompt-android";
 
 import { LeftArrow } from "../components/icons";
 
@@ -45,22 +44,21 @@ export const OnboardingScreen = () => {
 
   const slides = [
     {
-      title: "Stay on top of what matters to you",
+      title: "Track what matters with simple check-ins",
       description:
-        "Use personalized prompts to manage and improve your wellbeing. You’ll get notified to respond to them based on times you set.",
+        "Build resilience through simple daily prompts that help you track and improve your wellbeing, right when it matters most.",
       image: require("../../assets/onboarding/engaging-prompts.png"),
     },
     {
-      title: "Your Prompts and Responses are saved locally on your device",
+      title: "You own and control your data",
       description:
-        "We've set up an anonymous identity for you on Fusion. Your data is stored on your device.",
+        "Your data stays private on your device by default. You choose what to share with friends or researchers - we believe in giving you full control over your information.",
       image: require("../../assets/onboarding/prompt_responses.png"),
     },
     {
-      title: "Get summaries and recommendations with AI",
+      title: "Get personalized insights that matter",
       description:
-        "Fusion Copilot will send you summaries and suggested actions based on your responses over time.",
-      // image: require("../../assets/onboarding/fusion-copilot.png"),
+        "Turn your daily check-ins into actionable insights. We'll help you identify patterns and suggest practical steps to improve your wellbeing.",
       image: require("../../assets/onboarding/intelligent_recommendations.png"),
       onclick: async () => {
         appInsights.trackEvent({
@@ -73,78 +71,77 @@ export const OnboardingScreen = () => {
         const consentStatus = await requestCopilotConsent(
           accountContext!.userNpub
         );
-        // set account context value
         accountContext?.setUserPreferences({
           ...accountContext.userPreferences,
           enableCopilot: consentStatus,
         });
       },
     },
-    {
-      title: "Stay in the loop",
-      description:
-        "Get updates from the team, on features, experiments and more. Your email is not linked to your fusion account, it’s only to send you updates.",
-      image: require("../../assets/onboarding/fusion-newsletter.png"),
-      hasInput: true,
-      onclick: async () => {
-        const requestEmail = new Promise((resolve) => {
-          if (Platform.OS === "ios") {
-            Alert.prompt(
-              "Get Email Updates",
-              "Please enter your email so we can reach you",
-              [
-                {
-                  text: "Cancel",
-                  onPress: () => {
-                    resolve("");
-                  },
-                  style: "cancel",
-                },
-                {
-                  text: "OK",
-                  onPress: (email) => {
-                    resolve(email);
-                  },
-                },
-              ]
-            );
-          } else {
-            prompt(
-              "Get Email Updates",
-              "Please enter your email so we can reach you",
-              [
-                {
-                  text: "Cancel",
-                  onPress: () => resolve(""),
-                  style: "cancel",
-                },
-                {
-                  text: "OK",
-                  onPress: (email) => resolve(email),
-                },
-              ],
-              {
-                type: "email-address",
-                placeholder: "you@email.com",
-                style: "shimo",
-              }
-            );
-          }
-        });
+    // {
+    //   title: "Stay in the loop",
+    //   description:
+    //     "Get updates from the team, on features, experiments and more. Your email is not linked to your fusion account, it’s only to send you updates.",
+    //   image: require("../../assets/onboarding/fusion-newsletter.png"),
+    //   hasInput: true,
+    //   onclick: async () => {
+    //     const requestEmail = new Promise((resolve) => {
+    //       if (Platform.OS === "ios") {
+    //         Alert.prompt(
+    //           "Get Email Updates",
+    //           "Please enter your email so we can reach you",
+    //           [
+    //             {
+    //               text: "Cancel",
+    //               onPress: () => {
+    //                 resolve("");
+    //               },
+    //               style: "cancel",
+    //             },
+    //             {
+    //               text: "OK",
+    //               onPress: (email) => {
+    //                 resolve(email);
+    //               },
+    //             },
+    //           ]
+    //         );
+    //       } else {
+    //         prompt(
+    //           "Get Email Updates",
+    //           "Please enter your email so we can reach you",
+    //           [
+    //             {
+    //               text: "Cancel",
+    //               onPress: () => resolve(""),
+    //               style: "cancel",
+    //             },
+    //             {
+    //               text: "OK",
+    //               onPress: (email) => resolve(email),
+    //             },
+    //           ],
+    //           {
+    //             type: "email-address",
+    //             placeholder: "you@email.com",
+    //             style: "shimo",
+    //           }
+    //         );
+    //       }
+    //     });
 
-        const email = await requestEmail;
+    //     const email = await requestEmail;
 
-        if (email) {
-          appInsights.trackEvent({
-            name: "onboarding_newsletter",
-            properties: {
-              onboardingEmail: email,
-            },
-          });
-        }
-      },
-      buttonText: "Get updates",
-    },
+    //     if (email) {
+    //       appInsights.trackEvent({
+    //         name: "onboarding_newsletter",
+    //         properties: {
+    //           onboardingEmail: email,
+    //         },
+    //       });
+    //     }
+    //   },
+    //   buttonText: "Get updates",
+    // },
   ];
 
   const panActiveSlide = (direction: "left" | "right") => {
@@ -169,7 +166,7 @@ export const OnboardingScreen = () => {
   return (
     <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
       <View className="flex-1">
-        <View className="justify-between flex-row px-4">
+        <View className="justify-between flex-row px-4 min-h-10">
           {activeSlideIndex > 0 ? (
             <Button
               variant="ghost"
