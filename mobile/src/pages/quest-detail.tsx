@@ -20,7 +20,7 @@ import {
   Screen,
 } from "~/components";
 import { AccountContext } from "~/contexts";
-import { useCreatePrompt, useCreateQuest } from "~/hooks";
+import { useCreatePrompt, useCreateQuest, usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
@@ -32,6 +32,8 @@ export function QuestDetailScreen() {
 
   const { mutateAsync: createQuest } = useCreateQuest();
   const { mutateAsync: createPrompt } = useCreatePrompt();
+  const { data: savedPrompts, isLoading: savedPromptsLoading } =
+    usePromptsQuery();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
   const [joiningQuest, setJoiningQuest] = React.useState(false);
@@ -45,40 +47,16 @@ export function QuestDetailScreen() {
     route.params.quest
   );
 
-  /**
-   * Fetch quest details from remote server and
-   * updates the data cache after a period of time
-   */
-  const handleFetchQuestFromRemote = async () => {
-    try {
-      const apiService = await getApiService();
-      if (apiService === null) {
-        console.log("apiService is null");
-        return;
-      }
-      const response = await apiService.get(`/quest/detail`, {
-        params: { questId: route.params.quest.guid },
-      });
-      const updatedQuest = {
-        ...response?.data?.quest,
-        prompts: JSON.parse(response?.data?.quest?.config)?.prompts,
-      } as Quest;
-
-      if (
-        quest?.title !== updatedQuest.title ||
-        quest?.description !== updatedQuest.description ||
-        quest?.config !== updatedQuest.config
-      ) {
-        setQuest(updatedQuest);
-        // only save if the user is subscribed
-        if (isSubscribed) {
-          await questService.saveQuest(updatedQuest);
-        }
-      }
-    } catch (error) {
-      console.log("error --->", error);
+  const [questPrompts, setQuestPrompts] = React.useState<Prompt[]>([]);
+  React.useEffect(() => {
+    if (savedPrompts) {
+      setQuestPrompts(
+        savedPrompts.filter(
+          (prompt) => prompt.additionalMeta?.questId === quest?.guid
+        )
+      );
     }
-  };
+  }, [savedPrompts]);
 
   /**
    * Check if the quest is saved locally
@@ -124,7 +102,6 @@ export function QuestDetailScreen() {
   useEffect(() => {
     if (isSubscribed) {
       (async () => {
-        await handleFetchQuestFromRemote();
         await pushQuestData();
       })();
     }
@@ -362,7 +339,8 @@ export function QuestDetailScreen() {
             {/* <HealthCard /> */}
 
             <View className="mt-5">
-              {quest?.prompts && quest.prompts.length > 0 && (
+              {((!savedPromptsLoading && questPrompts.length > 0) ||
+                (quest?.prompts && quest.prompts.length > 0)) && (
                 <>
                   {["Morning", "Afternoon", "Evening"].map((timeOfDay) => {
                     const getTimeRange = (time: string) => {
@@ -379,7 +357,9 @@ export function QuestDetailScreen() {
                     };
 
                     const timeRange = getTimeRange(timeOfDay);
-                    const promptsInRange = quest?.prompts?.filter((prompt) => {
+                    const prompts =
+                      questPrompts.length > 0 ? questPrompts : quest?.prompts;
+                    const promptsInRange = prompts?.filter((prompt) => {
                       const startHour = parseInt(
                         prompt.notificationConfig_startTime.split(":")[0],
                         10
@@ -402,7 +382,11 @@ export function QuestDetailScreen() {
                               variant="detail"
                               displayFrequency
                               showFrequencyLabel={false}
-                              onClick={() => handlePromptExpandSheet(prompt)}
+                              onClick={
+                                questPrompts.length > 0
+                                  ? () => handlePromptExpandSheet(prompt)
+                                  : undefined
+                              }
                             />
                           </View>
                         ))}
