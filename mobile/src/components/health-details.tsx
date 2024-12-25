@@ -10,7 +10,7 @@ import { Reload } from "./icons";
 
 import { FusionHealthDataset } from "~/@types";
 import { AccountContext } from "~/contexts";
-import { buildHealthDataset, connectAppleHealth, secondsToHms } from "~/utils";
+import { buildHealthDataset, connectAppleHealth } from "~/utils";
 
 export const HealthCard = () => {
   const navigation = useNavigation();
@@ -120,7 +120,7 @@ export const HealthCard = () => {
       </View>
 
       {/* display the sleep data */}
-      <View className="rounded-md mt-2 py-5 px-5 bg-secondary-900 active:opacity-90">
+      {/* <View className="rounded-md mt-2 py-5 px-5 bg-secondary-900 active:opacity-90">
         <Text className="font-sans flex flex-wrap text-white text-base mr-2">
           Sleep
         </Text>
@@ -144,7 +144,7 @@ export const HealthCard = () => {
             />
           </View>
         </View>
-      </View>
+      </View> */}
 
       {/* display the heart rate data */}
       {/* <TouchableOpacity

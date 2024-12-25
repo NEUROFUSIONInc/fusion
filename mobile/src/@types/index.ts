@@ -182,12 +182,14 @@ export interface FusionStepSummary {
 
 export interface FusionSleepSummary {
   date: string;
-  duration: number;
-  source?: HealthDataSource;
-  summaryType?: "overall" | "device";
-  sourceId?: string;
-  sourceName?: string;
-  value?: "awake" | "asleep" | "core" | "rem" | "deep" | "inbed";
+  sources: {
+    [sourceId: string]: {
+      sourceName: string;
+      stages: {
+        [key: string]: number;
+      };
+    };
+  };
 }
 
 export interface FusionHeartRateSummary {

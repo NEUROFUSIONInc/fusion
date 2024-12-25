@@ -64,9 +64,20 @@ export const getAppleHealthSleepSummary = async (
     };
     endDate && (options.endDate = endDate.toISOString());
 
-    let sleepSummary: FusionSleepSummary[] = [];
+    // Map to store sleep data grouped by date
+    const sleepDataMap: {
+      [date: string]: {
+        sources: {
+          [sourceId: string]: {
+            sourceName: string;
+            stages: {
+              [key: string]: number;
+            };
+          };
+        };
+      };
+    } = {};
 
-    const sleepSummaryMap: { [date: string]: FusionSleepSummary } = {};
     AppleHealthKit.getSleepSamples(
       options,
       async (err: any, results: HealthValue[]) => {
@@ -75,66 +86,68 @@ export const getAppleHealthSleepSummary = async (
           return;
         }
 
-        // console.log("results", results);
-
-        // store the total for each day
-        // get the difference between the start and end time for the duration of activity in each sample
-        // value types: apple: INBED  oura: AWAKE, ASLEEP, CORE, REM, DEEP, INBED
-        // TODO: logs can sometimes come from multiple apple devices, so we need to filter by sourceId
-        // TODO: we need summary's per source
+        const samples = results as unknown as AppleHealthSleepSample[];
 
         for (const date of dateArray) {
-          if (!sleepSummaryMap[date]) {
-            sleepSummaryMap[date] = {
-              date,
-              duration: 0,
+          const currentDate = dayjs(date).startOf("day");
+          const previousDate = currentDate.subtract(1, "day");
+          const currentDayCutoff = currentDate.hour(12);
+          const previousDayCutoff = previousDate.hour(18);
+
+          const filteredData = samples.filter((sample) => {
+            const sampleDate = dayjs(sample.startDate);
+
+            // Include current day data before 6pm
+            const isCurrentDayBeforeCutoff =
+              sampleDate.isSame(currentDate, "day") &&
+              sampleDate.isBefore(currentDayCutoff);
+
+            // Include previous day data after 6pm
+            const isPreviousDayAfterCutoff =
+              sampleDate.isSame(previousDate, "day") &&
+              sampleDate.isAfter(previousDayCutoff);
+
+            return isCurrentDayBeforeCutoff || isPreviousDayAfterCutoff;
+          });
+
+          // Initialize the date entry if it doesn't exist
+          if (!sleepDataMap[date]) {
+            sleepDataMap[date] = {
+              sources: {},
             };
           }
 
-          // When filtering samples to include, we choose:
-          // - 6pm from previous night to 6pm of day
-          const filteredData = (
-            results as unknown as AppleHealthSleepSample[]
-          ).filter(
-            (sample) =>
-              sample.value === "INBED" &&
-              // For the current date, include data from the day before 6pm
-              ((dayjs(sample.startDate).isSame(dayjs(date), "day") &&
-                dayjs(sample.startDate).isBefore(dayjs(date).hour(18))) ||
-                // For the previous date, include data from after 6pm
-                (dayjs(sample.startDate).isSame(
-                  dayjs(date).subtract(1, "day"),
-                  "day"
-                ) &&
-                  dayjs(sample.startDate).isAfter(
-                    dayjs(date).subtract(1, "day").hour(18)
-                  )))
-          );
+          // Process filtered data
+          for (const sample of filteredData) {
+            // Initialize the source if it doesn't exist
+            if (!sleepDataMap[date].sources[sample.sourceId]) {
+              sleepDataMap[date].sources[sample.sourceId] = {
+                sourceName: sample.sourceName,
+                stages: {},
+              };
+            }
 
-          // if there is no sleep data for the current date, skip
-          if (!filteredData.length) {
-            continue;
-          }
-
-          // update the sleep summary for the current date
-          for (const entry of filteredData) {
-            const entryStart = dayjs(entry.startDate);
-            const entryEnd = dayjs(entry.endDate);
-
-            // Add the current entry's value to the total for the corresponding date
-            sleepSummaryMap[date].duration += entryEnd.diff(
-              entryStart,
+            const duration = dayjs(sample.endDate).diff(
+              dayjs(sample.startDate),
               "second"
             );
+
+            // Add duration to the appropriate stage
+            if (sample.value) {
+              const sourceData = sleepDataMap[date].sources[sample.sourceId];
+              sourceData.stages[sample.value] =
+                (sourceData.stages[sample.value] || 0) + duration;
+            }
           }
         }
 
-        // Convert the map to an array of summary objects sorted by date
-        sleepSummary = Object.keys(sleepSummaryMap)
-          .sort() // Ensure the dates are sorted
-          .map((date) => ({
-            ...sleepSummaryMap[date],
-          }));
+        // Convert the map to FusionSleepSummary array
+        const sleepSummary: FusionSleepSummary[] = Object.entries(sleepDataMap)
+          .map(([date, data]) => ({
+            date,
+            sources: data.sources,
+          }))
+          .filter((summary) => Object.keys(summary.sources).length > 0); // Only include dates with data
 
         resolve(sleepSummary);
       }
@@ -338,7 +351,7 @@ export const buildHealthDataFromApple = (startDate: Dayjs, endDate: Dayjs) => {
 
         dataset.push({
           date,
-          sleepSummary: sleepSummaryForDate ?? { date, duration: 0 },
+          sleepSummary: sleepSummaryForDate ?? { date, sources: {} },
           stepSummary: stepSummaryForDate ?? { date, totalSteps: 0 },
           heartRateSummary: heartRateSummaryForDate ?? {
             date,
