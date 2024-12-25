@@ -8,7 +8,6 @@ import { LeftArrow } from "../components/icons";
 import { Button } from "~/components/button";
 import { AccountContext, OnboardingContext } from "~/contexts";
 import { appInsights } from "~/utils";
-import { requestCopilotConsent } from "~/utils/consent";
 
 export const OnboardingScreen = () => {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
@@ -60,22 +59,22 @@ export const OnboardingScreen = () => {
       description:
         "Turn your daily check-ins into actionable insights. We'll help you identify patterns and suggest practical steps to improve your wellbeing.",
       image: require("../../assets/onboarding/intelligent_recommendations.png"),
-      onclick: async () => {
-        appInsights.trackEvent({
-          name: "onboarding_copilot_triggered",
-          properties: {
-            userNpub: accountContext!.userNpub,
-          },
-        });
+      // onclick: async () => {
+      //   appInsights.trackEvent({
+      //     name: "onboarding_copilot_triggered",
+      //     properties: {
+      //       userNpub: accountContext!.userNpub,
+      //     },
+      //   });
 
-        const consentStatus = await requestCopilotConsent(
-          accountContext!.userNpub
-        );
-        accountContext?.setUserPreferences({
-          ...accountContext.userPreferences,
-          enableCopilot: consentStatus,
-        });
-      },
+      //   const consentStatus = await requestCopilotConsent(
+      //     accountContext!.userNpub
+      //   );
+      //   accountContext?.setUserPreferences({
+      //     ...accountContext.userPreferences,
+      //     enableCopilot: consentStatus,
+      //   });
+      // },
     },
     // {
     //   title: "Stay in the loop",
