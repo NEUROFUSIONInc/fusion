@@ -421,7 +421,11 @@ export function QuestDetailScreen() {
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
             allowEdit={false}
-            optionsList={[PromptOptionKey.record, PromptOptionKey.previous]}
+            optionsList={[
+              PromptOptionKey.record,
+              PromptOptionKey.previous,
+              PromptOptionKey.edit,
+            ]}
           />
         )}
 

@@ -134,19 +134,21 @@ export function EditPromptScreen() {
         )}
         {prompt && (
           <>
-            <View>
-              <PromptDetailsStep
-                promptText={promptText}
-                setPromptText={setPromptText}
-                responseType={responseType}
-                setResponseType={setResponseType}
-                customOptions={customOptions}
-                setCustomOptions={setCustomOptions}
-                category={category}
-                setCategory={setCategory}
-                isCreating={false}
-              />
-            </View>
+            {!prompt.additionalMeta.questId && (
+              <View>
+                <PromptDetailsStep
+                  promptText={promptText}
+                  setPromptText={setPromptText}
+                  responseType={responseType}
+                  setResponseType={setResponseType}
+                  customOptions={customOptions}
+                  setCustomOptions={setCustomOptions}
+                  category={category}
+                  setCategory={setCategory}
+                  isCreating={false}
+                />
+              </View>
+            )}
             <View className="flex -z-10">
               <TimePicker
                 start={start}

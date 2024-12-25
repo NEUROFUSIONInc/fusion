@@ -175,7 +175,11 @@ export const PromptsScreen = () => {
             defaultPrompt={activePrompt}
             optionsList={
               activePrompt?.additionalMeta?.questId
-                ? [PromptOptionKey.record, PromptOptionKey.previous]
+                ? [
+                    PromptOptionKey.record,
+                    PromptOptionKey.previous,
+                    PromptOptionKey.edit,
+                  ]
                 : allPromptOptionKeys
             }
           />

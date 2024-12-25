@@ -1,21 +1,35 @@
 import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 
 import { Button } from "../../button";
 import { LeftArrow, VerticalMenu } from "../../icons";
 import { PromptOptionsSheet } from "../prompt-details/sheets";
 
-import { PromptOptionKey } from "~/@types";
+import { Prompt, PromptOptionKey } from "~/@types";
 import { RouteProp } from "~/navigation";
+import { promptService } from "~/services";
 
 export const EditPromptHeader = () => {
   const route = useRoute<RouteProp<"EditPrompt">>();
   const promptOptionsSheet = useRef<RNBottomSheet>(null);
   const navigation = useNavigation();
   const isEdit = route.params.type === "edit";
+
+  const [prompt, setPrompt] = useState<Prompt>();
+  useEffect(() => {
+    if (!isEdit) return;
+    (async () => {
+      const res = await promptService.getPrompt(
+        route.params.type === "edit" ? route.params.promptId : ""
+      );
+      if (res) {
+        setPrompt(res);
+      }
+    })();
+  }, [isEdit, route.params]);
 
   const handleBottomSheetClose = useCallback(() => {
     promptOptionsSheet.current?.close();
@@ -54,7 +68,7 @@ export const EditPromptHeader = () => {
       <Text className="font-sans text-base text-white">
         {isEdit ? "Edit Prompt" : "Add Prompt "}
       </Text>
-      {isEdit ? (
+      {isEdit && !prompt?.additionalMeta.questId ? (
         <Button
           variant="ghost"
           size="icon"
