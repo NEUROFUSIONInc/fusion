@@ -62,7 +62,7 @@ const RecordingsPage: NextPage = () => {
           })}
         </select>
       </label>
-      <Experiment {...activeExperiment} />
+      <Experiment key={activeExperiment.id} {...activeExperiment} />
       <OnboardingModal />
     </DashboardLayout>
   );

@@ -139,13 +139,13 @@ export const experiments: IExperiment[] = [
       "The Stroop task is a classic test of cognitive control and attentional flexibility. It is often used in clinical and experimental settings to measure selective attention and cognitive control. The task involves naming the color of a word, while ignoring the semantic meaning of the word. For example, the word 'red' might be written in blue ink. The task is often used to measure changes in brain activity associated with attention, relaxation, and other cognitive processes.",
     url: "/experiments/stroop_task.html",
   },
-  {
-    id: 121,
-    name: "CN Experience",
-    description:
-      "This experience is designed by Causality Network to see how people react to a brand change. You will be presented multiple images. Sit still and observe the images.",
-    url: "/experiments/cn_experience.html",
-  },
+  // {
+  //   id: 121,
+  //   name: "CN Experience",
+  //   description:
+  //     "This experience is designed by Causality Network to see how people react to a brand change. You will be presented multiple images. Sit still and observe the images.",
+  //   url: "/experiments/cn_experience.html",
+  // },
   // {
   //   id: 6,
   //   name: "Verbal Fluency - Cognitive Test",
