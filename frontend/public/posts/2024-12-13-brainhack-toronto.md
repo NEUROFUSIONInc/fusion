@@ -17,7 +17,7 @@ Still buzzing from [Brain Hack in Toronto 🧠](https://brainhackto.github.io/gl
 
 ![ore speaking](/images/blog/brainhack/ore_speaking.jpg)
 
-In 48 hours, we collected 25 brain recording sessions from 18 participants - on highlight for me was seeing people's eyes light up as they saw their brainwaves change in real time. The process was simple; A person is asked to wear a mobile EEG headset then complete a resting state task - closing and opening their eyes at alternating times. We then analyzed their brain activity with a focus on their alpha (7-13Hz) power which is a measure of attention. We also collected self reports of coffee, energy and stress levels through the day.
+In 48 hours, we completed 25 brain recording sessions from 18 participants - one highlight for me was seeing people's eyes light up as they saw their brainwaves change in real time. The process was simple; A person is asked to wear a mobile EEG headset then complete a resting state task - closing and opening their eyes at alternating times. We then analyzed their brain activity with a focus on their alpha (7-13Hz) power which is a measure of attention. We also collected self reports of coffee, energy and stress levels through the day.
 
 ![experiment on neurofusion explorer](/images/blog/brainhack/experiment.png)
 
