@@ -1,7 +1,7 @@
 ---
 title: "Community Brain Recordings at Brain Hack Toronto"
 description: "Tracking daily variations in brain activity patterns between eyes-open and eyes-closed states"
-publishedDate: 2024/06/30
+publishedDate: 2024/12/13
 coverImage: /images/blog/brainhack/ore_speaking.jpg
 tags:
   - Community Brain Recordings
