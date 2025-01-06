@@ -420,12 +420,15 @@ export function QuestDetailScreen() {
             promptId={activePrompt?.uuid!}
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
-            allowEdit={false}
-            optionsList={[
-              PromptOptionKey.record,
-              PromptOptionKey.previous,
-              PromptOptionKey.edit,
-            ]}
+            optionsList={
+              activePrompt.additionalMeta.notifyCondition?.sourceId
+                ? [PromptOptionKey.record, PromptOptionKey.previous]
+                : [
+                    PromptOptionKey.record,
+                    PromptOptionKey.previous,
+                    PromptOptionKey.edit,
+                  ]
+            }
           />
         )}
 
