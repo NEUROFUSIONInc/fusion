@@ -163,7 +163,10 @@ class PromptService {
     }
   };
 
-  public deletePrompt = async (uuid: string) => {
+  public deletePrompt = async (
+    uuid: string,
+    deleteResponses: boolean = true
+  ) => {
     try {
       // cancel the existing notifications for prompt
       await this.notificationService.cancelExistingNotificationForPrompt(uuid);
@@ -189,6 +192,10 @@ class PromptService {
 
       const deleteStatus = await deleteFromDb();
       if (deleteStatus) {
+        if (deleteResponses) {
+          await this.deletePromptResponses(uuid);
+        }
+
         // delete from quest_prompt table
         if (prompt.additionalMeta?.questId) {
           const stat = await questService.deleteQuestPrompt(
@@ -206,6 +213,35 @@ class PromptService {
       // error reading value
       console.log("error deleting prompt", e);
       throw new Error("error deleting prompt");
+    }
+  };
+
+  public deletePromptResponses = async (promptUuid: string) => {
+    try {
+      const deleteFromDb = () =>
+        new Promise<boolean>((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              `DELETE FROM prompt_responses WHERE promptUuid = ?`,
+              [promptUuid],
+              () => {
+                console.log("prompt responses deleted");
+                resolve(true);
+              },
+              (_, error) => {
+                console.log("error deleting prompt responses", error);
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+
+      const deleteStatus = await deleteFromDb();
+      return deleteStatus;
+    } catch (e) {
+      console.log("error deleting prompt responses", e);
+      throw new Error("error deleting prompt responses");
     }
   };
 
