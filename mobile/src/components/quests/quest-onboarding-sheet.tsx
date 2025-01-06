@@ -92,6 +92,7 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
       });
 
       // call the method that adds user to quest
+      Keyboard.dismiss();
       callback(onboardingResponses);
       bottomSheetRef.current?.close();
     } catch (error) {

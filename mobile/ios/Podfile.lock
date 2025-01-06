@@ -1227,13 +1227,6 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - RNZipArchive (6.1.2):
-    - React-Core
-    - RNZipArchive/Core (= 6.1.2)
-    - SSZipArchive (~> 2.2)
-  - RNZipArchive/Core (6.1.2):
-    - React-Core
-    - SSZipArchive (~> 2.2)
   - SocketRocket (0.6.1)
   - sqlite3 (3.42.0):
     - sqlite3/common (= 3.42.0)
@@ -1242,7 +1235,6 @@ PODS:
     - sqlite3/common
   - sqlite3/fts5 (3.42.0):
     - sqlite3/common
-  - SSZipArchive (2.4.3)
   - UMAppLoader (4.5.1)
   - Yoga (1.14.0)
 
@@ -1343,7 +1335,6 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - RNZipArchive (from `../node_modules/react-native-zip-archive`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1353,7 +1344,6 @@ SPEC REPOS:
     - libevent
     - SocketRocket
     - sqlite3
-    - SSZipArchive
 
 EXTERNAL SOURCES:
   boost:
@@ -1543,8 +1533,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  RNZipArchive:
-    :path: "../node_modules/react-native-zip-archive"
   UMAppLoader:
     :path: "../node_modules/unimodules-app-loader/ios"
   Yoga:
@@ -1646,10 +1634,8 @@ SPEC CHECKSUMS:
   RNScreens: 17e2f657f1b09a71ec3c821368a04acbb7ebcb46
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  RNZipArchive: 6d736ee4e286dbbd9d81206b7a4da355596ca04a
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   sqlite3: f163dbbb7aa3339ad8fc622782c2d9d7b72f7e9c
-  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   UMAppLoader: 79d3ee6aa2447a1fe2e8b0d07acf2de106e55b58
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
 
