@@ -532,16 +532,29 @@ export function PromptEntryScreen() {
               {/* if the prompt is a custom prompt, show the custom options */}
               {prompt.responseType === "customOptions" &&
                 customOptions.length > 0 && (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View className="flex-1 w-full h-20 flex-row gap-x-2 gap-y-3 mt-2">
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                      flexGrow: 1,
+                      justifyContent: "center",
+                      minWidth: "100%",
+                    }}
+                  >
+                    <View className="flex-row items-center justify-center gap-x-2 gap-y-3 mt-2 px-4">
                       {customOptions.map((option) => (
                         <Tag
                           key={option}
                           title={option}
                           isActive={userResponse.split(";").includes(option)}
-                          handleValueChange={() =>
-                            handleCustomOptionChange(option)
-                          }
+                          handleValueChange={() => {
+                            if (prompt.additionalMeta.questId) {
+                              // only allow single question response
+                              setUserResponse(option);
+                            } else {
+                              handleCustomOptionChange(option);
+                            }
+                          }}
                         />
                       ))}
                     </View>
