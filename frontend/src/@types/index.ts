@@ -136,6 +136,7 @@ export type PromptAdditionalMeta = {
   category?: string;
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
+  singleResponse?: boolean;
   questId?: string;
   notifyCondition?: PromptNotifyCondition;
 };

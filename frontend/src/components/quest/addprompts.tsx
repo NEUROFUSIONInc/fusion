@@ -35,6 +35,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
   const [customOptions, setCustomOptions] = useState<string[]>(
     prompt.additionalMeta.customOptionText ? prompt.additionalMeta.customOptionText.split(";") : []
   );
+  const [singleResponse, setSingleResponse] = useState(prompt.additionalMeta.singleResponse);
   const [responseType, setResponseType] = useState<PromptResponseType | null>(prompt.responseType);
   const [category, setCategory] = useState<string | null>(prompt.additionalMeta.category ?? null);
   const [countPerDay, setCountPerDay] = useState<number | undefined>();
@@ -67,6 +68,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
       additionalMeta: {
         category: category ?? "",
         customOptionText: customOptions.join(";"),
+        singleResponse: singleResponse,
       }, // Initialize with an empty object
     };
 
@@ -193,6 +195,28 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
                       {option}
                     </span>
                   ))}
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="singleResponse" className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Allow multiple responses
+                  </label>
+                  <select
+                    id="singleResponse"
+                    value={singleResponse ? "no" : "yes"}
+                    onChange={(e) => {
+                      if (e.target.value === "yes") {
+                        setSingleResponse(false);
+                      } else {
+                        setSingleResponse(true);
+                      }
+                    }}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+                  >
+                    <option value="yes" selected>
+                      Yes
+                    </option>
+                    <option value="no">No</option>
+                  </select>
                 </div>
               </div>
             )}

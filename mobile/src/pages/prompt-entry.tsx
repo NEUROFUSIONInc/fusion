@@ -548,7 +548,10 @@ export function PromptEntryScreen() {
                           title={option}
                           isActive={userResponse.split(";").includes(option)}
                           handleValueChange={() => {
-                            if (prompt.additionalMeta.questId) {
+                            if (
+                              prompt.additionalMeta.questId &&
+                              prompt.additionalMeta.singleResponse
+                            ) {
                               // only allow single question response
                               setUserResponse(option);
                             } else {

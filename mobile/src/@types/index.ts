@@ -28,6 +28,7 @@ export type PromptAdditionalMeta = {
   category?: string;
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
+  singleResponse?: boolean; // if true, only one response is allowed during custom option selection
   questId?: string;
   notifyCondition?: PromptNotifyCondition;
 };
