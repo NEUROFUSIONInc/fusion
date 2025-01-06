@@ -13,6 +13,7 @@ import {
 import { AccountContext } from "~/contexts/account.context";
 import { useCreatePrompt, usePrompt, useUpdatePrompt } from "~/hooks";
 import { PromptScreenNavigationProp, RouteProp } from "~/navigation";
+import { promptService } from "~/services";
 import {
   getDayjsFromTimeString,
   appInsights,
@@ -108,12 +109,39 @@ export function EditPromptScreen() {
         isNotificationActive: prompt?.additionalMeta?.isNotificationActive,
         customOptionText: customOptions.join(";"),
         questId: prompt?.additionalMeta?.questId,
+        notifyCondition: prompt?.additionalMeta?.notifyCondition,
+        singleResponse: prompt?.additionalMeta?.singleResponse,
       },
     };
 
     try {
       const updateOrCreatePrompt = isEditPage ? updatePrompt : createPrompt;
       await updateOrCreatePrompt({ ...promptEntry });
+
+      // check if other prompts have the current promptId as their notifyCondition
+      // if they do update the notificationConfig for those prompts
+      if (isEditPage) {
+        const allPrompts = await promptService.readSavedPrompts();
+        const promptsToUpdate = allPrompts.filter(
+          (p: Prompt) =>
+            p.additionalMeta?.notifyCondition?.sourceId === promptId
+        );
+
+        if (promptsToUpdate?.length > 0) {
+          console.log("promptsToUpdate", promptsToUpdate);
+          await Promise.all(
+            promptsToUpdate.map(async (p: Prompt) => {
+              await updatePrompt({
+                ...p,
+                notificationConfig_startTime: start.format("HH:mm"),
+                notificationConfig_endTime: end.format("HH:mm"),
+                notificationConfig_days: days,
+                notificationConfig_countPerDay: countPerDay ?? 0,
+              });
+            })
+          );
+        }
+      }
       navigation.navigate("Prompts");
     } catch (err) {
       console.log("Error saving prompt", err);
