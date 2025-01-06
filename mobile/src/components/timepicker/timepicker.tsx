@@ -21,6 +21,7 @@ export type TimePickerProps = {
   setDays: (days: NotificationConfigDays) => void;
   setPromptCount?: (count: number) => void;
   defaultPromptFrequencyLabel?: string | null;
+  hidePromptCountDays?: boolean;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
@@ -40,6 +41,7 @@ export const TimePicker: FC<TimePickerProps> = ({
   setDays,
   setPromptCount,
   defaultPromptFrequencyLabel,
+  hidePromptCountDays = false,
 }) => {
   const [isStartTimePickerVisible, setStartTimePickerVisibility] =
     useState(false);
@@ -134,19 +136,21 @@ export const TimePicker: FC<TimePickerProps> = ({
     <View>
       <View>
         <View className="mt-4">
-          <Select
-            label="How often should we prompt you?"
-            items={promptFrequencyDataWithDisabled}
-            value={selectedPromptFrequencyValue as unknown as string}
-            setValue={setSelectedPromptFrequencyValue}
-            dropDownDirection="BOTTOM"
-            listMode="SCROLLVIEW"
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-              indicatorStyle: "white",
-            }}
-            onChangeValue={() => setPromptCount?.(totalContactCount)}
-          />
+          {!hidePromptCountDays && (
+            <Select
+              label="How often should we prompt you?"
+              items={promptFrequencyDataWithDisabled}
+              value={selectedPromptFrequencyValue as unknown as string}
+              setValue={setSelectedPromptFrequencyValue}
+              dropDownDirection="BOTTOM"
+              listMode="SCROLLVIEW"
+              scrollViewProps={{
+                nestedScrollEnabled: true,
+                indicatorStyle: "white",
+              }}
+              onChangeValue={() => setPromptCount?.(totalContactCount)}
+            />
+          )}
           {selectedPromptFrequencyValue !== null && (
             <Text className="font-sans text-gray-400 text-sm mt-2 -z-10">
               {`You will be prompted ${
@@ -216,26 +220,28 @@ export const TimePicker: FC<TimePickerProps> = ({
         )}
       </View>
 
-      <View className="-z-10 mt-4">
-        <Text className="font-sans text-white text-base my-4 -z-10">
-          What days should we prompt you?
-        </Text>
-        <View className="flex justify-evenly w-full px-5 py-4 flex-row bg-secondary-900 rounded-md -z-10">
-          {Object.keys(days).map((day) => (
-            <DayChip
-              key={Math.random()}
-              day={day}
-              isChecked={days[day as Days]}
-              handleValueChange={(value) => {
-                setDays({ ...days, [day]: value });
-              }}
-            />
-          ))}
+      {!hidePromptCountDays && (
+        <View className="-z-10 mt-4">
+          <Text className="font-sans text-white text-base my-4 -z-10">
+            What days should we prompt you?
+          </Text>
+          <View className="flex justify-evenly w-full px-5 py-4 flex-row bg-secondary-900 rounded-md -z-10">
+            {Object.keys(days).map((day) => (
+              <DayChip
+                key={Math.random()}
+                day={day}
+                isChecked={days[day as Days]}
+                handleValueChange={(value) => {
+                  setDays({ ...days, [day]: value });
+                }}
+              />
+            ))}
+          </View>
+          <Text className="font-sans text-gray-400 text-sm my-2">
+            {interpretDaySelections}
+          </Text>
         </View>
-        <Text className="font-sans text-gray-400 text-sm my-2">
-          {interpretDaySelections}
-        </Text>
-      </View>
+      )}
     </View>
   );
 };

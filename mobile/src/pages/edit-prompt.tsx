@@ -163,6 +163,7 @@ export function EditPromptScreen() {
                   prompt.notificationConfig_endTime,
                   prompt.notificationConfig_countPerDay
                 )}
+                hidePromptCountDays={!!prompt.additionalMeta.questId}
               />
             </View>
           </>
