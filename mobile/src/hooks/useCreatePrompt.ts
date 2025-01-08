@@ -4,7 +4,7 @@ import Toast from "react-native-toast-message";
 import { Prompt } from "~/@types";
 import { promptService } from "~/services";
 
-export const useCreatePrompt = () => {
+export const useCreatePrompt = (showBanner: boolean = true) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: promptService.savePrompt,
@@ -22,11 +22,13 @@ export const useCreatePrompt = () => {
         );
       }
 
-      Toast.show({
-        type: "success",
-        text1: "Prompt created",
-        text2: "Your prompt has been created successfully",
-      });
+      if (showBanner) {
+        Toast.show({
+          type: "success",
+          text1: "Prompt created",
+          text2: "Your prompt has been created successfully",
+        });
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({

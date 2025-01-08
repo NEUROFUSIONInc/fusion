@@ -22,6 +22,7 @@ import {
 import { AccountContext } from "~/contexts";
 import { useCreatePrompt, useCreateQuest, usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
+import { promptService } from "~/services/prompt.service";
 import { questService } from "~/services/quest.service";
 import { appInsights, getApiService } from "~/utils";
 
@@ -31,7 +32,7 @@ export function QuestDetailScreen() {
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
   const { mutateAsync: createQuest } = useCreateQuest();
-  const { mutateAsync: createPrompt } = useCreatePrompt();
+  const { mutateAsync: createPrompt } = useCreatePrompt(false);
   const { data: savedPrompts, isLoading: savedPromptsLoading } =
     usePromptsQuery();
 
@@ -102,6 +103,7 @@ export function QuestDetailScreen() {
   useEffect(() => {
     if (isSubscribed) {
       (async () => {
+        await updateQuest();
         await pushQuestData();
       })();
     }
@@ -181,71 +183,11 @@ export function QuestDetailScreen() {
         setQuestIsSavedLocally(true);
 
         // save prompts locally
-        // TODO: this logic should be moved to createQuest hook
-        if (route.params.quest.prompts) {
-          const res = await Promise.all(
-            route.params.quest.prompts.map(async (prompt) => {
-              // link prompt to quest
-              prompt.additionalMeta["questId"] = route.params.quest.guid;
-
-              const promptNotifyCondition =
-                prompt.additionalMeta["notifyCondition"];
-
-              if (
-                promptNotifyCondition &&
-                promptNotifyCondition.sourceType === "onboardingQuestion"
-              ) {
-                const response = onboardingResponses.find(
-                  (r) => r.guid === promptNotifyCondition.sourceId
-                );
-                if (response) {
-                  let shouldSavePrompt = true;
-                  switch (promptNotifyCondition.operator) {
-                    case PromptNotifyOperator.equals:
-                      shouldSavePrompt =
-                        response.responseValue.toLowerCase() ===
-                        promptNotifyCondition.value.toLowerCase();
-                      break;
-                    case PromptNotifyOperator.not_equals:
-                      shouldSavePrompt =
-                        response.responseValue.toLowerCase() !==
-                        promptNotifyCondition.value.toLowerCase();
-                      break;
-                    case PromptNotifyOperator.greater_than:
-                      shouldSavePrompt =
-                        Number(response.responseValue) >
-                        Number(promptNotifyCondition.value);
-                      break;
-                    case PromptNotifyOperator.less_than:
-                      shouldSavePrompt =
-                        Number(response.responseValue) <
-                        Number(promptNotifyCondition.value);
-                      break;
-                    default:
-                      shouldSavePrompt = true;
-                  }
-
-                  if (!shouldSavePrompt) {
-                    return false;
-                  }
-                }
-              }
-
-              if (
-                promptNotifyCondition &&
-                promptNotifyCondition.sourceType === "prompt"
-              ) {
-                prompt.additionalMeta["isNotificationActive"] = false;
-              }
-              const promptRes = await createPrompt(prompt);
-              return promptRes;
-            })
-          );
-
-          if (res.includes(undefined)) {
-            throw new Error("Failed to save prompts locally");
-          }
-        }
+        await handleQuestPromptOnboarding(
+          route.params.quest.prompts!,
+          onboardingResponses,
+          quest?.guid!
+        );
 
         setIsSubscribed(true);
 
@@ -279,6 +221,163 @@ export function QuestDetailScreen() {
     } finally {
       setJoiningQuest(false);
     }
+  };
+
+  const handleQuestPromptOnboarding = async (
+    prompts: Prompt[],
+    onboardingResponses: OnboardingResponse[],
+    questGuid: string
+  ) => {
+    if (prompts) {
+      const res = await Promise.all(
+        prompts.map(async (prompt) => {
+          // link prompt to quest
+          prompt.additionalMeta["questId"] = questGuid;
+
+          const promptNotifyCondition =
+            prompt.additionalMeta["notifyCondition"];
+
+          if (
+            promptNotifyCondition &&
+            promptNotifyCondition.sourceType === "onboardingQuestion"
+          ) {
+            const response = onboardingResponses.find(
+              (r) => r.guid === promptNotifyCondition.sourceId
+            );
+            if (response) {
+              let shouldSavePrompt = true;
+              switch (promptNotifyCondition.operator) {
+                case PromptNotifyOperator.equals:
+                  shouldSavePrompt =
+                    response.responseValue.toLowerCase() ===
+                    promptNotifyCondition.value.toLowerCase();
+                  break;
+                case PromptNotifyOperator.not_equals:
+                  shouldSavePrompt =
+                    response.responseValue.toLowerCase() !==
+                    promptNotifyCondition.value.toLowerCase();
+                  break;
+                case PromptNotifyOperator.greater_than:
+                  shouldSavePrompt =
+                    Number(response.responseValue) >
+                    Number(promptNotifyCondition.value);
+                  break;
+                case PromptNotifyOperator.less_than:
+                  shouldSavePrompt =
+                    Number(response.responseValue) <
+                    Number(promptNotifyCondition.value);
+                  break;
+                default:
+                  shouldSavePrompt = true;
+              }
+
+              if (!shouldSavePrompt) {
+                return false;
+              }
+            }
+          }
+
+          if (
+            promptNotifyCondition &&
+            promptNotifyCondition.sourceType === "prompt"
+          ) {
+            prompt.additionalMeta["isNotificationActive"] = false;
+          }
+          const promptRes = await createPrompt(prompt);
+          return promptRes;
+        })
+      );
+
+      if (res.includes(undefined)) {
+        throw new Error("Failed to save prompts locally");
+      }
+    }
+  };
+
+  const updateQuest = async () => {
+    const apiService = await getApiService();
+    if (!apiService || !quest?.guid) return;
+
+    const latestQuestDetail = await fetchLatestQuestDetail(
+      apiService,
+      quest.guid
+    );
+    if (!latestQuestDetail) return;
+    setQuest(latestQuestDetail);
+
+    const hasChanged = await questService.hasQuestChanged(
+      quest,
+      latestQuestDetail
+    );
+    if (!hasChanged) {
+      console.log("Quest has not changed");
+      return;
+    }
+
+    console.log("Quest has changed");
+    await createQuest(latestQuestDetail);
+
+    const onboardingResponses = await fetchOnboardingResponses(
+      apiService,
+      quest.guid
+    );
+
+    if (latestQuestDetail.prompts) {
+      await updateQuestPrompts(
+        latestQuestDetail.prompts,
+        onboardingResponses,
+        quest.guid
+      );
+    }
+  };
+
+  const fetchLatestQuestDetail = async (apiService: any, questId: string) => {
+    const res = await apiService.get(`/quest/detail`, {
+      params: { questId },
+    });
+
+    if (res.status >= 200 && res.status < 300) {
+      const questDetail = res.data.quest;
+      if (questDetail) {
+        questDetail.prompts = JSON.parse(questDetail.config ?? "{}")?.prompts;
+        return questDetail;
+      }
+    }
+    return null;
+  };
+
+  const fetchOnboardingResponses = async (apiService: any, questId: string) => {
+    const res = await apiService.get(`/quest/datasets`, {
+      params: {
+        questId,
+        type: "onboarding_responses",
+        singleUser: true,
+      },
+    });
+
+    if (res.status >= 200 && res.status < 300) {
+      const responses = res.data.userQuestDatasets[0]
+        .value as OnboardingResponse[];
+      console.log("onboardingResponses", responses);
+      return responses;
+    }
+    return [];
+  };
+
+  const updateQuestPrompts = async (
+    newPrompts: any[],
+    onboardingResponses: OnboardingResponse[],
+    questId: string
+  ) => {
+    // Delete old prompts
+    await Promise.all(
+      questPrompts.map((prompt) =>
+        promptService.deletePrompt(prompt.uuid, false)
+      )
+    );
+
+    // Save new prompts
+    await handleQuestPromptOnboarding(newPrompts, onboardingResponses, questId);
   };
 
   /** Prompt Sheet Functions */

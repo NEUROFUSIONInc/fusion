@@ -19,8 +19,7 @@ class QuestService {
               [quest.guid],
               (_, { rows }) => {
                 if (rows.length > 0) {
-                  console.log("updating prompt");
-                  // update prompt
+                  console.log("updating quest");
                   tx.executeSql(
                     `UPDATE quests SET title = ?, description = ?, organizerName = ?, startTimestamp = ?, endTimestamp = ?, config = ? WHERE guid = ?`,
                     [
@@ -43,7 +42,7 @@ class QuestService {
                     }
                   );
                 } else {
-                  // save prompt to db
+                  // save quest to db
                   tx.executeSql(
                     `INSERT INTO quests (guid, title, description, organizerName, startTimestamp, endTimestamp, config ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
                     [
@@ -484,6 +483,27 @@ class QuestService {
 
     // from this return the quest
     return missedQuestPrompts;
+  }
+
+  async hasQuestChanged(savedQuest: Quest, remoteQuest: Quest) {
+    if (savedQuest.title !== remoteQuest.title) {
+      return true;
+    }
+
+    if (savedQuest.description !== remoteQuest.description) {
+      return true;
+    }
+
+    if (savedQuest.organizerName !== remoteQuest.organizerName) {
+      return true;
+    }
+
+    // now let's check the config
+    if (savedQuest.config !== remoteQuest.config) {
+      return true;
+    }
+
+    return false;
   }
 }
 
