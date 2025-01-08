@@ -384,10 +384,11 @@ exports.saveQuestDataset = async (req, res) => {
 
 exports.getQuestDatasets = async (req, res) => {
   try {
-    console.log("about fetch db", req.query.questId);
     const latestTimestamps = await db.UserQuestDataset.findAll({
       where: {
         questGuid: req.query.questId,
+        ...(req.query.type && { type: req.query.type }),
+        ...(req.query.singleUser && { userGuid: req.user.userGuid })
       },
       attributes: [
         "userGuid",
