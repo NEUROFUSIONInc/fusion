@@ -134,16 +134,6 @@ export class NotificationService {
       });
 
       if (isInNotifyConditions) {
-        // Set up quest prompt notification that opens the app since this prompt is referenced by others
-        await Notifications.setNotificationCategoryAsync("quest_prompt", [
-          {
-            identifier: "quest_prompt_action",
-            buttonTitle: "Respond",
-            options: {
-              opensAppToForeground: true,
-            },
-          },
-        ]);
         if (Platform.OS === "android") {
           // make it like just a normal notification by not providing a categoryIdentifier
         } else {
@@ -407,6 +397,16 @@ export class NotificationService {
         },
         options: {
           opensAppToForeground: false,
+        },
+      },
+    ]);
+    // Set up quest prompt notification that opens the app since this prompt is referenced by others
+    await Notifications.setNotificationCategoryAsync("quest_prompt", [
+      {
+        identifier: "quest_prompt_action",
+        buttonTitle: "Respond",
+        options: {
+          opensAppToForeground: true,
         },
       },
     ]);

@@ -191,13 +191,11 @@ function App() {
               );
             }
 
-            const prompt = await promptService.getPrompt(promptUuid);
-
             // if it's a quest prompt, sent to prompt entry
             if (
               response.actionIdentifier ===
                 Notifications.DEFAULT_ACTION_IDENTIFIER ||
-              prompt?.additionalMeta?.questId
+              response.actionIdentifier === "quest_prompt_action"
             ) {
               navigation.reset({
                 index: 0,
