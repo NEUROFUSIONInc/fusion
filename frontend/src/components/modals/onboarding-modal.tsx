@@ -59,12 +59,12 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel 
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent>
-        <DialogTitle>Welcome to Fusion</DialogTitle>
+        <DialogTitle>Welcome to NeuroFusion Explorer</DialogTitle>
         <DialogDescription>
-          Here's what you can do with Fusion:
+          Here's what you can do with our tools:
           <div className="list-disc ml-6 mt-2">
             <p>Record brain activity during cognitive experiments</p>
-            <p>Respond to prompts on mobile devices</p>
+            <p>Respond to self-reports on behavior using your mobile devices</p>
           </div>
         </DialogDescription>
         <div className="flex justify-end mt-4">
@@ -90,12 +90,12 @@ const DataHandlingModal: React.FC<DataHandlingModalProps> = ({ onPrevious, onGet
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>
-        <DialogTitle>Data Handling in Fusion</DialogTitle>
+        <DialogTitle>Data Handling</DialogTitle>
         <DialogDescription>
-          How Fusion handles your data:
+          How we handle your data:
           <ul className="list-disc ml-6 mt-2">
-            <li>Assigns anonymous identities with no email required</li>
-            <li>Stores data locally on your device</li>
+            <li>You are assigned an anonymous identity with no email required</li>
+            <li>Your data is stored data locally on your device unless you choose to share it with a researcher</li>
           </ul>
         </DialogDescription>
         <div className="flex justify-end mt-4">
