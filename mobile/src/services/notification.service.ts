@@ -51,6 +51,10 @@ export class NotificationService {
      * - if no, loop through the days and use WeeklyInputTrigger
      * - save notificationId to sqlite
      * - update 'isScheduled' for prompt
+     *
+     * TODO: check if android work around is still needed https://github.com/expo/expo/issues/20500
+     * responding from the notification menu needs more work on Android
+     * so disabling all & forcing clicks
      */
 
     // get the available times from date ranges.
@@ -107,13 +111,59 @@ export class NotificationService {
       saturday: 7,
     };
 
-    // one more quirk for Android - https://github.com/expo/expo/issues/20500
-    // responding from the notification menu needs more work on Android
-    // so disabling all & forcing clicks
-    if (Platform.OS === "android") {
-      // make it like just a normal notification by not providing a categoryIdentifier
+    // Set up notification category based on whether it's a quest prompt or not
+    if (prompt.additionalMeta?.questId) {
+      // Check if this prompt is referenced in any other prompt's notifyConditions
+      const isInNotifyConditions = await new Promise<boolean>((resolve) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `SELECT p.uuid FROM prompts p 
+             WHERE json_extract(p.additionalMeta, '$.notifyConditions') IS NOT NULL 
+             AND json_extract(p.additionalMeta, '$.notifyConditions') LIKE ?`,
+            [`%"sourceId":"${prompt.uuid}"%`],
+            (_, { rows }) => {
+              resolve(rows.length > 0);
+            },
+            (_, error) => {
+              console.log("Error checking notify conditions:", error);
+              resolve(false);
+              return false;
+            }
+          );
+        });
+      });
+
+      if (isInNotifyConditions) {
+        // Set up quest prompt notification that opens the app since this prompt is referenced by others
+        await Notifications.setNotificationCategoryAsync("quest_prompt", [
+          {
+            identifier: "quest_prompt_action",
+            buttonTitle: "Respond",
+            options: {
+              opensAppToForeground: true,
+            },
+          },
+        ]);
+        if (Platform.OS === "android") {
+          // make it like just a normal notification by not providing a categoryIdentifier
+        } else {
+          contentObject["categoryIdentifier"] = "quest_prompt";
+        }
+      } else {
+        // Keep the default notification behavior
+        if (Platform.OS === "android") {
+          // make it like just a normal notification by not providing a categoryIdentifier
+        } else {
+          contentObject["categoryIdentifier"] = notificationIdentifier;
+        }
+      }
     } else {
-      contentObject["categoryIdentifier"] = notificationIdentifier;
+      // Handle non-quest prompts as before
+      if (Platform.OS === "android") {
+        // make it like just a normal notification by not providing a categoryIdentifier
+      } else {
+        contentObject["categoryIdentifier"] = notificationIdentifier;
+      }
     }
 
     try {

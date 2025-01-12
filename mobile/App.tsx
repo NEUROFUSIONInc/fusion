@@ -199,12 +199,22 @@ function App() {
                 Notifications.DEFAULT_ACTION_IDENTIFIER ||
               prompt?.additionalMeta?.questId
             ) {
-              navigation.navigate("PromptNavigator", {
-                screen: "PromptEntry",
-                params: {
-                  promptUuid,
-                  triggerTimestamp: Math.floor(response.notification.date),
-                },
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "PromptNavigator",
+                    params: {
+                      screen: "PromptEntry",
+                      params: {
+                        promptUuid,
+                        triggerTimestamp: Math.floor(
+                          response.notification.date
+                        ),
+                      },
+                    },
+                  },
+                ],
               });
               return;
             }
