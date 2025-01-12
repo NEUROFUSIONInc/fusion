@@ -18,6 +18,7 @@ import {
   PromptNotifyOperator,
   PromptResponse,
   UserAccount,
+  PromptNotifyCondition,
 } from "~/@types";
 import { db } from "~/lib";
 import {
@@ -866,54 +867,64 @@ class PromptService {
 
   public promptMeetsNotifyCondition = async (prompt: Prompt) => {
     /**
-     * Returns true if the prompt meets its notify condition else false
-     *
-     * TODO: include request to "missedPromptsToday" and checking if sourcePrompt is in missedPromptsToday
+     * Returns true if the prompt meets all its notify conditions else false
+     * If there are multiple conditions, ALL conditions must be met (AND logic)
      */
-    const promptNotifyCondition = prompt.additionalMeta?.notifyCondition;
+    const notifyConditions = prompt.additionalMeta?.notifyConditions;
 
-    if (!promptNotifyCondition) return true;
-    if (promptNotifyCondition.sourceType !== "prompt") return true;
+    // If no conditions exist, the prompt should be shown
+    if (!notifyConditions || notifyConditions.length === 0) return true;
 
-    // Get today's responses for the source prompt
-    const sourcePromptResponsesToday = await promptService.getPromptResponses(
-      promptNotifyCondition.sourceId!,
-      dayjs().startOf("day").valueOf()
-    );
+    // For multiple conditions, ALL must be met (AND logic)
+    for (const condition of notifyConditions) {
+      if (condition.sourceType !== "prompt") continue;
 
-    if (sourcePromptResponsesToday.length === 0) return false;
+      // Get today's responses for the source prompt
+      const sourcePromptResponsesToday = await promptService.getPromptResponses(
+        condition.sourceId!,
+        dayjs().startOf("day").valueOf()
+      );
 
-    // Get the latest response
-    const latestResponse = sourcePromptResponsesToday.reduce(
-      (latest, current) => {
-        return !latest || current.responseTimestamp > latest.responseTimestamp
-          ? current
-          : latest;
-      }
-    );
+      if (sourcePromptResponsesToday.length === 0) return false;
 
-    const sourceValue = latestResponse.value.toLowerCase();
-    const targetValue = promptNotifyCondition.value.toLowerCase();
+      // Get the latest response
+      const latestResponse = sourcePromptResponsesToday.reduce(
+        (latest, current) => {
+          return !latest || current.responseTimestamp > latest.responseTimestamp
+            ? current
+            : latest;
+        }
+      );
 
-    let shouldInclude = false;
-    switch (promptNotifyCondition.operator) {
-      case PromptNotifyOperator.equals:
-        shouldInclude = sourceValue === targetValue;
-        break;
-      case PromptNotifyOperator.not_equals:
-        shouldInclude = sourceValue !== targetValue;
-        break;
-      case PromptNotifyOperator.greater_than:
-        shouldInclude = Number(sourceValue) > Number(targetValue);
-        break;
-      case PromptNotifyOperator.less_than:
-        shouldInclude = Number(sourceValue) < Number(targetValue);
-        break;
-      default:
-        shouldInclude = true;
+      const conditionMet = this.evaluateCondition(
+        latestResponse.value,
+        condition
+      );
+      if (!conditionMet) return false; // If any condition fails, return false
     }
 
-    return shouldInclude;
+    return true; // All conditions were met
+  };
+
+  private evaluateCondition = (
+    sourceValue: string,
+    condition: PromptNotifyCondition
+  ): boolean => {
+    const normalizedSourceValue = sourceValue.toLowerCase();
+    const normalizedTargetValue = condition.value.toLowerCase();
+
+    switch (condition.operator) {
+      case PromptNotifyOperator.equals:
+        return normalizedSourceValue === normalizedTargetValue;
+      case PromptNotifyOperator.not_equals:
+        return normalizedSourceValue !== normalizedTargetValue;
+      case PromptNotifyOperator.greater_than:
+        return Number(normalizedSourceValue) > Number(normalizedTargetValue);
+      case PromptNotifyOperator.less_than:
+        return Number(normalizedSourceValue) < Number(normalizedTargetValue);
+      default:
+        return true;
+    }
   };
 }
 

@@ -109,7 +109,7 @@ export function EditPromptScreen() {
         isNotificationActive: prompt?.additionalMeta?.isNotificationActive,
         customOptionText: customOptions.join(";"),
         questId: prompt?.additionalMeta?.questId,
-        notifyCondition: prompt?.additionalMeta?.notifyCondition,
+        notifyConditions: prompt?.additionalMeta?.notifyConditions,
         singleResponse: prompt?.additionalMeta?.singleResponse,
       },
     };
@@ -118,14 +118,22 @@ export function EditPromptScreen() {
       const updateOrCreatePrompt = isEditPage ? updatePrompt : createPrompt;
       await updateOrCreatePrompt({ ...promptEntry });
 
-      // check if other prompts have the current promptId as their notifyCondition
+      // check if other prompts have the current promptId in their conditions
       // if they do update the notificationConfig for those prompts
       if (isEditPage) {
         const allPrompts = await promptService.readSavedPrompts();
-        const promptsToUpdate = allPrompts.filter(
-          (p: Prompt) =>
-            p.additionalMeta?.notifyCondition?.sourceId === promptId
-        );
+        const promptsToUpdate = allPrompts.filter((p: Prompt) => {
+          const conditions = p.additionalMeta?.notifyConditions;
+          return (
+            conditions &&
+            Array.isArray(conditions) &&
+            conditions.some(
+              (condition) =>
+                condition.sourceType === "prompt" &&
+                condition.sourceId === promptId
+            )
+          );
+        });
 
         if (promptsToUpdate?.length > 0) {
           console.log("promptsToUpdate", promptsToUpdate);

@@ -30,7 +30,7 @@ export type PromptAdditionalMeta = {
   customOptionText?: string; // ; separated list of options
   singleResponse?: boolean; // if true, only one response is allowed during custom option selection
   questId?: string;
-  notifyCondition?: PromptNotifyCondition;
+  notifyConditions?: PromptNotifyCondition[];
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {

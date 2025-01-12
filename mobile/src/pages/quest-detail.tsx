@@ -8,6 +8,7 @@ import Toast from "react-native-toast-message";
 import {
   OnboardingResponse,
   Prompt,
+  PromptNotifyCondition,
   PromptNotifyOperator,
   PromptOptionKey,
   Quest,
@@ -234,55 +235,43 @@ export function QuestDetailScreen() {
           // link prompt to quest
           prompt.additionalMeta["questId"] = questGuid;
 
-          const promptNotifyCondition =
-            prompt.additionalMeta["notifyCondition"];
+          const notifyConditions = prompt.additionalMeta["notifyConditions"];
 
-          if (
-            promptNotifyCondition &&
-            promptNotifyCondition.sourceType === "onboardingQuestion"
-          ) {
-            const response = onboardingResponses.find(
-              (r) => r.guid === promptNotifyCondition.sourceId
-            );
-            if (response) {
-              let shouldSavePrompt = true;
-              switch (promptNotifyCondition.operator) {
-                case PromptNotifyOperator.equals:
-                  shouldSavePrompt =
-                    response.responseValue.toLowerCase() ===
-                    promptNotifyCondition.value.toLowerCase();
-                  break;
-                case PromptNotifyOperator.not_equals:
-                  shouldSavePrompt =
-                    response.responseValue.toLowerCase() !==
-                    promptNotifyCondition.value.toLowerCase();
-                  break;
-                case PromptNotifyOperator.greater_than:
-                  shouldSavePrompt =
-                    Number(response.responseValue) >
-                    Number(promptNotifyCondition.value);
-                  break;
-                case PromptNotifyOperator.less_than:
-                  shouldSavePrompt =
-                    Number(response.responseValue) <
-                    Number(promptNotifyCondition.value);
-                  break;
-                default:
-                  shouldSavePrompt = true;
-              }
+          let shouldSavePrompt = true;
 
-              if (!shouldSavePrompt) {
-                return false;
+          // If we have multiple conditions, check all of them
+          if (notifyConditions && notifyConditions.length > 0) {
+            for (const condition of notifyConditions) {
+              if (condition.sourceType === "onboardingQuestion") {
+                const response = onboardingResponses.find(
+                  (r) => r.guid === condition.sourceId
+                );
+                if (response) {
+                  const conditionMet = evaluatePromptCondition(
+                    response.responseValue,
+                    condition
+                  );
+                  if (!conditionMet) {
+                    shouldSavePrompt = false;
+                    break;
+                  }
+                }
               }
             }
           }
 
+          if (!shouldSavePrompt) {
+            return false;
+          }
+
+          // Set notification status based on conditions
           if (
-            promptNotifyCondition &&
-            promptNotifyCondition.sourceType === "prompt"
+            notifyConditions &&
+            notifyConditions.some((c) => c.sourceType === "prompt")
           ) {
             prompt.additionalMeta["isNotificationActive"] = false;
           }
+
           const promptRes = await createPrompt(prompt);
           return promptRes;
         })
@@ -291,6 +280,27 @@ export function QuestDetailScreen() {
       if (res.includes(undefined)) {
         throw new Error("Failed to save prompts locally");
       }
+    }
+  };
+
+  const evaluatePromptCondition = (
+    responseValue: string,
+    condition: PromptNotifyCondition
+  ): boolean => {
+    const sourceValue = responseValue.toLowerCase();
+    const targetValue = condition.value.toLowerCase();
+
+    switch (condition.operator) {
+      case PromptNotifyOperator.equals:
+        return sourceValue === targetValue;
+      case PromptNotifyOperator.not_equals:
+        return sourceValue !== targetValue;
+      case PromptNotifyOperator.greater_than:
+        return Number(sourceValue) > Number(targetValue);
+      case PromptNotifyOperator.less_than:
+        return Number(sourceValue) < Number(targetValue);
+      default:
+        return true;
     }
   };
 
@@ -520,7 +530,9 @@ export function QuestDetailScreen() {
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
             optionsList={
-              activePrompt.additionalMeta.notifyCondition?.sourceId
+              activePrompt.additionalMeta.notifyConditions?.some(
+                (condition) => condition.sourceType === "prompt"
+              )
                 ? [PromptOptionKey.record, PromptOptionKey.previous]
                 : [
                     PromptOptionKey.record,

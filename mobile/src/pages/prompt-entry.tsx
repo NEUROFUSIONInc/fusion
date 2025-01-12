@@ -107,16 +107,25 @@ export function PromptEntryScreen() {
             (prompt): prompt is Prompt => prompt !== null
           );
 
-          // if the source prompt hasn't been responded to, go to the source prompt
-          // Find the source prompt in the promptQueue
-          const isSourcePromptInMissedPrompts = validPrompts.find(
-            (p) => p.uuid === prompt.additionalMeta?.notifyCondition?.sourceId
+          // Check if any of the source prompts from conditions are in the missed prompts
+          const sourcePromptIds = new Set<string>();
+          if (prompt.additionalMeta?.notifyConditions) {
+            prompt.additionalMeta.notifyConditions.forEach((condition) => {
+              if (condition.sourceType === "prompt") {
+                sourcePromptIds.add(condition.sourceId);
+              }
+            });
+          }
+
+          // Find any source prompts in the missed prompts
+          const sourcePromptsInMissedPrompts = validPrompts.find((p) =>
+            sourcePromptIds.has(p.uuid)
           );
 
-          if (isSourcePromptInMissedPrompts) {
+          if (sourcePromptsInMissedPrompts) {
             await goToNextItemInPromptQueueorInsightsPage(
               validPrompts,
-              isSourcePromptInMissedPrompts?.uuid!
+              sourcePromptsInMissedPrompts?.uuid!
             );
           } else {
             if (validPrompts.length === 0) {

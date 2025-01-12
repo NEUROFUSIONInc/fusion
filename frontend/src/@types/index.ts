@@ -138,7 +138,7 @@ export type PromptAdditionalMeta = {
   customOptionText?: string; // ; separated list of options
   singleResponse?: boolean;
   questId?: string;
-  notifyCondition?: PromptNotifyCondition;
+  notifyConditions?: PromptNotifyCondition[];
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {
