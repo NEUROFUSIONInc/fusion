@@ -80,6 +80,7 @@ export const AccountContextProvider = ({
         enableCopilot: copilotConsent,
         enableHealthConnect: healthConnect,
         lastActiveCategory: lastActiveCategory ?? categories[0].name,
+        activeQuest: null,
       });
 
       setUserLoading(false);

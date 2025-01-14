@@ -42,8 +42,6 @@ export const buildHealthDataset = async (startDate: Dayjs, endDate: Dayjs) => {
     dataset = await buildHealthDataFromApple(startDate, endDate);
   }
 
-  console.log("returning dataset", dataset);
-
   return dataset;
 };
 

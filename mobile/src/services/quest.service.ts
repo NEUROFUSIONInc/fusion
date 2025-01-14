@@ -438,8 +438,6 @@ class QuestService {
         );
 
         if (res) {
-          console.log("health dataset entries:", res.length);
-          console.log("health data", JSON.stringify(res));
           return res;
         }
       } catch (error) {

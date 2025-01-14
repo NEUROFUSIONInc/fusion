@@ -60,6 +60,9 @@ export function QuestDetailScreen() {
     }
   }, [savedPrompts]);
 
+  const [updatingQuestPrompts, setUpdatingQuestPrompts] =
+    React.useState<boolean>(false);
+
   /**
    * Check if the quest is saved locally
    */
@@ -229,58 +232,40 @@ export function QuestDetailScreen() {
     onboardingResponses: OnboardingResponse[],
     questGuid: string
   ) => {
-    if (prompts) {
-      const res = await Promise.all(
-        prompts.map(async (prompt) => {
-          // link prompt to quest
-          prompt.additionalMeta["questId"] = questGuid;
+    if (!prompts?.length) return;
 
-          const notifyConditions = prompt.additionalMeta["notifyConditions"];
+    const processPrompt = async (prompt: Prompt) => {
+      prompt.additionalMeta.questId = questGuid;
+      const notifyConditions = prompt.additionalMeta.notifyConditions;
 
-          let shouldSavePrompt = true;
-
-          // If we have multiple conditions, check all of them
-          if (notifyConditions && notifyConditions.length > 0) {
-            for (const condition of notifyConditions) {
-              if (condition.sourceType === "onboardingQuestion") {
-                const response = onboardingResponses.find(
-                  (r) => r.guid === condition.sourceId
-                );
-                if (response) {
-                  const conditionMet = evaluatePromptCondition(
-                    response.responseValue,
-                    condition
-                  );
-                  if (!conditionMet) {
-                    shouldSavePrompt = false;
-                    break;
-                  }
-                }
-              }
-            }
-          }
-
-          if (!shouldSavePrompt) {
-            return false;
-          }
-
-          // Set notification status based on conditions
-          if (
-            notifyConditions &&
-            notifyConditions.some((c) => c.sourceType === "prompt")
-          ) {
-            prompt.additionalMeta["isNotificationActive"] = false;
-          }
-
-          const promptRes = await createPrompt(prompt);
-          return promptRes;
-        })
-      );
-
-      if (res.includes(undefined)) {
-        throw new Error("Failed to save prompts locally");
+      if (!notifyConditions?.length) {
+        const promptRes = await createPrompt(prompt);
+        return promptRes;
       }
-    }
+
+      const shouldSavePrompt = notifyConditions.every((condition) => {
+        if (condition.sourceType !== "onboardingQuestion") return true;
+
+        const response = onboardingResponses.find(
+          (r) => r.guid === condition.sourceId
+        );
+        if (!response) return true;
+
+        return evaluatePromptCondition(response.responseValue, condition);
+      });
+
+      if (!shouldSavePrompt) return false;
+
+      // Set notification status based on conditions
+      if (notifyConditions.some((c) => c.sourceType === "prompt")) {
+        prompt.additionalMeta.isNotificationActive = false;
+      }
+
+      const promptRes = await createPrompt(prompt);
+      return promptRes;
+    };
+
+    await Promise.all(prompts.map(processPrompt));
   };
 
   const evaluatePromptCondition = (
@@ -313,8 +298,6 @@ export function QuestDetailScreen() {
       quest.guid
     );
     if (!latestQuestDetail) return;
-    setQuest(latestQuestDetail);
-
     const hasChanged = await questService.hasQuestChanged(
       quest,
       latestQuestDetail
@@ -332,12 +315,15 @@ export function QuestDetailScreen() {
       quest.guid
     );
 
+    setQuest(latestQuestDetail);
     if (latestQuestDetail.prompts) {
+      setUpdatingQuestPrompts(true);
       await updateQuestPrompts(
         latestQuestDetail.prompts,
         onboardingResponses,
         quest.guid
       );
+      setUpdatingQuestPrompts(false);
     }
   };
 
@@ -350,7 +336,7 @@ export function QuestDetailScreen() {
       const questDetail = res.data.quest;
       if (questDetail) {
         questDetail.prompts = JSON.parse(questDetail.config ?? "{}")?.prompts;
-        return questDetail;
+        return questDetail as Quest;
       }
     }
     return null;
@@ -366,16 +352,16 @@ export function QuestDetailScreen() {
     });
 
     if (res.status >= 200 && res.status < 300) {
-      const responses = res.data.userQuestDatasets[0]
-        .value as OnboardingResponse[];
-      console.log("onboardingResponses", responses);
-      return responses;
+      const responses = res.data.userQuestDatasets[0].value;
+      const parsedResponses =
+        typeof responses === "string" ? JSON.parse(responses) : responses;
+      return parsedResponses as OnboardingResponse[];
     }
     return [];
   };
 
   const updateQuestPrompts = async (
-    newPrompts: any[],
+    newPrompts: Prompt[],
     onboardingResponses: OnboardingResponse[],
     questId: string
   ) => {
@@ -387,7 +373,15 @@ export function QuestDetailScreen() {
     );
 
     // Save new prompts
-    await handleQuestPromptOnboarding(newPrompts, onboardingResponses, questId);
+    try {
+      await handleQuestPromptOnboarding(
+        newPrompts,
+        onboardingResponses,
+        questId
+      );
+    } catch (error) {
+      console.error("Failed to save prompts locally", error);
+    }
   };
 
   /** Prompt Sheet Functions */
@@ -448,59 +442,69 @@ export function QuestDetailScreen() {
             {/* <HealthCard /> */}
 
             <View className="mt-5">
-              {((!savedPromptsLoading && questPrompts.length > 0) ||
-                (quest?.prompts && quest.prompts.length > 0)) && (
+              {updatingQuestPrompts ? (
+                <Text className="text-white font-sans text-base px-5 mt-4 mb-2">
+                  Updating Prompts...
+                </Text>
+              ) : (
                 <>
-                  {["Morning", "Afternoon", "Evening"].map((timeOfDay) => {
-                    const getTimeRange = (time: string) => {
-                      switch (time) {
-                        case "Morning":
-                          return (hour: number) => hour >= 5 && hour < 12;
-                        case "Afternoon":
-                          return (hour: number) => hour >= 12 && hour < 17;
-                        case "Evening":
-                          return (hour: number) => hour >= 17 || hour < 5;
-                        default:
-                          return () => false;
-                      }
-                    };
+                  {((!savedPromptsLoading && questPrompts.length > 0) ||
+                    (quest?.prompts && quest.prompts.length > 0)) && (
+                    <>
+                      {["Morning", "Afternoon", "Evening"].map((timeOfDay) => {
+                        const getTimeRange = (time: string) => {
+                          switch (time) {
+                            case "Morning":
+                              return (hour: number) => hour >= 5 && hour < 12;
+                            case "Afternoon":
+                              return (hour: number) => hour >= 12 && hour < 17;
+                            case "Evening":
+                              return (hour: number) => hour >= 17 || hour < 5;
+                            default:
+                              return () => false;
+                          }
+                        };
 
-                    const timeRange = getTimeRange(timeOfDay);
-                    const prompts =
-                      questPrompts.length > 0 ? questPrompts : quest?.prompts;
-                    const promptsInRange = prompts?.filter((prompt) => {
-                      const startHour = parseInt(
-                        prompt.notificationConfig_startTime.split(":")[0],
-                        10
-                      );
-                      return timeRange(startHour);
-                    });
+                        const timeRange = getTimeRange(timeOfDay);
+                        const prompts =
+                          questPrompts.length > 0
+                            ? questPrompts
+                            : quest?.prompts ?? [];
+                        const promptsInRange = prompts?.filter((prompt) => {
+                          const startHour = parseInt(
+                            prompt.notificationConfig_startTime.split(":")[0],
+                            10
+                          );
+                          return timeRange(startHour);
+                        });
 
-                    if (!promptsInRange || promptsInRange.length === 0)
-                      return null;
+                        if (!promptsInRange || promptsInRange.length === 0)
+                          return null;
 
-                    return (
-                      <View key={timeOfDay}>
-                        <Text className="text-white font-sans text-base px-5 mt-4 mb-2">
-                          {timeOfDay}
-                        </Text>
-                        {promptsInRange.map((prompt) => (
-                          <View key={prompt.uuid} className="my-2">
-                            <PromptDetails
-                              prompt={prompt}
-                              variant="detail"
-                              displayFrequency
-                              onClick={
-                                questPrompts.length > 0
-                                  ? () => handlePromptExpandSheet(prompt)
-                                  : undefined
-                              }
-                            />
+                        return (
+                          <View key={timeOfDay}>
+                            <Text className="text-white font-sans text-base px-5 mt-4 mb-2">
+                              {timeOfDay}
+                            </Text>
+                            {promptsInRange.map((prompt) => (
+                              <View key={`${prompt.uuid}`} className="my-2">
+                                <PromptDetails
+                                  prompt={prompt}
+                                  variant="detail"
+                                  displayFrequency
+                                  onClick={
+                                    questPrompts.length > 0
+                                      ? () => handlePromptExpandSheet(prompt)
+                                      : undefined
+                                  }
+                                />
+                              </View>
+                            ))}
                           </View>
-                        ))}
-                      </View>
-                    );
-                  })}
+                        );
+                      })}
+                    </>
+                  )}
                 </>
               )}
             </View>
