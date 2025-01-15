@@ -18,7 +18,7 @@ const HeroSection = dynamic(() => import("~/components/features/landing").then((
 export async function getStaticProps() {
   const posts: any[] = (await getAllPostsWithFrontMatter()) as unknown as any[];
 
-  const selectedSlugs = ["decoding-the-brain", "ncode-cognitive-assessments", "tech-in-psych"];
+  const selectedSlugs = ["brainhack-alpha-changes", "decoding-the-brain", "ncode-cognitive-assessments"];
   const filteredPosts = posts.filter((post: any) => selectedSlugs.includes(post.slug));
 
   return {
