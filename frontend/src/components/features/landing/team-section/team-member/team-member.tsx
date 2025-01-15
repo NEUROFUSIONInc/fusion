@@ -12,13 +12,13 @@ interface TeamMemberProps {
 
 export const TeamMember: FC<TeamMemberProps> = ({ member, handleLeftClick, handleRightClick, showArrows }) => {
   return (
-    <div className="relative mx-4 flex min-h-[360px] max-w-sm flex-col overflow-hidden rounded-3xl md:min-w-[380px] md:max-w-4xl md:flex-row md:items-stretch lg:mx-auto lg:w-full">
+    <div className="relative mx-4 flex min-h-[360px] max-w-sm flex-col overflow-hidden rounded-3xl md:min-w-[380px] md:max-w-4xl md:flex-row md:items-stretch lg:mx-auto lg:w-full bg-indigo-700">
       <Image
         src={member.image}
         alt={member.name}
         width={500}
         height={500}
-        className="h-80 w-full object-cover md:h-auto md:w-2/5"
+        className="h-80 w-full object-cover object-center self-center md:h-full md:w-2/5"
       />
       <div className="w-full bg-indigo-700 bg-team-pattern bg-contain bg-center bg-no-repeat px-7 py-28 text-center md:w-3/5 md:py-12 md:text-left">
         <div className="mx-auto flex h-full w-full max-w-xs flex-col items-center justify-center space-y-8 font-normal text-white">
