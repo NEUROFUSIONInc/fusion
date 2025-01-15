@@ -25,7 +25,7 @@ export const TeamSection = () => {
     <section title="team-members" className="relative mx-4 flex max-w-full flex-col items-center md:mx-auto md:my-10">
       <div className="mb-14 flex flex-col items-center justify-center space-y-4">
         <h2 className="max-w-2xl text-4xl font-semibold md:text-5xl lg:text-6xl text-center">
-          Our platform is <span className="text-primary-gradient">open source</span>
+          Building with transparency <br /> <span className="text-primary-gradient">100% open source</span>
         </h2>
 
         <TeamMember
