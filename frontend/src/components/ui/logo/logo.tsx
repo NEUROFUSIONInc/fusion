@@ -33,7 +33,6 @@ export const Logo: FC<LinkProps> = ({ withText, size, className, neuro }) => {
         alt="Neurofusion Logo"
         width={80}
         height={80}
-        loading="eager"
         className={logoStyles({ size, className })}
       />
       {withText && (
