@@ -207,3 +207,18 @@ export interface PromptNotifyCondition {
   operator: PromptNotifyOperator;
   value: string;
 }
+
+export interface QuestAssignment {
+  guid: string;
+  script: {
+    code: string;
+    inputs?: QuestAssignmentInput[];
+    language: "python" | "javascript";
+  };
+}
+
+export interface QuestAssignmentInput {
+  sourceId: string;
+  sourceType: "prompt" | "onboardingQuestion";
+  placeholder: string;
+}

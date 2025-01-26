@@ -9,6 +9,7 @@ export const buttonStyles = cva(
     variants: {
       intent: {
         primary: "bg-secondary-600 text-white focus:ring-secondary-100 focus:ring-offset-2",
+        danger: "bg-red-600 text-white focus:ring-red-100 focus:ring-offset-2",
         ghost:
           "bg-transparent focus:outline-0 border-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-dark focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:opacity-90",
         integration:
@@ -17,6 +18,8 @@ export const buttonStyles = cva(
         filled: "bg-indigo text-white focus:ring-indigo focus:ring-offset-2",
         outlined:
           "bg-transparent text-indigo focus:outline-0 border-2 border-indigo focus:ring-0 focus-visible:ring-indigo focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:bg-indigo hover:text-white",
+        danger_outlined:
+          "bg-transparent text-red-600 focus:outline-0 border-2 border-red-600 focus:ring-0 focus-visible:ring-red-600 focus-visible:ring-2 dark:focus-visible:ring-secondary-100 focus:ring-transparent focus:outline-none hover:bg-red-600 hover:text-white",
       },
       fullWidth: {
         true: "w-full",

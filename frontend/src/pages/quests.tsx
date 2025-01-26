@@ -9,13 +9,13 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Pencil, Plus, Save, Trash } from "lucide-react";
 import AddPromptModal from "~/components/quest/addprompts";
-import { healthDataCategories, IQuest, IQuestConfig, OnboardingQuestion, Prompt } from "~/@types";
+import { healthDataCategories, IQuest, IQuestConfig, OnboardingQuestion, Prompt, QuestAssignment } from "~/@types";
 import { promptSelectionDays } from "~/config/data";
 import { ExperimentEditor } from "~/components/lab";
 import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShareModal } from "~/components/quests/share-modal";
-// import { NotebookEditor } from "~/components/lab/notebook-editor";
+import AssignmentEditor from "~/components/quest/assigment-editor";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -54,6 +54,7 @@ const QuestsPage: NextPage = () => {
         collaborators: collaborators, // comma separated public keys
         experimentConfig: experimentConfig, // it's the code for the experiment in html format
         healthDataConfig: healthDataConfig,
+        assignmentConfig: assignmentConfig,
       }),
       ...(isEdit ? { guid } : {}),
     };
@@ -315,6 +316,11 @@ const QuestsPage: NextPage = () => {
   };
   /* Prompt Configuration - End */
 
+  /* Assigment Configuration - Start */
+  const [assignmentConfig, setAssignmentConfig] = useState<QuestAssignment | null>();
+  const [showAssignmentEditor, setShowAssignmentEditor] = useState<boolean>(false);
+  /* Assigment Configuration - End */
+
   // preload data from questConfig
   React.useEffect(() => {
     if (questConfig) {
@@ -500,6 +506,63 @@ const QuestsPage: NextPage = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <Input
+                  label="Configure custom protocol assignments for participants"
+                  type="text"
+                  size="lg"
+                  fullWidth
+                  placeholder="Enter Assginment Config (JSON)"
+                  className="h-40  hidden"
+                />
+
+                <div className="flex flex-row items-center gap-2">
+                  <Button
+                    onClick={() => {
+                      if (!assignmentConfig) {
+                        setAssignmentConfig({
+                          script: {
+                            code: "",
+                            inputs: [],
+                            language: "python",
+                          },
+                          guid: crypto.randomUUID(),
+                        });
+                      }
+                      setShowAssignmentEditor(true);
+                    }}
+                    leftIcon={<Pencil />}
+                  >
+                    {assignmentConfig ? "Edit Assignment" : "Create Assignment"}
+                  </Button>
+
+                  {assignmentConfig && (
+                    <Button intent="danger_outlined" leftIcon={<Trash />} onClick={() => setAssignmentConfig(null)}>
+                      Delete Assignment
+                    </Button>
+                  )}
+                </div>
+
+                {showAssignmentEditor && assignmentConfig && (
+                  <div className="mt-2">
+                    <AssignmentEditor
+                      assignmentConfig={assignmentConfig}
+                      isOpen={showAssignmentEditor}
+                      onClose={(config: QuestAssignment) => {
+                        console.log("config", config);
+                        if (config.script.code === "") {
+                          setAssignmentConfig(null);
+                        } else {
+                          setAssignmentConfig(config);
+                        }
+                        setShowAssignmentEditor(false);
+                      }}
+                      savedOnboardingQuestions={onboardingQuestions}
+                    />
                   </div>
                 )}
               </div>
