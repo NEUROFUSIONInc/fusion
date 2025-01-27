@@ -7,7 +7,7 @@ export const teamMembers: ITeamMember[] = [
     position: "Founder, CEO",
     image: "/images/team/ore2.jpeg",
     quote:
-      "Spent his past life building data & ai platforms across startups, governments & Microsoft. His research focuses on investigating the neural mechanisms underlying severe mental illnesses. He started NeuroFusion to accelerate hypothesis testing and discovery of personalized interventions using mobile EEGs, cognitive assessments and self-reports!",
+      "Previously built data & AI platforms at Microsoft, government tech & startups. His neuroscience research investigates neural mechanisms of severe mental illness. Founded NeuroFusion to accelerate brain health research through mobile EEG technology, cognitive assessments and personalized interventions.",
   },
   {
     id: 2,
