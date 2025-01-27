@@ -20,6 +20,7 @@ import {
   QuestOnboardingSheet,
   Screen,
 } from "~/components";
+import { Assignments } from "~/components/quests/assignments";
 import { AccountContext } from "~/contexts";
 import { useCreatePrompt, useCreateQuest, usePromptsQuery } from "~/hooks";
 import { RouteProp } from "~/navigation";
@@ -29,7 +30,6 @@ import { appInsights, getApiService } from "~/utils";
 
 export function QuestDetailScreen() {
   const accountContext = React.useContext(AccountContext);
-
   const route = useRoute<RouteProp<"QuestDetailScreen">>();
 
   const { mutateAsync: createQuest } = useCreateQuest();
@@ -48,6 +48,9 @@ export function QuestDetailScreen() {
   const [quest, setQuest] = React.useState<Quest | undefined>(
     route.params.quest
   );
+  const [assignment, setAssignment] = React.useState<string | null>(null);
+  const [allAssignments, setAllAssignments] = React.useState<any[]>([]);
+  const [loadingAssignment, setLoadingAssignment] = React.useState(false);
 
   const [questPrompts, setQuestPrompts] = React.useState<Prompt[]>([]);
   React.useEffect(() => {
@@ -423,6 +426,30 @@ export function QuestDetailScreen() {
     []
   );
 
+  const fetchAssignmentData = async () => {
+    if (!quest?.guid || !isSubscribed) return;
+
+    try {
+      setLoadingAssignment(true);
+      await questService.fetchAssignment(quest.guid);
+      const todayAssignment = await questService.getTodayAssignment(quest.guid);
+      const all = await questService.getAllAssignments(quest.guid);
+
+      setAssignment(todayAssignment);
+      setAllAssignments(all);
+    } catch (error) {
+      console.error("Failed to fetch assignment", error);
+    } finally {
+      setLoadingAssignment(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isSubscribed) {
+      fetchAssignmentData();
+    }
+  }, [isSubscribed, quest?.guid]);
+
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -436,6 +463,14 @@ export function QuestDetailScreen() {
               <Text className="text-white opacity-60 text-base font-sans my-2">
                 Organized by {quest.organizerName}
               </Text>
+            )}
+
+            {/* Assignment Section */}
+            {isSubscribed && (
+              <Assignments
+                todayAssignment={assignment}
+                allAssignments={allAssignments}
+              />
             )}
 
             {/* TODO: only show based on healthDataConfig */}

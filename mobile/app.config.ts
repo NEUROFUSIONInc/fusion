@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion Copilot",
   slug: "fusion",
-  version: "2.2.3",
+  version: "2.3.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "109",
+    buildNumber: "110",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 109,
+    versionCode: 110,
     softwareKeyboardLayoutMode: "pan",
     // permissions: [
     //   "android.permission.health.READ_STEPS",
@@ -60,6 +60,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       process.env.FUSION_BACKEND_API_URL ??
       "https://neurofusionbackendprd.azurewebsites.net",
     // "https://neurofusion-backend.azurewebsites.net",
+    // "http://localhost:4000",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
@@ -85,7 +86,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         android: {
           compileSdkVersion: 34,
           targetSdkVersion: 34,
-          minSdkVersion: 26,
+          minSdkVersion: 34,
         },
         ios: {
           deploymentTarget: "15.0",

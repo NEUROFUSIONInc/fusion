@@ -211,3 +211,9 @@ export interface HealthDataSource {
   sourceName: string;
   sourceId: string;
 }
+
+export interface QuestAssignment {
+  questId: string;
+  timestamp: number;
+  assignment: string;
+}

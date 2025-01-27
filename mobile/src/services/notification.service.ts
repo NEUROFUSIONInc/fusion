@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs from "dayjs";
 import * as Crypto from "expo-crypto";
 import {
   NotificationContentInput,
@@ -786,6 +787,76 @@ export class NotificationService {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  };
+
+  public scheduleOneTimeNotification = async ({
+    id,
+    title,
+    body,
+    timestamp,
+  }: {
+    id: string;
+    title: string;
+    body: string;
+    timestamp: number;
+  }) => {
+    try {
+      const triggerObject: NotificationTriggerInput = {};
+      const contentObject: NotificationContentInput = {
+        title,
+        body,
+      };
+
+      // if platform is android assign channel
+      if (Platform.OS === "android") {
+        triggerObject["channelId"] = "default";
+      }
+
+      // Calculate seconds until notification using dayjs
+      const secondsFromNow = Math.max(
+        0,
+        dayjs(timestamp).diff(dayjs(), "second")
+      );
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        identifier: id,
+        content: contentObject,
+        trigger: {
+          ...triggerObject,
+          seconds: secondsFromNow,
+        },
+      });
+
+      await this.saveCutomNotificationToDb(notificationId, "one_time");
+      return true;
+    } catch (error) {
+      console.error("Error scheduling one-time notification:", error);
+      return false;
+    }
+  };
+
+  public cancelOneTimeNotification = async (notificationId: string) => {
+    try {
+      await Notifications.cancelScheduledNotificationAsync(notificationId);
+
+      // Delete from custom notifications table
+      await db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM custom_notifications WHERE notificationId = ? AND title = ?",
+          [notificationId, "one_time"],
+          undefined,
+          (_, error) => {
+            console.error("Error deleting notification from db:", error);
+            return true;
+          }
+        );
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error canceling one-time notification:", error);
+      return false;
     }
   };
 }

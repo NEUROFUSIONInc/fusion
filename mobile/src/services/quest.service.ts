@@ -1,9 +1,16 @@
 import dayjs from "dayjs";
 
+import { notificationService } from "./notification.service";
 import { promptService } from "./prompt.service";
 
-import { Quest, Prompt, QuestPrompt, OnboardingResponse } from "~/@types";
-import { db } from "~/lib";
+import {
+  Quest,
+  Prompt,
+  QuestPrompt,
+  OnboardingResponse,
+  QuestAssignment,
+} from "~/@types";
+import { db } from "~/lib/db";
 import { appInsights, buildHealthDataset, getApiService } from "~/utils";
 
 class QuestService {
@@ -313,7 +320,7 @@ class QuestService {
   }
 
   async deleteQuest(questId: string) {
-    // remove quest_prompts -> prompts -> quest
+    // remove quest_prompts -> prompts -> quest_assignments -> quest
     try {
       const questPromptsDetails = await questService.fetchQuestPromptDetails(
         questId
@@ -324,6 +331,9 @@ class QuestService {
           promptService.deletePrompt(prompt.uuid)
         )
       );
+      // delete quest_assignments
+      await questService.cleanupQuestAssignments(questId);
+
       // delete quest
       const deleteQuest = () =>
         new Promise<boolean>((resolve, reject) => {
@@ -502,6 +512,213 @@ class QuestService {
     }
 
     return false;
+  }
+
+  async fetchAssignment(questId: string) {
+    try {
+      // Check if assignments already exist
+      const existingAssignments = await this.getAllAssignments(questId);
+      if (existingAssignments.length > 0) {
+        return existingAssignments;
+      }
+
+      console.log("Fetching assignments for quest from api", questId);
+
+      const apiService = await getApiService();
+      if (!apiService) return null;
+      const response = await apiService.get(`/quest/assignments`, {
+        params: { questId },
+      });
+
+      if (response.status === 200 && response.data) {
+        const assignments = response.data.split("\n").filter(Boolean);
+        const now = dayjs().startOf("day");
+
+        // Get quest details for notification title
+        const quest = await this.getSingleQuestFromLocal(questId);
+        if (!quest) return null;
+
+        // Create assignments with timestamps for each day
+        const assignmentData: QuestAssignment[] = assignments.map(
+          (assignment: string, index: number) => {
+            const [timeStr, ...assignmentParts] = assignment
+              .split(";")
+              .map((s) => s.trim());
+            const timestamp = now.add(index, "day");
+            const [hours, minutes] = timeStr.match(/\d{2}/g) || ["09", "00"];
+
+            return {
+              questId,
+              timestamp: timestamp
+                .hour(parseInt(hours, 10))
+                .minute(parseInt(minutes, 10))
+                .valueOf(),
+              assignment: assignmentParts.join(";").trim(),
+            };
+          }
+        );
+
+        await this.saveAssignments(assignmentData);
+        await this.scheduleAssignmentNotifications(assignmentData, quest.title);
+
+        return assignmentData;
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to fetch assignment", error);
+      return null;
+    }
+  }
+
+  async saveAssignments(assignments: QuestAssignment[]) {
+    if (!assignments.length) return false;
+
+    try {
+      await questService.cleanupQuestAssignments(assignments[0].questId);
+
+      await new Promise<void>((resolve, reject) => {
+        db.transaction((tx) => {
+          const query = `INSERT INTO quest_assignments (questId, timestamp, assignment) VALUES ${assignments
+            .map(() => "(?, ?, ?)")
+            .join(", ")}`;
+
+          const values = assignments.flatMap((assignment) => [
+            assignment.questId,
+            assignment.timestamp,
+            assignment.assignment,
+          ]);
+
+          tx.executeSql(
+            query,
+            values,
+            () => resolve(),
+            (_, error) => {
+              console.error("Error saving assignments:", error);
+              reject(error);
+              return false;
+            }
+          );
+        });
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Failed to save assignments:", error);
+      return false;
+    }
+  }
+
+  async getTodayAssignment(questId: string): Promise<string | null> {
+    return new Promise((resolve) => {
+      const startOfDay = dayjs().startOf("day").valueOf();
+      const endOfDay = dayjs().endOf("day").valueOf();
+
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT assignment FROM quest_assignments WHERE questId = ? AND timestamp >= ? AND timestamp < ? LIMIT 1",
+          [questId, startOfDay, endOfDay],
+          (_, result) => {
+            if (result.rows.length > 0) {
+              resolve(result.rows.item(0).assignment);
+            } else {
+              resolve(null);
+            }
+          },
+          (_, error) => {
+            console.error("Error getting today's assignment:", error);
+            resolve(null);
+            return true;
+          }
+        );
+      });
+    });
+  }
+
+  async getAllAssignments(questId: string): Promise<QuestAssignment[]> {
+    return new Promise((resolve) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT * FROM quest_assignments WHERE questId = ? ORDER BY timestamp ASC",
+          [questId],
+          (_, result) => {
+            const assignments: QuestAssignment[] = [];
+            for (let i = 0; i < result.rows.length; i++) {
+              assignments.push(result.rows.item(i));
+            }
+            resolve(assignments);
+          },
+          (_, error) => {
+            console.error("Error getting assignments:", error);
+            resolve([]);
+            return true;
+          }
+        );
+      });
+    });
+  }
+
+  private async scheduleAssignmentNotifications(
+    assignments: QuestAssignment[],
+    questTitle: string
+  ) {
+    try {
+      for (const assignment of assignments) {
+        const notificationTime = dayjs(assignment.timestamp);
+        const notificationId = `quest-${assignment.questId}-${assignment.timestamp}`;
+
+        // Only schedule if it's in the future
+        if (notificationTime.isAfter(dayjs())) {
+          await notificationService.scheduleOneTimeNotification({
+            id: notificationId,
+            title: questTitle,
+            body: assignment.assignment,
+            timestamp: notificationTime.valueOf(),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error scheduling notifications:", error);
+    }
+  }
+
+  async cleanupQuestAssignments(questId: string) {
+    try {
+      // Get all notification IDs for this quest
+      const assignments = await this.getAllAssignments(questId);
+
+      // Cancel all notifications
+      for (const assignment of assignments) {
+        const notificationId = `quest-${assignment.questId}-${assignment.timestamp}`;
+        await notificationService.cancelOneTimeNotification(notificationId);
+      }
+
+      // Delete assignments from local DB
+      await this.deleteQuestAssignments(questId);
+
+      return true;
+    } catch (error) {
+      console.error("Error cleaning up assignments:", error);
+      return false;
+    }
+  }
+
+  private async deleteQuestAssignments(questId: string) {
+    return new Promise<boolean>((resolve) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM quest_assignments WHERE questId = ?",
+          [questId],
+          () => {
+            resolve(true);
+          },
+          (_, error) => {
+            console.error("Error deleting assignments:", error);
+            resolve(false);
+            return true;
+          }
+        );
+      });
+    });
   }
 }
 

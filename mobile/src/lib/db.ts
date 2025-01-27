@@ -274,6 +274,24 @@ export const createBaseTables = () => {
           return Boolean(error);
         }
       );
+
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS quest_assignments (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          questId TEXT NOT NULL,
+          timestamp INTEGER NOT NULL,
+          assignment TEXT NOT NULL
+        );`,
+        [],
+        (tx) => {
+          resolve(true);
+        },
+        (tx, error) => {
+          console.log("error", error);
+          reject(error);
+          return Boolean(error);
+        }
+      );
     });
   });
 };
