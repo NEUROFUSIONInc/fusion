@@ -178,6 +178,7 @@ export interface IQuestConfig {
   collaborators?: string; // comma separated public keys
   experimentConfig?: string; // html code for the experiment
   healthDataConfig?: { [key: string]: boolean };
+  assignmentConfig?: QuestAssignment;
 }
 
 export const healthDataCategories: DisplayCategory[] = [

@@ -80,10 +80,8 @@ const AssignmentEditor: React.FC<IAssignmentEditorProps> = ({
               <div className="mb-4">
                 <h3 className="text-lg font-semibold mb-2">Assignment Inputs</h3>
                 <p className="text-sm text-slate-500 mb-2">
-                  Add inputs to the script that will be used to decide the users quest assignment.
-                  <br></br>
-                  After the script is executed, the user will be assigned a quest based on the output of the script and
-                  notified in the app.
+                  Add inputs to the script that will be used to decide the users protocol assignment when the script is
+                  executed.
                 </p>
                 <div className="space-y-2">
                   {assignmentInputs.map((input, index) => (

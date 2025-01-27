@@ -342,6 +342,7 @@ const QuestsPage: NextPage = () => {
               return acc;
             }, {})
         );
+        setAssignmentConfig(parsedConfig.assignmentConfig ?? null);
       }
     }
   }, [questConfig]);
