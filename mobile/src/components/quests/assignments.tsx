@@ -18,15 +18,17 @@ interface QuestAssignment {
 interface AssignmentsProps {
   todayAssignment: string | null;
   allAssignments: QuestAssignment[];
+  isLoading: boolean;
 }
 
 export function Assignments({
   todayAssignment,
   allAssignments,
+  isLoading,
 }: AssignmentsProps) {
   const [showAssignmentsModal, setShowAssignmentsModal] = useState(false);
 
-  if (!todayAssignment) return null;
+  if (isLoading || !todayAssignment) return null;
 
   return (
     <View className="mt-4">

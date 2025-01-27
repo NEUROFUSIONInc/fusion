@@ -514,7 +514,7 @@ class QuestService {
     return false;
   }
 
-  async fetchAssignment(questId: string) {
+  async fetchAssignments(questId: string) {
     try {
       // Check if assignments already exist
       const existingAssignments = await this.getAllAssignments(questId);

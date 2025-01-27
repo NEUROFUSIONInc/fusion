@@ -110,6 +110,7 @@ export function QuestDetailScreen() {
   useEffect(() => {
     if (isSubscribed) {
       (async () => {
+        await fetchAssignmentData();
         await updateQuest();
         await pushQuestData();
       })();
@@ -431,24 +432,20 @@ export function QuestDetailScreen() {
 
     try {
       setLoadingAssignment(true);
-      await questService.fetchAssignment(quest.guid);
+      const allAssignments = await questService.fetchAssignments(quest.guid);
       const todayAssignment = await questService.getTodayAssignment(quest.guid);
-      const all = await questService.getAllAssignments(quest.guid);
 
       setAssignment(todayAssignment);
-      setAllAssignments(all);
+
+      if (allAssignments) {
+        setAllAssignments(allAssignments);
+      }
     } catch (error) {
       console.error("Failed to fetch assignment", error);
     } finally {
       setLoadingAssignment(false);
     }
   };
-
-  useEffect(() => {
-    if (isSubscribed) {
-      fetchAssignmentData();
-    }
-  }, [isSubscribed, quest?.guid]);
 
   return (
     <Screen>
@@ -470,6 +467,7 @@ export function QuestDetailScreen() {
               <Assignments
                 todayAssignment={assignment}
                 allAssignments={allAssignments}
+                isLoading={loadingAssignment}
               />
             )}
 
