@@ -137,6 +137,8 @@ app.get(
 app.post("/api/quest/dataset", questController.saveQuestDataset);
 app.get("/api/quest/datasets", questController.getQuestDatasets);
 
+app.get("/api/quest/assignments", questController.getQuestAssignments);
+
 /**
  * Start server
  */
