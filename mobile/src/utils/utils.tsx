@@ -1,7 +1,8 @@
+import axios from "axios";
 import dayjs from "dayjs";
+import Constants from "expo-constants";
 import * as Crypto from "expo-crypto";
 import "react-native-get-random-values";
-
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { useEffect, useState } from "react";
@@ -9,10 +10,6 @@ import { useEffect, useState } from "react";
 import { promptFrequencyData } from "../components/timepicker/data";
 
 import { Days, NotificationConfigDays, UserAccount } from "~/@types";
-
-import axios from "axios";
-import Constants from "expo-constants";
-
 import { nostrService } from "~/services";
 
 /**
@@ -413,4 +410,8 @@ export const getApiService = async () => {
       Authorization: `Bearer ${apiToken}`,
     },
   });
+};
+
+export const utilityFunctions = {
+  // Keep utils that don't depend on services
 };

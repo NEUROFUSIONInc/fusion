@@ -3,6 +3,9 @@
 const path = require("path");
 
 const { getDefaultConfig } = require("expo/metro-config");
+const {
+  wrapWithReanimatedMetroConfig,
+} = require("react-native-reanimated/metro-config");
 
 const config = getDefaultConfig(__dirname);
 
@@ -39,4 +42,4 @@ config.web = {
   webpack: false,
 };
 
-module.exports = config;
+module.exports = wrapWithReanimatedMetroConfig(config);

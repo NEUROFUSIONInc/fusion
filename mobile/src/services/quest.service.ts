@@ -259,7 +259,6 @@ class QuestService {
 
   async fetchRemoteSubscriptionStatus(questId: string) {
     try {
-      console.log("Quest is not saved locally, checking subscription status");
       const apiService = await getApiService();
       if (apiService === null) {
         throw new Error("Failed to get api service");

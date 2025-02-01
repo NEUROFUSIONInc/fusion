@@ -2,6 +2,10 @@ import "./globals.js";
 import { registerRootComponent } from "expo";
 import React from "react";
 import { Alert } from "react-native";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from 'react-native-reanimated';
 import PolyfillCrypto from "react-native-webview-crypto";
 
 import App from "./App.tsx";
@@ -10,6 +14,12 @@ import { NavigationContainer } from "./src/navigation/navigation-container.tsx";
 import { AccountContextProvider } from "~/contexts/account.context.tsx";
 import { OnboardingContextProvider } from "~/contexts/onboarding.context.tsx";
 import { createBaseTables } from "~/lib";
+
+// This is the default configuration
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 (async () => {
   const setupStatus = await createBaseTables();

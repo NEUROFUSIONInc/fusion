@@ -2,7 +2,7 @@ import RNBottomSheet from "@gorhom/bottom-sheet";
 import { Portal } from "@gorhom/portal";
 import { useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, ScrollView, Platform } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import Toast from "react-native-toast-message";
 
 import {
@@ -38,6 +38,7 @@ export function QuestDetailScreen() {
     usePromptsQuery();
 
   const [isSubscribed, setIsSubscribed] = React.useState(false);
+
   const [joiningQuest, setJoiningQuest] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [questIsSavedLocally, setQuestIsSavedLocally] = React.useState(false);
@@ -110,7 +111,6 @@ export function QuestDetailScreen() {
   useEffect(() => {
     if (isSubscribed) {
       (async () => {
-        await fetchAssignmentData();
         await updateQuest();
         await pushQuestData();
       })();
@@ -402,21 +402,10 @@ export function QuestDetailScreen() {
   }, []);
 
   useEffect(() => {
-    /**
-     * This delay is added before showing bottom sheet because some time
-     * is required for the assignment in react state to reflect in the UI.
-     */
-    let delayMs = 300;
-    if (Platform.OS === "android") {
-      delayMs = 500;
-    }
-    if (activePrompt) {
-      const timeout = setTimeout(() => {
+    if (activePrompt && promptOptionsSheetRef.current) {
+      setTimeout(() => {
         promptOptionsSheetRef.current?.expand();
-      }, delayMs);
-      return () => {
-        clearTimeout(timeout);
-      };
+      }, 100);
     }
   }, [activePrompt]);
   /** End Prompt Sheet Functions */
@@ -428,7 +417,7 @@ export function QuestDetailScreen() {
   );
 
   const fetchAssignmentData = async () => {
-    if (!quest?.guid || !isSubscribed) return;
+    if (!quest?.guid || !questIsSavedLocally) return;
 
     try {
       setLoadingAssignment(true);
@@ -447,6 +436,14 @@ export function QuestDetailScreen() {
     }
   };
 
+  useEffect(() => {
+    if (questIsSavedLocally) {
+      (async () => {
+        await fetchAssignmentData();
+      })();
+    }
+  }, [questIsSavedLocally]);
+
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -463,7 +460,7 @@ export function QuestDetailScreen() {
             )}
 
             {/* Assignment Section */}
-            {isSubscribed && (
+            {questIsSavedLocally && (
               <Assignments
                 todayAssignment={assignment}
                 allAssignments={allAssignments}

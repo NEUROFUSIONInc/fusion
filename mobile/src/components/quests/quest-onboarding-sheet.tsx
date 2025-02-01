@@ -145,7 +145,10 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
             {onboardingQuestions.map((question) => {
               if (question.type === "text") {
                 return (
-                  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                  <TouchableWithoutFeedback
+                    key={question.guid}
+                    onPress={() => Keyboard.dismiss()}
+                  >
                     <Input
                       value={
                         onboardingResponses.find(
@@ -170,7 +173,10 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
                 );
               } else if (question.type === "number") {
                 return (
-                  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                  <TouchableWithoutFeedback
+                    key={question.guid}
+                    onPress={() => Keyboard.dismiss()}
+                  >
                     <View>
                       <Input
                         label={question.question}
@@ -198,7 +204,10 @@ export const QuestOnboardingSheet: FC<QuestOnboardingSheetProps> = ({
                 );
               } else if (question.type === "yesno") {
                 return (
-                  <View className="flex flex-col gap-y-2.5 my-2">
+                  <View
+                    className="flex flex-col gap-y-2.5 my-2"
+                    key={question.guid}
+                  >
                     <Text className="font-sans text-base text-white mb-3 mt-3">
                       {question.question}
                     </Text>

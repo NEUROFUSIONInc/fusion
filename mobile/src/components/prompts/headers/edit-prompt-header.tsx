@@ -36,50 +36,53 @@ export const EditPromptHeader = () => {
   }, []);
 
   const handlePromptOptionsSheetOpen = useCallback(() => {
+    setShowPromptOptionsSheet(true);
     promptOptionsSheet.current?.expand();
   }, []);
 
+  const [showPromptOptionsSheet, setShowPromptOptionsSheet] = useState(false);
+
   const handleGoBack = () => {
     handleBottomSheetClose();
-    navigation.goBack();
+    navigation.navigate("Prompts");
   };
 
-  const renderPortal = () => {
-    return (
-      <Portal>
-        <PromptOptionsSheet
-          promptOptionsSheetRef={promptOptionsSheet}
-          promptId={isEdit ? route.params.promptId : ""}
-          onBottomSheetClose={handleBottomSheetClose}
-          optionsList={[PromptOptionKey.delete]}
-        />
-      </Portal>
-    );
-  };
+  const shouldShowOptions = isEdit && prompt && !prompt.additionalMeta.questId;
 
   return (
-    <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
-      <Button
-        variant="ghost"
-        size="icon"
-        leftIcon={<LeftArrow width={32} height={32} />}
-        onPress={handleGoBack}
-      />
-      <Text className="font-sans text-base text-white">
-        {isEdit ? "Edit Prompt" : "Add Prompt "}
-      </Text>
-      {isEdit && !prompt?.additionalMeta.questId ? (
+    <>
+      <View className="flex flex-row p-5 justify-between flex-nowrap bg-dark">
         <Button
           variant="ghost"
           size="icon"
-          leftIcon={<VerticalMenu />}
-          onPress={handlePromptOptionsSheetOpen}
+          leftIcon={<LeftArrow width={32} height={32} />}
+          onPress={handleGoBack}
         />
-      ) : (
-        <View />
-      )}
+        <Text className="font-sans text-base text-white">
+          {isEdit ? "Edit Prompt" : "Add Prompt "}
+        </Text>
+        {shouldShowOptions ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            leftIcon={<VerticalMenu />}
+            onPress={handlePromptOptionsSheetOpen}
+          />
+        ) : (
+          <View />
+        )}
+      </View>
 
-      {isEdit && renderPortal()}
-    </View>
+      {shouldShowOptions && showPromptOptionsSheet && (
+        <Portal>
+          <PromptOptionsSheet
+            promptOptionsSheetRef={promptOptionsSheet}
+            promptId={route.params.promptId}
+            onBottomSheetClose={handleBottomSheetClose}
+            optionsList={[PromptOptionKey.delete]}
+          />
+        </Portal>
+      )}
+    </>
   );
 };

@@ -1,7 +1,5 @@
 import { FontAwesome5 } from "@expo/vector-icons";
-import RNBottomSheet, {
-  useBottomSheetDynamicSnapPoints,
-} from "@gorhom/bottom-sheet";
+import RNBottomSheet from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { FC, RefObject, useCallback, useContext, useMemo } from "react";
@@ -47,18 +45,11 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   optionsList = allPromptOptionKeys,
 }) => {
   const { data: activePrompt } = usePrompt(promptId, defaultPrompt);
-  const navigation = useNavigation<PromptScreenNavigationProp>();
-  const insightsNavigator = useNavigation<any>();
-  const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
   const { mutateAsync: deletePrompt } = useDeletePrompt();
   const { mutateAsync: updatePromptNotificationState } =
     useUpdatePromptNotificationState(activePrompt?.uuid!);
+  const navigation = useNavigation<PromptScreenNavigationProp>();
+  const insightsNavigator = useNavigation<any>();
 
   const accountContext = useContext(AccountContext);
 
@@ -213,15 +204,11 @@ export const PromptOptionsSheet: FC<PromptOptionsSheetProps> = ({
   return (
     <BottomSheet
       ref={promptOptionsSheetRef}
-      snapPoints={animatedSnapPoints}
-      handleHeight={animatedHandleHeight}
-      contentHeight={animatedContentHeight}
+      snapPoints={["60%"]}
+      index={0} // NOTE: must be set for android to work propoerly lol :(
       onClose={onBottomSheetClose}
     >
-      <View
-        className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5"
-        onLayout={handleContentLayout}
-      >
+      <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
         <View className="flex flex-col gap-y-2.5 items-center">
           {optionsToShow.map((option, index) => (
             <PromptOption

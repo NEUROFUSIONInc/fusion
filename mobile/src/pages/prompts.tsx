@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Image, Platform, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { allPromptOptionKeys, Prompt, PromptOptionKey } from "~/@types";
@@ -20,7 +20,6 @@ import {
   PromptDetails,
   PromptOptionsSheet,
   Screen,
-  AddPromptSheet,
 } from "~/components";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts/account.context";
@@ -33,7 +32,6 @@ export const PromptsScreen = () => {
 
   const { data: savedPrompts, isLoading } = usePromptsQuery();
   const [activePrompt, setActivePrompt] = useState<Prompt | undefined>();
-  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
   const [selectedCategory, setSelectedCategory] = useState<
     string | undefined
   >();
@@ -71,28 +69,11 @@ export const PromptsScreen = () => {
     });
   }, [savedPrompts]);
 
-  useEffect(() => {
-    /**
-     * This delay is added before showing bottom sheet because some time
-     * is required for the assignment in react state to reflect in the UI.
-     */
-    let delayMs = 300;
-    if (Platform.OS === "android") {
-      delayMs = 500;
-    }
-    if (activePrompt) {
-      const timeout = setTimeout(() => {
-        promptOptionsSheetRef.current?.expand();
-      }, delayMs);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [activePrompt]);
-
   const handleCategorySelection = useCallback((category: string) => {
     setSelectedCategory(category);
   }, []);
+
+  const promptOptionsSheetRef = useRef<RNBottomSheet>(null);
 
   // Bottom sheet for prompt options when user has a list of prompts
   const handlePromptExpandSheet = useCallback((prompt: Prompt) => {
@@ -104,8 +85,14 @@ export const PromptsScreen = () => {
     promptOptionsSheetRef.current?.close();
   }, []);
 
-  // Bottom sheets for adding new prompts
-  const bottomSheetRef = useRef<RNBottomSheet>(null);
+  useEffect(() => {
+    if (activePrompt && promptOptionsSheetRef.current) {
+      console.log("expanding prompt options sheet");
+      setTimeout(() => {
+        promptOptionsSheetRef.current?.expand();
+      }, 100);
+    }
+  }, [activePrompt]);
 
   return (
     <Screen>
@@ -153,7 +140,6 @@ export const PromptsScreen = () => {
                 <PromptDetails
                   prompt={prompt}
                   onClick={() => handlePromptExpandSheet(prompt)}
-                  // displayFrequency={false}
                 />
               </View>
             ))}
@@ -162,31 +148,33 @@ export const PromptsScreen = () => {
       )}
 
       <Portal>
-        <AddPromptSheet
-          bottomSheetRef={bottomSheetRef}
-          selectedCategory={selectedCategory}
-        />
-
         {activePrompt && (
           <PromptOptionsSheet
             promptOptionsSheetRef={promptOptionsSheetRef}
-            promptId={activePrompt?.uuid!}
+            promptId={activePrompt.uuid}
             onBottomSheetClose={handlePromptBottomSheetClose}
             defaultPrompt={activePrompt}
-            optionsList={
-              activePrompt?.additionalMeta?.questId
-                ? [
+            optionsList={(() => {
+              if (!activePrompt?.additionalMeta?.questId) {
+                return allPromptOptionKeys;
+              }
+
+              const hasPromptSourceCondition =
+                activePrompt.additionalMeta.notifyConditions?.some(
+                  (condition) => condition.sourceType === "prompt"
+                );
+
+              return hasPromptSourceCondition
+                ? [PromptOptionKey.record, PromptOptionKey.previous]
+                : [
                     PromptOptionKey.record,
                     PromptOptionKey.previous,
                     PromptOptionKey.edit,
-                  ]
-                : allPromptOptionKeys
-            }
+                  ];
+            })()}
           />
         )}
       </Portal>
-
-      {/* <ChatBubble /> */}
     </Screen>
   );
 };

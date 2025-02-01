@@ -1,7 +1,5 @@
-import RNBottomSheet, {
-  useBottomSheetDynamicSnapPoints,
-} from "@gorhom/bottom-sheet";
-import React, { FC, RefObject, useMemo, useEffect } from "react";
+import RNBottomSheet from "@gorhom/bottom-sheet";
+import React, { FC, RefObject, useEffect } from "react";
 import { View, Text, Platform, Linking, Alert } from "react-native";
 import {
   getAvailablePurchases,
@@ -26,14 +24,6 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
   subscriptionSheetRef,
   onBottomSheetClose,
 }) => {
-  const initialSnapPoints = useMemo(() => ["CONTENT_HEIGHT"], []);
-  const {
-    animatedHandleHeight,
-    animatedSnapPoints,
-    animatedContentHeight,
-    handleContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialSnapPoints);
-
   const accountContext = React.useContext(AccountContext);
 
   const {
@@ -151,16 +141,8 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
 
   const [userSubscribed, setUserSubscribed] = React.useState(false);
   return (
-    <BottomSheet
-      ref={subscriptionSheetRef}
-      snapPoints={animatedSnapPoints}
-      handleHeight={animatedHandleHeight}
-      contentHeight={animatedContentHeight}
-    >
-      <View
-        className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5"
-        onLayout={handleContentLayout}
-      >
+    <BottomSheet ref={subscriptionSheetRef} snapPoints={["60%"]} index={0}>
+      <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
         <Text className="font-sans text-base text-white ">
           Get personalized recommendations on how to navigate your days.
           {"\n\n"}
