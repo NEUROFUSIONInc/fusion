@@ -450,8 +450,9 @@ export function QuestDetailScreen() {
             )}
 
             {/* Assignment Section */}
-            {questIsSavedLocally && (
+            {questIsSavedLocally && quest && (
               <Assignments
+                quest={quest}
                 todayAssignment={assignment}
                 allAssignments={allAssignments}
                 isLoading={loadingAssignment}

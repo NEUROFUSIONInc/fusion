@@ -719,6 +719,44 @@ class QuestService {
       });
     });
   }
+
+  async updateQuestAssignmentTime(quest: Quest, hour: number, minute: number) {
+    try {
+      // Get all assignments for this quest
+      const assignments = await this.getAllAssignments(quest.guid);
+      if (!assignments.length) return false;
+
+      // Update each assignment time
+      const updatedAssignments = assignments.map((assignment) => {
+        const day = dayjs(assignment.timestamp).startOf("day");
+        const newTimestamp = day.hour(hour).minute(minute).valueOf();
+
+        return {
+          ...assignment,
+          timestamp: newTimestamp,
+        };
+      });
+
+      // Save updated assignments
+      await this.saveAssignments(updatedAssignments);
+
+      // Schedule new notifications only for future assignments
+      const now = dayjs();
+      const futureAssignments = updatedAssignments.filter((assignment) =>
+        dayjs(assignment.timestamp).isAfter(now)
+      );
+
+      await this.scheduleAssignmentNotifications(
+        futureAssignments,
+        quest.title
+      );
+
+      return updatedAssignments as QuestAssignment[];
+    } catch (error) {
+      console.error("Error updating assignment times:", error);
+      return false;
+    }
+  }
 }
 
 export const questService = new QuestService();

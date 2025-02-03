@@ -1,5 +1,6 @@
+import { FontAwesome5 } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +9,12 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+import { Button } from "../button";
+
+import { Quest } from "~/@types";
+import { questService } from "~/services/quest.service";
 
 interface QuestAssignment {
   questId: string;
@@ -16,17 +23,26 @@ interface QuestAssignment {
 }
 
 interface AssignmentsProps {
+  quest: Quest;
   todayAssignment: string | null;
   allAssignments: QuestAssignment[];
   isLoading: boolean;
 }
 
 export function Assignments({
+  quest,
   todayAssignment,
   allAssignments,
   isLoading,
 }: AssignmentsProps) {
   const [showAssignmentsModal, setShowAssignmentsModal] = useState(false);
+  const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
+
+  const [localAssignments, setLocalAssignments] = useState<QuestAssignment[]>();
+
+  useEffect(() => {
+    setLocalAssignments(allAssignments);
+  }, [allAssignments]);
 
   if (isLoading || !todayAssignment) return null;
 
@@ -59,15 +75,53 @@ export function Assignments({
               <Text className="text-white font-sans text-lg">
                 All Assignments
               </Text>
-              <Pressable
-                onPress={() => setShowAssignmentsModal(false)}
-                className="p-2"
-              >
-                <Text className="text-white text-xl">×</Text>
-              </Pressable>
+
+              <>
+                <Button
+                  leftIcon={<FontAwesome5 name="history" size={18} />}
+                  onPress={() => {
+                    setIsDateTimePickerVisible(true);
+                  }}
+                  title="Change time"
+                  className="p-3"
+                />
+                <Pressable
+                  onPress={() => setShowAssignmentsModal(false)}
+                  className="p-2"
+                >
+                  <Text className="text-white text-xl">×</Text>
+                </Pressable>
+              </>
+
+              {localAssignments && (
+                <DateTimePickerModal
+                  isVisible={isDateTimePickerVisible}
+                  mode="time"
+                  date={new Date(localAssignments[0]?.timestamp || new Date())}
+                  onConfirm={async (selectedTime: Date) => {
+                    const hour = selectedTime.getHours();
+                    const minute = selectedTime.getMinutes();
+                    const updatedAssignments =
+                      await questService.updateQuestAssignmentTime(
+                        quest,
+                        hour,
+                        minute
+                      );
+
+                    if (updatedAssignments) {
+                      setLocalAssignments(updatedAssignments);
+                    }
+                    setIsDateTimePickerVisible(false);
+                  }}
+                  onCancel={() => {
+                    setIsDateTimePickerVisible(false);
+                  }}
+                />
+              )}
             </View>
+
             <ScrollView>
-              {allAssignments.map((a, index) => (
+              {localAssignments?.map((a, index) => (
                 <View
                   key={index}
                   className="bg-secondary-800 p-4 rounded-lg mb-2"

@@ -813,18 +813,19 @@ export class NotificationService {
         triggerObject["channelId"] = "default";
       }
 
-      // Calculate seconds until notification using dayjs
-      const secondsFromNow = Math.max(
-        0,
-        dayjs(timestamp).diff(dayjs(), "second")
-      );
+      // Convert timestamp to local date using dayjs
+      const date = dayjs(timestamp);
 
       const notificationId = await Notifications.scheduleNotificationAsync({
         identifier: id,
         content: contentObject,
         trigger: {
           ...triggerObject,
-          seconds: secondsFromNow,
+          hour: date.hour(),
+          minute: date.minute(),
+          day: date.date(),
+          month: date.month() + 1, // dayjs months are 0-based
+          year: date.year(),
         },
       });
 
