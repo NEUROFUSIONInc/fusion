@@ -66,13 +66,6 @@ app.post("/api/magicflow/set-token", magicFlowController.setToken);
 app.get("/api/magicflow/get-token", magicFlowController.fetchToken);
 
 /**
- * Vital Routes
- */
-// app.get("/api/vital/get-token", vitalController.generateToken);
-
-// app.get("/api/vital/get-devices", vitalController.getDevices);
-
-/**
  * Storage Routes
  */
 app.post(
@@ -138,6 +131,14 @@ app.post("/api/quest/dataset", questController.saveQuestDataset);
 app.get("/api/quest/datasets", questController.getQuestDatasets);
 
 app.get("/api/quest/assignments", questController.getQuestAssignments);
+
+app.get("/api/quest/config", questController.getQuestExtraConfig);
+app.post("/api/quest/config", questController.setQuestExtraConfig);
+
+// /**
+//  * Vital Routes - Health Data collection for Quests...
+//  */
+// app.get("/api/vital/quest/get-token", vitalController.generateToken);
 
 /**
  * Start server

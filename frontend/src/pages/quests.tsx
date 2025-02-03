@@ -354,6 +354,41 @@ const QuestsPage: NextPage = () => {
     }
   }, [activePrompt]);
 
+  const [showAdvancedHealthDataSettings, setShowAdvancedHealthDataSettings] = useState<boolean>(false);
+  const [vitalApiKey, setVitalApiKey] = useState<string>("");
+  const [vitalEnvironment, setVitalEnvironment] = useState<string>("sandbox");
+  const [vitalRegion, setVitalRegion] = useState<string>("us");
+
+  React.useEffect(() => {
+    try {
+      if (activeQuest && showAdvancedHealthDataSettings) {
+        api
+          .get(`/quest/config`, {
+            params: {
+              questId: activeQuest.guid,
+            },
+            headers: {
+              Authorization: `Bearer ${session.data?.user?.authToken}`,
+            },
+          })
+          .then((res) => {
+            console.log("res", res);
+            if (res.status === 200) {
+              const parsedConfig = JSON.parse(res.data.value);
+              setVitalApiKey(parsedConfig.vital_api_key ?? "");
+              setVitalEnvironment(parsedConfig.vital_environment ?? "");
+              setVitalRegion(parsedConfig.vital_region ?? "");
+            }
+          })
+          .catch((e) => {
+            console.error("Failed to fetch advanced health data config", e);
+          });
+      }
+    } catch (e) {
+      console.error("Failed to fetch advanced health data config", e);
+    }
+  }, [activeQuest, showAdvancedHealthDataSettings]);
+
   return (
     <DashboardLayout>
       <Meta
@@ -587,6 +622,102 @@ const QuestsPage: NextPage = () => {
                       <label htmlFor={category.value}>{category.name}</label>
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-4">
+                  <div className="flex items-center space-x-2">
+                    <a
+                      href="#"
+                      className="underline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowAdvancedHealthDataSettings(!showAdvancedHealthDataSettings);
+                      }}
+                    >
+                      {showAdvancedHealthDataSettings
+                        ? "Hide Advanced Health Settings"
+                        : "Show Advanced Health Settings"}
+                    </a>
+                  </div>
+
+                  {showAdvancedHealthDataSettings && (
+                    <div className="mt-2 space-y-2">
+                      <Input
+                        label="Vital API Key"
+                        type="text"
+                        size="lg"
+                        fullWidth
+                        placeholder="Enter Vital API Key"
+                        value={vitalApiKey}
+                        onChange={(e) => setVitalApiKey(e.target.value)}
+                        className="font-mono"
+                      />
+
+                      <Input
+                        label="Vital Environment"
+                        type="text"
+                        size="lg"
+                        placeholder="Enter Vital Environment"
+                        value={vitalEnvironment}
+                        onChange={(e) => setVitalEnvironment(e.target.value)}
+                        className="font-mono"
+                      />
+
+                      <Input
+                        label="Vital Region"
+                        type="text"
+                        size="lg"
+                        placeholder="Enter Vital Region"
+                        value={vitalRegion}
+                        onChange={(e) => setVitalRegion(e.target.value)}
+                        className="font-mono"
+                      />
+
+                      <Button
+                        onClick={async () => {
+                          try {
+                            if (!activeQuest) {
+                              alert("You need to save the quest before you can apply the configuration");
+                              return;
+                            }
+
+                            if (!vitalApiKey || !vitalEnvironment || !vitalRegion) {
+                              alert("You need to fill in all the fields");
+                              return;
+                            }
+
+                            const res = await api.post(
+                              `/quest/config`,
+                              {
+                                questId: activeQuest.guid,
+                                value: JSON.stringify({
+                                  vital_api_key: vitalApiKey,
+                                  vital_environment: vitalEnvironment,
+                                  vital_region: vitalRegion,
+                                }),
+                              },
+                              {
+                                headers: {
+                                  Authorization: `Bearer ${session.data?.user?.authToken}`,
+                                },
+                              }
+                            );
+
+                            console.log(res);
+                            if (res.status === 200) {
+                              alert("Configuration applied successfully");
+                            } else {
+                              alert("Failed to apply configuration");
+                            }
+                          } catch (e) {
+                            alert("Invalid JSON configuration");
+                          }
+                        }}
+                      >
+                        Apply Configuration
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 

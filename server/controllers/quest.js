@@ -552,3 +552,97 @@ exports.getQuestAssignments = async (req, res) => {
     });
   }
 };
+
+exports.getQuestExtraConfig = async (req, res) => {
+  try {
+    const questId = req.query.questId;
+    console.log("questId", questId);
+
+    const quest = await db.Quest.findOne({
+      where: {
+        guid: questId
+      }
+    });
+
+    if (!quest) {
+      return res.status(404).json({
+        error: "Quest not found"
+      });
+    }
+
+    const config = await db.QuestExtraConfig.findOne({
+      where: {
+        questId: questId
+      }
+    });
+
+    if (!config) {
+      return res.status(404).json({
+        error: "Quest API config not found"
+      });
+    }
+
+    res.status(200).json({
+      value: config.value
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error getting quest extra config"
+    });
+  }
+};
+
+exports.setQuestExtraConfig = async (req, res) => {
+  try {
+    const { questId, value } = req.body;
+    let userPubkey = req.user.userPubkey;
+    if (!userPubkey.startsWith("npub1")) {
+      userPubkey = nip19.npubEncode(userPubkey);
+    }
+
+    if (!questId || !value) {
+      return res.status(400).json({
+        error: "Quest ID and value are required"
+      });
+    }
+
+    // First check if the quest exists and user has permission
+    const quest = await db.Quest.findOne({
+      where: {
+        guid: questId,
+        [db.Sequelize.Op.or]: [
+          { userGuid: req.user.userGuid },
+          db.Sequelize.literal(
+            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${userPubkey}%')`
+          ),
+        ],
+      },
+    });
+
+    if (!quest) {
+      return res.status(403).json({
+        error: "Unauthorized - you must be the creator of the quest to modify its config"
+      });
+    }
+
+    const [config, created] = await db.QuestExtraConfig.findOrCreate({
+      where: { questId },
+      defaults: { value }
+    });
+
+    if (!created) {
+      config.value = value;
+      await config.save();
+    }
+
+    res.status(200).json({
+      value: config.value
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error setting quest extra config"
+    });
+  }
+};
