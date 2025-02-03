@@ -1,6 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import { VitalCore } from "@tryvital/vital-core-react-native";
+import {
+  VitalHealth,
+  HealthConfig,
+  VitalResource,
+} from "@tryvital/vital-health-react-native";
 import React from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, Linking, Platform, Text, View } from "react-native";
 import ContextMenu from "react-native-context-menu-view";
 
 import { Button } from "../../button";
@@ -9,6 +15,7 @@ import { LeftArrow, VerticalMenu } from "../../icons";
 import { AccountContext } from "~/contexts";
 import { useDeleteQuest } from "~/hooks";
 import { handleSendFeeback } from "~/services";
+import { connectWithVital } from "~/utils";
 
 export const QuestDetailHeader = () => {
   const navigation = useNavigation();
@@ -34,13 +41,74 @@ export const QuestDetailHeader = () => {
         title="Options"
         dropdownMenuMode
         actions={[
+          { title: "Share Health Data" },
           { title: "Feedback" },
           { title: "Leave Quest", destructive: true },
         ]}
         onPress={(e) => {
           if (e.nativeEvent.index === 0) {
-            return handleSendFeeback("");
+            const options = ["Oura"];
+            if (Platform.OS === "ios") {
+              options.push("Apple Health");
+            }
+            Alert.alert(
+              "Connect your Health Data",
+              "Select your health data source",
+              options.map((option) => ({
+                text: option,
+                onPress: async () => {
+                  const linkToken = await connectWithVital(
+                    accountContext?.userPreferences?.activeQuest!.guid!,
+                    option
+                  );
+
+                  if (!linkToken) {
+                    console.error("Failed to get link token");
+                    return;
+                  }
+                  // Handle the linkToken if needed
+                  if (option === "Oura") {
+                    Linking.openURL(linkToken);
+                  } else {
+                    // sign in the user
+                    try {
+                      try {
+                        const status = await VitalCore.status();
+                        if (status.includes("signedIn")) {
+                          console.log("already signed in");
+                          await VitalCore.signOut();
+                        }
+                        await VitalCore.signIn(linkToken);
+                      } catch (error) {
+                        console.error("Failed to sign in", error);
+                      }
+
+                      const config = new HealthConfig();
+                      config.iOSConfig.backgroundDeliveryEnabled = true;
+                      await VitalHealth.configure(config);
+
+                      await VitalHealth.ask(
+                        [
+                          VitalResource.Sleep,
+                          VitalResource.HeartRate,
+                          VitalResource.HeartRateVariability,
+                          VitalResource.BloodOxygen,
+                          VitalResource.Steps,
+                        ],
+                        []
+                      );
+
+                      await VitalHealth.syncData();
+                    } catch (error) {
+                      console.error("Failed to sign in", error);
+                    }
+                  }
+                },
+              }))
+            );
           } else if (e.nativeEvent.index === 1) {
+            return handleSendFeeback("");
+          } else if (e.nativeEvent.index === 2) {
             // confirm delete
             Alert.alert(
               "Leave Quest",

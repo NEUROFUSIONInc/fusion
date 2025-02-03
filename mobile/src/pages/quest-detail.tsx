@@ -112,19 +112,9 @@ export function QuestDetailScreen() {
     if (isSubscribed) {
       (async () => {
         await updateQuest();
-        await pushQuestData();
       })();
     }
   }, [isSubscribed]);
-
-  /**
-   * Push quest data to remote storage if the user is subscribed
-   */
-  const pushQuestData = async () => {
-    if (quest?.guid && isSubscribed) {
-      await questService.uploadQuestDataset(quest.guid);
-    }
-  };
 
   /**
    * When onboarding is complete, trigger addUserToQuest

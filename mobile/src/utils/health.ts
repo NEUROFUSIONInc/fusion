@@ -13,6 +13,8 @@ import {
   AppleHealthSleepSample,
 } from "../@types";
 
+import { getApiService } from "./utils";
+
 /* Permission options */
 export const permissions = {
   permissions: {
@@ -386,4 +388,33 @@ export const connectAppleHealth = async () => {
 
 export const connectGoogleFit = async () => {
   return false;
+};
+
+/**
+ * Methods for connecting with the Vital APIs
+ */
+export const connectWithVital = async (questId: string, device: string) => {
+  const apiService = await getApiService();
+
+  try {
+    const res = await apiService?.get("/vital/quest/get-token", {
+      params: {
+        questId,
+        device,
+      },
+    });
+
+    if (res?.status === 200) {
+      // handle based on the device
+      if (device.toLowerCase() === "oura") {
+        return res.data.linkUrl;
+      } else {
+        return res.data.signInToken;
+      }
+    }
+    return false;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };

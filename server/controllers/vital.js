@@ -10,7 +10,7 @@ exports.generateToken = async (req, res) => {
   try {
     const { device, questId } = req.query;
 
-    if (!["Oura", "Whoop"].includes(device)) {
+    if (!["Oura","Apple Health"].includes(device)) {
       return res.status(400).json({ error: "Invalid device type. Must be either 'Oura' or 'Whoop'" });
     }
 
@@ -51,10 +51,10 @@ exports.generateToken = async (req, res) => {
       return res.status(400).json({ error: "Unable to fetch/generate user provider record" });
     }
 
-    if (!userProvider.providerUserId || !userProvider.providerUserKey) {
+    if (!userProvider.providerUserId) {
       try {
         const user = await vitalClient.user.create({
-          clientUserId: userProvider.userGuid,
+          clientUserId: `${userProvider.userGuid}-${userProvider.providerGuid}`,
         });
         if (!user) throw new Error("Unable to create vital user");
 
@@ -68,17 +68,34 @@ exports.generateToken = async (req, res) => {
       }
     }
 
-    try {
-      console.log("creating signin token for mobile app");
-      const token = await vitalClient.user.getUserSignInToken(
-        userProvider.providerUserId);
+    // based on the device being connected, decide whether to create a link token or a signin token
+    if (device.toLowerCase() === "oura") {
+      try {
+        console.log("creating link token for oura");
+        const token = await vitalClient.link.token({
+          userId: userProvider.providerUserId,
+          provider: device.toLowerCase(),
+        });
+        if (!token) throw new Error("Unable to generate link token");
 
-      if (!token) throw new Error("Unable to generate signin token");
-
-      return res.status(200).json({ signInToken: token.signInToken });
-    } catch (err) {
-      console.error(err);
-      return res.status(400).json({ error: "Unable to generate signin token" });
+        return res.status(200).json({ linkToken: token.linkToken, linkUrl: token.linkWebUrl });
+      } catch (err) {
+        console.error(err);
+        return res.status(400).json({ error: "Unable to generate link token" });
+      }
+    } else if (["Apple Health"].includes(device)) {
+      try {
+        console.log("creating signin token for mobile app");
+        const token = await vitalClient.user.getUserSignInToken(
+          userProvider.providerUserId);
+  
+        if (!token) throw new Error("Unable to generate signin token");
+  
+        return res.status(200).json({ signInToken: token.signInToken });
+      } catch (err) {
+        console.error(err);
+        return res.status(400).json({ error: "Unable to generate signin token" });
+      }
     }
   } catch (err) {
     console.error(err);

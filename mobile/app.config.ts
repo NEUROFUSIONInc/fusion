@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion Copilot",
   slug: "fusion",
-  version: "2.3.0",
+  version: "2.3.2",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "110",
+    buildNumber: "112",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 110,
+    versionCode: 112,
     softwareKeyboardLayoutMode: "pan",
     // permissions: [
     //   "android.permission.health.READ_STEPS",
@@ -60,7 +60,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       process.env.FUSION_BACKEND_API_URL ??
       "https://neurofusionbackendprd.azurewebsites.net",
     // "https://neurofusion-backend.azurewebsites.net",
-    // "http://localhost:4000",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
       "5f3a52d8027cdde03a41857e98224dafd69495204d93071199aa86921aa02674",
@@ -92,6 +91,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           deploymentTarget: "15.0",
         },
       },
+    ],
+    [
+      "@tryvital/vital-core-react-native",
+      [
+        "@tryvital/vital-health-react-native",
+        {
+          healthSharePermission: "Fetch and display health data",
+        },
+      ],
     ],
   ],
   userInterfaceStyle: "automatic",

@@ -2,7 +2,6 @@ import { PortalProvider } from "@gorhom/portal";
 import { useNavigation } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { Logs } from "expo";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import React from "react";
@@ -31,8 +30,6 @@ import {
   setupBackgroundTasks,
 } from "~/services";
 import { toastConfig } from "~/theme";
-
-Logs?.enableExpoCliLogging();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
