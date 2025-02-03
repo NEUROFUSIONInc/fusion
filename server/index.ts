@@ -11,7 +11,7 @@ const userController = require("./controllers/user");
 const storageController = require("./controllers/storage");
 const magicFlowController = require("./controllers/magicflow");
 const neurosityController = require("./controllers/neurosity");
-// const vitalController = require("./controllers/vital");
+const vitalController = require("./controllers/vital");
 const insightController = require("./controllers/insight");
 const questController = require("./controllers/quest");
 const mailController = require("./controllers/mailer");
@@ -138,7 +138,7 @@ app.post("/api/quest/config", questController.setQuestExtraConfig);
 // /**
 //  * Vital Routes - Health Data collection for Quests...
 //  */
-// app.get("/api/vital/quest/get-token", vitalController.generateToken);
+app.get("/api/vital/quest/get-token", vitalController.generateToken);
 
 /**
  * Start server

@@ -36,6 +36,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         allowNull: false,
       },
+      questGuid: {
+        type: DataTypes.UUID,
+      },
       providerUserId: DataTypes.STRING,
       providerUserKey: DataTypes.STRING,
       providerToken: DataTypes.TEXT,

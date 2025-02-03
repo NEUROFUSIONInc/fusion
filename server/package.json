@@ -15,7 +15,7 @@
     "@magic-sdk/admin": "^1.8.0",
     "@neurosity/notion": "^5.17.0",
     "@neurosity/sdk": "^6.5.3",
-    "@tryvital/vital-node": "^2.1.6",
+    "@tryvital/vital-node": "^3.1.182",
     "cors": "^2.8.5",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
