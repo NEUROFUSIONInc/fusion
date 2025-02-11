@@ -17,7 +17,7 @@ export const MuseContextProvider = ({ children }: { children: React.ReactNode })
     const museClient = new MuseClient();
 
     try {
-      museClient.enablePpg = true;
+      museClient.enablePpg = false;
     } catch (e) {
       console.error("ppg is not supported");
     }
