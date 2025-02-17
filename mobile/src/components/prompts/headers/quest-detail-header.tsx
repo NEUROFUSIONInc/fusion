@@ -139,7 +139,7 @@ export const QuestDetailHeader = () => {
                     return;
                   }
 
-                  const deviceId = DeviceInfo.getUniqueId();
+                  const deviceId = await DeviceInfo.getUniqueId();
                   const res = await apiService.post("/quest/redeem-gift-card", {
                     questId:
                       accountContext?.userPreferences?.activeQuest!.guid!,
