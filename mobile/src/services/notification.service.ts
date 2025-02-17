@@ -808,26 +808,40 @@ export class NotificationService {
         body,
       };
 
-      // if platform is android assign channel
+      let notificationId: string;
+      // if platform is android assign channel and use seconds-based trigger
       if (Platform.OS === "android") {
         triggerObject["channelId"] = "default";
+
+        // Calculate seconds until notification time
+        const now = dayjs();
+        const secondsUntil = dayjs(timestamp).diff(now, "second");
+
+        notificationId = await Notifications.scheduleNotificationAsync({
+          identifier: id,
+          content: contentObject,
+          trigger: {
+            ...triggerObject,
+            seconds: secondsUntil,
+          },
+        });
+      } else {
+        // iOS supports calendar triggers
+        const date = dayjs(timestamp);
+
+        notificationId = await Notifications.scheduleNotificationAsync({
+          identifier: id,
+          content: contentObject,
+          trigger: {
+            ...triggerObject,
+            hour: date.hour(),
+            minute: date.minute(),
+            day: date.date(),
+            month: date.month() + 1, // dayjs months are 0-based
+            year: date.year(),
+          },
+        });
       }
-
-      // Convert timestamp to local date using dayjs
-      const date = dayjs(timestamp);
-
-      const notificationId = await Notifications.scheduleNotificationAsync({
-        identifier: id,
-        content: contentObject,
-        trigger: {
-          ...triggerObject,
-          hour: date.hour(),
-          minute: date.minute(),
-          day: date.date(),
-          month: date.month() + 1, // dayjs months are 0-based
-          year: date.year(),
-        },
-      });
 
       await this.saveCutomNotificationToDb(notificationId, "one_time");
       return true;
