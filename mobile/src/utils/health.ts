@@ -406,7 +406,7 @@ export const connectWithVital = async (questId: string, device: string) => {
 
     if (res?.status === 200) {
       // handle based on the device
-      if (device.toLowerCase() === "oura") {
+      if (["oura", "whoop"].includes(device.toLowerCase())) {
         return res.data.linkUrl;
       } else {
         return res.data.signInToken;

@@ -10,8 +10,8 @@ exports.generateToken = async (req, res) => {
   try {
     const { device, questId } = req.query;
 
-    if (!["Oura","Apple Health"].includes(device)) {
-      return res.status(400).json({ error: "Invalid device type. Must be either 'Oura' or 'Whoop'" });
+    if (!["Oura","Apple Health", "Whoop"].includes(device)) {
+      return res.status(400).json({ error: "Invalid device type. Must be either 'Oura', 'Apple Health', or 'Whoop'" });
     }
 
     const quest = await db.Quest.findOne({ where: { guid: questId } });
@@ -34,7 +34,9 @@ exports.generateToken = async (req, res) => {
       environment: vital_environment === "sandbox" ? VitalEnvironment.Sandbox : VitalEnvironment.Production,
     });
 
-    const provider = await db.Provider.findOne({ where: { name: device } });
+    const provider = await db.Provider.findOne({
+      where: db.Sequelize.where(db.Sequelize.fn('lower', db.Sequelize.col('name')), device.toLowerCase())
+    });
     if (!provider) {
       return res.status(400).json({ error: "Vital provider not found" });
     }
@@ -58,8 +60,6 @@ exports.generateToken = async (req, res) => {
         });
         if (!user) throw new Error("Unable to create vital user");
 
-        console.log("user", user);
-
         userProvider.providerUserId = user.userId;
         await userProvider.save();
       } catch (err) {
@@ -69,12 +69,12 @@ exports.generateToken = async (req, res) => {
     }
 
     // based on the device being connected, decide whether to create a link token or a signin token
-    if (device.toLowerCase() === "oura") {
+    if (["oura", "whoop"].includes(device.toLowerCase())) {
       try {
-        console.log("creating link token for oura");
+        const provider = device.toLowerCase() === "whoop" ? "whoop_v2" : device.toLowerCase();
         const token = await vitalClient.link.token({
           userId: userProvider.providerUserId,
-          provider: device.toLowerCase(),
+          provider,
         });
         if (!token) throw new Error("Unable to generate link token");
 
