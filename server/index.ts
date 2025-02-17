@@ -134,6 +134,7 @@ app.get("/api/quest/assignments", questController.getQuestAssignments);
 
 app.get("/api/quest/config", questController.getQuestExtraConfig);
 app.post("/api/quest/config", questController.setQuestExtraConfig);
+app.post("/api/quest/redeem-gift-card", questController.redeemGiftCard);
 
 // /**
 //  * Vital Routes - Health Data collection for Quests...

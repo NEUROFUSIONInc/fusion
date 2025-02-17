@@ -2,6 +2,7 @@ const dayjs = require("dayjs");
 const db = require("../models/index");
 const { nip19 } = require("nostr-tools");
 const axios = require("axios");
+const { getUserVitalConnectedSources } = require("./vital");
 
 exports.saveQuest = async (req, res) => {
   try {
@@ -643,6 +644,105 @@ exports.setQuestExtraConfig = async (req, res) => {
     console.error(err);
     res.status(500).json({
       error: "Error setting quest extra config"
+    });
+  }
+};
+
+exports.redeemGiftCard = async (req, res) => {
+  try {
+    const { questId, deviceId } = req.body;
+
+    if (!questId || !deviceId) {
+      return res.status(400).json({
+        error: "Quest ID and device ID are required"
+      });
+    }
+
+    // check that the quest config has a gift card code
+    const questExtraConfig = await db.QuestExtraConfig.findOne({
+      where: {
+        questId: questId,
+      }
+    });
+
+    if (!questExtraConfig) {
+      return res.status(404).json({
+        error: "ERROR: Not configured to redeem gift cards"
+      });
+    }
+
+    const configObject = JSON.parse(questExtraConfig.value);
+    const giftCardCodes = configObject.gift_card_codes;
+    if (!giftCardCodes) {
+      return res.status(404).json({
+        error: "ERROR: Gift card codes not found"
+      });
+    }
+
+    // check if the gift card codes history is defined, if not, initialize it
+    if (configObject["gift_card_codes_history"] == undefined) {
+      configObject["gift_card_codes_history"] = "";
+      // this is going to be in the form of "deviceId:giftCardCode,deviceId:giftCardCode,..."
+    }
+
+    const userVitalConnectedSources = await getUserVitalConnectedSources(req.user.userGuid, questId);
+    if (!userVitalConnectedSources) {
+      return res.status(400).json({
+        error: "You must connect your health data first to redeem a gift card"
+      });
+    }
+
+    // check if the deviceId has already been assigned a gift card code
+    const giftCardCodesHistory = configObject["gift_card_codes_history"];
+    if (giftCardCodesHistory.includes(deviceId)) {
+      // Find the code that was redeemed for this device
+      const deviceHistory = giftCardCodesHistory.split(",")
+        .find(entry => entry.startsWith(deviceId + ":"));
+      
+      if (deviceHistory) {
+        const redeemedCode = deviceHistory.split(":")[1];
+        return res.status(200).json({
+          code: redeemedCode
+        });
+      }
+      
+      return res.status(404).json({
+        error: "Unable to find gift code, it looks like you've already redeemed it"
+      });
+    }
+
+    // if not, check if there's a code available and assign to the device
+    // Split gift card codes into array and filter out any that are already used
+    const availableCodes = giftCardCodes.split(",").filter(code => 
+      !giftCardCodesHistory.includes(`:${code}`)
+    );
+
+    if (availableCodes.length === 0) {
+      return res.status(404).json({
+        error: "No more gift card codes available. Reach out to mouthtaping@cosimoresearch.com to get one."
+      });
+    }
+
+    // Take the first available code
+    const codeToAssign = availableCodes[0];
+    // Update the history with the new assignment
+    configObject["gift_card_codes_history"] = giftCardCodesHistory 
+      ? `${giftCardCodesHistory},${deviceId}:${codeToAssign}`
+      : `${deviceId}:${codeToAssign}`;
+
+    // Save the updated config
+    await db.QuestExtraConfig.update(
+      { value: JSON.stringify(configObject) },
+      { where: { questId: questId } }
+    );
+
+    return res.status(200).json({
+      code: codeToAssign
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Error redeeming gift card"
     });
   }
 };

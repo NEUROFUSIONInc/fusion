@@ -5,6 +5,7 @@ import {
   HealthConfig,
   VitalResource,
 } from "@tryvital/vital-health-react-native";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
 import {
   Alert,
@@ -146,13 +147,20 @@ export const QuestDetailHeader = () => {
                   });
 
                   if (res.status === 200) {
-                    Alert.alert("Your Amazon Gift Code is:", res.data.code);
+                    Alert.alert("Your Amazon Gift Code is", res.data.code);
                   } else {
                     Alert.alert("Error", res.data.error);
                   }
                 } catch (error) {
-                  console.error("Failed to redeem gift card", error);
-                  Alert.alert("Error", "Failed to redeem gift card");
+                  if (
+                    error instanceof AxiosError &&
+                    error.response?.data?.error
+                  ) {
+                    Alert.alert("Error", error.response.data.error);
+                  } else {
+                    console.error("Failed to redeem gift card", error);
+                    Alert.alert("Error", "An unexpected error occurred");
+                  }
                 } finally {
                   setIsLoading(false);
                 }

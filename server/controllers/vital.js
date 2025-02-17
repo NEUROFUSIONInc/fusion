@@ -102,3 +102,38 @@ exports.generateToken = async (req, res) => {
     return res.status(400).json({ error: "Unable to generate link token" });
   }
 };
+
+exports.getUserVitalConnectedSources = async (userGuid, questId) => {
+  const questExtraConfig = await db.QuestExtraConfig.findOne({ where: { questId } });
+  if (!questExtraConfig) {
+    return false;
+  }
+
+  const { vital_api_key, vital_environment, vital_region } = JSON.parse(questExtraConfig.value);
+  if (!vital_api_key || !vital_environment || !vital_region) {
+    return false;
+  }
+
+  const userProvider = await db.UserProvider.findOne({ where: { userGuid, questGuid: questId } });
+  if (!userProvider || !userProvider.providerUserId) {
+    return false;
+  }
+
+  const vitalClient = new VitalClient({
+    apiKey: vital_api_key,
+    environment: vital_environment === "sandbox" ? VitalEnvironment.Sandbox : VitalEnvironment.Production,
+  });
+
+  const user = await vitalClient.user.get(userProvider.providerUserId);
+  if (!user) {
+    return false;
+  }
+
+  const connectedSources = user["connectedSources"];
+
+  if (!connectedSources) {
+    return false;
+  }
+
+  return connectedSources;
+}
