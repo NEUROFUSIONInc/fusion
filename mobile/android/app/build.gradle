@@ -89,8 +89,8 @@ missingDimensionStrategy "store", "play"
         applicationId 'com.neurofusion.fusion'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 112
-        versionName "2.3.2"
+        versionCode 113
+        versionName "2.3.3"
 
         buildConfigField("boolean", "REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS", (findProperty("reactNative.unstable_useRuntimeSchedulerAlways") ?: true).toString())
     }
