@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion Copilot",
   slug: "fusion",
-  version: "2.3.3",
+  version: "2.3.4",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "113",
+    buildNumber: "115",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 113,
+    versionCode: 115,
     softwareKeyboardLayoutMode: "pan",
     // permissions: [
     //   "android.permission.health.READ_STEPS",

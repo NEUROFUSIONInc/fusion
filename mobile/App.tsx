@@ -13,7 +13,7 @@ import VersionCheck from "react-native-version-check";
 
 import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
-import { appInsights, maskPromptId } from "./src/utils";
+import { appInsights, maskPromptId, pushVitalData } from "./src/utils";
 
 import { QUERY_OPTIONS_DEFAULT, top_responders } from "~/config";
 import {
@@ -27,7 +27,7 @@ import {
   nostrService,
   notificationService,
   promptService,
-  setupBackgroundTasks,
+  questService,
 } from "~/services";
 import { toastConfig } from "~/theme";
 
@@ -72,8 +72,19 @@ function App() {
     );
 
     // TODO: register background tasks
+    // (async () => {
+    //   await setupBackgroundTasks();
+    // })();
+
+    // Push vital data if configured
     (async () => {
-      await setupBackgroundTasks();
+      if (
+        (await questService.fetchActiveQuests())?.find(
+          (q) => q.guid.toLowerCase() === "4705ba7b-55b6-4c99-afb7-45c3a1fcf7ee"
+        )
+      ) {
+        await pushVitalData();
+      }
     })();
 
     // validate permission status for user

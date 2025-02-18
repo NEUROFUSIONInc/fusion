@@ -688,7 +688,7 @@ exports.redeemGiftCard = async (req, res) => {
     const userVitalConnectedSources = await getUserVitalConnectedSources(req.user.userGuid, questId);
     if (!userVitalConnectedSources) {
       return res.status(400).json({
-        error: "You must connect your health data first to redeem a gift card"
+        error: "You must connect your health data to receive a confirmation code."
       });
     }
 
@@ -707,7 +707,7 @@ exports.redeemGiftCard = async (req, res) => {
       }
       
       return res.status(404).json({
-        error: "Unable to find gift code, it looks like you've already redeemed it"
+        error: "Unable to find gift code, it looks like you've already redeemed it."
       });
     }
 
@@ -719,7 +719,7 @@ exports.redeemGiftCard = async (req, res) => {
 
     if (availableCodes.length === 0) {
       return res.status(404).json({
-        error: "No more gift card codes available. Reach out to mouthtaping@cosimoresearch.com to get one."
+        error: "There are no more confirmation codes available."
       });
     }
 

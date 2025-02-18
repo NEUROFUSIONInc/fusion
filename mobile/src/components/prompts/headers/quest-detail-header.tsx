@@ -51,13 +51,14 @@ export const QuestDetailHeader = () => {
         <View className="w-8 h-8 justify-center items-center">
           <ActivityIndicator color="white" />
         </View>
-      ) : (
+      ) : accountContext?.userPreferences?.activeQuest?.guid?.toLowerCase() ===
+        "4705ba7b-55b6-4c99-afb7-45c3a1fcf7ee" ? (
         <ContextMenu
           title="Options"
           dropdownMenuMode
           actions={[
             { title: "Share Health Data" },
-            { title: "Redeem Gift Card" },
+            { title: "Redeem Confirmation Code" },
             { title: "Feedback" },
             { title: "Leave Quest", destructive: true },
           ]}
@@ -147,7 +148,7 @@ export const QuestDetailHeader = () => {
                   });
 
                   if (res.status === 200) {
-                    Alert.alert("Your Amazon Gift Code is", res.data.code);
+                    Alert.alert("Your Confirmation Code is", res.data.code);
                   } else {
                     Alert.alert("Error", res.data.error);
                   }
@@ -168,6 +169,48 @@ export const QuestDetailHeader = () => {
             } else if (e.nativeEvent.index === 2) {
               return handleSendFeeback("");
             } else if (e.nativeEvent.index === 3) {
+              // confirm delete
+              Alert.alert(
+                "Leave Quest",
+                "Are you sure you want to leave this quest? This action cannot be undone.",
+                [
+                  {
+                    text: "Cancel",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Leave",
+                    style: "destructive",
+                    onPress: async () => {
+                      try {
+                        await deleteQuest(
+                          accountContext?.userPreferences?.activeQuest!.guid!
+                        );
+                        navigation.goBack();
+                      } catch (error) {
+                        console.error("Failed to leave quest", error);
+                      }
+                    },
+                  },
+                ]
+              );
+            }
+          }}
+        >
+          <Button variant="ghost" size="icon" leftIcon={<VerticalMenu />} />
+        </ContextMenu>
+      ) : (
+        <ContextMenu
+          title="Options"
+          dropdownMenuMode
+          actions={[
+            { title: "Feedback" },
+            { title: "Leave Quest", destructive: true },
+          ]}
+          onPress={(e) => {
+            if (e.nativeEvent.index === 0) {
+              return handleSendFeeback("");
+            } else if (e.nativeEvent.index === 1) {
               // confirm delete
               Alert.alert(
                 "Leave Quest",

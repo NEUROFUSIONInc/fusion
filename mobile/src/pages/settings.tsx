@@ -44,7 +44,7 @@ export function SettingsScreen() {
       },
     },
     {
-      text: copilotConsent ? "Disable Copilot" : "Enable Copilot",
+      text: copilotConsent ? "Disable AI Copilot" : "Enable AI Copilot",
       onPress: async () => {
         // call bottom sheet
         const consentStatus = await requestCopilotConsent(
@@ -69,12 +69,12 @@ export function SettingsScreen() {
         await connectAppleHealth();
       },
     });
-    // itemList.push({
-    //   text: "Manage Subscription",
-    //   onPress: async () => {
-    //     subscriptionSheetRef.current?.expand();
-    //   },
-    // });
+    itemList.push({
+      text: "Manage Subscription",
+      onPress: async () => {
+        subscriptionSheetRef.current?.expand();
+      },
+    });
   }
 
   // add data export

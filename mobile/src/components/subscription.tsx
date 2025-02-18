@@ -144,14 +144,11 @@ export const SubscriptionSheet: FC<SubscriptionSheetProps> = ({
     <BottomSheet ref={subscriptionSheetRef} snapPoints={["60%"]} index={0}>
       <View className="flex flex-1 w-full justify-center gap-y-10 flex-col p-5">
         <Text className="font-sans text-base text-white ">
-          Get personalized recommendations on how to navigate your days.
-          {"\n\n"}
-          {"\n"}- Edit responses and share custom reports.
-          {"\n"}- Insights from your sleep, activity trackers, music listening
-          history and screen time.
+          Fusion Copilot is 'free to use' but you can support it's development
+          with a subscription!
         </Text>
 
-        <View className="flex">
+        <View className="flex flex-col gap-y-5">
           {userSubscribed ? (
             <Button
               title="Unsubscribe"

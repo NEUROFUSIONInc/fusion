@@ -1,3 +1,5 @@
+import { VitalCore } from "@tryvital/vital-core-react-native";
+import { VitalHealth } from "@tryvital/vital-health-react-native";
 import dayjs, { Dayjs } from "dayjs";
 import { Alert, Platform } from "react-native";
 import AppleHealthKit, {
@@ -416,5 +418,18 @@ export const connectWithVital = async (questId: string, device: string) => {
   } catch (err) {
     console.error(err);
     return false;
+  }
+};
+
+export const pushVitalData = async () => {
+  try {
+    const status = await VitalCore.status();
+    if (status.includes("signedIn") && status.includes("configured")) {
+      await VitalHealth.syncData();
+    } else {
+      console.log("not signed in");
+    }
+  } catch (err) {
+    console.error(err);
   }
 };
