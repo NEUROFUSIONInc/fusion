@@ -359,7 +359,7 @@ const QuestsPage: NextPage = () => {
   const [vitalEnvironment, setVitalEnvironment] = useState<string>("sandbox");
   const [vitalRegion, setVitalRegion] = useState<string>("us");
   const [giftCardCodes, setGiftCardCodes] = useState<string>("");
-
+  const [giftCardCodesHistory, setGiftCardCodesHistory] = useState<string>("");
   React.useEffect(() => {
     try {
       if (activeQuest && showAdvancedQuestSettings) {
@@ -380,6 +380,7 @@ const QuestsPage: NextPage = () => {
               setVitalEnvironment(parsedConfig.vital_environment ?? "");
               setVitalRegion(parsedConfig.vital_region ?? "");
               setGiftCardCodes(parsedConfig.gift_card_codes ?? "");
+              setGiftCardCodesHistory(parsedConfig.gift_card_codes_history ?? "");
             }
           })
           .catch((e) => {
@@ -763,6 +764,17 @@ const QuestsPage: NextPage = () => {
                       fullWidth
                     />
 
+                    <Input
+                      label="Claimed Gift Card Codes"
+                      type="text"
+                      size="lg"
+                      disabled
+                      placeholder="Claimed Gift Card Codes"
+                      value={giftCardCodesHistory}
+                      className="font-mono"
+                      fullWidth
+                    />
+
                     <Button
                       onClick={async () => {
                         try {
@@ -785,6 +797,7 @@ const QuestsPage: NextPage = () => {
                                 vital_environment: vitalEnvironment,
                                 vital_region: vitalRegion,
                                 gift_card_codes: giftCardCodes,
+                                gift_card_codes_history: giftCardCodesHistory,
                               }),
                             },
                             {
