@@ -702,7 +702,7 @@ exports.redeemGiftCard = async (req, res) => {
       if (deviceHistory) {
         const redeemedCode = deviceHistory.split(":")[1];
         return res.status(200).json({
-          code: redeemedCode
+          code: "You've already redeemed this code. Check your email for your gift card."
         });
       }
       
