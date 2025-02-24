@@ -736,8 +736,35 @@ exports.redeemGiftCard = async (req, res) => {
       { where: { questId: questId } }
     );
 
+    // go through onboarding to get the user's email
+    let userEmail = null;
+    try {
+      const onboardingDatasets = await getQuestDatasetsInternal(
+        questId,
+        "onboarding_responses",
+        true,
+        req.user.userGuid
+      );
+  
+      const onboardingResponses = JSON.parse(onboardingDatasets[0].value);
+      userEmail = onboardingResponses.find(response => response.guid === "31bd772e-37ce-4fa7-b3e4-55cb425f3fd4").responseValue;
+      
+      const zapierResponse = await axios.post(
+        "https://hooks.zapier.com/hooks/catch/20652342/28rbmgx/",
+        {
+          userEmail: userEmail,
+          deviceId: codeToAssign
+        }
+      );
+    } catch (error) {
+      console.error('Zapier error:', error.response?.data || error.message);
+      return res.status(500).json({
+        error: "Error sending gift card code to email"
+      });
+    }
+
     return res.status(200).json({
-      code: codeToAssign
+      code: `Sent to your email: ${userEmail}`
     });
   } catch (err) {
     console.error(err);
