@@ -58,7 +58,7 @@ export const QuestDetailHeader = () => {
           dropdownMenuMode
           actions={[
             { title: "Share Health Data" },
-            { title: "Redeem Confirmation Code" },
+            { title: "Redeem Gift Code" },
             { title: "Feedback" },
             { title: "Leave Quest", destructive: true },
           ]}
@@ -148,7 +148,7 @@ export const QuestDetailHeader = () => {
                   });
 
                   if (res.status === 200) {
-                    Alert.alert("Your Confirmation Code is", res.data.code);
+                    Alert.alert("Your Gift Code is", res.data.code);
                   } else {
                     Alert.alert("Error", res.data.error);
                   }
