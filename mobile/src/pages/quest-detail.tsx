@@ -266,8 +266,8 @@ export function QuestDetailScreen() {
     responseValue: string,
     condition: PromptNotifyCondition
   ): boolean => {
-    const sourceValue = responseValue.toLowerCase();
-    const targetValue = condition.value.toLowerCase();
+    const sourceValue = responseValue.trim().toLowerCase();
+    const targetValue = condition.value.trim().toLowerCase();
 
     switch (condition.operator) {
       case PromptNotifyOperator.equals:
@@ -278,6 +278,10 @@ export function QuestDetailScreen() {
         return Number(sourceValue) > Number(targetValue);
       case PromptNotifyOperator.less_than:
         return Number(sourceValue) < Number(targetValue);
+      case PromptNotifyOperator.contains:
+        return sourceValue.includes(targetValue);
+      case PromptNotifyOperator.not_contains:
+        return !sourceValue.includes(targetValue);
       default:
         return true;
     }

@@ -16,6 +16,8 @@ export enum PromptNotifyOperator {
   not_equals = "not_equals",
   greater_than = "greater_than",
   less_than = "less_than",
+  contains = "contains",
+  not_contains = "not_contains",
 }
 export interface PromptNotifyCondition {
   sourceType: "prompt" | "onboardingQuestion";

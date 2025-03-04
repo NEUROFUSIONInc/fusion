@@ -319,6 +319,8 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
                           <option value={PromptNotifyOperator.not_equals}>not equals</option>
                           <option value={PromptNotifyOperator.greater_than}>greater than</option>
                           <option value={PromptNotifyOperator.less_than}>less than</option>
+                          <option value={PromptNotifyOperator.contains}>contains</option>
+                          <option value={PromptNotifyOperator.not_contains}>not contains</option>
                         </select>
 
                         <Input

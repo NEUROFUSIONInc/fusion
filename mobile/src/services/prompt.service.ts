@@ -910,8 +910,8 @@ class PromptService {
     sourceValue: string,
     condition: PromptNotifyCondition
   ): boolean => {
-    const normalizedSourceValue = sourceValue.toLowerCase();
-    const normalizedTargetValue = condition.value.toLowerCase();
+    const normalizedSourceValue = sourceValue.trim().toLowerCase();
+    const normalizedTargetValue = condition.value.trim().toLowerCase();
 
     switch (condition.operator) {
       case PromptNotifyOperator.equals:
@@ -922,6 +922,10 @@ class PromptService {
         return Number(normalizedSourceValue) > Number(normalizedTargetValue);
       case PromptNotifyOperator.less_than:
         return Number(normalizedSourceValue) < Number(normalizedTargetValue);
+      case PromptNotifyOperator.contains:
+        return normalizedSourceValue.includes(normalizedTargetValue);
+      case PromptNotifyOperator.not_contains:
+        return !normalizedSourceValue.includes(normalizedTargetValue);
       default:
         return true;
     }
