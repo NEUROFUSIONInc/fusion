@@ -33,14 +33,6 @@ Once enabled, Fusion Copilot brings you recommendations based on insights gather
 
 <img src="/images/blog/fusioncopilot/fusion_copilot_recommendations.jpg" alt="App Screenshots of Copilot Recommendations" data-zoomable style="cursor: zoom-in;" />
 
-## Is Fusion Copilot a Premium Offer ?
-
-Fusion Copilot marks the beginning of our premium offerings. You’ll always be able to create & respond to prompts for free. Fusion premium subscription will be $9.99/month. In future versions of Fusion, you’ll be able to:
-
-- Edit previous responses
-- Share custom reports
-- Pair Fusion with your sleep, activity trackers, music listening history & screen time.
-
 <iframe width="100%" height="400" src="https://www.youtube.com/embed/P5wWX7DaiX4?si=U2CiUFYUpR50zidZ" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## We want your Feedback
