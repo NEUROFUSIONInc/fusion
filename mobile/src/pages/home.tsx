@@ -40,7 +40,7 @@ export function HomeScreen() {
 
   const [summaryText, setSummaryText] = React.useState("");
 
-  const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("week");
+  const [timePeriod, setTimePeriod] = React.useState<"week" | "month">("month");
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const categoryPillsToDisplay = useMemo(() => {
@@ -152,8 +152,8 @@ export function HomeScreen() {
     );
 
     // TODO: if they haven't responded recently, pass the last 10 responses
-    if (categoryPromptResponses.length === 0) {
-      return `Add responses to your '${category}' prompts in order to get summaries and personalized recommendations.`;
+    if (categoryPromptResponses.length <= 20) {
+      return `Respond to more of your '${category}' prompts in order to get summaries and personalized recommendations.`;
     }
 
     // sort responses by timestamp ascending
