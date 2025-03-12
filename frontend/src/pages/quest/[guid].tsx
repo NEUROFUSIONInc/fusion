@@ -313,8 +313,6 @@ const QuestDetailPage: NextPage = () => {
       <div className="mt-5">
         <h2 className="text-2xl">{quest?.title}</h2>
         <p className="mt-2">{quest?.description}</p>
-
-        <p className="mt-2">Active Participants: {questSubscribers.length}</p>
       </div>
 
       <div className="flex space-x-2 gap-x-2 mt-4">
