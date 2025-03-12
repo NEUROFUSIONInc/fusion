@@ -427,12 +427,58 @@ const getQuestDatasetsInternal = async (questId, type = null, singleUser = false
   return userQuestDatasets;
 };
 
+const isUserCreatorOrCollaborator = async (questId, userGuid) => {
+  try {
+    // Get the user's pubkey
+    const user = await db.UserMetadata.findOne({
+      where: {
+        userGuid: userGuid
+      }
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    // Check if userPubkey is already npub encoded if not, encode it
+    let userPubkey = user.userPubkey;
+    if (!userPubkey.startsWith("npub1")) {
+      userPubkey = nip19.npubEncode(userPubkey);
+    }
+
+    // Check if the user is the creator/collaborator of the quest
+    const existingQuest = await db.Quest.findOne({
+      where: {
+        guid: questId,
+        [db.Sequelize.Op.or]: [
+          { userGuid: userGuid },
+          db.Sequelize.literal(
+            `(config IS NOT NULL AND JSON_VALID(config) = 1 AND JSON_EXTRACT(config, '$.collaborators') LIKE '%${userPubkey}%')`
+          ),
+        ],
+      },
+    });
+
+    return !!existingQuest;
+  } catch (error) {
+    console.error("Error checking if user is creator or collaborator:", error);
+    return false;
+  }
+};
+
 exports.getQuestDatasets = async (req, res) => {
   try {
+    // check if the user is the creator/collaborator of the quest
+    const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(req.query.questId, req.user.userGuid);
+    let querySingleUser = req.query.singleUser;
+    if (isCreatorOrCollaborator == false) {
+      querySingleUser = true;
+    }
+
     const userQuestDatasets = await getQuestDatasetsInternal(
       req.query.questId,
       req.query.type,
-      req.query.singleUser,
+      querySingleUser,
       req.user.userGuid
     );
 
@@ -770,6 +816,19 @@ exports.redeemGiftCard = async (req, res) => {
     console.error(err);
     res.status(500).json({
       error: "Error redeeming gift card"
+    });
+  }
+};
+
+exports.getEditorCheck = async (req, res) => {
+  const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(req.query.questId, req.user.userGuid);
+  if (isCreatorOrCollaborator) {
+    res.status(200).json({
+      isEditor: true
+    });
+  } else {
+    res.status(200).json({
+      isEditor: false
     });
   }
 };

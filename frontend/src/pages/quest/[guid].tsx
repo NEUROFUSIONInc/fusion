@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import { FusionLineChart } from "~/components/charts";
 import dayjs from "dayjs";
 import { ShareModal } from "~/components/quests";
+import router from "next/router";
 
 const categories: DisplayCategory[] = [
   {
@@ -42,6 +43,7 @@ export interface FusionQuestSubscriber {
 const QuestDetailPage: NextPage = () => {
   const [quest, setQuest] = React.useState<IQuest | null>(null);
   const pathname = usePathname();
+  const session = useSession();
 
   // get the last part of the pathname
   const questId = pathname.split("/").pop();
@@ -76,7 +78,23 @@ const QuestDetailPage: NextPage = () => {
     }
   }, [questId]);
 
-  const session = useSession();
+  React.useEffect(() => {
+    (async () => {
+      const res = await api.get("/quest/editor-check", {
+        params: { questId },
+        headers: {
+          Authorization: `Bearer ${session.data?.user?.authToken}`,
+        },
+      });
+
+      if (res.status === 200) {
+        if (!res.data.isEditor) {
+          router.push(`/quests`);
+        }
+      }
+    })();
+  }, []);
+
   // fetch the quest info
   React.useEffect(() => {
     // maker request to backend to get quest info
