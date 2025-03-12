@@ -46,6 +46,36 @@ const QuestDetailPage: NextPage = () => {
   // get the last part of the pathname
   const questId = pathname.split("/").pop();
 
+  const [questVitalApiKey, setQuestVitalApiKey] = React.useState<string>("");
+
+  React.useEffect(() => {
+    try {
+      if (questId) {
+        api
+          .get(`/quest/config`, {
+            params: {
+              questId: questId,
+            },
+            headers: {
+              Authorization: `Bearer ${session.data?.user?.authToken}`,
+            },
+          })
+          .then((res) => {
+            console.log("res", res);
+            if (res.status === 200) {
+              const parsedConfig = JSON.parse(res.data.value);
+              setQuestVitalApiKey(parsedConfig.vital_api_key ?? "");
+            }
+          })
+          .catch((e) => {
+            console.error("Failed to fetch advanced quest config", e);
+          });
+      }
+    } catch (e) {
+      console.error("Failed to fetch advanced quest config", e);
+    }
+  }, [questId]);
+
   const session = useSession();
   // fetch the quest info
   React.useEffect(() => {
@@ -216,6 +246,59 @@ const QuestDetailPage: NextPage = () => {
     }
   };
 
+  const getVitalUserMapping = async () => {
+    try {
+      const res = await api.get("/vital/quest/user-mapping", {
+        params: {
+          questId,
+        },
+        headers: {
+          Authorization: `Bearer ${session.data?.user?.authToken}`,
+        },
+      });
+
+      if (res.status === 200) {
+        console.log("Vital user mapping fetched successfully");
+        // Extract vital user mapping data
+        const vitalUserMapping = res.data.vitalUserMapping || [];
+
+        if (vitalUserMapping.length > 0) {
+          // Create CSV content
+          const csvRows = [];
+
+          // Get headers dynamically from the first mapping object
+          const headers = Object.keys(vitalUserMapping[0]);
+          csvRows.push(headers.join(","));
+
+          // Add data rows
+          vitalUserMapping.forEach((mapping: Record<string, string>) => {
+            const row = headers.map((header) => mapping[header]);
+            csvRows.push(row.join(","));
+          });
+
+          // Create CSV content
+          const csvContent = csvRows.join("\n");
+
+          // Create blob and download
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const link = document.createElement("a");
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", `vital_user_mapping_${questId}.csv`);
+          link.style.visibility = "hidden";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        console.log(res.data);
+      } else {
+        console.error("Failed to fetch vital user mapping");
+      }
+    } catch (error) {
+      console.error("Failed to get vital user mapping", error);
+    }
+  };
+
   return (
     <DashboardLayout>
       <Meta
@@ -244,18 +327,23 @@ const QuestDetailPage: NextPage = () => {
           Share Quest
         </Button>
         {/* // TODO: gate this with zupass */}
-        <Button intent="primary" onClick={() => setDisplayTableView(true)}>
+        {/* <Button intent="primary" onClick={() => setDisplayTableView(true)}>
           Table View
-        </Button>
+        </Button> */}
 
         {displayTableView && (
           <>
-            <Button intent="primary" onClick={() => setDisplayTableView(false)}>
+            {/* <Button intent="primary" onClick={() => setDisplayTableView(false)}>
               Graph View
-            </Button>
+            </Button> */}
             <Button intent="primary" onClick={() => downloadCSV()}>
               Download Dataset
             </Button>
+            {questVitalApiKey && (
+              <Button intent="primary" onClick={() => getVitalUserMapping()}>
+                Get Vital to Fusion User Mapping
+              </Button>
+            )}
           </>
         )}
 

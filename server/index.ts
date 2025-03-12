@@ -44,6 +44,12 @@ app.post("/api/nostrlogin", userController.validateNostrLogin);
 
 app.post("/api/sendContactEmail", mailController.sendContactEmail);
 
+// /**
+//  * Token validation - doesn't require authentication
+//  * This endpoint is used by the frontend to check if a token is still valid
+//  */
+// app.get("/api/auth/validate", userController.validateToken);
+
 // All routes after this require an authorization token
 app.use(userController.tokenValidator);
 
@@ -140,7 +146,7 @@ app.post("/api/quest/redeem-gift-card", questController.redeemGiftCard);
 //  * Vital Routes - Health Data collection for Quests...
 //  */
 app.get("/api/vital/quest/get-token", vitalController.generateToken);
-
+app.get("/api/vital/quest/user-mapping", vitalController.getVitalUserMapping);
 /**
  * Start server
  */

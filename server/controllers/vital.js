@@ -137,3 +137,27 @@ exports.getUserVitalConnectedSources = async (userGuid, questId) => {
 
   return connectedSources;
 }
+
+exports.getVitalUserMapping = async (req, res) => {
+  const { questId } = req.query;
+
+  const questExtraConfig = await db.QuestExtraConfig.findOne({ where: { questId } });
+  if (!questExtraConfig) {
+    return res.status(400).json({ error: "Quest does not have vital configured" });
+  }
+
+  const userProviders = await db.UserProvider.findAll({
+    where: {
+      questGuid: questId,
+    },
+  });
+
+  const vitalUserMapping = userProviders.map((userProvider) => {
+    return {
+      fusionUserId: userProvider.userGuid,
+      vitalUserId: userProvider.providerUserId,
+    };
+  });
+
+  return res.status(200).json({ vitalUserMapping });
+}
