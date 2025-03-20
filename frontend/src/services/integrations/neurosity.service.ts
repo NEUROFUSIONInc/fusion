@@ -134,7 +134,7 @@ class NeurosityService {
      * Record raw brainwaves
      */
     neurosity
-      .brainwaves("raw")
+      .brainwaves("rawUnfiltered")
       .pipe(takeWhile(() => this.recordingStatus === "started"))
       .subscribe((brainwaves) => {
         // get the number of samples in each entry
