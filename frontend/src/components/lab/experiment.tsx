@@ -97,14 +97,16 @@ export const Experiment: FC<IExperiment> = (experiment) => {
   async function stopMuseRecording() {
     if (museEEGService) {
       setIsMuseRecording(false);
-      appInsights.trackEvent({
-        name: "stop_muse_recording",
-        properties: {
-          deviceInfo: await museContext?.museClient?.deviceInfo(),
-          experimentInfo: experimentInfo,
-          userNpub: session.data?.user?.name,
-        },
-      });
+
+      // appInsights.trackEvent({
+      //   name: "stop_muse_recording",
+      //   properties: {
+      //     deviceInfo: await museContext?.museClient?.deviceInfo(),
+      //     experimentInfo: experimentInfo,
+      //     userNpub: session.data?.user?.name,
+      //   },
+      // });
+
       console.log("stopping muse recording");
       if (experiment.id === 121) {
         await museEEGService.stopRecording(true, false, "ceramic");
