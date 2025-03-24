@@ -191,7 +191,11 @@ export class MuseEEGService {
     signDataset = false,
     storageMode: "local" | "remote" | "ceramic" = "local"
   ) {
-    this.museClient.pause();
+    try {
+      this.museClient.pause();
+    } catch (e) {
+      console.log("Error pausing muse client", e);
+    }
     // prepare files for download
     const datasetExport: DatasetExport = {
       fileNames: [`rawBrainwaves_${this.recordingStartTimestamp}.csv`, `events_${this.recordingStartTimestamp}.csv`],
