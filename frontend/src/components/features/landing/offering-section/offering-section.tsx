@@ -55,65 +55,67 @@ export const OfferingSection = ({ isResearch = false }) => {
               <>
                 <h2 className="text-3xl font-semibold text-gray-900">Let's work together!</h2>
                 <p className="font-normal text-md text-gray-500">
-                  Got any questions about the product or contributing to our research? We're here to help!
+                  By combining mobile wearables, cognitive assessments, and self-reports, we aim to accelerate the
+                  development of mental health biomarkers for researchers, health institutions and individuals alike.
                 </p>
-                <div className="w-full max-w-lg mt-3">
-                  <div className="flex flex-wrap -m-2">
-                    <div className="w-full p-2">
-                      <label htmlFor="name" className="block text-gray-700">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={contactName}
-                        onChange={(e) => setContactName(e.target.value)}
-                        placeholder="Enter your name"
-                        className="form-input mt-1 block w-full p-2.5 border-2"
-                      />
-                    </div>
-                    <div className="w-full p-2">
-                      <label htmlFor="email" className="block text-gray-700">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={contactEmail}
-                        onChange={(e) => setContactEmail(e.target.value)}
-                        placeholder="youremail@example.com"
-                        className="form-input mt-1 block w-full p-2.5 border-2"
-                      />
-                    </div>
-                    <div className="w-full p-2">
-                      <label htmlFor="message" className="block text-gray-700">
-                        Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={4}
-                        cols={40}
-                        value={contactMessage}
-                        onChange={(e) => setContacMessage(e.target.value)}
-                        placeholder="Type your message here..."
-                        className="form-textarea mt-1 p-2.5 block w-full border-2"
-                      ></textarea>
-                    </div>
-                    <div className="submit-btn p-2 w-full">
-                      <ButtonLink
-                        type="submit"
-                        onClick={handleSubmit}
-                        intent="outlined"
-                        className="btn w-full p-5"
-                        href={""}
-                      >
-                        Submit
-                      </ButtonLink>
-                    </div>
+                <p className="font-normal text-md text-gray-500 mt-4">
+                  Have a question worth exploring? Let's search for the answers together!
+                </p>
+                <div className="w-full max-w-lg mt-6 space-y-4">
+                  <div className="w-full">
+                    <ButtonLink
+                      intent="outlined"
+                      className="btn w-full p-5"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setContactName("");
+                        setContactEmail("");
+                        setContacMessage("");
+                        const researcherForm = document.getElementById("researcherForm");
+                        const participantForm = document.getElementById("participantForm");
+                        if (researcherForm) researcherForm.style.display = "block";
+                        if (participantForm) participantForm.style.display = "none";
+                      }}
+                      href={""}
+                    >
+                      Researchers? Join our Fellowship
+                    </ButtonLink>
                   </div>
+                  <div className="w-full">
+                    <ButtonLink
+                      intent="outlined"
+                      className="btn w-full p-5"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setContactName("");
+                        setContactEmail("");
+                        setContacMessage("");
+                        const participantForm = document.getElementById("participantForm");
+                        const researcherForm = document.getElementById("researcherForm");
+                        if (participantForm) participantForm.style.display = "block";
+                        if (researcherForm) researcherForm.style.display = "none";
+                      }}
+                      href={""}
+                    >
+                      Participants? Join our Study Registry
+                    </ButtonLink>
+                  </div>
+                </div>
+
+                <div id="researcherForm" className="w-full mt-6" style={{ display: "none" }}>
+                  <iframe
+                    src="https://docs.google.com/forms/d/e/1FAIpQLScKGtxEHwwuBYUW7eXVE_LEz3Mm93yMKGfogbOWfAqSiLKCRw/viewform?embedded=true"
+                    width="100%"
+                    height="500"
+                  >
+                    Loading…
+                  </iframe>
+                </div>
+
+                <div id="participantForm" className="w-full mt-6" style={{ display: "none" }}>
+                  <iframe src="https://forms.gle/8pUUGJVwo32och5h8?embedded=true" width="100%" height="500">
+                    Loading…
+                  </iframe>
                 </div>
               </>
             )}

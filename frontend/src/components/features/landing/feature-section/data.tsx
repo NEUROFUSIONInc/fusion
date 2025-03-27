@@ -1,38 +1,38 @@
-import { Maximize } from "lucide-react";
-
 import { IFusionFeature } from "./types";
 
 export const fusionFeatures: IFusionFeature[] = [
   {
     id: 1,
-    pretitle: "Use",
-    title: "fusion copilot to",
-    description: "Understand changes in your behavior over time with personalized prompts.",
+    pretitle: "For",
+    title: "Personal Growth",
+    description: "Track and optimize your daily performance with AI-powered insights.",
     featuresList: [
-      "Get recommendations to meet your daily goals",
-      "Understand the impact of daily activities on your health and performance",
-      "Reflect in one-click, even on your busiest days",
-      "Share reports with your friends & family",
+      "Receive personalized recommendations to achieve your health goals",
+      "Visualize how lifestyle choices impact your cognitive performance",
+      "Capture daily reflections with minimal effort, even on busy days",
+      "Securely share your progress with trusted contacts and healthcare providers",
     ],
   },
   {
     id: 2,
-    title: "coaches & health professionals",
-    description: "See, with consent how clients respond to recommendations & plans outside of consults",
+    title: "Healthcare Professionals",
+    description: "Monitor client progress between sessions with real-time, consent-based insights.",
     featuresList: [
-      "Simplify medication management for you and your clients with automated scheduling and adherence tracking",
-      "Monitor symptoms/side-effects in real-time to address concerns",
-      "Improve client care with ease by trialing interventions and treatment plans",
+      "Streamline medication management with automated reminders and adherence tracking",
+      "Detect and address side effects or symptoms as they emerge",
+      "Evaluate treatment effectiveness with objective data-driven feedback",
+      "Deliver targeted recommendations based on individual client needs",
     ],
   },
   {
     id: 3,
-    title: "researchers",
-    description: "Record experiments & design quests (a set of tasks other users can run) and share results",
+    title: "Scientific Research",
+    description: "Design, deploy, and analyze neuroscience experiments with powerful collaborative tools.",
     featuresList: [
-      "Engaging experiments for recording brain & behavior data with instant analysis",
-      "Design custom experiments people can run anywhere in the world",
-      "Curate open datasets & models for others to use",
+      "Create engaging protocols that capture high-quality brain and behavioral data",
+      "Deploy remote experiments to participants worldwide with standardized protocols",
+      "Build and share open-source datasets and analytical models",
+      "Generate publication-ready visualizations of your research findings",
     ],
   },
 ];
