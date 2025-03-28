@@ -152,7 +152,7 @@ export const CustomLink: FC<CustomLinkProps> = ({ variant, store = "apple", clas
         };
       case "docs":
         return {
-          href: "https://neurofusionresearchinc.mintlify.app/createquests",
+          href: "https://docs.usefusion.ai/createquests",
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path

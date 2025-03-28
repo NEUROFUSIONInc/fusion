@@ -12,6 +12,8 @@ import dayjs from "dayjs";
 
 const DatasetPage: NextPage = () => {
   const [files, setFiles] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -29,6 +31,22 @@ const DatasetPage: NextPage = () => {
 
     fetchFiles();
   }, []);
+
+  useEffect(() => {
+    const loadFileContent = async () => {
+      if (selectedFile) {
+        const file = await getLocalFile(selectedFile);
+        if (file && file.file) {
+          const text = await file.file.text();
+          setFileContent(text);
+        }
+      } else {
+        setFileContent(null);
+      }
+    };
+
+    loadFileContent();
+  }, [selectedFile]);
 
   const handleDownload = async (fileName: string) => {
     const file = await getLocalFile(fileName);
@@ -55,6 +73,10 @@ const DatasetPage: NextPage = () => {
     }
   };
 
+  const handleFileClick = async (fileName: string) => {
+    setSelectedFile(fileName);
+  };
+
   return (
     <DashboardLayout>
       <Meta
@@ -65,10 +87,29 @@ const DatasetPage: NextPage = () => {
       />
       <h1 className="text-4xl font-bold mb-4">Datasets</h1>
       <p className="mb-4">Manage your datasets from previous recordings. You can download your data here..</p>
+
+      {selectedFile && fileContent && (
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-xl font-semibold">Viewing: {selectedFile}</h2>
+            <Button onClick={() => setSelectedFile(null)} className="py-1">
+              Close Editor
+            </Button>
+          </div>
+          <div className="border rounded-lg overflow-hidden" style={{ height: "500px" }}>
+            <iframe
+              src={`/code-editor?filename=${encodeURIComponent(selectedFile)}`}
+              style={{ width: "100%", height: "100%", border: "none" }}
+              title={`Editor for ${selectedFile}`}
+            />
+          </div>
+        </div>
+      )}
+
       <ul className="space-y-2">
         {files.map((name, index) => (
           <li key={index} className="flex items-center justify-between">
-            <span>
+            <span className="cursor-pointer hover:text-blue-600 hover:underline" onClick={() => handleFileClick(name)}>
               {(() => {
                 const parts = name.split("_");
                 const timestamp = parts.pop() || "0";
@@ -103,6 +144,9 @@ const DatasetPage: NextPage = () => {
                     deleteLocalFile(name)
                       .then(() => {
                         setFiles(files.filter((f) => f !== name));
+                        if (selectedFile === name) {
+                          setSelectedFile(null);
+                        }
                       })
                       .catch((error) => {
                         console.error("Error deleting file:", error);

@@ -273,10 +273,9 @@ export class MuseEEGService {
     }
 
     try {
+      await writeToLocalStorage(datasetExport, dayjs.unix(this.recordingStartTimestamp));
       if (withDownload) {
         await downloadDataAsZip(datasetExport, `fusionDataExport`, dayjs.unix(this.recordingStartTimestamp));
-      } else {
-        await writeToLocalStorage(datasetExport, dayjs.unix(this.recordingStartTimestamp));
       }
     } catch (e) {
       console.log(e);
