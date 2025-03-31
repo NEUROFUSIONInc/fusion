@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../dist/jspsych.js"></script>
+    <script src="../dist/plugin-cloze.js"></script>
+    <link rel="stylesheet" href="../dist/jspsych.css" />
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var timeline = [];
+
+    // simple example using default settings (no check against correct solution, no custom button text)
+    timeline.push({
+      type: jsPsychCloze,
+      text: 'The %% is the largest terrestrial mammal. It lives in both %% and %%.'
+    });
+
+    // another example with checking if all the blanks are filled in
+    timeline.push({
+      type: jsPsychCloze,
+      text: 'Science notebooks have a %%-colored front cover. Math notebooks have a %%-colored front cover.',
+      allow_blanks: false,
+      mistake_fn: function () { alert("You have not filled in all the blanks!"); }
+    });
+
+    // more elaborate example (with check against correct solution, custom error handling and modified button text)
+    timeline.push({
+      type: jsPsychCloze,
+      text: 'A rectangle has % 4 % corners and a triangle has % 3 %.',
+      check_answers: true,
+      button_text: 'Next',
+      mistake_fn: function () { alert("Wrong answer. Please check again.") }
+    });
+
+    jsPsych.run(timeline);
+  </script>
+</html>
