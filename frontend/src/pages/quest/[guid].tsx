@@ -454,11 +454,40 @@ const QuestDetailPage: NextPage = () => {
                           {dayjs.unix(response.timestamp).format("YYYY-MM-DD HH:mm:ss")}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                          <pre className="whitespace-pre-wrap">
-                            {typeof response.value === "string"
-                              ? response.value
-                              : JSON.stringify(response.value, null, 2)}
-                          </pre>
+                          {typeof response.value === "string" ? (
+                            (() => {
+                              try {
+                                // Try to parse the string as JSON
+                                const parsedJson = JSON.parse(response.value);
+                                return (
+                                  <div>
+                                    <details className="cursor-pointer">
+                                      <summary className="text-blue-500 hover:text-blue-700 font-medium">
+                                        View data
+                                      </summary>
+                                      <pre className="whitespace-pre-wrap mt-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-md overflow-auto max-h-96">
+                                        {JSON.stringify(parsedJson, null, 2)}
+                                      </pre>
+                                    </details>
+                                  </div>
+                                );
+                              } catch (e) {
+                                // If it's not valid JSON, display the string directly
+                                return response.value;
+                              }
+                            })()
+                          ) : (
+                            <div>
+                              <details className="cursor-pointer">
+                                <summary className="text-blue-500 hover:text-blue-700 font-medium">
+                                  View JSON data
+                                </summary>
+                                <pre className="whitespace-pre-wrap mt-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-md overflow-auto max-h-96">
+                                  {JSON.stringify(response.value, null, 2)}
+                                </pre>
+                              </details>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
