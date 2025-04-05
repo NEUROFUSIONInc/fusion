@@ -16,6 +16,7 @@ import { allPromptOptionKeys, Prompt, PromptOptionKey } from "~/@types";
 import {
   Button,
   CategoryTag,
+  ChatBubble,
   Plus,
   PromptDetails,
   PromptOptionsSheet,
@@ -147,6 +148,7 @@ export const PromptsScreen = () => {
         </View>
       )}
 
+      <ChatBubble />
       <Portal>
         {activePrompt && (
           <PromptOptionsSheet
