@@ -64,8 +64,15 @@ const AccountPage: NextPage = () => {
       </div>
 
       <div>
-        <p className="mt-5">Support NeuroFusion's open-source development!</p>
-        <StripeButton />
+        <p className="mt-5">
+          You're using NeuroFusion's tools free! |{" "}
+          <a
+            href="https://buy.stripe.com/fZeaG6aKPgdga2IbII?locale=en&__embed_source=buy_btn_1PGow3AKPHx99o8IGvwDtS4E"
+            className="mt-5 underline"
+          >
+            $
+          </a>{" "}
+        </p>
       </div>
     </DashboardLayout>
   );
