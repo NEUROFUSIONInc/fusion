@@ -169,6 +169,67 @@ export interface FusionHealthDataset {
   heartRateSummary?: FusionHeartRateSummary;
 }
 
+export interface HealthDataSummary {
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  sleep: {
+    available: boolean;
+    averageDuration?: number;
+    daysTracked?: number;
+  };
+  steps: {
+    available: boolean;
+    averageSteps?: number;
+    daysTracked?: number;
+  };
+  heartRate: {
+    available: boolean;
+    averageHeartRate?: number;
+    daysTracked?: number;
+  };
+  trends: {
+    sufficient: boolean;
+    sleep?: {
+      available: boolean;
+      firstPeriodAverage?: number;
+      secondPeriodAverage?: number;
+      percentChange?: number;
+      direction?: string;
+    };
+    steps?: {
+      available: boolean;
+      firstPeriodAverage?: number;
+      secondPeriodAverage?: number;
+      percentChange?: number;
+      direction?: string;
+    };
+    heartRate?: {
+      available: boolean;
+      firstPeriodAverage?: number;
+      secondPeriodAverage?: number;
+      percentChange?: number;
+      direction?: string;
+    };
+    period?: {
+      firstHalf: {
+        start: string;
+        end: string;
+      };
+      secondHalf: {
+        start: string;
+        end: string;
+      };
+    };
+  };
+}
+
+export interface ProcessedHealthData {
+  raw: FusionHealthDataset[];
+  summary: HealthDataSummary;
+}
+
 export interface AppleHealthSleepSample {
   id: string;
   endDate: string;

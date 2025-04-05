@@ -23,7 +23,7 @@ export const ChatHeader = () => {
       />
 
       <Text className="font-sans text-base text-center text-white">
-        Chat with Fusion
+        Fusion Copilot
       </Text>
 
       <Button

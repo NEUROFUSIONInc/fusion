@@ -1,36 +1,24 @@
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import dayjs from "dayjs";
 import Constants from "expo-constants";
 import React, { useMemo, useState } from "react";
-import { View, Text, Linking, Alert } from "react-native";
+import { View, Linking } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import Toast from "react-native-toast-message";
 
 import { Prompt, PromptResponse } from "~/@types";
-import {
-  Screen,
-  Button,
-  Reload,
-  ThumbsUp,
-  ThumbsDown,
-  Modal,
-  CategoryTag,
-  ChevronRight,
-} from "~/components";
+import { Screen, Modal, ChatBubble, CopilotTrigger } from "~/components";
 import { HealthCard } from "~/components/health-details";
 import { categories } from "~/config";
 import { AccountContext } from "~/contexts";
 import { usePromptsQuery } from "~/hooks";
 import { promptService } from "~/services";
 import { appInsights, getTimeOfDay } from "~/utils";
-import { requestCopilotConsent } from "~/utils/consent";
 
 export function HomeScreen() {
   const { data: savedPrompts } = usePromptsQuery();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const accountContext = React.useContext(AccountContext);
 
   const [missedPrompts, setMissedPrompts] = useState<Prompt[]>();
@@ -216,6 +204,104 @@ export function HomeScreen() {
     }
   };
 
+  const handleSuggestionPress = (suggestionText: string) => {
+    // Track suggestion selection
+    appInsights.trackEvent({
+      name: "home_suggestion_selected",
+      properties: {
+        suggestion: suggestionText,
+        category: activeCategory?.name,
+        userNpub: accountContext?.userNpub,
+      },
+    });
+
+    // Navigate to chat with the suggestion
+    // Note: In a real implementation, you would need to store this message
+    // in global state or pass it through a context to be accessed in the ChatPage
+    navigation.navigate("ChatPage");
+  };
+
+  // Suggestions based on active category
+  const getHomeSuggestions = () => {
+    if (!activeCategory) return [];
+
+    // Default suggestions
+    const defaultSuggestions = [
+      {
+        title: "View Insights",
+        text: "Show me insights from my data",
+        onPress: () => {
+          if (savedPrompts && savedPrompts.length > 0) {
+            const promptUuid = savedPrompts.find(
+              (prompt) =>
+                prompt.additionalMeta?.category === activeCategory.name
+            )?.uuid;
+
+            if (promptUuid) {
+              navigation.navigate("InsightsNavigator", {
+                screen: "InsightsPage",
+                params: {
+                  promptUuid,
+                },
+              });
+            }
+          }
+        },
+      },
+      {
+        title: "Chat About Health",
+        text: "What patterns do you see in my data?",
+        onPress: () =>
+          handleSuggestionPress("What patterns do you see in my health data?"),
+      },
+    ];
+
+    // Category-specific suggestions
+    if (activeCategory.name === "Mental Health") {
+      return [
+        ...defaultSuggestions,
+        {
+          title: "Mental Health Tips",
+          text: "How can I improve my mental wellbeing?",
+          onPress: () =>
+            handleSuggestionPress("How can I improve my mental wellbeing?"),
+        },
+        {
+          title: "Find Resources",
+          text: "What mental health resources are available?",
+          onPress: async () => {
+            await Linking.openURL(
+              "https://cmha.ca/find-info/mental-health/general-info/"
+            );
+          },
+        },
+      ];
+    } else if (activeCategory.name === "Health and Fitness") {
+      return [
+        ...defaultSuggestions,
+        {
+          title: "Fitness Recommendations",
+          text: "What exercises should I try?",
+          onPress: () =>
+            handleSuggestionPress(
+              "What exercises should I try based on my health data?"
+            ),
+        },
+        {
+          title: "Activity Guidelines",
+          text: "Learn about physical activity",
+          onPress: async () => {
+            await Linking.openURL(
+              "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
+            );
+          },
+        },
+      ];
+    }
+
+    return defaultSuggestions;
+  };
+
   return (
     <Screen>
       <View className="flex-1">
@@ -229,7 +315,6 @@ export function HomeScreen() {
               clickText="Check in ✨"
               clickAction={() => {
                 // send them to the prompt entry page
-                // there may be multiple prompt
                 navigation.navigate("PromptNavigator", {
                   screen: "PromptEntry",
                   params: {
@@ -254,227 +339,38 @@ export function HomeScreen() {
           )}
 
           <>
-            {/* Fusion Copilot Card */}
-            <View className="flex flex-row w-full justify-between p-5 items-center">
-              <Text className="text-base font-sans-bold text-white justify">
-                Fusion Copilot
-              </Text>
-
-              {activeCategory && categoryPillsToDisplay.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => {
-                    // show an alert with all the active categories
-                    // when they click on one, set it as the active category
-                    // and close the alert
-                    Alert.alert(
-                      "Recommendation Category",
-                      "Select a category to see insights for",
-                      categoryPillsToDisplay.map((category) => ({
-                        text: category.name,
-                        onPress: () => {
-                          setActiveCategory(category);
-                        },
-                      }))
-                    );
-                  }}
-                >
-                  <CategoryTag
-                    key={activeCategory.name}
-                    title={activeCategory.name}
-                    isActive
-                    disabled
-                    icon={activeCategory.icon}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* show each category at a time */}
-            {/* TODO: sort category list based on the prompts with more responses. `rank` property */}
-            <View className="flex flex-col w-full bg-secondary-900 rounded">
-              <View>
-                {/* Enable Copliot */}
-                {!accountContext?.userLoading &&
-                  accountContext?.userPreferences.enableCopilot !== true && (
-                    <View className="flex flex-row w-full justify-between p-5">
-                      <Button
-                        onPress={async () => {
-                          // call bottom sheet
-                          const consentStatus = await requestCopilotConsent(
-                            accountContext!.userNpub
-                          );
-                          accountContext?.setUserPreferences({
-                            ...accountContext.userPreferences,
-                            enableCopilot: consentStatus,
-                          });
-                        }}
-                        title="Get personalized recommendations"
-                        className="px-4 py-2 self-center"
-                        fullWidth
-                      />
-                    </View>
-                  )}
-
-                {/* Summary Text */}
-                <Text
-                  ellipsizeMode="tail"
-                  className="font-sans flex flex-wrap text-white text-base font-medium m-5"
-                >
-                  {summaryText ? summaryText : "Loading summary..."}
-                </Text>
-              </View>
-
-              <View className="flex flex-row w-full justify-between p-5">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  leftIcon={<Reload />}
-                  onPress={() => {
-                    appInsights.trackEvent({
-                      name: "fusion_copilot_reload_summary",
-                      properties: {
-                        category: activeCategory?.name,
-                        userNpub: accountContext?.userNpub,
-                      },
-                    });
-
-                    // reload the summary
-                    setSummaryText("Loading summary...");
-                    (async () => {
-                      const ai_summary = await getInsightSummary(
-                        activeCategory.name
-                      );
-                      setCategoryInsightSummaries((prev) => ({
-                        ...prev,
-                        [activeCategory.name]: ai_summary,
-                      }));
-                    })();
-                  }}
-                  disabled={
-                    !accountContext?.userPreferences.enableCopilot ||
-                    !activeCategory
-                  }
-                />
-
-                <View className="flex flex-row gap-x-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    leftIcon={<ThumbsUp />}
-                    disabled={
-                      !accountContext?.userPreferences.enableCopilot ||
-                      !activeCategory
-                    }
-                    onPress={() => {
-                      appInsights.trackEvent({
-                        name: "fusion_copilot_feedback",
-                        properties: {
-                          feedback: "thumps_up",
-                          category: activeCategory.name,
-                          userNpub: accountContext?.userNpub,
-                        },
-                      });
-                      Toast.show({
-                        type: "success",
-                        // text1: "Feedback sent",
-                        text2:
-                          "Thank you for your feedback! Glad the insight was helpful.",
-                      });
-                    }}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    leftIcon={<ThumbsDown />}
-                    disabled={
-                      !accountContext?.userPreferences.enableCopilot ||
-                      !activeCategory
-                    }
-                    onPress={() => {
-                      appInsights.trackEvent({
-                        name: "fusion_copilot_feedback",
-                        properties: {
-                          feedback: "thumbs_down",
-                          category: activeCategory.name,
-                          userNpub: accountContext?.userNpub,
-                        },
-                      });
-
-                      Toast.show({
-                        type: "success",
-                        // text1: "Feedback sent",
-                        text2:
-                          "Thank you for your feedback! It helps us improve.",
-                      });
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-
             <HealthCard />
 
-            {/* Contextual action buttons */}
-            <View className="flex justify-between mb-5 mt-5">
-              {/* Connect with data source */}
-              {savedPrompts && savedPrompts.length > 0 && (
-                <Button
-                  title="View Insights"
-                  fullWidth
-                  onPress={async () => {
-                    const val = activeCategory.name;
-                    navigation.navigate("InsightsNavigator", {
-                      screen: "InsightsPage",
-                      params: {
-                        promptUuid: savedPrompts?.find(
-                          (prompt) =>
-                            prompt.additionalMeta?.category ===
-                            activeCategory.name
-                        )?.uuid,
-                      },
-                    });
-                  }}
-                  className="bg-secondary-900 flex justify-between mb-2"
-                  variant="secondary"
-                  rightIcon={<ChevronRight />}
-                />
-              )}
+            <CopilotTrigger
+              summaryText={summaryText}
+              contextName={activeCategory?.name}
+              disableActions={!activeCategory}
+              onReloadSummary={() => {
+                appInsights.trackEvent({
+                  name: "fusion_copilot_reload_summary",
+                  properties: {
+                    category: activeCategory?.name,
+                    userNpub: accountContext?.userNpub,
+                  },
+                });
 
-              {/* Display Related Resources */}
-              {activeCategory && activeCategory.name === "Mental Health" && (
-                <Button
-                  onPress={async () => {
-                    await Linking.openURL(
-                      "https://cmha.ca/find-info/mental-health/general-info/"
-                    );
-                  }}
-                  title="Mental Health Resources"
-                  fullWidth
-                  className="bg-secondary-900 flex justify-between mb-2"
-                  variant="secondary"
-                  rightIcon={<ChevronRight />}
-                />
-              )}
-              {/* Display Fitness Resources */}
-              {activeCategory &&
-                activeCategory.name === "Health and Fitness" && (
-                  <Button
-                    onPress={async () => {
-                      await Linking.openURL(
-                        "https://www.who.int/news-room/fact-sheets/detail/physical-activity"
-                      );
-                    }}
-                    title="Learn more about physical activity"
-                    fullWidth
-                    className="bg-secondary-900 flex justify-between mb-2"
-                    variant="secondary"
-                    rightIcon={<ChevronRight />}
-                  />
-                )}
-            </View>
+                // reload the summary
+                setSummaryText("Loading summary...");
+                (async () => {
+                  const ai_summary = await getInsightSummary(
+                    activeCategory.name
+                  );
+                  setCategoryInsightSummaries((prev) => ({
+                    ...prev,
+                    [activeCategory.name]: ai_summary,
+                  }));
+                })();
+              }}
+              suggestions={getHomeSuggestions()}
+            />
           </>
         </ScrollView>
-        {/* <ChatBubble /> */}
+        <ChatBubble />
       </View>
     </Screen>
   );

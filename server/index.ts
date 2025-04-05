@@ -109,6 +109,8 @@ app.post("/api/getpromptsummary/v2", insightController.getPromptSummaryV2);
 
 app.post("/api/getpromptsuggestions", insightController.getPromptSuggestions);
 
+app.post("/api/chat", insightController.handleChatConversation);
+
 /**
  * Get the latest version
  */

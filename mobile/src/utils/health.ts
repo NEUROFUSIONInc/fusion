@@ -13,6 +13,7 @@ import {
   FusionStepSummary,
   FusionHeartRateSummary,
   AppleHealthSleepSample,
+  ProcessedHealthData,
 } from "../@types";
 
 import { getApiService } from "./utils";
@@ -432,4 +433,210 @@ export const pushVitalData = async () => {
   } catch (err) {
     console.error(err);
   }
+};
+
+// Process health data to calculate summary statistics
+export const processHealthData = (
+  data: FusionHealthDataset[]
+): ProcessedHealthData | null => {
+  if (!data || data.length === 0) return null;
+
+  // Calculate averages and extract useful insights
+  const processedData: ProcessedHealthData = {
+    raw: data,
+    summary: {
+      dateRange: {
+        start: data[0]?.date,
+        end: data[data.length - 1]?.date,
+      },
+      sleep: calculateSleepSummary(data),
+      steps: calculateStepsSummary(data),
+      heartRate: calculateHeartRateSummary(data),
+      trends: calculateHealthTrends(data),
+    },
+  };
+
+  return processedData;
+};
+
+// Calculate trends across health metrics
+export const calculateHealthTrends = (data: FusionHealthDataset[]) => {
+  if (!data || data.length < 7) return { sufficient: false }; // Need at least a week of data
+
+  // Sort data by date
+  const sortedData = [...data].sort((a, b) =>
+    dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1
+  );
+
+  // Calculate week-over-week changes
+  const midpoint = Math.floor(sortedData.length / 2);
+  const firstHalf = sortedData.slice(0, midpoint);
+  const secondHalf = sortedData.slice(midpoint);
+
+  // Sleep trend
+  const sleepTrend = calculateMetricTrend(firstHalf, secondHalf, (day) => {
+    let totalSleep = 0;
+    let count = 0;
+    Object.values(day.sleepSummary.sources).forEach((source: any) => {
+      const totalSeconds = Object.values(source.stages).reduce(
+        (total: number, duration: any) => total + (Number(duration) || 0),
+        0
+      );
+      totalSleep += totalSeconds / 3600; // convert to hours
+      count++;
+    });
+    return count > 0 ? totalSleep / count : 0;
+  });
+
+  // Steps trend
+  const stepsTrend = calculateMetricTrend(
+    firstHalf,
+    secondHalf,
+    (day) => day.stepSummary?.totalSteps || 0
+  );
+
+  // Heart rate trend
+  const heartRateTrend = calculateMetricTrend(
+    firstHalf,
+    secondHalf,
+    (day) => day.heartRateSummary?.average || 0
+  );
+
+  return {
+    sufficient: true,
+    sleep: sleepTrend,
+    steps: stepsTrend,
+    heartRate: heartRateTrend,
+    period: {
+      firstHalf: {
+        start: firstHalf[0]?.date,
+        end: firstHalf[firstHalf.length - 1]?.date,
+      },
+      secondHalf: {
+        start: secondHalf[0]?.date,
+        end: secondHalf[secondHalf.length - 1]?.date,
+      },
+    },
+  };
+};
+
+// Helper function to calculate trend between two periods
+export const calculateMetricTrend = (
+  firstPeriod: FusionHealthDataset[],
+  secondPeriod: FusionHealthDataset[],
+  metricExtractor: (day: FusionHealthDataset) => number
+) => {
+  // Filter out days with no data
+  const validFirstPeriod = firstPeriod.filter(
+    (day) => metricExtractor(day) > 0
+  );
+  const validSecondPeriod = secondPeriod.filter(
+    (day) => metricExtractor(day) > 0
+  );
+
+  if (validFirstPeriod.length === 0 || validSecondPeriod.length === 0) {
+    return { available: false };
+  }
+
+  // Calculate averages
+  const firstAverage =
+    validFirstPeriod.reduce((sum, day) => sum + metricExtractor(day), 0) /
+    validFirstPeriod.length;
+  const secondAverage =
+    validSecondPeriod.reduce((sum, day) => sum + metricExtractor(day), 0) /
+    validSecondPeriod.length;
+
+  // Calculate percentage change
+  const percentChange =
+    firstAverage > 0
+      ? ((secondAverage - firstAverage) / firstAverage) * 100
+      : 0;
+
+  return {
+    available: true,
+    firstPeriodAverage: firstAverage,
+    secondPeriodAverage: secondAverage,
+    percentChange,
+    direction:
+      percentChange > 0
+        ? "increase"
+        : percentChange < 0
+        ? "decrease"
+        : "unchanged",
+  };
+};
+
+// Calculate sleep summary statistics
+export const calculateSleepSummary = (data: FusionHealthDataset[]) => {
+  const sleepData = data.filter(
+    (d) => d.sleepSummary && Object.keys(d.sleepSummary.sources).length > 0
+  );
+
+  if (sleepData.length === 0) return { available: false };
+
+  // Extract sleep durations
+  let totalSleepMinutes = 0;
+  let sleepEntries = 0;
+
+  sleepData.forEach((day) => {
+    Object.values(day.sleepSummary.sources).forEach((source: any) => {
+      const stages = source.stages;
+      // Fix type issues with explicit casting
+      const totalSeconds = Object.values(stages).reduce(
+        (total: number, duration: any) => total + (Number(duration) || 0),
+        0
+      );
+      totalSleepMinutes += totalSeconds / 60;
+      sleepEntries++;
+    });
+  });
+
+  return {
+    available: true,
+    averageDuration:
+      sleepEntries > 0 ? totalSleepMinutes / sleepEntries / 60 : 0, // in hours
+    daysTracked: sleepData.length,
+  };
+};
+
+// Calculate steps summary statistics
+export const calculateStepsSummary = (data: FusionHealthDataset[]) => {
+  const stepsData = data.filter(
+    (d) => d.stepSummary && d.stepSummary.totalSteps > 0
+  );
+
+  if (stepsData.length === 0) return { available: false };
+
+  const totalSteps = stepsData.reduce(
+    (sum, day) => sum + day.stepSummary.totalSteps,
+    0
+  );
+  const average = totalSteps / stepsData.length;
+
+  return {
+    available: true,
+    averageSteps: average,
+    daysTracked: stepsData.length,
+  };
+};
+
+// Calculate heart rate summary statistics
+export const calculateHeartRateSummary = (data: FusionHealthDataset[]) => {
+  const heartRateData = data.filter(
+    (d) => d.heartRateSummary && d.heartRateSummary.average > 0
+  );
+
+  if (heartRateData.length === 0) return { available: false };
+
+  const averageHR =
+    heartRateData.reduce(
+      (sum, day) => sum + (day.heartRateSummary?.average || 0),
+      0
+    ) / heartRateData.length;
+
+  return {
+    available: true,
+    averageHeartRate: averageHR,
+    daysTracked: heartRateData.length,
+  };
 };

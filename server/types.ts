@@ -63,3 +63,54 @@ export interface PromptResponseWithEvent {
     value: string;
   };
 }
+
+export interface IQuest {
+  title: string;
+  description: string;
+  config: string;
+  guid: string;
+  userGuid: string;
+  createdAt: string;
+  updatedAt: string;
+  joinCode: string;
+  organizerName?: string;
+  participants?: string[];
+  prompts: Prompt[];
+}
+
+export interface OnboardingQuestion {
+  guid: string;
+  question: string;
+  options?: string[];
+  required?: boolean;
+  type: PromptResponseType;
+}
+
+export interface IQuestConfig {
+  onboardingQuestions?: OnboardingQuestion[];
+  prompts?: Prompt[];
+  collaborators?: string; // comma separated public keys
+  experimentConfig?: string; // html code for the experiment
+  healthDataConfig?: { [key: string]: boolean };
+  assignmentConfig?: QuestAssignment;
+}
+
+export interface QuestAssignment {
+  guid: string;
+  script: {
+    code: string;
+    inputs?: QuestAssignmentInput[];
+    language: "python" | "javascript";
+  };
+}
+
+export interface QuestAssignmentInput {
+  sourceId: string;
+  sourceType: "prompt" | "onboardingQuestion";
+  placeholder: string;
+}
+
+export interface OnboardingResponse extends OnboardingQuestion {
+  responseValue: string;
+  responseTimestamp: number;
+}

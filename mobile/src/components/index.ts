@@ -18,3 +18,4 @@ export * from "./headers";
 export * from "./modal";
 export * from "./calendar-picker";
 export * from "./quests";
+export * from "./copilot-trigger";

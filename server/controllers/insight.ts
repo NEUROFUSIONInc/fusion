@@ -244,3 +244,207 @@ export async function getPromptSuggestions(req: any, res: any) {
     });
   } catch (err) {}
 }
+
+export async function handleChatConversation(req: any, res: any) {
+  const message: string = req.body.message;
+  const healthData: {
+    raw: any[];
+    summary: {
+      dateRange: {
+        start: string;
+        end: string;
+      };
+      sleep: {
+        available: boolean;
+        averageDuration?: number;
+        daysTracked?: number;
+      };
+      steps: {
+        available: boolean;
+        averageSteps?: number;
+        daysTracked?: number;
+      };
+      heartRate: {
+        available: boolean;
+        averageHeartRate?: number;
+        daysTracked?: number;
+      };
+      trends: {
+        sufficient: boolean;
+        sleep?: {
+          available: boolean;
+          firstPeriodAverage?: number;
+          secondPeriodAverage?: number;
+          percentChange?: number;
+          direction?: string;
+        };
+        steps?: {
+          available: boolean;
+          firstPeriodAverage?: number;
+          secondPeriodAverage?: number;
+          percentChange?: number;
+          direction?: string;
+        };
+        heartRate?: {
+          available: boolean;
+          firstPeriodAverage?: number;
+          secondPeriodAverage?: number;
+          percentChange?: number;
+          direction?: string;
+        };
+        period?: {
+          firstHalf: {
+            start: string;
+            end: string;
+          };
+          secondHalf: {
+            start: string;
+            end: string;
+          };
+        };
+      };
+    };
+  } = req.body.healthData;
+
+  const messages: { content: string; role: "user" | "assistant" }[] =
+    req.body.messages || [];
+
+  try {
+    // Prepare conversation history
+    const conversationHistory = messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
+    // Generate health data context dynamically
+    let healthContext = "";
+    if (healthData && healthData.summary) {
+      healthContext = `Health data is available for the period ${healthData.summary.dateRange.start} to ${healthData.summary.dateRange.end}.\n\n`;
+
+      if (healthData.summary.sleep.available) {
+        healthContext += `Sleep tracking available: Yes\n`;
+        healthContext += `Average sleep duration: ${healthData.summary.sleep.averageDuration?.toFixed(
+          2
+        )} hours\n`;
+        healthContext += `Days with sleep data: ${healthData.summary.sleep.daysTracked}\n\n`;
+      } else {
+        healthContext += `Sleep tracking available: No\n\n`;
+      }
+
+      if (healthData.summary.steps.available) {
+        healthContext += `Step tracking available: Yes\n`;
+        healthContext += `Average daily steps: ${Math.round(
+          healthData.summary.steps.averageSteps || 0
+        )}\n`;
+        healthContext += `Days with step data: ${healthData.summary.steps.daysTracked}\n\n`;
+      } else {
+        healthContext += `Step tracking available: No\n\n`;
+      }
+
+      if (healthData.summary.heartRate.available) {
+        healthContext += `Heart rate tracking available: Yes\n`;
+        healthContext += `Average heart rate: ${Math.round(
+          healthData.summary.heartRate.averageHeartRate || 0
+        )} bpm\n`;
+        healthContext += `Days with heart rate data: ${healthData.summary.heartRate.daysTracked}\n\n`;
+      } else {
+        healthContext += `Heart rate tracking available: No\n\n`;
+      }
+
+      // Add trend information if available
+      if (healthData.summary.trends.sufficient) {
+        const { trends } = healthData.summary;
+
+        healthContext += `TREND ANALYSIS (comparing ${trends.period?.firstHalf.start} to ${trends.period?.firstHalf.end} vs ${trends.period?.secondHalf.start} to ${trends.period?.secondHalf.end}):\n\n`;
+
+        if (trends.sleep?.available) {
+          healthContext += `Sleep trend: ${
+            trends.sleep.direction
+          } of ${Math.abs(trends.sleep.percentChange || 0).toFixed(1)}%\n`;
+          healthContext += `(${trends.sleep.firstPeriodAverage?.toFixed(
+            1
+          )} hours vs ${trends.sleep.secondPeriodAverage?.toFixed(
+            1
+          )} hours)\n\n`;
+        }
+
+        if (trends.steps?.available) {
+          healthContext += `Step count trend: ${
+            trends.steps.direction
+          } of ${Math.abs(trends.steps.percentChange || 0).toFixed(1)}%\n`;
+          healthContext += `(${Math.round(
+            trends.steps.firstPeriodAverage || 0
+          )} steps vs ${Math.round(
+            trends.steps.secondPeriodAverage || 0
+          )} steps)\n\n`;
+        }
+
+        if (trends.heartRate?.available) {
+          healthContext += `Heart rate trend: ${
+            trends.heartRate.direction
+          } of ${Math.abs(trends.heartRate.percentChange || 0).toFixed(1)}%\n`;
+          healthContext += `(${Math.round(
+            trends.heartRate.firstPeriodAverage || 0
+          )} bpm vs ${Math.round(
+            trends.heartRate.secondPeriodAverage || 0
+          )} bpm)\n\n`;
+        }
+      }
+    } else {
+      healthContext = "No health data available for analysis.";
+    }
+
+    // Include the full raw data for deeper analysis
+    const healthDataJson = healthData ? JSON.stringify(healthData.raw) : "[]";
+
+    const chatCompletions = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are Fusion Copilot, an AI assistant focused on holistic wellbeing. 
+          You are having a conversation with a user about their health and wellbeing.
+          
+          Here is a summary of the user's health data:
+          
+          ${healthContext}
+          
+          Additionally, I'm providing you with the full raw health data in JSON format for detailed analysis when needed:
+          ${healthDataJson}
+          
+          Guidelines:
+          - Use the health summary for basic insights, but analyze the raw JSON data for deeper questions
+          - Use direct "you/your" language, never "the user/they"
+          - Be empathetic and non-judgmental
+          - If you don't know something, acknowledge that and provide general advice
+          - Focus on evidence-based recommendations
+          - Provide actionable suggestions when appropriate
+          - Avoid alarmist language about health metrics but do provide insights and be truthful
+          - Maintain a warm, supportive tone
+          - Look at wellbeing holistically across the following categories - Mental Health, Productivity, Relationships, Health and Fitness, Spiritual Practice, Self Care, Finance, Personal Interest
+          - Only analyze the health data when specifically asked about health insights or when directly relevant to the conversation
+          - If there is no health data or the data is sparse, acknowledge this fact
+          - When providing health insights, consider patterns, trends, and connections between different metrics
+          - Above all, always responses concise (under 200 words) - unless the user asks for a planning / lists
+          `,
+        },
+        ...conversationHistory,
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    });
+
+    return res.status(200).json({
+      status: "success",
+      response: chatCompletions.choices[0].message.content,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: "error",
+      message: "Something went wrong. Please try again later.",
+    });
+  }
+}
