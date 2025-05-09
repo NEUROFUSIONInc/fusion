@@ -47,7 +47,7 @@ interface CopilotTriggerProps {
 }
 
 export function CopilotTrigger({
-  title = "Fusion Copilot",
+  title,
   summaryText,
   onReloadSummary,
   contextName = "general",

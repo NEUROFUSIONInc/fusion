@@ -63,7 +63,9 @@ export const ChatScreen = () => {
       }
     };
 
-    fetchHealthData();
+    (async () => {
+      await fetchHealthData();
+    })();
   }, []);
 
   const sendMessageToServer = async (messageText: string) => {
