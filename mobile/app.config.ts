@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Fusion Copilot",
   slug: "fusion",
-  version: "2.3.5",
+  version: "2.4",
   orientation: "portrait",
   icon: "./assets/icon.png",
   backgroundColor: "#0B0816",
@@ -20,13 +20,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.neurofusion.fusion",
-    buildNumber: "116",
+    buildNumber: "118",
     backgroundColor: "#0B0816",
     config: {
       usesNonExemptEncryption: false,
     },
     infoPlist: {
-      UIBackgroundModes: ["remote-notification", "fetch"],
+      UIBackgroundModes: ["remote-notification", "fetch", "processing"],
     },
     // associatedDomains: ["applinks:usefusion.ai", "applinks:usefusion.app"],
   },
@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0B0816",
     },
     package: "com.neurofusion.fusion",
-    versionCode: 116,
+    versionCode: 118,
     softwareKeyboardLayoutMode: "pan",
     // permissions: [
     //   "android.permission.health.READ_STEPS",
@@ -58,8 +58,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "InstrumentationKey=5a52ca8a-bd71-4c4c-84f6-d51429acbe03;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
     fusionBackendUrl:
       process.env.FUSION_BACKEND_API_URL ??
-      // "https://neurofusionbackendprd.azurewebsites.net",
-      "https://neurofusion-backend.azurewebsites.net",
+      "https://neurofusionbackendprd.azurewebsites.net",
+    // "https://neurofusion-backend.azurewebsites.net",
     // "http://localhost:4000",
     fusionRelayUrl: "wss://relay.usefusion.ai",
     fusionNostrPublicKey:
