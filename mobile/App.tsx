@@ -15,7 +15,7 @@ import { FontLoader } from "./FontLoader";
 import { CustomNavigation } from "./src/navigation";
 import { appInsights, maskPromptId, pushVitalData } from "./src/utils";
 
-import { QUERY_OPTIONS_DEFAULT, top_responders } from "~/config";
+import { QUERY_OPTIONS_DEFAULT } from "~/config";
 import {
   PromptContextProvider,
   AccountContext,
@@ -28,6 +28,7 @@ import {
   notificationService,
   promptService,
   questService,
+  setupBackgroundTasks,
 } from "~/services";
 import { toastConfig } from "~/theme";
 
@@ -71,10 +72,9 @@ function App() {
       }
     );
 
-    // TODO: register background tasks
-    // (async () => {
-    //   await setupBackgroundTasks();
-    // })();
+    (async () => {
+      await setupBackgroundTasks();
+    })();
 
     // Push vital data if configured
     (async () => {
@@ -83,7 +83,10 @@ function App() {
           (q) => q.guid.toLowerCase() === "4705ba7b-55b6-4c99-afb7-45c3a1fcf7ee"
         )
       ) {
-        await pushVitalData();
+        await pushVitalData(
+          accountContext?.userNpub!,
+          "4705ba7b-55b6-4c99-afb7-45c3a1fcf7ee"
+        );
       }
     })();
 
@@ -92,15 +95,6 @@ function App() {
       await notificationService.registerForPushNotificationsAsync();
       await notificationService.setUpNotificationCategories();
       await notificationService.scheduleInsightNotifications();
-
-      // TOOD: check if userNpub is    user...make sure that account context is ready
-      if (top_responders.includes(accountContext?.userNpub!)) {
-        appInsights.trackEvent({
-          name: "top_responder_notification_setup",
-          properties: { userNpub },
-        });
-        await notificationService.scheduleOutreachNotifications();
-      }
 
       // set notification handlers
       // what happens when a user responds to notification

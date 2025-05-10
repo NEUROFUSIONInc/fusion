@@ -1,10 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import { VitalCore } from "@tryvital/vital-core-react-native";
-import {
-  VitalHealth,
-  HealthConfig,
-  VitalResource,
-} from "@tryvital/vital-health-react-native";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import {
@@ -24,7 +18,7 @@ import { LeftArrow, VerticalMenu } from "../../icons";
 import { AccountContext } from "~/contexts";
 import { useDeleteQuest } from "~/hooks";
 import { handleSendFeeback } from "~/services";
-import { connectWithVital, getApiService } from "~/utils";
+import { connectWithVital, getApiService, pushVitalData } from "~/utils";
 
 export const QuestDetailHeader = () => {
   const navigation = useNavigation();
@@ -77,9 +71,11 @@ export const QuestDetailHeader = () => {
                   onPress: async () => {
                     setIsLoading(true);
                     try {
+                      const deviceId = await DeviceInfo.getUniqueId();
                       const linkToken = await connectWithVital(
                         accountContext?.userPreferences?.activeQuest!.guid!,
-                        option
+                        option,
+                        deviceId
                       );
 
                       if (!linkToken) {
@@ -90,34 +86,16 @@ export const QuestDetailHeader = () => {
                       if (["oura", "whoop"].includes(option.toLowerCase())) {
                         Linking.openURL(linkToken);
                       } else {
-                        // sign in the user
-                        try {
-                          const status = await VitalCore.status();
-                          if (status.includes("signedIn")) {
-                            console.log("already signed in");
-                            await VitalCore.signOut();
-                          }
-                          await VitalCore.signIn(linkToken);
+                        const res = await pushVitalData(
+                          accountContext?.userNpub!,
+                          accountContext?.userPreferences?.activeQuest!.guid!
+                        );
 
-                          const config = new HealthConfig();
-                          config.iOSConfig.backgroundDeliveryEnabled = true;
-                          await VitalHealth.configure(config);
-
-                          await VitalHealth.ask(
-                            [
-                              VitalResource.Sleep,
-                              VitalResource.HeartRate,
-                              VitalResource.HeartRateVariability,
-                              VitalResource.BloodOxygen,
-                              VitalResource.Steps,
-                            ],
-                            []
+                        if (res) {
+                          Alert.alert(
+                            "Success",
+                            "Your health data has been successfully shared. Please remember to wear your watch to sleep daily."
                           );
-
-                          await VitalHealth.syncData();
-                        } catch (error) {
-                          console.error("Failed to sign in", error);
-                          Alert.alert("Error", "Failed to connect health data");
                         }
                       }
                     } catch (error) {

@@ -1,7 +1,12 @@
 import { VitalCore } from "@tryvital/vital-core-react-native";
-import { VitalHealth } from "@tryvital/vital-health-react-native";
+import {
+  VitalHealth,
+  HealthConfig,
+  VitalResource,
+} from "@tryvital/vital-health-react-native";
 import dayjs, { Dayjs } from "dayjs";
 import { Alert, Platform } from "react-native";
+import DeviceInfo from "react-native-device-info";
 import AppleHealthKit, {
   HealthInputOptions,
   HealthValue,
@@ -16,6 +21,7 @@ import {
   ProcessedHealthData,
 } from "../@types";
 
+import { appInsights } from "./appInsights";
 import { getApiService } from "./utils";
 
 /* Permission options */
@@ -396,7 +402,11 @@ export const connectGoogleFit = async () => {
 /**
  * Methods for connecting with the Vital APIs
  */
-export const connectWithVital = async (questId: string, device: string) => {
+export const connectWithVital = async (
+  questId: string,
+  device: string,
+  deviceId: string
+) => {
   const apiService = await getApiService();
 
   try {
@@ -404,6 +414,7 @@ export const connectWithVital = async (questId: string, device: string) => {
       params: {
         questId,
         device,
+        deviceId,
       },
     });
 
@@ -422,16 +433,65 @@ export const connectWithVital = async (questId: string, device: string) => {
   }
 };
 
-export const pushVitalData = async () => {
+export const pushVitalData = async (userNpub: string, quest_id: string) => {
   try {
-    const status = await VitalCore.status();
-    if (status.includes("signedIn") && status.includes("configured")) {
-      await VitalHealth.syncData();
-    } else {
-      console.log("not signed in");
+    const deviceId = await DeviceInfo.getUniqueId();
+    const linkToken = await connectWithVital(
+      quest_id,
+      "Apple Health",
+      deviceId
+    );
+
+    if (!linkToken) {
+      console.log("Failed to get link token");
+      return;
     }
+
+    // sign in the user
+    const status = await VitalCore.status();
+    if (status.includes("signedIn")) {
+      console.log("already signed in");
+      await VitalCore.signOut();
+    }
+    await VitalCore.signIn(linkToken);
+
+    const config = new HealthConfig();
+    config.numberOfDaysToBackFill = 180;
+    await VitalHealth.configure(config);
+
+    await VitalHealth.ask(
+      [
+        VitalResource.Sleep,
+        VitalResource.HeartRate,
+        VitalResource.HeartRateVariability,
+        VitalResource.BloodOxygen,
+        VitalResource.Steps,
+      ],
+      []
+    );
+    await VitalHealth.syncData();
+
+    appInsights.trackEvent(
+      {
+        name: "vital_sync_success",
+      },
+      {
+        userNpub,
+      }
+    );
+
+    return true;
   } catch (err) {
     console.error(err);
+    appInsights.trackEvent(
+      {
+        name: "vital_sync_error",
+      },
+      {
+        userNpub,
+        error: JSON.stringify(err),
+      }
+    );
   }
 };
 
@@ -580,14 +640,21 @@ export const calculateSleepSummary = (data: FusionHealthDataset[]) => {
 
   sleepData.forEach((day) => {
     Object.values(day.sleepSummary.sources).forEach((source: any) => {
+      const isOura = source.sourceName.toLowerCase().includes("oura");
       const stages = source.stages;
-      // Fix type issues with explicit casting
-      const totalSeconds = Object.values(stages).reduce(
-        (total: number, duration: any) => total + (Number(duration) || 0),
-        0
-      );
-      totalSleepMinutes += totalSeconds / 60;
-      sleepEntries++;
+
+      if (isOura) {
+        // For Oura, sum up core, rem, and deep sleep
+        const totalSeconds =
+          (stages["CORE"] || 0) + (stages["REM"] || 0) + (stages["DEEP"] || 0);
+        totalSleepMinutes += totalSeconds / 60;
+        sleepEntries++;
+      } else {
+        // For other sources like Apple Health, use ASLEEP
+        const totalSeconds = stages["ASLEEP"] || 0;
+        totalSleepMinutes += totalSeconds / 60;
+        sleepEntries++;
+      }
     });
   });
 
@@ -623,20 +690,42 @@ export const calculateStepsSummary = (data: FusionHealthDataset[]) => {
 // Calculate heart rate summary statistics
 export const calculateHeartRateSummary = (data: FusionHealthDataset[]) => {
   const heartRateData = data.filter(
-    (d) => d.heartRateSummary && d.heartRateSummary.average > 0
+    (d) =>
+      d.heartRateSummary &&
+      d.heartRateSummary.morning > 0 &&
+      d.heartRateSummary.afternoon > 0 &&
+      d.heartRateSummary.night > 0
   );
 
   if (heartRateData.length === 0) return { available: false };
 
-  const averageHR =
+  const averageMorningHR =
     heartRateData.reduce(
-      (sum, day) => sum + (day.heartRateSummary?.average || 0),
+      (sum, day) => sum + (day.heartRateSummary?.morning || 0),
       0
     ) / heartRateData.length;
+
+  const averageAfternoonHR =
+    heartRateData.reduce(
+      (sum, day) => sum + (day.heartRateSummary?.afternoon || 0),
+      0
+    ) / heartRateData.length;
+
+  const averageNightHR =
+    heartRateData.reduce(
+      (sum, day) => sum + (day.heartRateSummary?.night || 0),
+      0
+    ) / heartRateData.length;
+
+  const averageHR =
+    (averageMorningHR + averageAfternoonHR + averageNightHR) / 3;
 
   return {
     available: true,
     averageHeartRate: averageHR,
+    averageMorningHeartRate: averageMorningHR,
+    averageAfternoonHeartRate: averageAfternoonHR,
+    averageNightHeartRate: averageNightHR,
     daysTracked: heartRateData.length,
   };
 };
