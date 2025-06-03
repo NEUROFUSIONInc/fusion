@@ -16,6 +16,7 @@ import { AddOnboardingQuestionModal } from "~/components/quest/addquestions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShareModal } from "~/components/quests/share-modal";
 import AssignmentEditor from "~/components/quest/assigment-editor";
+import { NotebookEditor } from "~/components/lab/notebook-editor";
 
 const QuestsPage: NextPage = () => {
   const session = useSession();
@@ -34,8 +35,8 @@ const QuestsPage: NextPage = () => {
   const [experimentConfig, setExperimentConfig] = React.useState<string>("");
   const [showExperimentEditor, setShowExperimentEditor] = React.useState<boolean>(false);
 
-  // const [scriptConfig, setScriptConfig] = React.useState<string>("");
-  // const [showScriptEditor, setShowScriptEditor] = React.useState<boolean>(false);
+  const [scriptConfig, setScriptConfig] = React.useState<string>("");
+  const [showScriptEditor, setShowScriptEditor] = React.useState<boolean>(false);
 
   const buildQuestRequestBody = (isEdit: boolean = false, guid: string = "") => {
     const questObject: {
@@ -55,6 +56,7 @@ const QuestsPage: NextPage = () => {
         experimentConfig: experimentConfig, // it's the code for the experiment in html format
         healthDataConfig: healthDataConfig,
         assignmentConfig: assignmentConfig,
+        scriptConfig: scriptConfig, // .py code to be run after an experiment is complete
       }),
       ...(isEdit ? { guid } : {}),
     };
@@ -343,6 +345,7 @@ const QuestsPage: NextPage = () => {
             }, {})
         );
         setAssignmentConfig(parsedConfig.assignmentConfig ?? null);
+        setScriptConfig(parsedConfig.scriptConfig ?? "");
       }
     }
   }, [questConfig]);
@@ -671,7 +674,7 @@ const QuestsPage: NextPage = () => {
               </div>
 
               {/* allow user to add a script (notebook) */}
-              {/* <div className="flex flex-col space-y-2">
+              <div className="mt-5">
                 <Input
                   label="Add a script (notebook) to run after data is collected"
                   type="text"
@@ -684,9 +687,10 @@ const QuestsPage: NextPage = () => {
                 />
 
                 <div className="flex flex-row space-x-2">
-                  <Button leftIcon={<Plus />} onClick={() => setShowScriptEditor(true)}>
-                    Add Script (.py)
+                  <Button leftIcon={<Pencil />} onClick={() => setShowScriptEditor(true)}>
+                    {scriptConfig ? "Edit Script (.py)" : "Add Script (.py)"}
                   </Button>
+
                   {scriptConfig && (
                     <Button intent="outlined" leftIcon={<Trash />} onClick={() => setScriptConfig("")}>
                       Delete Script
@@ -704,7 +708,7 @@ const QuestsPage: NextPage = () => {
                     </div>
                   )}
                 </div>
-              </div> */}
+              </div>
 
               <div className="mt-4">
                 <div className="flex items-center space-x-2">

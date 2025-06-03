@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>2.4</string>
+    <string>2.5</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -38,7 +38,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>118</string>
+    <string>119</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSRequiresIPhoneOS</key>
@@ -72,7 +72,6 @@
     <array>
       <string>remote-notification</string>
       <string>fetch</string>
-      <string>processing</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>

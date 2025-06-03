@@ -179,6 +179,7 @@ export interface IQuestConfig {
   experimentConfig?: string; // html code for the experiment
   healthDataConfig?: { [key: string]: boolean };
   assignmentConfig?: QuestAssignment;
+  scriptConfig?: string; // python script to be executed after experiment
 }
 
 export const healthDataCategories: DisplayCategory[] = [

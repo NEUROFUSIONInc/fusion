@@ -45,31 +45,31 @@ export const ChatScreen = () => {
         userNpub: accountContext?.userNpub,
       },
     });
-
-    // make data request for prompts/responses and biosignals
-    const fetchHealthData = async () => {
-      try {
-        const data = await buildHealthDataset(
-          dayjs().subtract(1, "months"),
-          dayjs()
-        );
-
-        // Process health data to calculate summary statistics
-        const processedData = processHealthData(data);
-        setHealthData(processedData);
-      } catch (error) {
-        console.error("Error fetching health data:", error);
-        setHealthData(null);
-      }
-    };
-
-    (async () => {
-      await fetchHealthData();
-    })();
   }, []);
+
+  // make data request for prompts/responses and biosignals
+  const fetchHealthData = async () => {
+    try {
+      const data = await buildHealthDataset(
+        dayjs().subtract(1, "months"),
+        dayjs()
+      );
+
+      // Process health data to calculate summary statistics
+      const processedData = processHealthData(data);
+      setHealthData(processedData);
+    } catch (error) {
+      console.error("Error fetching health data:", error);
+      setHealthData(null);
+    }
+  };
 
   const sendMessageToServer = async (messageText: string) => {
     setLoading(true);
+
+    if (healthData === null) {
+      await fetchHealthData();
+    }
 
     let fusionBackendUrl = "";
     if (Constants.expoConfig?.extra) {
