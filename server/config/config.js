@@ -6,6 +6,13 @@ module.exports = {
     database: process.env.DATABASE_NAME,
     host: process.env.DATABASE_HOST,
     dialect: process.env.DATABASE_DIALECT,
+    dialectOptions: {
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
+    },
   },
   test: {
     username: process.env.DATABASE_USER,
@@ -13,6 +20,13 @@ module.exports = {
     database: process.env.DATABASE_NAME,
     host: process.env.DATABASE_HOST,
     dialect: process.env.DATABASE_DIALECT,
+    dialectOptions: {
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
+    },
   },
   production: {
     username: process.env.DATABASE_USER,
@@ -26,6 +40,11 @@ module.exports = {
       ssl: {
         require: true,
       },
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
     },
   },
 };
