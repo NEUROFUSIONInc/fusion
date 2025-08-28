@@ -76,6 +76,7 @@ exports.getCreatorQuests = async (req, res) => {
 
 exports.getQuestByCode = async (req, res) => {
   try {
+    console.log("fetching join code:", req.query.joinCode);
     const quest = await db.Quest.findOne({
       where: {
         joinCode: req.query.joinCode.trim().toLowerCase(),
@@ -83,12 +84,13 @@ exports.getQuestByCode = async (req, res) => {
     });
 
     if (!quest) {
+      console.log("quest not found");
       res.status(404).json({
         error: "Quest not found",
       });
       return;
     }
-
+    console.log("found quest:", quest.guid);
     res.status(200).json({
       quest,
     });
