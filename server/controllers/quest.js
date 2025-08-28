@@ -27,6 +27,7 @@ exports.saveQuest = async (req, res) => {
       quest,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       error: "Error saving quest",
     });
@@ -92,6 +93,7 @@ exports.getQuestByCode = async (req, res) => {
       quest,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       error: "Error getting quest",
     });
@@ -385,7 +387,12 @@ exports.saveQuestDataset = async (req, res) => {
   }
 };
 
-const getQuestDatasetsInternal = async (questId, type = null, singleUser = false, userGuid = null) => {
+const getQuestDatasetsInternal = async (
+  questId,
+  type = null,
+  singleUser = false,
+  userGuid = null
+) => {
   const latestTimestamps = await db.UserQuestDataset.findAll({
     where: {
       questGuid: questId,
@@ -396,7 +403,10 @@ const getQuestDatasetsInternal = async (questId, type = null, singleUser = false
       "userGuid",
       "questGuid",
       "type",
-      [db.sequelize.fn("MAX", db.sequelize.col("timestamp")), "latestTimestamp"],
+      [
+        db.sequelize.fn("MAX", db.sequelize.col("timestamp")),
+        "latestTimestamp",
+      ],
     ],
     group: ["userGuid", "questGuid", "type"],
     raw: true,
@@ -415,13 +425,7 @@ const getQuestDatasetsInternal = async (questId, type = null, singleUser = false
     where: {
       [db.Sequelize.Op.or]: conditions,
     },
-    attributes: [
-      "userGuid",
-      "questGuid",
-      "type",
-      "timestamp",
-      "value",
-    ],
+    attributes: ["userGuid", "questGuid", "type", "timestamp", "value"],
   });
 
   return userQuestDatasets;
@@ -432,8 +436,8 @@ const isUserCreatorOrCollaborator = async (questId, userGuid) => {
     // Get the user's pubkey
     const user = await db.UserMetadata.findOne({
       where: {
-        userGuid: userGuid
-      }
+        userGuid: userGuid,
+      },
     });
 
     if (!user) {
@@ -469,7 +473,10 @@ const isUserCreatorOrCollaborator = async (questId, userGuid) => {
 exports.getQuestDatasets = async (req, res) => {
   try {
     // check if the user is the creator/collaborator of the quest
-    const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(req.query.questId, req.user.userGuid);
+    const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(
+      req.query.questId,
+      req.user.userGuid
+    );
     let querySingleUser = req.query.singleUser;
     if (isCreatorOrCollaborator == false) {
       querySingleUser = true;
@@ -556,15 +563,18 @@ exports.getQuestAssignments = async (req, res) => {
       // for each input, find the corresponding response
       for (let i = 0; i < scriptInputs.length; i++) {
         const input = scriptInputs[i];
-        const response = onboardingResponses.find((response) => response.guid === input.sourceId);
-        
+        const response = onboardingResponses.find(
+          (response) => response.guid === input.sourceId
+        );
+
         // TODO: make this design more robust, scaffolding should be on the frontend where user can see and test script run
         // INJECT VARIABLE INTO THE SCRIPT
         if (response) {
-          assignmentConfig.script.code = `${input.placeholder} = \"${response.responseValue}\"\n` + assignmentConfig.script.code;
+          assignmentConfig.script.code =
+            `${input.placeholder} = \"${response.responseValue}\"\n` +
+            assignmentConfig.script.code;
         }
       }
-
     }
 
     console.log(`assignment code:\n${assignmentConfig.script.code}`);
@@ -582,14 +592,17 @@ exports.getQuestAssignments = async (req, res) => {
       } else {
         res.status(500).json({
           error: "Error executing script",
-          message: JSON.stringify(response.data)
+          message: JSON.stringify(response.data),
         });
       }
     } catch (error) {
-      console.error('Python executor error:', error.response?.data || error.message);
+      console.error(
+        "Python executor error:",
+        error.response?.data || error.message
+      );
       res.status(500).json({
         error: "Error executing script",
-        message: error.response?.data || error.message
+        message: error.response?.data || error.message,
       });
     }
   } catch (err) {
@@ -607,35 +620,35 @@ exports.getQuestExtraConfig = async (req, res) => {
 
     const quest = await db.Quest.findOne({
       where: {
-        guid: questId
-      }
+        guid: questId,
+      },
     });
 
     if (!quest) {
       return res.status(404).json({
-        error: "Quest not found"
+        error: "Quest not found",
       });
     }
 
     const config = await db.QuestExtraConfig.findOne({
       where: {
-        questId: questId
-      }
+        questId: questId,
+      },
     });
 
     if (!config) {
       return res.status(404).json({
-        error: "Quest API config not found"
+        error: "Quest API config not found",
       });
     }
 
     res.status(200).json({
-      value: config.value
+      value: config.value,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      error: "Error getting quest extra config"
+      error: "Error getting quest extra config",
     });
   }
 };
@@ -650,7 +663,7 @@ exports.setQuestExtraConfig = async (req, res) => {
 
     if (!questId || !value) {
       return res.status(400).json({
-        error: "Quest ID and value are required"
+        error: "Quest ID and value are required",
       });
     }
 
@@ -669,13 +682,14 @@ exports.setQuestExtraConfig = async (req, res) => {
 
     if (!quest) {
       return res.status(403).json({
-        error: "Unauthorized - you must be the creator of the quest to modify its config"
+        error:
+          "Unauthorized - you must be the creator of the quest to modify its config",
       });
     }
 
     const [config, created] = await db.QuestExtraConfig.findOrCreate({
       where: { questId },
-      defaults: { value }
+      defaults: { value },
     });
 
     if (!created) {
@@ -684,12 +698,12 @@ exports.setQuestExtraConfig = async (req, res) => {
     }
 
     res.status(200).json({
-      value: config.value
+      value: config.value,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      error: "Error setting quest extra config"
+      error: "Error setting quest extra config",
     });
   }
 };
@@ -700,7 +714,7 @@ exports.redeemGiftCard = async (req, res) => {
 
     if (!questId || !deviceId) {
       return res.status(400).json({
-        error: "Quest ID and device ID are required"
+        error: "Quest ID and device ID are required",
       });
     }
 
@@ -708,12 +722,12 @@ exports.redeemGiftCard = async (req, res) => {
     const questExtraConfig = await db.QuestExtraConfig.findOne({
       where: {
         questId: questId,
-      }
+      },
     });
 
     if (!questExtraConfig) {
       return res.status(404).json({
-        error: "ERROR: Not configured to redeem gift cards"
+        error: "ERROR: Not configured to redeem gift cards",
       });
     }
 
@@ -721,7 +735,7 @@ exports.redeemGiftCard = async (req, res) => {
     const giftCardCodes = configObject.gift_card_codes;
     if (!giftCardCodes) {
       return res.status(404).json({
-        error: "ERROR: Gift card codes not found"
+        error: "ERROR: Gift card codes not found",
       });
     }
 
@@ -731,10 +745,14 @@ exports.redeemGiftCard = async (req, res) => {
       // this is going to be in the form of "deviceId:giftCardCode,deviceId:giftCardCode,..."
     }
 
-    const userVitalConnectedSources = await getUserVitalConnectedSources(req.user.userGuid, questId);
+    const userVitalConnectedSources = await getUserVitalConnectedSources(
+      req.user.userGuid,
+      questId
+    );
     if (!userVitalConnectedSources) {
       return res.status(400).json({
-        error: "You must connect your health data to receive a confirmation code."
+        error:
+          "You must connect your health data to receive a confirmation code.",
       });
     }
 
@@ -742,37 +760,39 @@ exports.redeemGiftCard = async (req, res) => {
     const giftCardCodesHistory = configObject["gift_card_codes_history"];
     if (giftCardCodesHistory.includes(deviceId)) {
       // Find the code that was redeemed for this device
-      const deviceHistory = giftCardCodesHistory.split(",")
-        .find(entry => entry.startsWith(deviceId + ":"));
-      
+      const deviceHistory = giftCardCodesHistory
+        .split(",")
+        .find((entry) => entry.startsWith(deviceId + ":"));
+
       if (deviceHistory) {
         const redeemedCode = deviceHistory.split(":")[1];
         return res.status(200).json({
-          code: "You've already redeemed this code. Check your email for your gift card."
+          code: "You've already redeemed this code. Check your email for your gift card.",
         });
       }
-      
+
       return res.status(404).json({
-        error: "Unable to find gift code, it looks like you've already redeemed it."
+        error:
+          "Unable to find gift code, it looks like you've already redeemed it.",
       });
     }
 
     // if not, check if there's a code available and assign to the device
     // Split gift card codes into array and filter out any that are already used
-    const availableCodes = giftCardCodes.split(",").filter(code => 
-      !giftCardCodesHistory.includes(`:${code}`)
-    );
+    const availableCodes = giftCardCodes
+      .split(",")
+      .filter((code) => !giftCardCodesHistory.includes(`:${code}`));
 
     if (availableCodes.length === 0) {
       return res.status(404).json({
-        error: "There are no more confirmation codes available."
+        error: "There are no more confirmation codes available.",
       });
     }
 
     // Take the first available code
     const codeToAssign = availableCodes[0];
     // Update the history with the new assignment
-    configObject["gift_card_codes_history"] = giftCardCodesHistory 
+    configObject["gift_card_codes_history"] = giftCardCodesHistory
       ? `${giftCardCodesHistory},${deviceId}:${codeToAssign}`
       : `${deviceId}:${codeToAssign}`;
 
@@ -791,44 +811,49 @@ exports.redeemGiftCard = async (req, res) => {
         true,
         req.user.userGuid
       );
-  
+
       const onboardingResponses = JSON.parse(onboardingDatasets[0].value);
-      userEmail = onboardingResponses.find(response => response.guid === "31bd772e-37ce-4fa7-b3e4-55cb425f3fd4").responseValue;
-      
+      userEmail = onboardingResponses.find(
+        (response) => response.guid === "31bd772e-37ce-4fa7-b3e4-55cb425f3fd4"
+      ).responseValue;
+
       const zapierResponse = await axios.post(
         "https://hooks.zapier.com/hooks/catch/20652342/28rbmgx/",
         {
           userEmail: userEmail,
-          deviceId: codeToAssign
+          deviceId: codeToAssign,
         }
       );
     } catch (error) {
-      console.error('Zapier error:', error.response?.data || error.message);
+      console.error("Zapier error:", error.response?.data || error.message);
       return res.status(500).json({
-        error: "Error sending gift card code to email"
+        error: "Error sending gift card code to email",
       });
     }
 
     return res.status(200).json({
-      code: `Sent to your email: ${userEmail}`
+      code: `Sent to your email: ${userEmail}`,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      error: "Error redeeming gift card"
+      error: "Error redeeming gift card",
     });
   }
 };
 
 exports.getEditorCheck = async (req, res) => {
-  const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(req.query.questId, req.user.userGuid);
+  const isCreatorOrCollaborator = await isUserCreatorOrCollaborator(
+    req.query.questId,
+    req.user.userGuid
+  );
   if (isCreatorOrCollaborator) {
     res.status(200).json({
-      isEditor: true
+      isEditor: true,
     });
   } else {
     res.status(200).json({
-      isEditor: false
+      isEditor: false,
     });
   }
 };
