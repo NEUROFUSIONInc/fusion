@@ -34,13 +34,20 @@ export const HeroSection = ({ isResearch = false }) => {
         </div>
       ) : (
         <>
-          <div className="flex w-full max-w-3xl flex-col space-y-10 text-center md:min-w-[300px]">
-            <h1 className="font-body text-3xl font-semibold sm:text-6xl">
-              Personal Insights to <br />
-              <span className="text-primary-gradient">Guide Your Daily Actions</span>
+          <div className="flex w-full flex-col space-y-10 text-center md:min-w-[300px]">
+            <h1 className="font-body text-1xl font-semibold sm:text-6xl">
+              Explore Your Mind. <br />
+              <span className="text-primary-gradient">
+                Learn Your Brain’s Patterns. <br />
+                Advance Discovery Together!
+              </span>
             </h1>
             <p className="block text-base leading-8 text-gray-500 dark:text-gray-400 md:text-xl">
-              Use Fusion Copilot to improve your productivity, physical and mental health.
+              Fusion Copilot helps you to understand your brain’s state, supporting better neurological health and
+              well-being.
+              <br />
+              Effortlessly collect and explore EEG data to gain insights that help you make informed choices for a
+              healthier mind.
             </p>
           </div>
           <div className="mt-10 flex flex-col items-center justify-center gap-x-6 gap-y-2 md:flex-row">
@@ -49,7 +56,7 @@ export const HeroSection = ({ isResearch = false }) => {
           </div>
           <div className="relative pb-[56.25%] h-0 w-full">
             <iframe
-              title="Neurofusion Demo Video"
+              title="How to use Fusion Copilot App"
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               src="https://www.loom.com/embed/013db5f1fb3f44f49693ab59cb3e36f4?sid=ae15a47c-8d9d-4529-9ca2-13ec6e19e1ad?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&autoplay=0"
               allowFullScreen

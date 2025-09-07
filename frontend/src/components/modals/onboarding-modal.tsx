@@ -65,6 +65,7 @@ const CapabilitiesModal: React.FC<CapabilitiesModalProps> = ({ onNext, onCancel 
           <div className="list-disc ml-6 mt-2">
             <p>Record brain activity during cognitive experiments</p>
             <p>Respond to self-reports on behavior using your mobile devices</p>
+            <p>Your data stays on your device unless you share it with a researcher for a study</p>
           </div>
         </DialogDescription>
         <div className="flex justify-end mt-4">
