@@ -1,4 +1,9 @@
-export type PromptResponseType = "text" | "yesno" | "number" | "customOptions";
+export type PromptResponseType =
+  | "text"
+  | "yesno"
+  | "number"
+  | "numberRange"
+  | "customOptions";
 
 export interface Prompt {
   uuid: string;
@@ -11,10 +16,32 @@ export interface Prompt {
   additionalMeta: PromptAdditionalMeta;
 }
 
+export enum PromptNotifyOperator {
+  equals = "equals",
+  not_equals = "not_equals",
+  greater_than = "greater_than",
+  less_than = "less_than",
+  contains = "contains",
+  not_contains = "not_contains",
+}
+export interface PromptNotifyCondition {
+  sourceType: "prompt" | "onboardingQuestion";
+  sourceId: string;
+  operator: PromptNotifyOperator;
+  value: string;
+}
+
 export type PromptAdditionalMeta = {
   category?: string;
   isNotificationActive?: boolean;
   customOptionText?: string; // ; separated list of options
+  singleResponse?: boolean; // if true, only one response is allowed during custom option selection
+  questId?: string;
+  notifyConditions?: PromptNotifyCondition[];
+  numberRangeOptions?: {
+    min: number;
+    max: number;
+  };
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {

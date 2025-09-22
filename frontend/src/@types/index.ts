@@ -119,7 +119,7 @@ export interface DisplayCategory {
   value: string;
 }
 
-export type PromptResponseType = "text" | "yesno" | "number" | "customOptions";
+export type PromptResponseType = "text" | "yesno" | "number" | "numberRange" | "customOptions";
 
 export interface Prompt {
   uuid: string;
@@ -139,6 +139,10 @@ export type PromptAdditionalMeta = {
   singleResponse?: boolean;
   questId?: string;
   notifyConditions?: PromptNotifyCondition[];
+  numberRangeOptions?: {
+    min: number;
+    max: number;
+  };
 };
 
 export type CreatePrompt = Omit<Prompt, "notificationConfig_days" | "uuid"> & {

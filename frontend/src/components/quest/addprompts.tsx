@@ -49,6 +49,11 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
     prompt.additionalMeta?.notifyConditions ?? []
   );
 
+  const [numberRangeOptions, setNumberRangeOptions] = useState<{ min: number; max: number }>(
+    prompt.additionalMeta?.numberRangeOptions ?? { min: 0, max: 10 }
+  );
+  const [numberRangeError, setNumberRangeError] = useState<string | null>(null);
+
   const updatePrompt = () => {
     const updatedPrompt: Prompt = {
       ...prompt,
@@ -64,6 +69,7 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
         customOptionText: customOptions.join(";"),
         singleResponse: singleResponse,
         notifyConditions: notifyConditions.length > 0 ? notifyConditions : undefined,
+        numberRangeOptions: responseType === "numberRange" ? numberRangeOptions : undefined,
       },
     };
 
@@ -117,6 +123,22 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
     }
     return res;
   }, [savedPrompts, savedOnboardingQuestions]);
+
+  const setNumberRangeOption = (key: "min" | "max", value: number) => {
+    if (key === "min" && value >= numberRangeOptions.max) {
+      setNumberRangeError("Minimum value must be less than maximum value.");
+      return;
+    }
+    if (key === "max" && value <= numberRangeOptions.min) {
+      setNumberRangeError("Maximum value must be greater than minimum value.");
+      return;
+    }
+    setNumberRangeError(null);
+    setNumberRangeOptions((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -229,6 +251,25 @@ const AddPromptModal: React.FC<AddPromptModalProps> = ({
                       <option value="no">No</option>
                     </select>
                   </div>
+                </div>
+              )}
+              {responseType === "numberRange" && (
+                <div className="flex flex-col mt-2">
+                  <div className="flex space-x-4">
+                    {(["min", "max"] as const).map((key) => (
+                      <div className="flex-1" key={key}>
+                        <Input
+                          label={key === "min" ? "Minimum Value" : "Maximum Value"}
+                          type="number"
+                          size="md"
+                          fullWidth
+                          value={numberRangeOptions[key]}
+                          onChange={(e) => setNumberRangeOption(key, parseInt(e.target.value, 10))}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {numberRangeError && <div className="text-red-500 text-sm">{numberRangeError}</div>}
                 </div>
               )}
             </label>
