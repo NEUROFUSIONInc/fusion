@@ -30,12 +30,14 @@ export function convertToCSV(arr: any[]) {
 
 export async function writeDataToStore(dataName: string, data: any, fileTimestamp: string, storeType = "download") {
   // TODO: fix validation
-  console.log("fileTimestamp: ", fileTimestamp);
+  console.log("writing data to store:");
+  console.log("fileTimestamp ", fileTimestamp);
+  console.log("dataName ", dataName);
 
   const providerName = dataName === "event" ? "fusion" : "neurosity";
+  const fileName = `${dataName}_${fileTimestamp}.csv`;
 
   if (storeType === "download") {
-    const fileName = `${dataName}_${fileTimestamp}.csv`;
     const content = convertToCSV(data); // convert to csv format
 
     const hiddenElement = document.createElement("a");
@@ -61,6 +63,13 @@ export async function writeDataToStore(dataName: string, data: any, fileTimestam
         console.log(`Writing data for ${dataName} failed`);
       }
     })();
+  } else if (storeType === "localStorage") {
+    const content = convertToCSV(data); // convert to csv format
+    const blob = new Blob([`data:text/csv;charset=utf-8,${encodeURIComponent(content)}`], { type: "text/csv" });
+    const file = new File([blob], fileName, { type: "text/csv" });
+
+    // save to local storage
+    await saveLocalFile(fileName, file);
   }
 }
 
