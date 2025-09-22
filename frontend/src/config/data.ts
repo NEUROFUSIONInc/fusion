@@ -53,6 +53,7 @@ export const responseTypes = [
   { label: "Text", value: "text" },
   { label: "Number", value: "number" },
   { label: "Custom Options", value: "customOptions" },
+  { label: "Number Range", value: "numberRange" },
 ];
 
 export const promptFrequencyData = [
